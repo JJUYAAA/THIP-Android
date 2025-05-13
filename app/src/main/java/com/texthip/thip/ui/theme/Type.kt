@@ -16,11 +16,13 @@ val thipFontRegular = FontFamily(Font(R.font.regular))
 @Immutable
 data class ThipTypography(
     val bigtitle_b700_s22_h24: TextStyle,
+    val bigtitle_b700_s22: TextStyle,
     val title_b700_s20_h24: TextStyle,
     val navipressed_b700_s10: TextStyle,
     val smalltitle_sb600_s18_h24: TextStyle,
     val smalltitle_sb600_s16_h24: TextStyle,
     val smalltitle_sb600_s16_h20: TextStyle,
+    val smalltitle_sb600_s14_h20: TextStyle,
     val menu_sb600_s14_h24: TextStyle,
     val menu_sb600_s12_h20: TextStyle,
     val menu_sb600_s12: TextStyle,
@@ -48,6 +50,10 @@ val defaultThipTypography = ThipTypography(
         fontSize = 22.sp,
         lineHeight = 24.sp,
     ),
+    bigtitle_b700_s22 = TextStyle(
+        fontFamily = thipFontBold,
+        fontSize = 22.sp,
+    ),
     title_b700_s20_h24 = TextStyle(
         fontFamily = thipFontBold,
         fontSize = 20.sp,
@@ -70,6 +76,11 @@ val defaultThipTypography = ThipTypography(
     smalltitle_sb600_s16_h20 = TextStyle(
         fontFamily = thipFontSemiBold,
         fontSize = 16.sp,
+        lineHeight = 20.sp,
+    ),
+    smalltitle_sb600_s14_h20 = TextStyle(
+        fontFamily = thipFontSemiBold,
+        fontSize = 14.sp,
         lineHeight = 20.sp,
     ),
     menu_sb600_s14_h24 = TextStyle(
