@@ -5,6 +5,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
 import com.texthip.thip.R
 
@@ -49,6 +50,10 @@ val defaultThipTypography = ThipTypography(
         fontFamily = thipFontBold,
         fontSize = 22.sp,
         lineHeight = 24.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     bigtitle_b700_s22 = TextStyle(
         fontFamily = thipFontBold,
@@ -58,6 +63,10 @@ val defaultThipTypography = ThipTypography(
         fontFamily = thipFontBold,
         fontSize = 20.sp,
         lineHeight = 24.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     navipressed_b700_s10 = TextStyle(
         fontFamily = thipFontBold,
@@ -67,31 +76,55 @@ val defaultThipTypography = ThipTypography(
         fontFamily = thipFontSemiBold,
         fontSize = 18.sp,
         lineHeight = 24.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     smalltitle_sb600_s16_h24 = TextStyle(
         fontFamily = thipFontSemiBold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     smalltitle_sb600_s16_h20 = TextStyle(
         fontFamily = thipFontSemiBold,
         fontSize = 16.sp,
         lineHeight = 20.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     smalltitle_sb600_s14_h20 = TextStyle(
         fontFamily = thipFontSemiBold,
         fontSize = 14.sp,
         lineHeight = 20.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     menu_sb600_s14_h24 = TextStyle(
         fontFamily = thipFontSemiBold,
         fontSize = 14.sp,
         lineHeight = 24.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     menu_sb600_s12_h20 = TextStyle(
         fontFamily = thipFontSemiBold,
         fontSize = 12.sp,
         lineHeight = 20.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     menu_sb600_s12 = TextStyle(
         fontFamily = thipFontSemiBold,
@@ -101,21 +134,37 @@ val defaultThipTypography = ThipTypography(
         fontFamily = thipFontMedium,
         fontSize = 18.sp,
         lineHeight = 24.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     menu_m500_s16_h24 = TextStyle(
         fontFamily = thipFontMedium,
         fontSize = 16.sp,
         lineHeight = 24.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     menu_m500_s14_h24 = TextStyle(
         fontFamily = thipFontMedium,
         fontSize = 14.sp,
         lineHeight = 24.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     copy_m500_s14_h20 = TextStyle(
         fontFamily = thipFontMedium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     view_m500_s14 = TextStyle(
         fontFamily = thipFontMedium,
@@ -125,6 +174,10 @@ val defaultThipTypography = ThipTypography(
         fontFamily = thipFontMedium,
         fontSize = 12.sp,
         lineHeight = 20.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     info_m500_s12 = TextStyle(
         fontFamily = thipFontMedium,
@@ -138,11 +191,19 @@ val defaultThipTypography = ThipTypography(
         fontFamily = thipFontRegular,
         fontSize = 14.sp,
         lineHeight = 24.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     feedcopy_r400_s14_h20 = TextStyle(
         fontFamily = thipFontRegular,
         fontSize = 14.sp,
         lineHeight = 20.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     copy_r400_s14 = TextStyle(
         fontFamily = thipFontRegular,
@@ -152,11 +213,19 @@ val defaultThipTypography = ThipTypography(
         fontFamily = thipFontRegular,
         fontSize = 12.sp,
         lineHeight = 24.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     copy_r400_s12_h20 = TextStyle(
         fontFamily = thipFontRegular,
         fontSize = 12.sp,
         lineHeight = 20.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     info_r400_s12 = TextStyle(
         fontFamily = thipFontRegular,
@@ -166,6 +235,10 @@ val defaultThipTypography = ThipTypography(
         fontFamily = thipFontRegular,
         fontSize = 11.sp,
         lineHeight = 20.sp,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.None
+        )
     ),
     timedate_r400_s11 = TextStyle(
         fontFamily = thipFontRegular,
