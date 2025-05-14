@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Thip</string>
+
+    <!--    mock data    -->
+    <string name="book_title">책이름을입력해주세요책이름을</string>
+    <string name="book_author">한한강한강한강한ㅇㅇㄴㄴㅁ강</string>
+
+    <!--    버튼 컴포넌트    -->
+    <string name="author">저</string>
 </resources>
