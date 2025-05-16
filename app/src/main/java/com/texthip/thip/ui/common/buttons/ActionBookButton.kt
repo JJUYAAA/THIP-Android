@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.common.buttons
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,11 +28,16 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun ActionBookButton(
     bookTitle: String = stringResource(R.string.book_title),
     bookAuthor: String = stringResource(R.string.book_author),
+    onClick: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
             .background(color = colors.DarkGrey, shape = RoundedCornerShape(12.dp))
+            .clickable {
+                onClick()
+            }
             .padding(top = 16.dp, bottom = 16.dp, start = 12.dp, end = 4.dp)
+
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
