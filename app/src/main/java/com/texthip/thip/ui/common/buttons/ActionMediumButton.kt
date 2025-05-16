@@ -45,17 +45,14 @@ fun ActionMediumButton(
             .clickable {
                 onClick()
             },
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
         Icon(
             painter = icon,
             contentDescription = null,
             tint = contentColor,
         )
-
-        Spacer(modifier = Modifier.width(8.dp))
 
         Text(
             text = text,
@@ -63,15 +60,11 @@ fun ActionMediumButton(
             style = typography.smalltitle_sb600_s16_h24,
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
-
         Icon(
             painter = painterResource(R.drawable.ic_chevron),
             contentDescription = null,
             tint = contentColor,
         )
-
-
     }
 }
 
