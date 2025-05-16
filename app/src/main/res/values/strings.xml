@@ -7,4 +7,5 @@
 
     <!--    버튼 컴포넌트    -->
     <string name="author">저</string>
+    <string name="add_to_my_feed">내 피드에 추가</string>
 </resources>
