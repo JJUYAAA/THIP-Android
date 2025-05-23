@@ -9,4 +9,6 @@
     <string name="author">저</string>
     <string name="add_to_my_feed">내 피드에 추가</string>
     <string name="post">글 등록</string>
+    <string name="follow">팔로우</string>
+    <string name="change_book">책 변경</string>
 </resources>
