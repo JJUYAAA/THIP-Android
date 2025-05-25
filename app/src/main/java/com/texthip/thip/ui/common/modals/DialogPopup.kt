@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.texthip.thip.R
+import com.texthip.thip.ui.theme.LocalThipColorsProvider
 
 @Composable
 fun DialogPopup(
@@ -38,7 +39,7 @@ fun DialogPopup(
             .width(320.dp)
             .height(182.dp)
             .background(
-                color = colorResource(id = R.color.darkgray),
+                color = LocalThipColorsProvider.current.Black,
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(20.dp)
