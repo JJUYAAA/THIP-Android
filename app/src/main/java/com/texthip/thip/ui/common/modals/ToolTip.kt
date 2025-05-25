@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.DividerDefaults.color
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +34,7 @@ enum class ArrowPosition {
 
 @Composable
 fun TriangleArrow(
-    color: Color = Color.DarkGray,
+    color: Color = colorResource(id = R.color.darkgray),
     size: Dp = 12.dp,
     modifier: Modifier = Modifier
 ) {
@@ -56,8 +55,8 @@ fun TriangleArrow(
 fun PopupModal(
     text: String,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color.DarkGray,
-    textColor: Color = Color(0xFFAA7FFB4),
+    backgroundColor: Color = colorResource(id = R.color.darkgray),
+    textColor: Color = colorResource(id = R.color.point_green),
     arrowPosition: ArrowPosition = ArrowPosition.CENTER,
     onClose: () -> Unit = {}
 ) {
@@ -105,7 +104,7 @@ fun PopupModal(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "닫기",
-                    tint =  colorResource(id = R.color.white),
+                    tint =  colorResource(id = R.color.primary_white),
                     modifier = Modifier
                         .size(20.dp)
                         .clickable { onClose() }
@@ -119,7 +118,6 @@ fun PopupModal(
 @Composable
 private fun PopupPrev() {
     PopupModal(
-        //실제 사용 시 stringResource()로 불러오기
         text = "독서진행도 80%부터 총평을 작성할 수 있습니다.",
         modifier = Modifier
             .width(400.dp)
