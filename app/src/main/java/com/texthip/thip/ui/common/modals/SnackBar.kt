@@ -11,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,8 +29,8 @@ fun SnackBar(
 ) {
     Box(
         modifier = modifier
-            .background(backgroundColor, shape = RoundedCornerShape(16.dp))
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .background(backgroundColor, shape = RoundedCornerShape(12.dp))
+            .padding(horizontal = 15.dp, vertical = 15.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -38,12 +40,14 @@ fun SnackBar(
             Text(
                 text = message,
                 color = messageColor,
-                fontSize = 14.sp
+                fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.medium))
             )
             Text(
                 text = actionText,
                 color = actionTextColor,
-                fontSize = 14.sp,
+                fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.semibold)),
                 modifier = Modifier.clickable { onActionClick() }
             )
         }
@@ -59,6 +63,5 @@ fun SnackBarPreview() {
         onActionClick = {},
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
     )
 }
