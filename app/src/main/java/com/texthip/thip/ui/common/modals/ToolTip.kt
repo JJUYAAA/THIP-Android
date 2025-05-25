@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -35,7 +36,7 @@ enum class ArrowPosition {
 @Composable
 fun TriangleArrow(
     color: Color = colorResource(id = R.color.darkgray),
-    size: Dp = 12.dp,
+    size: Dp = 13.dp,
     modifier: Modifier = Modifier
 ) {
     val triangleSizePx = with(androidx.compose.ui.platform.LocalDensity.current) { size.toPx() }
@@ -88,7 +89,7 @@ fun PopupModal(
 
         Box(
             modifier = Modifier
-                .background(backgroundColor, RoundedCornerShape(10.dp))
+                .background(backgroundColor, RoundedCornerShape(12.dp))
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             Row(
@@ -97,16 +98,16 @@ fun PopupModal(
                 Text(
                     text = text,
                     color = textColor,
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily(Font(R.font.medium)),
                     modifier = Modifier.weight(1f)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "닫기",
                     tint =  colorResource(id = R.color.primary_white),
                     modifier = Modifier
-                        .size(20.dp)
+                        .size(24.dp)
                         .clickable { onClose() }
                 )
             }
