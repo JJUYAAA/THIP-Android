@@ -9,6 +9,8 @@
     <color name="black">#FF000000</color>
     <color name="darkgray">#FF3D3D3D</color>
     <color name="darkgray2">#FF282828</color>
+    <color name="background_gray03">#FF525252</color>
+    <color name="secondary_gray">#FFDADADA</color>
     <color name="white">#FFFFFFFF</color>
     <color name="primary_white">#FFFEFEFE</color>
 </resources>
