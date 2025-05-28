@@ -13,4 +13,5 @@
     <string name="post">글 등록</string>
     <string name="follow">팔로우</string>
     <string name="change_book">책 변경</string>
+    <string name="finish">완료</string>
 </resources>
