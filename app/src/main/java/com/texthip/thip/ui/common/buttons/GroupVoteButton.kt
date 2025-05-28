@@ -39,8 +39,8 @@ fun GroupVoteButton(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         options.forEachIndexed { index, option ->
-            val hasVoted = selectedIndex != null
             val isSelected = selectedIndex == index
+            val hasVoted = selectedIndex != null
             val votePercent = voteResults.getOrNull(index) ?: 0
 
             val backgroundColor = when {
@@ -68,7 +68,9 @@ fun GroupVoteButton(
                     .fillMaxWidth()
                     .background(color = backgroundColor, shape = RoundedCornerShape(12.dp))
                     .height(44.dp)
-                    .clickable(enabled = !hasVoted) { selectedIndex = index }
+                    .clickable {
+                        selectedIndex = if (isSelected) null else index
+                    }
             ) {
                 // 퍼센트 채우기
                 if (hasVoted) {
