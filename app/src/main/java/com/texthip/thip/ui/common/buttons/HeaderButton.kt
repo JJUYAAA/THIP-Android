@@ -29,16 +29,16 @@ fun HeaderButton(
     text: String,
     onClick: () -> Unit = {},
 ) {
-    var clicked by remember { mutableStateOf(false) }
+    var isClicked by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
             .background(
-                color = if (clicked) colors.Purple else colors.Grey02,
+                color = if (isClicked) colors.Purple else colors.Grey02,
                 shape = RoundedCornerShape(20.dp)
             )
             .clickable {
-                clicked = !clicked
+                isClicked = !isClicked
                 onClick()
             }
             .padding(vertical = 4.dp, horizontal = 12.dp),

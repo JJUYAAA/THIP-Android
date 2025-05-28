@@ -21,13 +21,13 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
 fun ToggleSwitchButton() {
-    var checked by remember { mutableStateOf(true) }
+    var isChecked by remember { mutableStateOf(true) }
 
     Switch(
         modifier = Modifier.padding(4.dp),
-        checked = checked,
+        checked = isChecked,
         onCheckedChange = {
-            checked = it
+            isChecked = it
         },
         colors = SwitchDefaults.colors(
             checkedThumbColor = colors.White,
