@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,12 +30,15 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun ActionMediumButton(
     text: String,
-    icon: Painter,
+    icon: Painter? = null,
     contentColor: Color,
     backgroundColor: Color,
+    hasRightIcon: Boolean = false,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
+    val hasLeftIcon = icon != null
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -48,11 +50,13 @@ fun ActionMediumButton(
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            painter = icon,
-            contentDescription = null,
-            tint = contentColor,
-        )
+        if (hasLeftIcon) {
+            Icon(
+                painter = icon,
+                contentDescription = null,
+                tint = contentColor,
+            )
+        }
 
         Text(
             text = text,
@@ -60,11 +64,13 @@ fun ActionMediumButton(
             style = typography.smalltitle_sb600_s16_h24,
         )
 
-        Icon(
-            painter = painterResource(R.drawable.ic_chevron),
-            contentDescription = null,
-            tint = contentColor,
-        )
+        if (hasRightIcon) {
+            Icon(
+                painter = painterResource(R.drawable.ic_chevron),
+                contentDescription = null,
+                tint = contentColor,
+            )
+        }
     }
 }
 
@@ -74,38 +80,60 @@ private fun ActionMediumButtonPreview() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(30.dp)
+            .padding(30.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
     ) {
         ActionMediumButton(
             text = stringResource(R.string.add_to_my_feed),
             icon = painterResource(R.drawable.ic_search),
             contentColor = colors.White,
             backgroundColor = colors.Grey02,
+            hasRightIcon = true,
             modifier = Modifier.width(180.dp),
             onClick = {},
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         ActionMediumButton(
             text = stringResource(R.string.add_to_my_feed),
             icon = painterResource(R.drawable.ic_plus),
             contentColor = colors.White,
             backgroundColor = colors.Purple,
+            hasRightIcon = true,
             modifier = Modifier.width(180.dp),
             onClick = {},
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         ActionMediumButton(
             text = stringResource(R.string.add_to_my_feed),
             icon = painterResource(R.drawable.ic_search),
             contentColor = colors.Grey,
             backgroundColor = Color.Transparent,
-            modifier = Modifier.width(180.dp)
+            hasRightIcon = true,
+            modifier = Modifier
+                .width(180.dp)
                 .border(width = 1.dp, color = colors.Grey02, shape = RoundedCornerShape(12.dp)),
             onClick = {},
         )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally),
+        ) {
+
+        ActionMediumButton(
+            text = stringResource(R.string.yes),
+            contentColor = colors.White,
+            backgroundColor = colors.Purple,
+            modifier = Modifier.weight(1f),
+            onClick = {},
+        )
+
+        ActionMediumButton(
+            text = stringResource(R.string.no),
+            contentColor = colors.White,
+            backgroundColor = colors.Grey02,
+            modifier = Modifier.weight(1f),
+            onClick = {},
+        )
+        }
     }
 }
