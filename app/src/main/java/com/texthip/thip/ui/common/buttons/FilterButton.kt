@@ -6,7 +6,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,7 +45,12 @@ fun FilterButton(
     Column(modifier = modifier) {
         Row(
             modifier = Modifier
-                .clickable { expanded = !expanded },
+                .fillMaxWidth()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null // 클릭 효과 제거
+                ) { expanded = !expanded },
+            horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -52,7 +59,9 @@ fun FilterButton(
                 style = typography.menu_m500_s14_h24
             )
             Icon(
-                painter = painterResource(id = R.drawable.ic_downmore),
+                painter = painterResource(
+                    id = if (expanded) R.drawable.ic_upmore else R.drawable.ic_downmore
+                ),
                 contentDescription = "Dropdown",
                 tint = colors.Grey02,
                 modifier = Modifier.size(24.dp)
@@ -66,28 +75,37 @@ fun FilterButton(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .width(144.dp)
-                    .border(width = 1.dp, color = colors.Grey01, shape = RoundedCornerShape(16.dp))
-                    .background(color = colors.Black, shape = RoundedCornerShape(16.dp))
-                    .padding(vertical = 20.dp, horizontal = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.TopEnd
             ) {
-                options.forEach { option ->
-                    val isSelected = option == selectedOption
-                    Text(
-                        text = option,
-                        color = if (isSelected) colors.White else colors.Grey02,
-                        style = typography.feedcopy_r400_s14_h20,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                onOptionSelected(option)
-                                expanded = false
-                            }
-                    )
+                Column(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .width(144.dp)
+                        .border(
+                            width = 1.dp,
+                            color = colors.Grey01,
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .background(color = colors.Black, shape = RoundedCornerShape(16.dp))
+                        .padding(vertical = 20.dp, horizontal = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    options.forEach { option ->
+                        val isSelected = option == selectedOption
+                        Text(
+                            text = option,
+                            color = if (isSelected) colors.White else colors.Grey02,
+                            style = typography.feedcopy_r400_s14_h20,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onOptionSelected(option)
+                                    expanded = false
+                                }
+                        )
+                    }
                 }
             }
         }
