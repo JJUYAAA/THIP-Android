@@ -22,7 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.texthip.thip.ui.theme.LocalThipColorsProvider
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -31,34 +32,40 @@ fun BottomNavigationBar(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(73.dp)
-            .clip(RoundedCornerShape(
-                topStart = 12.dp,
-                topEnd = 12.dp,
-                bottomStart = 0.dp,
-                bottomEnd = 0.dp
-            ))
-            .background(LocalThipColorsProvider.current.Black),
+            .height(90.dp)
+            .clip(
+                RoundedCornerShape(
+                    topStart = 12.dp,
+                    topEnd = 12.dp,
+                    bottomStart = 0.dp,
+                    bottomEnd = 0.dp
+                )
+            )
+            .background(colors.Black),
         contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 16.dp),
+                .padding(horizontal = 32.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             NavBarItems.BarItems.forEach { item ->
                 val isSelected = currentRoute == item.route
-
                 NavigationBarItem(
                     icon = {
                         Icon(
-                            painter = painterResource(id = if (isSelected) item.IconRes else item.SelectedIconRes),
+                            painter = painterResource(id = if (isSelected) item.SelectedIconRes else item.IconRes),
                             contentDescription = item.title,
                         )
                     },
-                    label = { Text(item.title) },
+                    label = {
+                        Text(
+                            text = item.title,
+                            style = typography.navi_m500_s10
+                        )
+                    },
                     selected = isSelected,
                     onClick = {
                         if (!isSelected) {
@@ -74,9 +81,9 @@ fun BottomNavigationBar(navController: NavController) {
 
                     colors = NavigationBarItemDefaults.colors(
                         indicatorColor = Color.Transparent,
-                        selectedIconColor = LocalThipColorsProvider.current.Purple,
+                        selectedIconColor = colors.Purple,
                         unselectedIconColor = Color.Unspecified,
-                        selectedTextColor = LocalThipColorsProvider.current.Purple,
+                        selectedTextColor = colors.Purple,
                         unselectedTextColor = Color.Unspecified
                     )
                 )
