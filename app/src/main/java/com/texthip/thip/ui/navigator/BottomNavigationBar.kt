@@ -32,7 +32,7 @@ fun BottomNavigationBar(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(90.dp)
+            .height(73.dp)
             .clip(
                 RoundedCornerShape(
                     topStart = 12.dp,
