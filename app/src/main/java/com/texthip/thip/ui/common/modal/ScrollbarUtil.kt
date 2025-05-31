@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.common.modals
+package com.texthip.thip.ui.common.modal
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.ui.Modifier

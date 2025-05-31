@@ -1,6 +1,7 @@
-package com.texthip.thip.ui.common.modals
+package com.texthip.thip.ui.common.modal
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,23 +12,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.texthip.thip.R
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 enum class ArrowPosition {
     LEFT, CENTER, RIGHT
@@ -35,7 +32,7 @@ enum class ArrowPosition {
 
 @Composable
 fun TriangleArrow(
-    color: Color = colorResource(id = R.color.darkgray),
+    color: Color = colors.DarkGrey,
     size: Dp = 13.dp,
     modifier: Modifier = Modifier
 ) {
@@ -56,9 +53,7 @@ fun TriangleArrow(
 fun PopupModal(
     text: String,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = colorResource(id = R.color.darkgray),
-    textColor: Color = colorResource(id = R.color.point_green),
-    arrowPosition: ArrowPosition = ArrowPosition.CENTER,
+    arrowPosition: ArrowPosition = ArrowPosition.RIGHT,
     onClose: () -> Unit = {}
 ) {
     Column(
@@ -74,22 +69,23 @@ fun PopupModal(
                 ArrowPosition.LEFT -> Modifier
                     .align(Alignment.TopStart)
                     .padding(start = 24.dp)
+
                 ArrowPosition.CENTER -> Modifier
                     .align(Alignment.TopCenter)
+
                 ArrowPosition.RIGHT -> Modifier
                     .align(Alignment.TopEnd)
                     .padding(end = 24.dp)
             }
-
             TriangleArrow(
-                color = backgroundColor,
+                color = colors.DarkGrey,
                 modifier = arrowModifier
             )
         }
 
         Box(
             modifier = Modifier
-                .background(backgroundColor, RoundedCornerShape(12.dp))
+                .background(colors.DarkGrey, RoundedCornerShape(12.dp))
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             Row(
@@ -97,15 +93,13 @@ fun PopupModal(
             ) {
                 Text(
                     text = text,
-                    color = textColor,
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.medium)),
+                    color = colors.NeonGreen,
+                    style = typography.info_m500_s12,
                     modifier = Modifier.weight(1f)
                 )
-                Icon(
-                    imageVector = Icons.Default.Close,
+                Image(
+                    painter = painterResource(id = R.drawable.ic_x),
                     contentDescription = "닫기",
-                    tint =  colorResource(id = R.color.primary_white),
                     modifier = Modifier
                         .size(24.dp)
                         .clickable { onClose() }
@@ -118,13 +112,32 @@ fun PopupModal(
 @Preview(showBackground = true)
 @Composable
 private fun PopupPrev() {
-    PopupModal(
-        text = "독서진행도 80%부터 총평을 작성할 수 있습니다.",
-        modifier = Modifier
-            .width(400.dp)
-            .padding(16.dp),
-        arrowPosition=ArrowPosition.LEFT,
-        onClose = {}
-    )
+    Column {
+        PopupModal(
+            text = "독서진행도 80%부터 총평을 작성할 수 있습니다.",
+            modifier = Modifier
+                .width(400.dp)
+                .padding(16.dp),
+            arrowPosition = ArrowPosition.LEFT,
+            onClose = {}
+        )
+        PopupModal(
+            text = "독서진행도 80%부터 총평을 작성할 수 있습니다.",
+            modifier = Modifier
+                .width(400.dp)
+                .padding(16.dp),
+            arrowPosition = ArrowPosition.CENTER,
+            onClose = {}
+        )
+        PopupModal(
+            text = "독서진행도 80%부터 총평을 작성할 수 있습니다.",
+            modifier = Modifier
+                .width(400.dp)
+                .padding(16.dp),
+            arrowPosition = ArrowPosition.RIGHT,
+            onClose = {}
+        )
+    }
 }
+
 
