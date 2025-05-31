@@ -46,7 +46,7 @@ fun CountingBar(
 @Composable
 private fun CountingBarPrev() {
     CountingBar(
-        text = stringResource(id = R.string.counting_bar_text),
+        text = "🔥210명이 읽기에 참여중이에요!🔥",
         modifier = Modifier
             .fillMaxWidth()
     )
