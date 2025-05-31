@@ -11,12 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.texthip.thip.R
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun CountingBar(
@@ -25,7 +25,7 @@ fun CountingBar(
 ) {
     Box(
         modifier = modifier
-            .background(colorResource(id = R.color.darkgray2), shape = RoundedCornerShape(16.dp))
+            .background(colors.DarkGrey02, shape = RoundedCornerShape(16.dp))
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Row(
@@ -35,8 +35,8 @@ fun CountingBar(
         ) {
             Text(
                 text = text,
-                color = colorResource(id = R.color.point_green),
-                fontSize = 14.sp
+                color = colors.NeonGreen,
+                style = typography.menu_r400_s14_h24
             )
         }
     }
