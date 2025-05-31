@@ -17,8 +17,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -71,7 +73,7 @@ fun DialogPopup(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        "아니오",
+                        stringResource(R.string.no),
                         color = colors.White,
                         style = typography.smalltitle_sb600_s16_h24
                     )
@@ -86,7 +88,7 @@ fun DialogPopup(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        "예",
+                        stringResource(R.string.yes),
                         color = colors.White,
                         style = typography.smalltitle_sb600_s16_h24
                     )

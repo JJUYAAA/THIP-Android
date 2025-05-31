@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Thip</string>
+    <string name="reading_user_num">🔥%d명이 읽기에 참여중이에요!🔥</string>
+    <string name="subscribe">구독</string>
+    <string name="subscriber_num">%02d명이 구독중</string>
+    <string name="condition_of_general_review">독서진행도 %d%%부터 총평을 작성할 수 있습니다.</string>
+    <string name="complete_comment">댓글 작성이 완료되었습니다.</string>
+    <string name="action_view_comment">보러가기</string>
+    <string name="introduction">소개</string>
+    <string name="yes">예</string>
+    <string name="no">아니오</string>
+    <string name="influencer">공식 인플루언서</string>
+    <string name="hours_ago">%d시간 전</string>
 </resources>

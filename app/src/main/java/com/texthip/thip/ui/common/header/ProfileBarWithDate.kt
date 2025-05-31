@@ -20,9 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.R
 import com.texthip.thip.ui.theme.LocalThipColorsProvider
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -54,7 +57,7 @@ fun ProfileBarWithDate(
                 modifier = Modifier
                     .size(24.dp)
                     .clip(CircleShape)
-                    .background(LocalThipColorsProvider.current.Grey)
+                    .background(colors.Grey)
             )
         }
         Spacer(modifier = Modifier.width(8.dp))
@@ -70,11 +73,10 @@ fun ProfileBarWithDate(
                 color = colors.Grey01
             )
         }
-
         Icon(
-            imageVector = Icons.Default.MoreVert,
+            painter = painterResource(R.drawable.ic_more),
             contentDescription = "메뉴",
-            tint = colors.White,
+            tint = Color.Unspecified,
             modifier = Modifier
                 .size(24.dp)
                 .clickable { onMenuClick() }

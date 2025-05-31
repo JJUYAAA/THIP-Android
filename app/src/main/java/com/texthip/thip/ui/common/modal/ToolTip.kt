@@ -1,7 +1,6 @@
 package com.texthip.thip.ui.common.modal
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -97,9 +98,10 @@ fun PopupModal(
                     style = typography.info_m500_s12,
                     modifier = Modifier.weight(1f)
                 )
-                Image(
+                Icon(
                     painter = painterResource(id = R.drawable.ic_x),
                     contentDescription = "닫기",
+                    tint = Color.Unspecified,
                     modifier = Modifier
                         .size(24.dp)
                         .clickable { onClose() }
@@ -114,28 +116,25 @@ fun PopupModal(
 private fun PopupPrev() {
     Column {
         PopupModal(
-            text = "독서진행도 80%부터 총평을 작성할 수 있습니다.",
+            text = stringResource(R.string.condition_of_general_review,80),
             modifier = Modifier
                 .width(400.dp)
                 .padding(16.dp),
-            arrowPosition = ArrowPosition.LEFT,
-            onClose = {}
+            arrowPosition = ArrowPosition.LEFT
         )
         PopupModal(
-            text = "독서진행도 80%부터 총평을 작성할 수 있습니다.",
+            text = stringResource(R.string.condition_of_general_review,80),
             modifier = Modifier
                 .width(400.dp)
                 .padding(16.dp),
-            arrowPosition = ArrowPosition.CENTER,
-            onClose = {}
+            arrowPosition = ArrowPosition.CENTER
         )
         PopupModal(
-            text = "독서진행도 80%부터 총평을 작성할 수 있습니다.",
+            text = stringResource(R.string.condition_of_general_review,80),
             modifier = Modifier
                 .width(400.dp)
                 .padding(16.dp),
-            arrowPosition = ArrowPosition.RIGHT,
-            onClose = {}
+            arrowPosition = ArrowPosition.RIGHT
         )
     }
 }

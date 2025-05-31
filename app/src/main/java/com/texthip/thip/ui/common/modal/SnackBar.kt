@@ -12,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -53,10 +55,9 @@ fun SnackBar(
 @Composable
 fun SnackBarPreview() {
     SnackBar(
-        message = "댓글 작성이 완료되었습니다.",
-        actionText = "보러가기",
+        message = stringResource(R.string.complete_comment),
+        actionText = stringResource(R.string.action_view_comment),
         onActionClick = {},
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     )
 }

@@ -20,7 +20,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun CountingBar(
-    text: String,
+    count: Int,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -34,7 +34,7 @@ fun CountingBar(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = text,
+                text = stringResource(R.string.reading_user_num, count),
                 color = colors.NeonGreen,
                 style = typography.menu_r400_s14_h24
             )
@@ -46,8 +46,7 @@ fun CountingBar(
 @Composable
 private fun CountingBarPrev() {
     CountingBar(
-        text = "🔥210명이 읽기에 참여중이에요!🔥",
-        modifier = Modifier
-            .fillMaxWidth()
+        count = 200,
+        modifier = Modifier.fillMaxWidth()
     )
 }
