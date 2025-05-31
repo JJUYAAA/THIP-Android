@@ -25,6 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.ui.theme.LocalThipColorsProvider
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun ProfileBarWithDate(
@@ -59,20 +61,20 @@ fun ProfileBarWithDate(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = nickname,
-                style = ThipTheme.typography.menu_sb600_s12,
-                color = ThipTheme.colors.White
+                style = typography.menu_sb600_s12,
+                color = colors.White
             )
             Text(
                 text = dateText,
-                style = ThipTheme.typography.timedate_r400_s11,
-                color = ThipTheme.colors.Grey01
+                style = typography.timedate_r400_s11,
+                color = colors.Grey01
             )
         }
 
         Icon(
             imageVector = Icons.Default.MoreVert,
             contentDescription = "메뉴",
-            tint = ThipTheme.colors.White,
+            tint = colors.White,
             modifier = Modifier
                 .size(24.dp)
                 .clickable { onMenuClick() }

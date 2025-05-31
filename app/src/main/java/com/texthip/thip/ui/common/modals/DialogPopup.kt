@@ -17,14 +17,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.texthip.thip.R
-import com.texthip.thip.ui.theme.LocalThipColorsProvider
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun DialogPopup(
@@ -39,7 +35,7 @@ fun DialogPopup(
             .width(320.dp)
             .height(182.dp)
             .background(
-                color = LocalThipColorsProvider.current.Black,
+                color = colors.DarkGrey,
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(20.dp)
@@ -51,16 +47,14 @@ fun DialogPopup(
             Column {
                 Text(
                     text = title,
-                    fontSize = 18.sp,
-                    color = colorResource(id = R.color.primary_white),
-                    fontFamily = FontFamily(Font(R.font.medium))
+                    color = colors.White,
+                    style = typography.smalltitle_m500_s18_h24,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = description,
-                    fontSize = 14.sp,
-                    color = colorResource(id = R.color.primary_white),
-                    fontFamily = FontFamily(Font(R.font.regular))
+                    color = colors.White,
+                    style = typography.copy_r400_s14,
                 )
             }
 
@@ -71,32 +65,30 @@ fun DialogPopup(
                 Button(
                     onClick = onCancel,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.secondary_gray02)
+                        containerColor = colors.Grey02
                     ),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
                         "아니오",
-                        color = colorResource(id = R.color.primary_white),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.semibold))
+                        color = colors.White,
+                        style = typography.smalltitle_sb600_s16_h24
                     )
                 }
 
                 Button(
                     onClick = onConfirm,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.button_primary)
+                        containerColor = colors.Purple
                     ),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
                         "예",
-                        color = colorResource(id = R.color.primary_white),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.semibold))
+                        color = colors.White,
+                        style = typography.smalltitle_sb600_s16_h24
                     )
                 }
             }

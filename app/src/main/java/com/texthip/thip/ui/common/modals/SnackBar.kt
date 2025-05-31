@@ -1,35 +1,32 @@
 package com.texthip.thip.ui.common.modals
 
-import com.texthip.thip.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun SnackBar(
     message: String,
     actionText: String,
     onActionClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    backgroundColor: Color = colorResource(id = R.color.darkgray2),
-    messageColor: Color = colorResource(id=R.color.primary_white),
-    actionTextColor: Color = colorResource(id=R.color.point_green)
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
-            .background(backgroundColor, shape = RoundedCornerShape(12.dp))
+            .background(colors.DarkGrey02, shape = RoundedCornerShape(12.dp))
             .padding(horizontal = 15.dp, vertical = 15.dp)
     ) {
         Row(
@@ -39,15 +36,13 @@ fun SnackBar(
         ) {
             Text(
                 text = message,
-                color = messageColor,
-                fontSize = 12.sp,
-                fontFamily = FontFamily(Font(R.font.medium))
+                color = colors.White,
+                style = typography.view_m500_s12_h20
             )
             Text(
                 text = actionText,
-                color = actionTextColor,
-                fontSize = 12.sp,
-                fontFamily = FontFamily(Font(R.font.semibold)),
+                color = colors.NeonGreen,
+                style = typography.menu_sb600_s12_h20,
                 modifier = Modifier.clickable { onActionClick() }
             )
         }

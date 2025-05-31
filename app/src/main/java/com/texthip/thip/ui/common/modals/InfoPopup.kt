@@ -15,13 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.texthip.thip.R
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun InfoPopup(
@@ -35,7 +32,7 @@ fun InfoPopup(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(colorResource(id = R.color.darkgray), shape = RoundedCornerShape(12.dp))
+            .background(colors.DarkGrey, shape = RoundedCornerShape(12.dp))
             .padding(20.dp)
     ) {
         Column {
@@ -45,14 +42,11 @@ fun InfoPopup(
             ) {
                 Text(
                     text = title,
-                    color = colorResource(id = R.color.primary_white),
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.semibold))
+                    color = colors.White,
+                    style = typography.smalltitle_sb600_s16_h24
                 )
             }
-
             Spacer(modifier = Modifier.height(12.dp))
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -62,9 +56,8 @@ fun InfoPopup(
             ) {
                 Text(
                     text = content,
-                    color = colorResource(id = R.color.secondary_gray),
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.regular)),
+                    color = colors.White,
+                    style = typography.copy_r400_s12_h20
                 )
             }
         }

@@ -24,10 +24,12 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.LocalThipColorsProvider
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun ProfileBar(
-    profileImage: Painter?, // nullable
+    profileImage: Painter?,
     topText: String,
     bottomText: String,
     rightContent: @Composable () -> Unit,
@@ -59,13 +61,13 @@ fun ProfileBar(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = topText,
-                style = ThipTheme.typography.view_m500_s14,
-                color = ThipTheme.colors.White
+                style = typography.view_m500_s14,
+                color = colors.White
             )
             Text(
                 text = bottomText,
-                style = ThipTheme.typography.info_r400_s12,
-                color = ThipTheme.colors.NeonGreen
+                style = typography.info_r400_s12,
+                color = colors.NeonGreen
             )
         }
         rightContent()//오른쪽 컨텐츠
@@ -83,8 +85,8 @@ fun PreviewProfileBar() {
             rightContent = {
                 Text(
                     text = "12시간 전",
-                    style = ThipTheme.typography.timedate_r400_s11,
-                    color = ThipTheme.colors.Grey01
+                    style = typography.timedate_r400_s11,
+                    color = colors.Grey01
                 )
             }
         )
@@ -105,15 +107,15 @@ fun PreviewProfileBar_SubscriptionStyle() {
                 ) {
                     Text(
                         text = "00명이 구독중",
-                        style = ThipTheme.typography.timedate_r400_s11,
-                        color = ThipTheme.colors.Grey01
+                        style = typography.timedate_r400_s11,
+                        color = colors.Grey01
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Image(
                         painter = painterResource(id = R.drawable.ic_chevron_right),
                         contentDescription = "화살표",
                         modifier = Modifier.size(16.dp),
-                        colorFilter = ColorFilter.tint(ThipTheme.colors.Grey01)
+                        colorFilter = ColorFilter.tint(colors.Grey01)
                     )
                 }
             }
