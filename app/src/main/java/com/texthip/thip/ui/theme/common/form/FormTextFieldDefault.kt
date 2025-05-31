@@ -1,9 +1,7 @@
-package com.texthip.thip.ui.theme.common.forms
+package com.texthip.thip.ui.theme.common.form
 
-import android.R.attr.singleLine
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -13,7 +11,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -28,7 +25,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun BorderedTextField(
+fun BaseInputTextField(
     hint: String,
     modifier: Modifier = Modifier
 ) {
@@ -50,13 +47,12 @@ fun BorderedTextField(
         shape = RoundedCornerShape(12.dp),
         colors = TextFieldDefaults.colors(
             focusedTextColor = colors.White,
-            focusedIndicatorColor = colors.Grey02,
-            unfocusedIndicatorColor = colors.Grey02,
-            focusedContainerColor = colors.Black00,
-            unfocusedContainerColor = colors.Black00,
-            cursorColor = colors.NeonGreen,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = colors.Black,
+            unfocusedContainerColor = colors.Black,
+            cursorColor = colors.NeonGreen
         ),
-
         trailingIcon = {
             if (text.isNotEmpty()) {
                 Icon(
@@ -71,19 +67,20 @@ fun BorderedTextField(
                     contentDescription = "Clear text"
                 )
             }
-        }
+        },
+        singleLine = true
     )
 }
 
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360, heightDp = 200)
-fun BorderedTextFieldPreview() {
+fun InputTextFieldPreviewEmpty() {
     Box(
         modifier = Modifier.size(width = 360.dp, height = 200.dp),
         contentAlignment = Alignment.Center
     ) {
-        BorderedTextField(
-            hint = "가이드 텍스트를 입력"
+        BaseInputTextField(
+            hint = "이곳에 텍스트를 입력하세요"
         )
     }
 }
