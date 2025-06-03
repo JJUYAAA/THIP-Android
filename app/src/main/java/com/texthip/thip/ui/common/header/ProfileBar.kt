@@ -36,7 +36,7 @@ fun ProfileBar(
     profileImage: Painter?,
     topText: String,
     bottomText: String,
-    rightContent: @Composable () -> Unit
+    showSubscriberInfo: Boolean
 ) {
     Row(
         modifier = modifier
@@ -73,7 +73,30 @@ fun ProfileBar(
                 color = colors.NeonGreen
             )
         }
-        rightContent()//오른쪽 컨텐츠
+        if (showSubscriberInfo) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.subscriber_num,1),
+                    style = typography.timedate_r400_s11,
+                    color = colors.Grey01
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_chevron_right),
+                    contentDescription = "화살표",
+                    modifier = Modifier.size(16.dp),
+                    tint = Color.Unspecified
+                )
+            }
+        } else {
+            Text(
+                text = stringResource(R.string.hours_ago,10),
+                style = typography.timedate_r400_s11,
+                color = colors.Grey01
+            )
+        }
     }
 }
 
@@ -86,36 +109,13 @@ fun PreviewProfileBar() {
                 profileImage = null,
                 topText = "user.01",
                 bottomText = stringResource(R.string.influencer),
-                rightContent = {
-                    Text(
-                        text = stringResource(R.string.hours_ago,10),
-                        style = typography.timedate_r400_s11,
-                        color = colors.Grey01
-                    )
-                }
+                showSubscriberInfo = true
             )
             ProfileBar(
                 profileImage = null,
-                topText = "user.01",
+                topText = "user.04",
                 bottomText = stringResource(R.string.influencer),
-                rightContent = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(R.string.subscriber_num,1),
-                            style = typography.timedate_r400_s11,
-                            color = colors.Grey01
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_chevron_right),
-                            contentDescription = "화살표",
-                            modifier = Modifier.size(16.dp),
-                            tint = Color.Unspecified
-                        )
-                    }
-                }
+                showSubscriberInfo = false
             )
         }
     }
