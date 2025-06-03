@@ -26,11 +26,11 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun DialogPopup(
+    modifier: Modifier = Modifier,
     title: String,
     description: String,
     onConfirm: () -> Unit,
-    onCancel: () -> Unit,
-    modifier: Modifier = Modifier
+    onCancel: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -60,6 +60,7 @@ fun DialogPopup(
                 )
             }
 
+            //TODO: 추후 버튼 공통 컴포넌트로 변경
             Row(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxWidth()

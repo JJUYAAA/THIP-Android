@@ -24,9 +24,9 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun InfoPopup(
+    modifier: Modifier = Modifier,
     title: String,
     content: String,
-    modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()

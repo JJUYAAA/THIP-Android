@@ -25,18 +25,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
-import com.texthip.thip.ui.theme.LocalThipColorsProvider
+import com.texthip.thip.ui.theme.Grey
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun ProfileBar(
+    modifier: Modifier = Modifier,
     profileImage: Painter?,
     topText: String,
     bottomText: String,
-    rightContent: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+    rightContent: @Composable () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -57,7 +57,7 @@ fun ProfileBar(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(LocalThipColorsProvider.current.Grey)
+                    .background(Grey)
             )
         }
         Spacer(modifier = Modifier.width(8.dp))

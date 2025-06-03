@@ -24,18 +24,19 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.texthip.thip.ui.theme.LocalThipColorsProvider
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.R
+import com.texthip.thip.ui.theme.Grey02
+
 @Composable
 fun AuthorHeader(
+    modifier: Modifier = Modifier,
     profileImage: Painter?,
     nickname: String,
     badgeText: String,
-    onSubscribeClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onSubscribeClick: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -80,7 +81,7 @@ fun AuthorHeader(
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
-                .border(1.dp, LocalThipColorsProvider.current.Grey02, RoundedCornerShape(20.dp))
+                .border(1.dp, Grey02, RoundedCornerShape(20.dp))
                 .background(Color.Transparent)
                 .clickable { onSubscribeClick() }
                 .padding(horizontal = 12.dp, vertical = 8.dp)

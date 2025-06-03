@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import androidx.compose.ui.platform.LocalDensity
 
 enum class ArrowPosition {
     LEFT, CENTER, RIGHT
@@ -33,11 +35,11 @@ enum class ArrowPosition {
 
 @Composable
 fun TriangleArrow(
+    modifier: Modifier = Modifier,
     color: Color = colors.DarkGrey,
-    size: Dp = 13.dp,
-    modifier: Modifier = Modifier
+    size: Dp = 13.dp
 ) {
-    val triangleSizePx = with(androidx.compose.ui.platform.LocalDensity.current) { size.toPx() }
+    val triangleSizePx = with(LocalDensity.current) { size.toPx() }
 
     Canvas(modifier = modifier.size(size)) {
         val path = Path().apply {
@@ -64,7 +66,6 @@ fun PopupModal(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 0.dp)
         ) {
             val arrowModifier = when (arrowPosition) {
                 ArrowPosition.LEFT -> Modifier

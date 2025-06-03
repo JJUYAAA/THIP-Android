@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.common.modal
 
+import android.R.id.message
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,10 +22,10 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun SnackBar(
+    modifier: Modifier = Modifier,
     message: String,
     actionText: String,
-    onActionClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onActionClick: () -> Unit
 ) {
     Box(
         modifier = modifier

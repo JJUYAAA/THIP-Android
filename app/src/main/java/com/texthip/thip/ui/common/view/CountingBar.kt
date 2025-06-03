@@ -20,8 +20,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun CountingBar(
-    count: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    count: Int
 ) {
     Box(
         modifier = modifier
