@@ -1,5 +1,28 @@
 <resources>
     <string name="app_name">Thip</string>
+
+    <!--    mock data    -->
+    <string name="book_title">책이름을입력해주세요책이름을</string>
+    <string name="book_author">한한강한강한강한ㅇㅇㄴㄴㅁ강</string>
+
+    <!--    버튼 컴포넌트    -->
+    <string name="author">저</string>
+    <string name="add_to_my_feed">내 피드에 추가</string>
+    <string name="yes">예</string>
+    <string name="no">아니오</string>
+    <string name="post">글 등록</string>
+    <string name="follow">팔로우</string>
+    <string name="change_book">책 변경</string>
+    <string name="finish">완료</string>
+    <string name="essay">에세이•자기계발</string>
+    <string name="recent_search">최근 검색어</string>
+    <string name="add_list">리스트 추가하기</string>
+    <string name="character_relationship">인물관계도 보기</string>
+    <string name="write_record">기록 작성</string>
+    <string name="create_vote">투표 생성</string>
+    
+    <!--    카드 컴포넌트    -->
     <string name="time_ago">시간 전</string>
     <string name="group">모임</string>
+
 </resources>
