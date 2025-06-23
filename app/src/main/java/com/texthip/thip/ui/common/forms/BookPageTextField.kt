@@ -121,7 +121,6 @@ class SuffixTransformation(
     override fun filter(text: AnnotatedString): TransformedText {
         val original = text.text
 
-        // 1) 숫자 부분은 기본 스타일, suffix 부분만 별도 SpanStyle 적용
         val transformed = buildAnnotatedString {
             append(original)
             pushStyle(SpanStyle(color = suffixColor))
@@ -129,7 +128,6 @@ class SuffixTransformation(
             pop()
         }
 
-        // 2) 커서 맵핑: suffix 바깥에서만 움직이도록
         val offsetMapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int =
                 offset.coerceAtMost(original.length)
