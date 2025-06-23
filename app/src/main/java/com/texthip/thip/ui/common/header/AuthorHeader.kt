@@ -55,7 +55,7 @@ fun AuthorHeader(
         } else {
             Box(
                 modifier = Modifier
-                    .size(54.dp)
+                    .size(48.dp)
                     .clip(CircleShape)
                     .background(colors.Grey)
             )
