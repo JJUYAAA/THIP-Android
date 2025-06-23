@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.ui.common.buttons.ActionMediumButton
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -65,36 +66,22 @@ fun DialogPopup(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Button(
-                    onClick = onCancel,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colors.Grey02
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        stringResource(R.string.no),
-                        color = colors.White,
-                        style = typography.smalltitle_sb600_s16_h24
-                    )
-                }
-
-                Button(
-                    onClick = onConfirm,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colors.Purple
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        stringResource(R.string.yes),
-                        color = colors.White,
-                        style = typography.smalltitle_sb600_s16_h24
-                    )
-                }
+                ActionMediumButton(
+                    text = stringResource(R.string.no),
+                    contentColor = colors.White,
+                    backgroundColor = colors.Grey02,
+                    modifier = Modifier.weight(1f),
+                    onClick = {},
+                )
+                ActionMediumButton(
+                    text = stringResource(R.string.yes),
+                    contentColor = colors.White,
+                    backgroundColor = colors.Purple,
+                    modifier = Modifier.weight(1f),
+                    onClick = {},
+                )
             }
+
         }
     }
 }
