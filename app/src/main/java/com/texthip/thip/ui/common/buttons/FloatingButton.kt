@@ -32,7 +32,7 @@ fun FloatingButton(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp), // TODO: 화면에서 버튼 위치 조정
+            .padding(end = 20.dp, bottom = 32.dp),
         contentAlignment = Alignment.BottomEnd
     ) {
         // 플로팅 버튼
