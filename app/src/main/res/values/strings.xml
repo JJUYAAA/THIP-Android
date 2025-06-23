@@ -20,4 +20,9 @@
     <string name="character_relationship">인물관계도 보기</string>
     <string name="write_record">기록 작성</string>
     <string name="create_vote">투표 생성</string>
+    
+    <!--    카드 컴포넌트    -->
+    <string name="time_ago">시간 전</string>
+    <string name="group">모임</string>
+
 </resources>
