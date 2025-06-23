@@ -13,6 +13,15 @@ val NeonGreen50 = Color(0x80A7FFB4)
 
 val Red = Color(0xFFFF9496)
 
+val Mint = Color(0xFFA0F8E8)
+val MintSub = Color(0xFF4FD9C0)
+val Orange = Color(0xFFFDB770)
+val OrangeSub = Color(0xFFFF8B17)
+val Skyblue = Color(0xFFA1D5FF)
+val SkyblueSub = Color(0xFF6DB5EE)
+val Lavendar = Color(0xFFC8A5FF)
+val LavendaSub = Color(0xFFA76FFF)
+
 val PureWhite = Color(0xFFFFFFFF)
 val White = Color(0xFFFEFEFE)
 
@@ -24,6 +33,7 @@ val Grey03 = Color(0xFF525252)
 val DarkGrey = Color(0xFF3D3D3D)
 val DarkGrey50 = Color(0x803D3D3D)
 val DarkGrey02 = Color(0xFF282828)
+val DarkGrey01 = Color(0x4B4B4B4B)
 
 val Black = Color(0xFF121212)
 val Black50 = Color(0x80121212)
@@ -38,6 +48,14 @@ data class ThipColors(
     val NeonGreen: Color,
     val NeonGreen50: Color,
     val Red: Color,
+    val Mint: Color,
+    val MintSub: Color,
+    val Orange: Color,
+    val OrangeSub: Color,
+    val Skyblue: Color,
+    val SkyblueSub: Color,
+    val Lavendar: Color,
+    val LavendaSub: Color,
     val PureWhite: Color,
     val White: Color,
     val Grey50: Color,
@@ -46,6 +64,7 @@ data class ThipColors(
     val Grey02: Color,
     val Grey03: Color,
     val DarkGrey: Color,
+    val darkGray01: Color,
     val DarkGrey50: Color,
     val DarkGrey02: Color,
     val Black: Color,
@@ -61,6 +80,14 @@ val defaultThipColors = ThipColors(
     NeonGreen = NeonGreen,
     NeonGreen50 = NeonGreen50,
     Red = Red,
+    Mint = Mint,
+    MintSub = MintSub,
+    Orange = Orange,
+    OrangeSub = OrangeSub,
+    Skyblue = Skyblue,
+    SkyblueSub = SkyblueSub,
+    Lavendar = Lavendar,
+    LavendaSub = LavendaSub,
     PureWhite = PureWhite,
     White = White,
     Grey50 = Grey50,
@@ -69,6 +96,7 @@ val defaultThipColors = ThipColors(
     Grey02 = Grey02,
     Grey03 = Grey03,
     DarkGrey = DarkGrey,
+    darkGray01 = DarkGrey01,
     DarkGrey50 = DarkGrey50,
     DarkGrey02 = DarkGrey02,
     Black = Black,

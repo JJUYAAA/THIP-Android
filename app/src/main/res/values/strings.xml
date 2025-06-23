@@ -1,14 +1,47 @@
 <resources>
     <string name="app_name">Thip</string>
+
+    <!--   view 컴포넌트    -->
     <string name="reading_user_num">🔥%d명이 읽기에 참여중이에요!🔥</string>
+
+    <!--   header 컴포넌트    -->
     <string name="subscribe">구독</string>
     <string name="subscriber_num">%02d명이 구독중</string>
+    <string name="influencer">공식 인플루언서</string>
+    <string name="hours_ago">%d시간 전</string>
+
+    <!--   modal 컴포넌트    -->
     <string name="condition_of_general_review">독서진행도 %d%%부터 총평을 작성할 수 있습니다.</string>
     <string name="complete_comment">댓글 작성이 완료되었습니다.</string>
     <string name="action_view_comment">보러가기</string>
     <string name="introduction">소개</string>
+
+    <!--    mock data    -->
+    <string name="book_title">책이름을입력해주세요책이름을</string>
+    <string name="book_author">한한강한강한강한ㅇㅇㄴㄴㅁ강</string>
+
+    <!--    버튼 컴포넌트    -->
+    <string name="author">저</string>
+    <string name="add_to_my_feed">내 피드에 추가</string>
     <string name="yes">예</string>
     <string name="no">아니오</string>
-    <string name="influencer">공식 인플루언서</string>
-    <string name="hours_ago">%d시간 전</string>
+    <string name="post">글 등록</string>
+    <string name="follow">팔로우</string>
+    <string name="change_book">책 변경</string>
+    <string name="finish">완료</string>
+    <string name="essay">에세이•자기계발</string>
+    <string name="recent_search">최근 검색어</string>
+    <string name="add_list">리스트 추가하기</string>
+    <string name="character_relationship">인물관계도 보기</string>
+    <string name="write_record">기록 작성</string>
+    <string name="create_vote">투표 생성</string>
+
+    <!--    카드 컴포넌트    -->
+    <string name="time_ago">시간 전</string>
+    <string name="group">모임</string>
+    <string name="change">변경</string>
+
+    <!--    TextField 컴포넌트    -->
+    <string name="error_page_over">해당 도서는 %1$dp까지만 있습니다.</string>
+
 </resources>

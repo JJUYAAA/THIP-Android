@@ -2,7 +2,7 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="app">
+      <SelectionState runConfigName="Thip.app">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2025-05-31T10:07:48.311628Z">
           <Target type="DEFAULT_BOOT">
