@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.theme.common.form
+package com.texthip.thip.ui.common.forms
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

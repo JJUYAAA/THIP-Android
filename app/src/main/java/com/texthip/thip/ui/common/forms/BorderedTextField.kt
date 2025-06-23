@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.theme.common.form
+package com.texthip.thip.ui.common.forms
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -25,7 +25,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun BaseInputTextField(
+fun BorderedTextField(
     modifier: Modifier = Modifier,
     hint: String
 ) {
@@ -47,12 +47,13 @@ fun BaseInputTextField(
         shape = RoundedCornerShape(12.dp),
         colors = TextFieldDefaults.colors(
             focusedTextColor = colors.White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedContainerColor = colors.Black,
-            unfocusedContainerColor = colors.Black,
-            cursorColor = colors.NeonGreen
+            focusedIndicatorColor = colors.Grey02,
+            unfocusedIndicatorColor = colors.Grey02,
+            focusedContainerColor = colors.Black00,
+            unfocusedContainerColor = colors.Black00,
+            cursorColor = colors.NeonGreen,
         ),
+
         trailingIcon = {
             if (text.isNotEmpty()) {
                 Icon(
@@ -67,20 +68,19 @@ fun BaseInputTextField(
                     contentDescription = "Clear text"
                 )
             }
-        },
-        singleLine = true
+        }
     )
 }
 
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360, heightDp = 200)
-fun InputTextFieldPreviewEmpty() {
+fun BorderedTextFieldPreview() {
     Box(
         modifier = Modifier.size(width = 360.dp, height = 200.dp),
         contentAlignment = Alignment.Center
     ) {
-        BaseInputTextField(
-            hint = "이곳에 텍스트를 입력하세요"
+        BorderedTextField(
+            hint = "가이드 텍스트를 입력"
         )
     }
 }

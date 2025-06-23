@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.theme.common.card
+package com.texthip.thip.ui.common.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
