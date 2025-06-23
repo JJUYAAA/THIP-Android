@@ -1,5 +1,8 @@
 package com.texthip.thip.ui.common.buttons
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,27 +44,27 @@ fun GroupVoteButton(
         options.forEachIndexed { index, option ->
             val isSelected = selectedIndex == index
             val hasVoted = selectedIndex != null
-            val votePercent = voteResults.getOrNull(index) ?: 0
+            val votePercent = if (hasVoted) voteResults.getOrNull(index)?.coerceIn(0, 100) ?: 0 else 0
 
-            val backgroundColor = when {
-                isSelected -> colors.PurpleDark
-                else -> colors.DarkGrey
-            }
+            val animatedPercent by animateFloatAsState(
+                targetValue = votePercent / 100f,
+                animationSpec = tween(durationMillis = 500)
+            )
 
-            val percentBarColor = when {
-                isSelected -> colors.Purple
-                else -> colors.Grey02
-            }
+            val backgroundColor by animateColorAsState(
+                targetValue = if (isSelected) colors.PurpleDark else colors.DarkGrey
+            )
 
-            val textColor = when {
-                isSelected -> colors.NeonGreen
-                else -> colors.White
-            }
+            val percentBarColor by animateColorAsState(
+                targetValue = if (isSelected) colors.Purple else colors.Grey02
+            )
 
-            val fontStyle = when {
-                !hasVoted -> typography.feedcopy_r400_s14_h20
-                else -> typography.menu_sb600_s14_h24
-            }
+            val textColor by animateColorAsState(
+                targetValue = if (isSelected) colors.NeonGreen else colors.White
+            )
+
+            val fontStyle = if (!hasVoted) typography.feedcopy_r400_s14_h20
+            else typography.menu_sb600_s14_h24
 
             Box(
                 modifier = Modifier
@@ -77,7 +80,7 @@ fun GroupVoteButton(
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .fillMaxWidth(votePercent / 100f)
+                            .fillMaxWidth(animatedPercent)
                             .background(
                                 color = percentBarColor,
                                 shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
@@ -99,7 +102,7 @@ fun GroupVoteButton(
                     )
                     if (hasVoted) {
                         Text(
-                            text = "$votePercent%",
+                            text = "${votePercent}%",
                             color = textColor,
                             style = fontStyle
                         )
