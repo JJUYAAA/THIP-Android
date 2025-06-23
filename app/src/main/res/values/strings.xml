@@ -26,4 +26,7 @@
     <string name="group">모임</string>
     <string name="change">변경</string>
 
+    <!--    TextField 컴포넌트    -->
+    <string name="error_page_over">해당 도서는 %1$dp까지만 있습니다.</string>
+
 </resources>

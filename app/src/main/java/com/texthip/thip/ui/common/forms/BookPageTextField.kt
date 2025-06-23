@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -44,7 +45,8 @@ fun BookPageTextField(
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     var isError by rememberSaveable { mutableStateOf(false) }
-    var errorMessage by rememberSaveable { mutableStateOf("") }
+    var errorMessageRes by rememberSaveable { mutableStateOf<Int?>(null) }
+    var errorMessageParam by rememberSaveable { mutableStateOf(0) }
 
     Column {
         OutlinedTextField(
@@ -52,19 +54,21 @@ fun BookPageTextField(
             onValueChange = { newText: String ->
                 if (newText.isEmpty() || newText.all { it.isDigit() }) {
                     text = newText
-                    // 숫자만 입력된 경우에만 페이지 수 체크
                     if (newText.isNotEmpty()) {
                         val pageNum = newText.toInt()
                         isError = pageNum > bookPage
                         if (isError) {
-                            errorMessage = "해당 도서는 ${bookPage}p까지만 있습니다."
+                            errorMessageRes = R.string.error_page_over
+                            errorMessageParam = bookPage
+                        } else {
+                            errorMessageRes = null
                         }
                     } else {
                         isError = false
+                        errorMessageRes = null
                     }
                 }
             },
-            // 여기에 VisualTransformation 설정
             visualTransformation = SuffixTransformation(
                 suffix = "/${bookPage}p",
                 suffixColor = colors.Grey02
@@ -90,6 +94,7 @@ fun BookPageTextField(
                         modifier = Modifier.clickable {
                             text = ""
                             isError = false
+                            errorMessageRes = null
                         },
                         tint = Color.Unspecified
                     )
@@ -102,17 +107,16 @@ fun BookPageTextField(
             }
         )
 
-        if (isError) {
+        if (isError && errorMessageRes != null) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = errorMessage,
+                text = stringResource(id = errorMessageRes!!, errorMessageParam),
                 color = colors.Red,
                 style = typography.menu_r400_s14_h24.copy(lineHeight = 12.sp)
             )
         }
     }
 }
-
 
 class SuffixTransformation(
     private val suffix: String,
