@@ -36,7 +36,9 @@ fun ProfileBar(
     profileImage: Painter?,
     topText: String,
     bottomText: String,
-    showSubscriberInfo: Boolean
+    showSubscriberInfo: Boolean,
+    subscriberCount: Int = 0,
+    hoursAgo: Int = 0
 ) {
     Row(
         modifier = modifier
@@ -78,7 +80,7 @@ fun ProfileBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.subscriber_num,1),
+                    text = stringResource(R.string.subscriber_num,subscriberCount),
                     style = typography.timedate_r400_s11,
                     color = colors.Grey01
                 )
@@ -92,7 +94,7 @@ fun ProfileBar(
             }
         } else {
             Text(
-                text = stringResource(R.string.hours_ago,10),
+                text = stringResource(R.string.hours_ago,hoursAgo),
                 style = typography.timedate_r400_s11,
                 color = colors.Grey01
             )
@@ -109,13 +111,15 @@ fun PreviewProfileBar() {
                 profileImage = null,
                 topText = "user.01",
                 bottomText = stringResource(R.string.influencer),
-                showSubscriberInfo = true
+                showSubscriberInfo = true,
+                subscriberCount = 77
             )
             ProfileBar(
                 profileImage = null,
                 topText = "user.04",
                 bottomText = stringResource(R.string.influencer),
-                showSubscriberInfo = false
+                showSubscriberInfo = false,
+                hoursAgo = 7
             )
         }
     }
