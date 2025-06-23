@@ -24,8 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,13 +37,13 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun DetailedDarkCard(
+    modifier: Modifier = Modifier,
     title: String,
     author: String,
     publisher: String,
     description: String,
     imageRes: Int? = R.drawable.bookcover_sample,
-    onClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier
@@ -69,11 +71,12 @@ fun DetailedDarkCard(
                     style = typography.menu_m500_s16_h24,
                     color = Color.White,
                     maxLines = 1,
-                    modifier = Modifier.width(244.dp)
+                    modifier = Modifier.weight(1f),
                 )
 
+                Spacer(modifier = Modifier.width(12.dp))
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_right),
                     contentDescription = "더보기",
                     tint = Color.White,
                 )
@@ -106,6 +109,8 @@ fun DetailedDarkCard(
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
+                    Spacer(modifier = Modifier.height(7.dp))
+
                     Text(
                         text = "$author 저 · $publisher",
                         color = colors.White,
@@ -146,7 +151,7 @@ fun PreviewDetailedDarkCard() {
     ) {
         DetailedDarkCard(
             title = "도서명을 입력, 예시까지 최대 입력 후...",
-            author = "저자명 저",
+            author = "저자명",
             publisher = "출판사",
             description = "세 줄로 내용을 입력합니다. 세 줄로 내용을 입력합니다. 세 줄로 내용을 입력합니다. 세 줄로 내용을 입력합니다. 세 줄로 내용을 입력합니다. 세 줄로 내용을 입력합니다."
         )

@@ -26,20 +26,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 
 @Composable
 fun NotificationCard(
+    modifier: Modifier = Modifier,
     title: String,
     message: String,
     timeAgo: String,
     isRead: Boolean = false,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     Card(
@@ -47,7 +49,7 @@ fun NotificationCard(
             .fillMaxWidth()
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = if (isRead) Color(0xFF3A3A3A) else Color(0xFF2D2D2D)
+            containerColor = if (isRead) colors.DarkGrey else colors.DarkGrey02
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(12.dp)
@@ -65,17 +67,17 @@ fun NotificationCard(
                 // 뱃지
                 Box(
                     modifier = Modifier
-                        .size(width = 41.dp, height = 24.dp)
+                        .size(width = 40.dp, height = 24.dp)
                         .clip(RoundedCornerShape(13.dp))
                         .border(
                             width = 1.dp,
-                            color = if (isRead) Color(0xFF8D8D8D) else colors.Grey01,
+                            color = if (isRead) colors.Grey02 else colors.Grey01,
                             shape = RoundedCornerShape(13.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "모임",
+                        text = stringResource(R.string.group),
                         color = if (isRead) colors.Grey01 else colors.Grey,
                         style = typography.menu_sb600_s12_h20
                     )
@@ -115,21 +117,21 @@ fun NotificationCard(
                             }
 
                             Text(
-                                text = timeAgo,
+                                text = timeAgo + stringResource(R.string.time_ago),
                                 style = typography.view_m500_s12_h20,
-                                color = if (isRead) Color(0xFF8D8D8D) else colors.Grey01
+                                color = if (isRead) colors.Grey02 else colors.Grey01,
                             )
                         }
                     }
                 }
             }
 
-            Spacer(modifier.height(12.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
             Text(
                 text = message,
                 style = typography.copy_r400_s12_h20,
-                color = if (isRead) Color(0xFF8D8D8D) else colors.Grey01,
+                color = if (isRead) colors.Grey02 else colors.Grey01,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -150,7 +152,7 @@ fun PreviewNotificationCards() {
         NotificationCard(
             title = "같이 읽기를 시작했어요!",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
-            timeAgo = "12시간 전",
+            timeAgo = "12",
             isRead = isRead
         ) {
             isRead = true
@@ -160,7 +162,7 @@ fun PreviewNotificationCards() {
         NotificationCard(
             title = "같이 읽기를 시작했어요!",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
-            timeAgo = "12시간 전",
+            timeAgo = "12",
             isRead = true
         )
     }

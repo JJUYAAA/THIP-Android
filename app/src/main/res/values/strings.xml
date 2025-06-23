@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Thip</string>
+    <string name="time_ago">시간 전</string>
+    <string name="group">모임</string>
 </resources>

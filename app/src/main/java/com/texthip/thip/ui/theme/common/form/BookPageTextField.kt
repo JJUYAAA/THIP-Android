@@ -39,8 +39,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun BookPageTextField(
-    bookPage: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    bookPage: Int
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     var isError by rememberSaveable { mutableStateOf(false) }
@@ -72,6 +72,7 @@ fun BookPageTextField(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = modifier.size(width = 320.dp, height = 48.dp),
             textStyle = typography.menu_r400_s14_h24.copy(lineHeight = 12.sp),
+            maxLines = 1,
             shape = RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = colors.White,

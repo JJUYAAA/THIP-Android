@@ -26,8 +26,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun BorderedTextField(
-    hint: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hint: String
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     val myStyle = typography.menu_r400_s14_h24.copy(lineHeight = 14.sp)

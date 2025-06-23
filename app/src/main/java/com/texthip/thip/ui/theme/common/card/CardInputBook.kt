@@ -31,11 +31,11 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun CardInputBook(
+    modifier: Modifier = Modifier,
     title: String,
     author: String,
     imageRes: Int? = R.drawable.bookcover_sample, // 기본 이미지 리소스
-    onChangeClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onChangeClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -90,6 +90,7 @@ fun CardInputBook(
                 .align(Alignment.Bottom),
             contentPadding = PaddingValues(0.dp)   // 기본 패딩 없애기
         ) {
+            // TODO: 나은이 공통 컴포넌트 사용하기 
             Text(
                 text = "변경",
                 style = typography.view_m500_s14,

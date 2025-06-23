@@ -29,9 +29,9 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun WarningTextField(
+    modifier: Modifier = Modifier,
     hint: String,
     warningMessage: String = "경고 메시지를 입력해주세요.",
-    modifier: Modifier = Modifier,
     showWarning: Boolean
 ) {
     var text by rememberSaveable { mutableStateOf("") }

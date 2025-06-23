@@ -24,6 +24,7 @@ val Grey03 = Color(0xFF525252)
 val DarkGrey = Color(0xFF3D3D3D)
 val DarkGrey50 = Color(0x803D3D3D)
 val DarkGrey02 = Color(0xFF282828)
+val DarkGrey01 = Color(0x4B4B4B4B)
 
 val Black = Color(0xFF121212)
 val Black50 = Color(0x80121212)
@@ -46,6 +47,7 @@ data class ThipColors(
     val Grey02: Color,
     val Grey03: Color,
     val DarkGrey: Color,
+    val darkGray01: Color,
     val DarkGrey50: Color,
     val DarkGrey02: Color,
     val Black: Color,
@@ -69,6 +71,7 @@ val defaultThipColors = ThipColors(
     Grey02 = Grey02,
     Grey03 = Grey03,
     DarkGrey = DarkGrey,
+    darkGray01 = DarkGrey01,
     DarkGrey50 = DarkGrey50,
     DarkGrey02 = DarkGrey02,
     Black = Black,

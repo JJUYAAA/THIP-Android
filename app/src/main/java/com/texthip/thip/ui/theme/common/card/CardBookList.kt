@@ -41,13 +41,13 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun CardBookList(
+    modifier: Modifier = Modifier,
     title: String,
     author: String,
     publisher: String,
     imageRes: Int? = R.drawable.bookcover_sample, // 기본 이미지 리소스
     isBookmarked: Boolean = false,
-    onBookmarkClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onBookmarkClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -57,7 +57,7 @@ fun CardBookList(
         // 책 이미지
         Box(
             modifier = Modifier
-                .size(width = 80.dp, height = 107.dp)
+                .size(width = 80.dp, height = 108.dp)
         ) {
 
             imageRes?.let {
@@ -99,7 +99,7 @@ fun CardBookList(
             modifier = Modifier.size(24.dp)
         ) {
             Icon(
-                imageVector = if (isBookmarked) ImageVector.vectorResource(R.drawable.ic_save) else ImageVector.vectorResource(R.drawable.ic_save),
+                imageVector = if (isBookmarked) ImageVector.vectorResource(R.drawable.ic_save_filled) else ImageVector.vectorResource(R.drawable.ic_save),
                 contentDescription = "북마크",
                 tint = if (isBookmarked) colors.Purple else colors.Grey01
             )

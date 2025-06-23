@@ -27,11 +27,11 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun CardBookSearch(
+    modifier: Modifier = Modifier,
     number: Int,
     title: String,
     imageRes: Int? = R.drawable.bookcover_sample, // 기본 이미지 리소스
-    onClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
