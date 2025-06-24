@@ -22,10 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,12 +32,13 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun CardRoomBook(
+fun CardItemRoom(
     modifier: Modifier = Modifier,
     title: String,
-    author: String,
-    publisher: String,
-    description: String,
+    participants: Int,
+    maxParticipants: Int,
+    isRecruiting: Boolean,
+    endDate: Int, // 남은 일 수 (예: 3)
     imageRes: Int? = R.drawable.bookcover_sample,
     onClick: () -> Unit = {}
 ) {
@@ -48,7 +47,7 @@ fun CardRoomBook(
             .fillMaxWidth()
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = colors.DarkGrey02
+            containerColor = colors.DarkGrey50
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp)
@@ -56,37 +55,12 @@ fun CardRoomBook(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(12.dp)
         ) {
-            // 헤더 행
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                Text(
-                    text = title,
-                    style = typography.menu_m500_s16_h24,
-                    color = Color.White,
-                    maxLines = 1,
-                    modifier = Modifier.weight(1f),
-                )
-
-                Spacer(modifier = Modifier.width(12.dp))
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_right),
-                    contentDescription = "더보기",
-                    tint = Color.White,
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // 내용 행
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // 책 이미지
+                // 이미지
                 Box(
                     modifier = Modifier
                         .size(width = 80.dp, height = 107.dp)
@@ -103,34 +77,42 @@ fun CardRoomBook(
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                // 텍스트 정보
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Spacer(modifier = Modifier.height(7.dp))
-
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "$author 저 · $publisher",
+                        text = title,
                         color = colors.White,
-                        style = typography.info_m500_s12,
-                    )
-
-                    Spacer(modifier = Modifier.height(21.dp))
-
-                    Text(
-                        text = "도서 소개",
-                        color = colors.White,
-                        style = typography.info_m500_s12,
-                    )
-
-                    Spacer(modifier = Modifier.height(5.dp))
-
-                    Text(
-                        text = description,
-                        color = colors.Grey01,
-                        style = typography.timedate_r400_s11,
-                        maxLines = 3,
+                        style = typography.smalltitle_sb600_s18_h24,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            modifier = Modifier.size(20.dp),
+                            painter = painterResource(id = R.drawable.ic_group),
+                            contentDescription = "그룹 아이콘",
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = if (isRecruiting) {
+                                "$participants / ${maxParticipants}명"
+                            } else {
+                                "${participants}명 참여"
+                            },
+                            color = colors.White,
+                            style = typography.info_m500_s12,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        text = "${endDate}일 뒤 " + if (isRecruiting) "모집 마감" else "종료",
+                        color = if (isRecruiting) colors.Red else colors.Grey01,
+                        style = typography.menu_sb600_s12_h20,
+                        maxLines = 1
                     )
                 }
             }
@@ -139,20 +121,25 @@ fun CardRoomBook(
 }
 
 
-@Preview
+@Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360)
 @Composable
-fun PreviewCardRoomBook() {
-
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        CardRoomBook(
-            title = "도서명을 입력, 예시까지 최대 입력 후...",
-            author = "저자명",
-            publisher = "출판사",
-            description = "세 줄로 내용을 입력합니다. 세 줄로 내용을 입력합니다. 세 줄로 내용을 입력합니다. 세 줄로 내용을 입력합니다. 세 줄로 내용을 입력합니다. 세 줄로 내용을 입력합니다."
+fun CardItemRoomPreview() {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        CardItemRoom(
+            title = "모임방 이름입니다. 모임방...",
+            participants = 22,
+            maxParticipants = 30,
+            isRecruiting = true,
+            endDate = 3,
+            imageRes = R.drawable.bookcover_sample
+        )
+        CardItemRoom(
+            title = "모임방 이름입니다. 모임방...",
+            participants = 22,
+            maxParticipants = 30,
+            isRecruiting = false,
+            endDate = 3,
+            imageRes = R.drawable.bookcover_sample
         )
     }
-
 }
