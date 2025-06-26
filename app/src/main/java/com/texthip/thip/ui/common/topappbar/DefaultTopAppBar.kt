@@ -82,5 +82,10 @@ private fun DefaultTopAppBarPreview() {
             onLeftClick = {},
             onRightClick = {},
         )
+        DefaultTopAppBar(
+            isRightIconVisible = false,
+            isTitleVisible = false,
+            onLeftClick = {},
+        )
     }
 }
