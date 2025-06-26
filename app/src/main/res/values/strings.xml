@@ -44,4 +44,9 @@
     <!--    TextField 컴포넌트    -->
     <string name="error_page_over">해당 도서는 %1$dp까지만 있습니다.</string>
 
+    <!--    myGroup 컴포넌트    -->
+    <string name="onGoing">진행중</string>
+    <string name="recruiting">모집중</string>
+    <string name="myGroupRoom">내 모임방</string>
+
 </resources>

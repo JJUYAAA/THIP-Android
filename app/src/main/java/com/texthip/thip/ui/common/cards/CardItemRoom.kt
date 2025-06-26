@@ -78,7 +78,7 @@ fun CardItemRoom(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -126,7 +126,7 @@ fun CardItemRoom(
 fun CardItemRoomPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         CardItemRoom(
-            title = "모임방 이름입니다. 모임방...",
+            title = "모임방 이름입니다. 모임방 이름입니다.",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = true,
@@ -134,7 +134,7 @@ fun CardItemRoomPreview() {
             imageRes = R.drawable.bookcover_sample
         )
         CardItemRoom(
-            title = "모임방 이름입니다. 모임방...",
+            title = "모임방 이름입니다. 모임방 이름입니다.",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = false,
