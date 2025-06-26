@@ -33,9 +33,7 @@ fun InputTopAppBar(
     CenterAlignedTopAppBar(
         navigationIcon = {
             if (isLeftIconVisible) {
-                IconButton(onClick = {
-                    onLeftClick()
-                }) {
+                IconButton(onClick = onLeftClick) {
                     Icon(
                         painter = painterResource(R.drawable.ic_arrow_back),
                         contentDescription = "Back Button",

@@ -22,9 +22,7 @@ fun BookTopAppBar(
 ) {
     TopAppBar(
         navigationIcon = {
-            IconButton(onClick = {
-                onLeftClick()
-            }) {
+            IconButton(onClick = onLeftClick) {
                 Icon(
                     painter = painterResource(R.drawable.ic_arrow_back),
                     contentDescription = "Back Button",
@@ -38,9 +36,7 @@ fun BookTopAppBar(
             )
         },
         actions = {
-            IconButton(onClick = {
-                onRightClick()
-            }) {
+            IconButton(onClick = onRightClick) {
                 Icon(
                     painter = painterResource(R.drawable.ic_more),
                     contentDescription = "More Options",

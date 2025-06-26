@@ -31,9 +31,7 @@ fun FeedListTopAppBar(
 ) {
     CenterAlignedTopAppBar(
         navigationIcon = {
-            IconButton(onClick = {
-                onLeftClick()
-            }) {
+            IconButton(onClick = onLeftClick) {
                 Icon(
                     painter = painterResource(R.drawable.ic_arrow_back),
                     contentDescription = "Back Button",

@@ -26,9 +26,7 @@ fun DefaultTopAppBar(
 ) {
     CenterAlignedTopAppBar(
         navigationIcon = {
-            IconButton(onClick = {
-                onLeftClick()
-            }) {
+            IconButton(onClick = onLeftClick) {
                 Icon(
                     painter = painterResource(R.drawable.ic_arrow_back),
                     contentDescription = "Back Button",
@@ -47,9 +45,7 @@ fun DefaultTopAppBar(
         },
         actions = {
             if (isRightIconVisible) {
-                IconButton(onClick = {
-                    onRightClick()
-                }) {
+                IconButton(onClick = onRightClick) {
                     Icon(
                         painter = painterResource(R.drawable.ic_more),
                         contentDescription = "More Options",
