@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.common.topappbar
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,20 +24,24 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun InputTopAppBar(
     title: String = "페이지명",
-    enabled: Boolean = false,
-    onLeftClick: () -> Unit,
+    isRightButtonEnabled: Boolean = false,
+    rightButtonName: String = stringResource(R.string.finish),
+    isLeftIconVisible: Boolean = true,
+    onLeftClick: () -> Unit = {},
     onRightClick: () -> Unit = {},
 ) {
     CenterAlignedTopAppBar(
         navigationIcon = {
-            IconButton(onClick = {
-                onLeftClick()
-            }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_back),
-                    contentDescription = "Back Button",
-                    tint = Color.Unspecified
-                )
+            if (isLeftIconVisible) {
+                IconButton(onClick = {
+                    onLeftClick()
+                }) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_back),
+                        contentDescription = "Back Button",
+                        tint = Color.Unspecified
+                    )
+                }
             }
         },
         title = {
@@ -48,8 +53,8 @@ fun InputTopAppBar(
         },
         actions = {
             HeaderButton(
-                text = stringResource(R.string.finish),
-                enabled = enabled,
+                text = rightButtonName,
+                enabled = isRightButtonEnabled,
                 onClick = {
                     onRightClick()
                 },
@@ -67,9 +72,19 @@ fun InputTopAppBar(
 @Preview
 @Composable
 private fun InputTopAppBarPreview() {
-    InputTopAppBar(
-        enabled = true,
-        onLeftClick = {},
-        onRightClick = {}
-    )
+    Column {
+        InputTopAppBar(
+            isRightButtonEnabled = true,
+            onLeftClick = {},
+            onRightClick = {}
+        )
+        InputTopAppBar(
+            title = "설정 1/2",
+            isRightButtonEnabled = false,
+            rightButtonName = stringResource(R.string.next),
+            isLeftIconVisible = false,
+            onLeftClick = {},
+            onRightClick = {}
+        )
+    }
 }
