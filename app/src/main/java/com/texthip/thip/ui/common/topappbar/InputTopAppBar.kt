@@ -23,7 +23,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputTopAppBar(
-    title: String = "페이지명",
+    title: String = stringResource(R.string.page_name),
     isRightButtonEnabled: Boolean = false,
     rightButtonName: String = stringResource(R.string.finish),
     isLeftIconVisible: Boolean = true,

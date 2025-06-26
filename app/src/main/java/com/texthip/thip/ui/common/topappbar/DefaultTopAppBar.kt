@@ -10,6 +10,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -18,7 +19,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultTopAppBar(
-    title: String = "페이지명",
+    title: String = stringResource(R.string.page_name),
     isTitleVisible: Boolean = true,
     isRightIconVisible: Boolean = false,
     onLeftClick: () -> Unit,
