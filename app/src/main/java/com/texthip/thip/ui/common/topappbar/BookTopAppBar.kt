@@ -16,9 +16,9 @@ import com.texthip.thip.ui.theme.ThipTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookTopAppBar(
+    count: Int = 0,
     onLeftClick: () -> Unit,
     onRightClick: () -> Unit,
-    count: Int = 0,
 ) {
     TopAppBar(
         navigationIcon = {
@@ -31,7 +31,6 @@ fun BookTopAppBar(
                     tint = Color.Unspecified
                 )
             }
-
         },
         title = {
             CountingBar(
