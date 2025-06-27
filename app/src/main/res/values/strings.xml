@@ -48,5 +48,11 @@
     <string name="onGoing">진행중</string>
     <string name="recruiting">모집중</string>
     <string name="myGroupRoom">내 모임방</string>
+    <string name="groupRoomDesc">소개글</string>
+    <string name="groupPeroid">모임 활동 기간</string>
+    <string name="groupMate">참여 중인 독서 메이트</string>
+    <string name="groupRecommend">이런 모임방은 어때요?</string>
+    <string name="groupRecruiting">"모집 "</string>
+    <string name="groupGenre">"장르 "</string>
 
 </resources>
