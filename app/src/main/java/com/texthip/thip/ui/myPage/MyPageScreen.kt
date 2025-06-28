@@ -1,19 +1,167 @@
-package com.texthip.thip.ui.myPage
+package com.texthip.thip.ui.myPage.screen
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.texthip.thip.R
+import com.texthip.thip.ui.common.buttons.MenuItemButton
+import com.texthip.thip.ui.common.header.AuthorHeader
+import com.texthip.thip.ui.common.topappbar.LeftNameTopAppBar
+import com.texthip.thip.ui.theme.Black
+import com.texthip.thip.ui.theme.DarkGrey02
+import com.texthip.thip.ui.theme.Red
+import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.ui.theme.White
 
 @Composable
-fun MyPageScreen(navController: NavController) {
-    Box(
-        modifier = Modifier.Companion.fillMaxSize(),
-        contentAlignment = Alignment.Companion.Center
-    ) {
-        Text(text = "MyPage Screen")
+fun MyPageScreen(
+    navController: NavController? = null,
+    nickname: String,
+    badgeText: String
+) {
+    Scaffold(
+        containerColor = Black,
+        topBar = {
+            LeftNameTopAppBar(
+                title = stringResource(R.string.my_page),
+                leftIcon = painterResource(R.drawable.ic_search),
+                rightIcon = painterResource(R.drawable.ic_plus)
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            Spacer(modifier = Modifier.height(40.dp))
+            AuthorHeader(
+                profileImage = null,
+                nickname = nickname,
+                badgeText = badgeText,
+                buttonText = stringResource(R.string.edit)
+            )
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.my_activity),
+                    style = typography.smalltitle_sb600_s18_h24,
+                    color = White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
+                MenuItemButton(
+                    text = stringResource(R.string.saved),
+                    icon = painterResource(R.drawable.ic_save),
+                    contentColor = White,
+                    backgroundColor = DarkGrey02,
+                    hasRightIcon = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {}
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                MenuItemButton(
+                    text = stringResource(R.string.reactions),
+                    icon = painterResource(R.drawable.ic_heart),
+                    contentColor = White,
+                    backgroundColor = DarkGrey02,
+                    hasRightIcon = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {}
+                )
+            }
+            Spacer(modifier = Modifier.height(40.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.menu),
+                    style = typography.smalltitle_sb600_s18_h24,
+                    color = White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
+                MenuItemButton(
+                    text = stringResource(R.string.alert_settings),
+                    icon = painterResource(R.drawable.ic_notice),
+                    contentColor = White,
+                    backgroundColor = DarkGrey02,
+                    hasRightIcon = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {}
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                MenuItemButton(
+                    text = stringResource(R.string.guide),
+                    icon = painterResource(R.drawable.ic_guide),
+                    contentColor = White,
+                    backgroundColor = DarkGrey02,
+                    hasRightIcon = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {}
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                MenuItemButton(
+                    text = stringResource(R.string.customer_service),
+                    icon = painterResource(R.drawable.ic_center),
+                    contentColor = White,
+                    backgroundColor = DarkGrey02,
+                    hasRightIcon = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {}
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                MenuItemButton(
+                    text = stringResource(R.string.delete_account),
+                    icon = painterResource(R.drawable.ic_bye),
+                    contentColor = White,
+                    backgroundColor = DarkGrey02,
+                    hasRightIcon = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {}
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                MenuItemButton(
+                    text = stringResource(R.string.log_out),
+                    icon = painterResource(R.drawable.ic_logout),
+                    contentColor = Red,
+                    backgroundColor = DarkGrey02,
+                    hasRightIcon = false,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {}
+                )
+            }
+
+        }
     }
+}
+
+@Preview
+@Composable
+private fun MyPagePrev() {
+    MyPageScreen(
+        nickname = "ThipUser01",
+        badgeText = "문학가"
+    )
 }

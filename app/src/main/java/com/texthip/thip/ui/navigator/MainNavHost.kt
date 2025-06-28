@@ -15,6 +15,12 @@ fun MainNavHost(navController: NavHostController) {
         composable(Routes.Feed.route) { FeedScreen(navController) }
         composable(Routes.Group.route) { GroupScreen(navController) }
         composable(Routes.BookSearch.route) { BookSearchScreen(navController) }
-        composable(Routes.MyPage.route) { MyPageScreen(navController) }
+        composable(Routes.MyPage.route) {
+            MyPageScreen(
+                navController,
+                nickname = "ThipUser01",
+                badgeText = "문학가"
+            )
+        }
     }
 }

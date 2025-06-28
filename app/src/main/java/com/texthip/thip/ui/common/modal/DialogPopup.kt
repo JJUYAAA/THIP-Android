@@ -61,7 +61,6 @@ fun DialogPopup(
                 )
             }
 
-            //TODO: 추후 버튼 공통 컴포넌트로 변경
             Row(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxWidth()
