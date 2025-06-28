@@ -2,13 +2,13 @@ package com.texthip.thip.ui.common.header
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -39,12 +39,13 @@ fun ProfileBar(
     bottomTextColor: Color = colors.NeonGreen, // todo: 서버에서 색 보내주는걸로 받기?
     showSubscriberInfo: Boolean,
     subscriberCount: Int = 0,
-    hoursAgo: Int = 0
+    hoursAgo: Int = 0,
+    onClick: () -> Unit = { }
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (profileImage != null) {

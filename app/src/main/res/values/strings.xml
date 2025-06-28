@@ -61,4 +61,5 @@
     <string name="genre">장르</string>
     <string name="today_quote">오늘의 한마디</string>
     <string name="today_quote_description">모임방 멤버들과 간단한 인사를 나눠보세요!</string>
+    <string name="group_room_mates">독서메이트</string>
 </resources>
