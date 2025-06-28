@@ -14,6 +14,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +32,9 @@ fun CardVote(
 ) {
     val pageCount = voteData.size
     val pagerState = rememberPagerState(pageCount = { pageCount })
+
+    // 각 투표에 따라 투표한거 기록
+    val selectedIndexes = remember { mutableStateMapOf<Int, Int?>() }
 
     Column(
         modifier = Modifier
@@ -51,6 +56,7 @@ fun CardVote(
             modifier = Modifier.fillMaxWidth()
         ) { page ->
             val item = voteData[page]
+            val selectedIndex = selectedIndexes[page]
 
             Column(
                 modifier = Modifier.padding(horizontal = 12.dp),
@@ -64,7 +70,9 @@ fun CardVote(
 
                 GroupVoteButton(
                     options = item.options,
-                    voteResults = item.votes
+                    voteResults = item.votes,
+                    selectedIndex = selectedIndex,
+                    onOptionSelected = { selectedIndexes[page] = it }
                 )
             }
         }
