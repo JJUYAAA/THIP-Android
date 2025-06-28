@@ -18,10 +18,11 @@ import com.texthip.thip.ui.group.screen.room.mock.VoteData
 
 @Composable
 fun GroupRoomBody(
+    modifier: Modifier = Modifier,
     data: GroupRoomBodyData
 ) {
     Column(
-        modifier = Modifier.padding(20.dp),
+        modifier = modifier.padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         ActionBookButton(
