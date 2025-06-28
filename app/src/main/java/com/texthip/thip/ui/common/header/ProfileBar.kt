@@ -2,6 +2,7 @@ package com.texthip.thip.ui.common.header
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,6 +36,7 @@ fun ProfileBar(
     profileImage: Painter?,
     topText: String,
     bottomText: String,
+    bottomTextColor: Color = colors.NeonGreen, // todo: 서버에서 색 보내주는걸로 받기?
     showSubscriberInfo: Boolean,
     subscriberCount: Int = 0,
     hoursAgo: Int = 0
@@ -63,7 +64,10 @@ fun ProfileBar(
             )
         }
         Spacer(modifier = Modifier.width(8.dp))
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
             Text(
                 text = topText,
                 style = typography.view_m500_s14,
@@ -72,7 +76,7 @@ fun ProfileBar(
             Text(
                 text = bottomText,
                 style = typography.info_r400_s12,
-                color = colors.NeonGreen
+                color = bottomTextColor
             )
         }
         if (showSubscriberInfo) {
@@ -80,11 +84,17 @@ fun ProfileBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.subscriber_num,subscriberCount),
+                    text = subscriberCount.toString(),
                     style = typography.timedate_r400_s11,
                     color = colors.Grey01
                 )
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(
+                    text = stringResource(R.string.subscriber_num, subscriberCount),
+                    style = typography.timedate_r400_s11,
+                    color = colors.Grey01
+                )
+                Spacer(modifier = Modifier.width(2.dp))
                 Icon(
                     painter = painterResource(id = R.drawable.ic_chevron_right),
                     contentDescription = "화살표",
@@ -94,7 +104,7 @@ fun ProfileBar(
             }
         } else {
             Text(
-                text = stringResource(R.string.hours_ago,hoursAgo),
+                text = stringResource(R.string.hours_ago, hoursAgo),
                 style = typography.timedate_r400_s11,
                 color = colors.Grey01
             )

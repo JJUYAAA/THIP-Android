@@ -6,7 +6,7 @@
 
     <!--   header 컴포넌트    -->
     <string name="subscribe">구독</string>
-    <string name="subscriber_num">%02d명이 구독중</string>
+    <string name="subscriber_num">명이 구독중</string>
     <string name="influencer">공식 인플루언서</string>
     <string name="hours_ago">%d시간 전</string>
 
