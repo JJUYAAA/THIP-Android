@@ -28,6 +28,7 @@ import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.R
+import com.texthip.thip.ui.common.buttons.OutlinedButton
 import com.texthip.thip.ui.theme.Grey02
 
 @Composable
@@ -36,7 +37,7 @@ fun AuthorHeader(
     profileImage: Painter?,
     nickname: String,
     badgeText: String,
-    onSubscribeClick: () -> Unit
+    buttonText: String
 ) {
     Row(
         modifier = modifier
@@ -77,21 +78,13 @@ fun AuthorHeader(
                 maxLines = 1
             )
         }
-
-        Box(
+        OutlinedButton(
             modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
-                .border(1.dp, Grey02, RoundedCornerShape(20.dp))
-                .background(Color.Transparent)
-                .clickable { onSubscribeClick() }
-                .padding(horizontal = 12.dp, vertical = 8.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.subscribe),
-                style = typography.menu_m500_s14_h24,
-                color = colors.White
-            )
-        }
+                .size(width = 51.dp, height = 35.dp),
+            text = buttonText,
+            textStyle = typography.menu_m500_s14_h24,
+            onClick = {}
+        )
     }
 }
 
@@ -103,7 +96,7 @@ fun PreviewAuthorHeader() {
             profileImage = null,
             nickname = "열자자제한열열자제한",
             badgeText = "칭호칭호칭호",
-            onSubscribeClick = { println("구독") }
+            buttonText = "구독"
         )
     }
 }
