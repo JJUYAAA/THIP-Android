@@ -31,15 +31,16 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupVoteButton(
+    modifier: Modifier = Modifier,
     options: List<String>,
     voteResults: List<Int>
 ) {
     var selectedIndex by remember { mutableStateOf<Int?>(null) }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         options.forEachIndexed { index, option ->
             val isSelected = selectedIndex == index
