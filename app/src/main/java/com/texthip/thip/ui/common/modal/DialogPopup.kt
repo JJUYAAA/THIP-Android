@@ -70,14 +70,14 @@ fun DialogPopup(
                     contentColor = colors.White,
                     backgroundColor = colors.Grey02,
                     modifier = Modifier.weight(1f),
-                    onClick = {},
+                    onClick = onCancel,
                 )
                 ActionMediumButton(
                     text = stringResource(R.string.yes),
                     contentColor = colors.White,
                     backgroundColor = colors.Purple,
                     modifier = Modifier.weight(1f),
-                    onClick = {},
+                    onClick = onConfirm,
                 )
             }
 

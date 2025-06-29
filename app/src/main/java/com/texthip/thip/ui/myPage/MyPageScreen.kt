@@ -1,5 +1,7 @@
 package com.texthip.thip.ui.myPage.screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,15 +11,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.MenuItemButton
 import com.texthip.thip.ui.common.header.AuthorHeader
+import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.LeftNameTopAppBar
 import com.texthip.thip.ui.theme.Black
 import com.texthip.thip.ui.theme.DarkGrey02
@@ -31,6 +39,7 @@ fun MyPageScreen(
     nickname: String,
     badgeText: String
 ) {
+    var showLogoutDialog by remember { mutableStateOf(false) }
     Scaffold(
         containerColor = Black,
         topBar = {
@@ -149,10 +158,27 @@ fun MyPageScreen(
                     backgroundColor = DarkGrey02,
                     hasRightIcon = false,
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = {}
+                    onClick = {
+                        showLogoutDialog = true
+                    }
                 )
             }
-
+            if (showLogoutDialog) {
+                Dialog(onDismissRequest = { showLogoutDialog = false }) {
+                    DialogPopup(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                        title = stringResource(R.string.log_out),
+                        description = stringResource(R.string.logout_description),
+                        onCancel = { showLogoutDialog = false },
+                        onConfirm = {
+                            showLogoutDialog = false
+                            // TODO: 로그아웃 로직
+                        }
+                    )
+                }
+            }
         }
     }
 }
