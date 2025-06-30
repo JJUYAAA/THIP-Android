@@ -45,7 +45,7 @@ fun DialogPopup(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxSize()
         ) {
-            Column {
+            Column (){
                 Text(
                     text = title,
                     color = colors.White,

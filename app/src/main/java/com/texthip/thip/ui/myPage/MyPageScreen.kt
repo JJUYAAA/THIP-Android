@@ -73,7 +73,7 @@ fun MyPageScreen(
                     color = White,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 12.dp)
                 )
                 MenuItemButton(
                     text = stringResource(R.string.saved),
@@ -107,7 +107,7 @@ fun MyPageScreen(
                     color = White,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 12.dp)
                 )
                 MenuItemButton(
                     text = stringResource(R.string.notification_settings),
@@ -165,8 +165,7 @@ fun MyPageScreen(
                 Dialog(onDismissRequest = { showLogoutDialog = false }) {
                     DialogPopup(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
+                            .fillMaxWidth(),
                         title = stringResource(R.string.log_out),
                         description = stringResource(R.string.logout_description),
                         onCancel = { showLogoutDialog = false },

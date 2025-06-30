@@ -89,11 +89,10 @@ fun DeleteAccountCompleteScreen() {
                         .size(80.dp)
                 )
                 Image(
-                    painter = painterResource(R.drawable.character_sociology),
+                    painter = painterResource(R.drawable.character_literature),
                     contentDescription = null,
                     modifier = Modifier
-                        .width(80.dp)
-                        .height(95.dp)
+                        .size(80.dp)
                 )
             }
         }

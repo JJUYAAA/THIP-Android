@@ -140,14 +140,12 @@ fun DeleteAccountScreen() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(colors.Black.copy(alpha = 0.5f))
-                        .padding(20.dp),
+                        .background(colors.Black.copy(alpha = 0.5f)),
                     contentAlignment = Alignment.Center
                 ) {
                     DialogPopup(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
+                            .fillMaxWidth(),
                         title = stringResource(R.string.ask_account_deletion),
                         description = stringResource(R.string.delete_account_description),
                         onCancel = { isDialogVisible = false },
