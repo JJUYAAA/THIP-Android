@@ -94,6 +94,7 @@
     <string name="artist">예술가</string>
     <string name="humanities">인문학</string>
     <string name="philosopher">철학자</string>
+
     <string name="logout_description">또 THIP 해주실거죠?</string>
 
     <string name="leave_thip">THIP 떠나기</string>
@@ -104,11 +105,17 @@
     <string name="leave_thip_notice_4">-을 사유로 개인정보를 -개월 간 보존합니다.</string>
     <string name="leave_thip_notice_5">등록된 기록 및 게시물은 자동으로 삭제되지 않습니다.(or 삭제됩니다.)</string>
     <string name="leave_thip_agree">주의사항을 확인하였으며 이에 동의합니다.</string>
+    <string name="delete_account_complete">탈퇴 완료</string>
+    <string name="see_you_again">다음에 또 만나요!</string>
+
 
     <string name="push_notification">푸시 알림</string>
     <string name="notification_description">알림센터의 모든 알림을 포함해요</string>
     <string name="push_off">푸시 알림이 해제되었어요.</string>
     <string name="push_on">푸시 알림이 설정되었어요.</string>
+
+    <string name="customer_center_email">texthip2025@gmail.com</string>
+    <string name="customer_center_description">이메일로 닉네임과 문의사항을 보내주시면\n빠른 시일 내로 해결해 드릴게요!</string>
 
 
     <!--    my room 컴포넌트    -->
