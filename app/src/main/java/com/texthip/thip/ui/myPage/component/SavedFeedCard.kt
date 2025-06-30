@@ -1,10 +1,12 @@
 package com.texthip.thip.ui.myPage.component
 
+import android.R.attr.contentDescription
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -57,12 +59,16 @@ fun SavedFeedCard(
             showSubscriberInfo = false,
             hoursAgo = time_ago
         )
-        ActionBookButton(
-            bookTitle = book_title,
-            bookAuthor = auth_name,
-            onClick = {}
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp)
+        ) {
+            ActionBookButton(
+                bookTitle = book_title,
+                bookAuthor = auth_name,
+                onClick = {})
+        }
         if (imageRes != null) {
             Image(
                 painter = imageRes,
@@ -80,7 +86,7 @@ fun SavedFeedCard(
             color = White,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp)
+                .padding(bottom = 16.dp)
         )
         Row(
             verticalAlignment = Alignment.CenterVertically

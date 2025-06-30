@@ -61,7 +61,7 @@ fun SavedScreen() {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Box(modifier = Modifier.width(160.dp)) {
+            Box(modifier = Modifier.width(160.dp).padding(start = 20.dp)) {
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
                     containerColor = Color.Transparent,
@@ -72,8 +72,8 @@ fun SavedScreen() {
                         Box(
                             modifier = Modifier
                                 .tabIndicatorOffset(tabPosition)
-                                .width(10.dp)
-                                .height(1.dp)
+                                .width(48.dp)
+                                .height(2.dp)
                                 .align(Alignment.BottomCenter)
                                 .clip(RoundedCornerShape(1.5.dp))
                                 .background(White)
@@ -84,14 +84,13 @@ fun SavedScreen() {
                     tabs.forEachIndexed { index, title ->
                         val selected = selectedTabIndex == index
                         Tab(
-                            modifier = Modifier.width(80.dp),
+                            modifier = Modifier.width(60.dp),
                             selected = selected,
                             onClick = { selectedTabIndex = index },
                             selectedContentColor = White,
                             unselectedContentColor = Grey02,
                             text = {
                                 Box(
-                                    modifier = Modifier.width(60.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
