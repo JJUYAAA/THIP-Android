@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +23,6 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.view.CountingBar
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GradationTopAppBar(
     isImageVisible: Boolean = false,
