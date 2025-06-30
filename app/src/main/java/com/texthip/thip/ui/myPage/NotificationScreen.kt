@@ -1,15 +1,10 @@
 package com.texthip.thip.ui.myPage.screen
 
-import android.R.attr.text
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,17 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
-import com.texthip.thip.ui.common.forms.BaseInputTextField
 import com.texthip.thip.ui.common.modal.Toast
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
-import com.texthip.thip.ui.myPage.RoleCard
-import com.texthip.thip.ui.myPage.data.RoleItem
 import com.texthip.thip.ui.theme.Black
-import com.texthip.thip.ui.theme.Lavendar
-import com.texthip.thip.ui.theme.NeonGreen
-import com.texthip.thip.ui.theme.Orange
-import com.texthip.thip.ui.theme.Pink
-import com.texthip.thip.ui.theme.Skyblue
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.ui.theme.White
 import kotlinx.coroutines.delay
