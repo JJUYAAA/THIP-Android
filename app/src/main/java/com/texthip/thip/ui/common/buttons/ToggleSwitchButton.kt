@@ -20,15 +20,15 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
-fun ToggleSwitchButton() {
-    var isChecked by remember { mutableStateOf(true) }
-
+fun ToggleSwitchButton(
+    isChecked: Boolean,
+    onToggleChange: (Boolean) -> Unit
+) {
+    //var isChecked by remember { mutableStateOf(true) }
     Switch(
         modifier = Modifier.padding(4.dp),
         checked = isChecked,
-        onCheckedChange = {
-            isChecked = it
-        },
+        onCheckedChange = onToggleChange,
         colors = SwitchDefaults.colors(
             checkedThumbColor = colors.White,
             checkedTrackColor = colors.Purple,
@@ -49,11 +49,16 @@ fun ToggleSwitchButton() {
 @Preview
 @Composable
 private fun ToggleSwitchButtonPreview() {
+    var isChecked by remember { mutableStateOf(true) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(30.dp)
     ) {
-        ToggleSwitchButton()
+        ToggleSwitchButton(
+            isChecked = isChecked,
+            onToggleChange = { isChecked = it }
+        )
     }
 }
