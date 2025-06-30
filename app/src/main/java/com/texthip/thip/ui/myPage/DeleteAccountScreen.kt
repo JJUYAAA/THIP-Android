@@ -21,8 +21,10 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.CheckboxButton
+import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.theme.*
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -32,6 +34,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun DeleteAccountScreen() {
     var isChecked by rememberSaveable { mutableStateOf(false) }
     val backgroundColor = if (isChecked) Purple else Grey02
+    var isDialogVisible by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         containerColor = Black,
@@ -47,9 +50,11 @@ fun DeleteAccountScreen() {
                     .fillMaxWidth()
                     .height(56.dp)
                     .background(backgroundColor)
-                    .clickable(onClick = {
-                        //TODO 탈퇴 로직
-                    }),
+                    .clickable(
+                        enabled = isChecked,
+                        onClick = {
+                            isDialogVisible = true
+                        }),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -114,7 +119,7 @@ fun DeleteAccountScreen() {
                 }
             }
             Spacer(modifier = Modifier.height(29.dp))
-            Row (verticalAlignment = Alignment.CenterVertically){
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = stringResource(R.string.leave_thip_agree),
                     style = typography.copy_r400_s14,
@@ -128,6 +133,30 @@ fun DeleteAccountScreen() {
 
                     }
                 )
+            }
+        }
+        if (isDialogVisible) {
+            Dialog(onDismissRequest = { isDialogVisible = false }) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(colors.Black.copy(alpha = 0.5f))
+                        .padding(20.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    DialogPopup(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                        title = stringResource(R.string.ask_account_deletion),
+                        description = stringResource(R.string.delete_account_description),
+                        onCancel = { isDialogVisible = false },
+                        onConfirm = {
+                            isDialogVisible = false
+                            // TODO: 회원탈퇴 로직
+                        }
+                    )
+                }
             }
         }
     }
