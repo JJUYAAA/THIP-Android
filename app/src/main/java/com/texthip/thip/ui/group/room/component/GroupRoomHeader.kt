@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.screen.room.component
+package com.texthip.thip.ui.group.room.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
-import com.texthip.thip.ui.group.screen.room.mock.GroupRoomHeaderData
+import com.texthip.thip.ui.group.room.mock.GroupRoomHeaderData
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 

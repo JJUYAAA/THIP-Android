@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.screen.room.mock
+package com.texthip.thip.ui.group.room.mock
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter

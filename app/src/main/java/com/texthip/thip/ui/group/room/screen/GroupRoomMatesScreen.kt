@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.screen.room.screen
+package com.texthip.thip.ui.group.room.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,13 +14,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.group.screen.room.component.GroupRoomMatesList
-import com.texthip.thip.ui.group.screen.room.mock.GroupRoomMateData
+import com.texthip.thip.ui.group.room.component.GroupRoomMatesList
+import com.texthip.thip.ui.group.room.mock.GroupRoomMateData
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
-fun GroupRoomMatesScreen(modifier: Modifier = Modifier) {
+fun GroupRoomMatesScreen() {
     Scaffold(
         containerColor = colors.Black,
         topBar = {
@@ -32,7 +32,7 @@ fun GroupRoomMatesScreen(modifier: Modifier = Modifier) {
         content = { innerPadding ->
             val scrollState = rememberScrollState()
             Column(
-                modifier = modifier
+                modifier = Modifier
                     .padding(innerPadding)
                     .verticalScroll(scrollState)
             ) {

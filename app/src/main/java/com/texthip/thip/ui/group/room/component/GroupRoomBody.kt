@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.screen.room.component
+package com.texthip.thip.ui.group.room.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,8 +13,8 @@ import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.cards.CardChat
 import com.texthip.thip.ui.common.cards.CardNote
 import com.texthip.thip.ui.common.cards.CardVote
-import com.texthip.thip.ui.group.screen.room.mock.GroupRoomBodyData
-import com.texthip.thip.ui.group.screen.room.mock.VoteData
+import com.texthip.thip.ui.group.room.mock.GroupRoomBodyData
+import com.texthip.thip.ui.group.room.mock.VoteData
 
 @Composable
 fun GroupRoomBody(
@@ -36,8 +36,8 @@ fun GroupRoomBody(
         ) {}
 
         CardChat(
-            title = stringResource(R.string.today_quote),
-            subtitle = stringResource(R.string.today_quote_description)
+            title = stringResource(R.string.group_room_chat),
+            subtitle = stringResource(R.string.group_room_chat_description)
         ) {}
 
         CardVote(

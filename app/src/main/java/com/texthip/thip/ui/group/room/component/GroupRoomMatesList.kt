@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.screen.room.component
+package com.texthip.thip.ui.group.room.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.ui.common.header.ProfileBar
-import com.texthip.thip.ui.group.screen.room.mock.GroupRoomMateData
+import com.texthip.thip.ui.group.room.mock.GroupRoomMateData
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable

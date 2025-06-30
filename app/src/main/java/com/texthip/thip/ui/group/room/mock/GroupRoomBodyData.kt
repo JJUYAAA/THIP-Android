@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.screen.room.mock
+package com.texthip.thip.ui.group.room.mock
 
 data class GroupRoomBodyData(
     val bookTitle: String,

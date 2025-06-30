@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.screen.room.screen
+package com.texthip.thip.ui.group.room.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -17,11 +17,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.group.screen.room.component.GroupRoomBody
-import com.texthip.thip.ui.group.screen.room.component.GroupRoomHeader
-import com.texthip.thip.ui.group.screen.room.mock.GroupRoomBodyData
-import com.texthip.thip.ui.group.screen.room.mock.GroupRoomHeaderData
-import com.texthip.thip.ui.group.screen.room.mock.VoteData
+import com.texthip.thip.ui.group.room.component.GroupRoomBody
+import com.texthip.thip.ui.group.room.component.GroupRoomHeader
+import com.texthip.thip.ui.group.room.mock.GroupRoomBodyData
+import com.texthip.thip.ui.group.room.mock.GroupRoomHeaderData
+import com.texthip.thip.ui.group.room.mock.VoteData
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
@@ -39,7 +39,9 @@ fun GroupRoomScreen() {
         content = { innerPadding ->
             val scrollState = rememberScrollState()
 
-            Box {
+            Box(
+                modifier = Modifier.verticalScroll(scrollState), // 스크롤 범위 수정 여지 있음
+            ) {
                 Image(
                     painter = painterResource(R.drawable.img_group_room), // ✅ 배경 이미지
                     contentDescription = null,
@@ -67,7 +69,7 @@ fun GroupRoomScreen() {
                     )
 
                     GroupRoomBody(
-                        modifier = Modifier.verticalScroll(scrollState), // 스크롤 범위 수정 여지 있음
+//                        modifier = Modifier.verticalScroll(scrollState), // 스크롤 범위 수정 여지 있음
                         data = GroupRoomBodyData(
                             bookTitle = "호르몬 체인지",
                             bookAuthor = "최정화",
@@ -86,7 +88,11 @@ fun GroupRoomScreen() {
                                 ),
                                 VoteData(
                                     description = "옆으로 넘긴 다른 투표 02",
-                                    options = listOf("투표 제목과 항목 버튼이 가로 스크롤되고", "아래 캐러셀 닷은", "위치 그대로, 강조점만 바뀌도록."),
+                                    options = listOf(
+                                        "투표 제목과 항목 버튼이 가로 스크롤되고",
+                                        "아래 캐러셀 닷은",
+                                        "위치 그대로, 강조점만 바뀌도록."
+                                    ),
                                     votes = listOf(40, 35, 25)
                                 )
                             )
