@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
@@ -18,7 +19,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun MainSectionHeader(title: String, onClick: (() -> Unit)? = null) {
+fun MainSectionHeader(onClick: (() -> Unit)? = null) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -26,7 +27,11 @@ fun MainSectionHeader(title: String, onClick: (() -> Unit)? = null) {
             .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(title, style = typography.title_b700_s20_h24, color = colors.White)
+        Text(
+            text = stringResource(R.string.myGroup),
+            style = typography.title_b700_s20_h24,
+            color = colors.White
+        )
         Spacer(Modifier.weight(1f))
         if (onClick != null) {
             Icon(
@@ -41,5 +46,5 @@ fun MainSectionHeader(title: String, onClick: (() -> Unit)? = null) {
 @Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360)
 @Composable
 fun PreviewMainSectionHeader() {
-    MainSectionHeader(title = "내 모임방", onClick = {})
+    MainSectionHeader(){}
 }

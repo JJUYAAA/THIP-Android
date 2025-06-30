@@ -45,20 +45,19 @@ fun GroupPageScreen(
                 .padding(bottom = 32.dp), // FAB 공간 확보
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            // 1. 상단바
+            // 상단바
             item {
                 MainTopAppBar()
                 Spacer(Modifier.height(16.dp))
             }
-            // 2. 검색창
+            // 검색창
             item {
                 SearchTextField(onValueChange = { })
                 Spacer(Modifier.height(32.dp))
             }
-            // 3. 내 모임방 헤더 + 카드
+            // 내 모임방 헤더 + 카드
             item {
                 MainSectionHeader(
-                    title = "내 모임방",
                     onClick = { viewModel.onMyGroupHeaderClick() }
                 )
                 Spacer(Modifier.height(20.dp))
@@ -78,7 +77,7 @@ fun GroupPageScreen(
                 )
                 Spacer(Modifier.height(32.dp))
             }
-            // 4. 마감 임박한 독서 모임방
+            // 마감 임박한 독서 모임방
             item {
                 DeadlineRoomSection(
                     rooms = deadlineRooms,
@@ -89,7 +88,7 @@ fun GroupPageScreen(
                 )
             }
         }
-        // 오른쪽 하단 FAB (항상 화면 하단에 고정)
+        // 오른쪽 하단 FAB
         FloatingButton(
             icon = painterResource(id = com.texthip.thip.R.drawable.ic_makegroup),
             onClick = { viewModel.onFabClick() }

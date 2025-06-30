@@ -54,5 +54,10 @@
     <string name="groupRecommend">이런 모임방은 어때요?</string>
     <string name="groupRecruiting">"모집 "</string>
     <string name="groupGenre">"장르 "</string>
+    <string name="deadlineString">마감 임박한 독서 모임방</string>
+    <string name="myGroup">내 모임방</string>
+    <string name="groupParticipant">%1$s명 참여</string>
+    <string name="groupProgress">"%1$s의 진행도 "</string>
+    <string name="groupSearchPlaceHolder">모임방 참여할 사람!</string>
 
 </resources>
