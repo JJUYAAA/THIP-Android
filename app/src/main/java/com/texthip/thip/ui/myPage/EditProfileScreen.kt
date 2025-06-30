@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.BaseInputTextField
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
-import com.texthip.thip.ui.myPage.RoleCard
-import com.texthip.thip.ui.myPage.data.RoleItem
+import com.texthip.thip.ui.myPage.component.RoleCard
+import com.texthip.thip.ui.myPage.mock.RoleItem
 import com.texthip.thip.ui.theme.Black
 import com.texthip.thip.ui.theme.Lavendar
 import com.texthip.thip.ui.theme.NeonGreen

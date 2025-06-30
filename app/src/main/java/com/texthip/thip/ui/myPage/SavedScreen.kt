@@ -34,7 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardBookList
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.myPage.SavedFeedCard
+import com.texthip.thip.ui.myPage.component.SavedFeedCard
 import com.texthip.thip.ui.myPage.viewmodel.SavedBookViewModel
 import com.texthip.thip.ui.myPage.viewmodel.SavedFeedViewModel
 import com.texthip.thip.ui.theme.Black

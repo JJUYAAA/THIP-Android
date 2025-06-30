@@ -4,8 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.texthip.thip.R
-import com.texthip.thip.ui.myPage.data.BookItem
+import com.texthip.thip.ui.myPage.mock.BookItem
 
 class SavedBookViewModel : ViewModel() {
 

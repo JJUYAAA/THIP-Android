@@ -1,9 +1,8 @@
 package com.texthip.thip.ui.myPage.viewmodel
 
-import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.ViewModel
 import com.texthip.thip.R
-import com.texthip.thip.ui.myPage.data.FeedItem
+import com.texthip.thip.ui.myPage.mock.FeedItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
