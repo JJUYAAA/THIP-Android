@@ -22,7 +22,7 @@ fun GroupRoomBody(
     data: GroupRoomBodyData
 ) {
     Column(
-        modifier = modifier.padding(20.dp),
+        modifier = modifier.padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         ActionBookButton(

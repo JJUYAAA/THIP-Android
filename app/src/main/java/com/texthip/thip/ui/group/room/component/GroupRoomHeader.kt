@@ -32,7 +32,7 @@ fun GroupRoomHeader(
     data: GroupRoomHeaderData
 ) {
     Column(
-        modifier = Modifier.padding(20.dp)
+        modifier = Modifier.padding(horizontal = 20.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(2.dp, Alignment.Start),
@@ -53,7 +53,7 @@ fun GroupRoomHeader(
             }
         }
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(40.dp))
 
         Column {
             Text(
@@ -71,7 +71,7 @@ fun GroupRoomHeader(
             )
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(20.dp))
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(40.dp, Alignment.Start),
@@ -141,7 +141,7 @@ fun GroupRoomHeader(
             }
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(20.dp))
 
         Row(
             modifier = Modifier
