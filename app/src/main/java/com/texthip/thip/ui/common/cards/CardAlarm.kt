@@ -34,7 +34,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 
 @Composable
-fun NotificationCard(
+fun CardAlarm(
     modifier: Modifier = Modifier,
     badgeText: String,
     title: String,
@@ -149,7 +149,7 @@ fun PreviewNotificationCards() {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // 안읽은 알림
-        NotificationCard(
+        CardAlarm(
             title = "같이 읽기를 시작했어요!",
             badgeText = "모임",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
@@ -160,7 +160,7 @@ fun PreviewNotificationCards() {
         }
 
         // 읽은 알림
-        NotificationCard(
+        CardAlarm(
             title = "같이 읽기를 시작했어요!",
             badgeText = "모임",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
@@ -168,7 +168,7 @@ fun PreviewNotificationCards() {
             isRead = true
         )
 
-        NotificationCard(
+        CardAlarm(
             title = "같이 읽기를 시작했어요!",
             badgeText = "피드",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
@@ -176,7 +176,7 @@ fun PreviewNotificationCards() {
             isRead = false
         )
 
-        NotificationCard(
+        CardAlarm(
             title = "같이 읽기를 시작했어요!",
             badgeText = "좋아요",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
@@ -184,7 +184,7 @@ fun PreviewNotificationCards() {
             isRead = isRead
         )
 
-        NotificationCard(
+        CardAlarm(
             title = "같이 읽기를 시작했어요!",
             badgeText = "댓글",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
