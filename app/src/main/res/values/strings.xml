@@ -48,4 +48,22 @@
     <string name="subscriber">님의 구독자</string>
     <string name="next">다음</string>
     <string name="page_name">페이지명</string>
+
+    <!--    myGroup 컴포넌트    -->
+    <string name="onGoing">진행중</string>
+    <string name="recruiting">모집중</string>
+    <string name="myGroupRoom">내 모임방</string>
+    <string name="groupRoomDesc">소개글</string>
+    <string name="groupPeroid">모임 활동 기간</string>
+    <string name="groupMate">참여 중인 독서 메이트</string>
+    <string name="groupRecommend">이런 모임방은 어때요?</string>
+    <string name="groupRecruiting">"모집 "</string>
+    <string name="groupGenre">"장르 "</string>
+    <string name="deadlineString">마감 임박한 독서 모임방</string>
+    <string name="myGroup">내 모임방</string>
+    <string name="groupParticipant">%1$s명 참여</string>
+    <string name="groupProgress">"%1$s의 진행도 "</string>
+    <string name="groupSearchPlaceHolder">모임방 참여할 사람!</string>
+
+
 </resources>

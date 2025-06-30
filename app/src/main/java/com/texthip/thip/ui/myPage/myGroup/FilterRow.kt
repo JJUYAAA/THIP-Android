@@ -1,0 +1,32 @@
+package com.texthip.thip.ui.myPage.myGroup
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.texthip.thip.R
+import com.texthip.thip.ui.common.buttons.OptionChipButton
+
+@Composable
+fun FilterRow(
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        OptionChipButton(
+            text = stringResource(R.string.onGoing),
+            isFilled = true,
+            isSelected = selectedIndex == 0,
+            onClick = { onSelect(0) }
+        )
+        OptionChipButton(
+            text = stringResource(R.string.recruiting),
+            isFilled = true,
+            isSelected = selectedIndex == 1,
+            onClick = { onSelect(1) }
+        )
+    }
+}

@@ -34,7 +34,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun DetailedDarkCard(
+fun CardRoomBook(
     modifier: Modifier = Modifier,
     title: String,
     author: String,
@@ -141,13 +141,13 @@ fun DetailedDarkCard(
 
 @Preview
 @Composable
-fun PreviewDetailedDarkCard() {
+fun PreviewCardRoomBook() {
 
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        DetailedDarkCard(
+        CardRoomBook(
             title = "도서명을 입력, 예시까지 최대 입력 후...",
             author = "저자명",
             publisher = "출판사",

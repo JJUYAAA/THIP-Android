@@ -25,7 +25,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun BaseInputTextField(
+fun FormTextFieldDefault(
     modifier: Modifier = Modifier,
     hint: String
 ) {
@@ -74,12 +74,12 @@ fun BaseInputTextField(
 
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360, heightDp = 200)
-fun InputTextFieldPreviewEmpty() {
+fun FormTextFieldDefaultPreview() {
     Box(
         modifier = Modifier.size(width = 360.dp, height = 200.dp),
         contentAlignment = Alignment.Center
     ) {
-        BaseInputTextField(
+        FormTextFieldDefault(
             hint = "이곳에 텍스트를 입력하세요"
         )
     }
