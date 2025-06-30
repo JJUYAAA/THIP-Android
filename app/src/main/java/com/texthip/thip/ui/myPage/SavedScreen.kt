@@ -17,6 +17,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,7 +34,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardBookList
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.myPage.SavedFeedCard
 import com.texthip.thip.ui.myPage.viewmodel.SavedBookViewModel
+import com.texthip.thip.ui.myPage.viewmodel.SavedFeedViewModel
 import com.texthip.thip.ui.theme.Black
 import com.texthip.thip.ui.theme.Grey02
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -111,8 +115,32 @@ fun SavedScreen() {
 }
 
 @Composable
-fun FeedContent() {
-    Text("피드 항목들 보여주는 Composable")
+fun FeedContent(viewModel: SavedFeedViewModel = viewModel()) {
+    val feedList by viewModel.feeds.collectAsState()
+
+    LazyColumn {
+        items(feedList, key = { it.id }) { feed ->
+            val bookImagePainter = feed.imageUrl?.let { painterResource(it) }
+            val profileImagePainter = feed.user_profile_image?.let { painterResource(it) }
+
+            SavedFeedCard(
+                user_name = feed.user_name,
+                user_role = feed.user_role,
+                user_profile_image = profileImagePainter,
+                book_title = feed.book_title,
+                auth_name = feed.auth_name,
+                time_ago = feed.time_ago,
+                content = feed.content,
+                like_count = feed.like_count,
+                comment_count = feed.comment_count,
+                is_like = feed.is_liked,
+                is_saved = feed.is_saved,
+                imageRes = bookImagePainter,
+                onBookmarkClick = { viewModel.toggleBookmark(feed.id) },
+                onLikeClick = { viewModel.toggleLike(feed.id) }
+            )
+        }
+    }
 }
 
 @Composable

@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.myPage
 
 import android.R.attr.top
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.header.ProfileBar
+import com.texthip.thip.ui.theme.Red
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.ui.theme.White
@@ -30,6 +32,7 @@ fun SavedFeedCard(
     modifier: Modifier = Modifier,
     user_name: String,
     user_role: String,
+    user_profile_image: Painter? = null,
     book_title: String,
     auth_name: String,
     imageRes: Painter? = null,
@@ -39,7 +42,8 @@ fun SavedFeedCard(
     comment_count: Int,
     is_like: Boolean,
     is_saved: Boolean = true,
-    onBookmarkClick: () -> Unit = {}
+    onBookmarkClick: () -> Unit = {},
+    onLikeClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -47,7 +51,7 @@ fun SavedFeedCard(
             .padding(20.dp)
     ) {
         ProfileBar(
-            profileImage = imageRes,
+            profileImage = user_profile_image,
             topText = user_name,
             bottomText = user_role,
             showSubscriberInfo = false,
@@ -58,27 +62,38 @@ fun SavedFeedCard(
             bookAuthor = auth_name,
             onClick = {}
         )
+        if (imageRes != null) {
+            Image(
+                painter = imageRes,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+            )
+        }
+
         Text(
             text = content,
             style = typography.feedcopy_r400_s14_h20,
             color = White,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp,bottom = 16.dp)
+                .padding(top = 16.dp, bottom = 16.dp)
         )
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Icon(
+                modifier = Modifier.clickable { onLikeClick() },
                 painter = painterResource(R.drawable.ic_heart),
                 contentDescription = null,
-                tint = colors.White
+                tint = if (is_like) Red else colors.White
             )
             Text(
                 text = like_count.toString(),
                 style = typography.feedcopy_r400_s14_h20,
                 color = White,
-                modifier = Modifier.padding(start = 5.dp,end = 12.dp)
+                modifier = Modifier.padding(start = 5.dp, end = 12.dp)
             )
             Icon(
                 painter = painterResource(R.drawable.ic_comment),
@@ -89,7 +104,7 @@ fun SavedFeedCard(
                 text = comment_count.toString(),
                 style = typography.feedcopy_r400_s14_h20,
                 color = White,
-                modifier = Modifier.padding(start = 5.dp,end = 12.dp)
+                modifier = Modifier.padding(start = 5.dp, end = 12.dp)
             )
             Spacer(modifier = Modifier.weight(1f))
             Icon(
@@ -106,15 +121,32 @@ fun SavedFeedCard(
 @Preview
 @Composable
 private fun SavedFeedCardPrev() {
-    SavedFeedCard(
-        user_name = "user.01",
-        user_role = stringResource(R.string.influencer),
-        book_title = "책 제목",
-        auth_name = "한강",
-        time_ago = 3,
-        content = "무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷",
-        like_count = 10,
-        comment_count = 5,
-        is_like = false
-    )
+    Column {
+        SavedFeedCard(
+            user_name = "user.01",
+            user_role = stringResource(R.string.influencer),
+            book_title = "책 제목",
+            auth_name = "한강",
+            time_ago = 3,
+            content = "무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷",
+            like_count = 10,
+            comment_count = 5,
+            is_like = false,
+            user_profile_image = R.drawable.character_literature.let { painterResource(it) }
+        )
+        SavedFeedCard(
+            user_name = "user.01",
+            user_role = stringResource(R.string.influencer),
+            book_title = "책 제목",
+            auth_name = "한강",
+            time_ago = 3,
+            content = "한줄만 입력 가능",
+            like_count = 10,
+            comment_count = 5,
+            is_like = false,
+            imageRes = R.drawable.bookcover_sample.let { painterResource(it) },
+            user_profile_image = R.drawable.character_art.let { painterResource(it) }
+        )
+    }
+
 }
