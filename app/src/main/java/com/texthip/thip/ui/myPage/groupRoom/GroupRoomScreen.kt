@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.common.cards.CardRoomBook
+import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.myPage.myGroup.CardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -41,204 +42,202 @@ fun GroupRoomScreen(
     onRecommendationClick: (CardItemRoomData) -> Unit = {}
 ) {
     Box(Modifier.fillMaxSize()) {
-        Column(
-            Modifier
-                .background(colors.Black)
-                .fillMaxSize()
-                .padding(start = 20.dp, end = 20.dp, top = 16.dp)
-        ) {
-            // TODO: 배경 이미지 추가
-
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
-                contentDescription = "뒤로가기",
-                tint = colors.White,
-                modifier = Modifier
-                    .clickable {
-                        // 뒤로가기 동작 구현
-                    }
+        Column {
+            DefaultTopAppBar(
+                isRightIconVisible = false,
+                isTitleVisible = false,
+                onLeftClick = {},
             )
-            Spacer(modifier = Modifier.height(36.dp))
 
-            //타이틀
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                Modifier
+                    .background(colors.Black)
+                    .fillMaxSize()
+                    .padding(start = 20.dp, end = 20.dp)
             ) {
-                Text(
-                    text = detail.title,
-                    style = typography.bigtitle_b700_s22_h24,
-                    color = colors.White
-                )
-                if (detail.isSecret) {
-                    Spacer(Modifier.width(2.dp))
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_lock),
-                        contentDescription = "비밀방",
-                        tint = colors.White
-                    )
-                } else {
-                    Spacer(Modifier.width(2.dp))
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_unlock),
-                        contentDescription = "오픈방",
-                        tint = colors.White
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(32.dp))
+                // TODO: 배경 이미지 추가
+                Spacer(modifier = Modifier.height(20.dp))
 
-            //소개글
-            Text(
-                text = stringResource(R.string.groupRoomDesc),
-                style = typography.menu_sb600_s14_h24,
-                color = colors.White,
-            )
-
-            Text(
-                text = detail.description,
-                style = typography.copy_r400_s12_h20,
-                color = colors.Grey,
-                modifier = Modifier
-                    .padding(top = 4.dp, bottom = 18.dp)
-            )
-
-
-            Row(
-                Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                //모집 기간
-                Column {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_calendar),
-                            contentDescription = "모임 활동기간",
-                            tint = colors.White
-                        )
-                        Text(
-                            text = stringResource(R.string.groupPeroid),
-                            style = typography.view_m500_s12_h20,
-                            color = colors.White
-                        )
-                    }
-                    Spacer(Modifier.height(12.dp))
+                //타이틀
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        text = detail.period,
-                        style = typography.info_r400_s12,
-                        color = colors.Grey
-                    )
-                }
-
-                //참여 인원
-                Column {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_group),
-                            contentDescription = "참여 중인 독서 메이트",
-                            tint = colors.White
-                        )
-                        Text(
-                            text = stringResource(R.string.groupMate),
-                            style = typography.view_m500_s12_h20,
-                            color = colors.White
-                        )
-                    }
-                    Spacer(Modifier.height(12.dp))
-                    Text(
-                        text = "${detail.members} / ${detail.maxMembers}",
-                        style = typography.info_r400_s12,
+                        text = detail.title,
+                        style = typography.bigtitle_b700_s22_h24,
                         color = colors.White
                     )
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // 모집 마감/장르
-                Box(
-                    Modifier
-                        .background(colors.Grey03, shape = RoundedCornerShape(14.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                ) {
-                    Row {
-                        Text(
-                            text = stringResource(R.string.groupRecruiting),
-                            style = typography.info_m500_s12,
-                            color = colors.White
+                    if (detail.isSecret) {
+                        Spacer(Modifier.width(2.dp))
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_lock),
+                            contentDescription = "비밀방",
+                            tint = colors.White
                         )
+                    } else {
+                        Spacer(Modifier.width(2.dp))
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_unlock),
+                            contentDescription = "오픈방",
+                            tint = colors.White
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(32.dp))
+
+                //소개글
+                Text(
+                    text = stringResource(R.string.groupRoomDesc),
+                    style = typography.menu_sb600_s14_h24,
+                    color = colors.White,
+                )
+
+                Text(
+                    text = detail.description,
+                    style = typography.copy_r400_s12_h20,
+                    color = colors.Grey,
+                    modifier = Modifier
+                        .padding(top = 4.dp, bottom = 18.dp)
+                )
+
+
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    //모집 기간
+                    Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_calendar),
+                                contentDescription = "모임 활동기간",
+                                tint = colors.White
+                            )
+                            Text(
+                                text = stringResource(R.string.groupPeroid),
+                                style = typography.view_m500_s12_h20,
+                                color = colors.White
+                            )
+                        }
+                        Spacer(Modifier.height(12.dp))
                         Text(
-                            text = "${detail.daysLeft}일 남음",
-                            style = typography.info_m500_s12,
-                            color = colors.NeonGreen
+                            text = detail.period,
+                            style = typography.info_r400_s12,
+                            color = colors.Grey
                         )
                     }
 
-                }
-                Spacer(Modifier.width(12.dp))
-                Box(
-                    Modifier
-                        .background(colors.Grey03, shape = RoundedCornerShape(14.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                ) {
-                    Row {
+                    //참여 인원
+                    Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_group),
+                                contentDescription = "참여 중인 독서 메이트",
+                                tint = colors.White
+                            )
+                            Text(
+                                text = stringResource(R.string.groupMate),
+                                style = typography.view_m500_s12_h20,
+                                color = colors.White
+                            )
+                        }
+                        Spacer(Modifier.height(12.dp))
                         Text(
-                            text = stringResource(R.string.groupGenre),
-                            style = typography.info_m500_s12,
+                            text = "${detail.members} / ${detail.maxMembers}",
+                            style = typography.info_r400_s12,
                             color = colors.White
                         )
-                        Text(
-                            text = detail.genre,
-                            style = typography.info_m500_s12,
-                            color = colors.genreColor
+                    }
+                }
+
+                Spacer(Modifier.height(16.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 모집 마감/장르
+                    Box(
+                        Modifier
+                            .background(colors.Grey03, shape = RoundedCornerShape(14.dp))
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                    ) {
+                        Row {
+                            Text(
+                                text = stringResource(R.string.groupRecruiting),
+                                style = typography.info_m500_s12,
+                                color = colors.White
+                            )
+                            Text(
+                                text = "${detail.daysLeft}일 남음",
+                                style = typography.info_m500_s12,
+                                color = colors.NeonGreen
+                            )
+                        }
+
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Box(
+                        Modifier
+                            .background(colors.Grey03, shape = RoundedCornerShape(14.dp))
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                    ) {
+                        Row {
+                            Text(
+                                text = stringResource(R.string.groupGenre),
+                                style = typography.info_m500_s12,
+                                color = colors.White
+                            )
+                            Text(
+                                text = detail.genre,
+                                style = typography.info_m500_s12,
+                                color = colors.genreColor
+                            )
+                        }
+
+                    }
+                }
+
+                Spacer(Modifier.height(62.dp))
+
+                //읽을 책 정보
+                CardRoomBook(
+                    title = detail.bookData.title,
+                    author = detail.bookData.author,
+                    publisher = detail.bookData.publisher,
+                    description = detail.bookData.description,
+                    imageRes = detail.bookData.imageRes
+                )
+
+                Spacer(Modifier.height(40.dp))
+                Text(
+                    text = stringResource(R.string.groupRecommend),
+                    style = typography.smalltitle_sb600_s18_h24,
+                    color = colors.White
+                )
+                Spacer(Modifier.height(24.dp))
+
+                //추천 모임방
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    items(detail.recommendations) { rec ->
+                        CardItemRoomSmall(
+                            title = rec.title,
+                            participants = rec.participants,
+                            maxParticipants = rec.maxParticipants,
+                            endDate = rec.endDate,
+                            imageRes = rec.imageRes,
+                            onClick = { onRecommendationClick(rec) }
                         )
                     }
-
                 }
+
+                Spacer(Modifier.weight(1f))
             }
-
-            Spacer(Modifier.height(62.dp))
-
-            //읽을 책 정보
-            CardRoomBook(
-                title = detail.bookData.title,
-                author = detail.bookData.author,
-                publisher = detail.bookData.publisher,
-                description = detail.bookData.description,
-                imageRes = detail.bookData.imageRes
-            )
-
-            Spacer(Modifier.height(40.dp))
-            Text(
-                text = stringResource(R.string.groupRecommend),
-                style = typography.smalltitle_sb600_s18_h24,
-                color = colors.White
-            )
-            Spacer(Modifier.height(24.dp))
-
-            //추천 모임방
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                items(detail.recommendations) { rec ->
-                    CardItemRoomSmall(
-                        title = rec.title,
-                        participants = rec.participants,
-                        maxParticipants = rec.maxParticipants,
-                        endDate = rec.endDate,
-                        imageRes = rec.imageRes,
-                        onClick = { onRecommendationClick(rec) }
-                    )
-                }
-            }
-
-            Spacer(Modifier.weight(1f))
         }
 
         // 하단 버튼

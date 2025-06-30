@@ -29,6 +29,7 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import androidx.compose.foundation.lazy.items
+import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 
 @Composable
 fun MyGroupScreen(
@@ -45,52 +46,43 @@ fun MyGroupScreen(
             allDataList.filter { it.isRecruiting }
         }
     }
-
     Column(
         Modifier
             .background(colors.Black)
             .fillMaxSize()
-            .padding(horizontal = 20.dp)
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        // 상단 타이틀
-        Row(
-            Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+        DefaultTopAppBar(
+            title = stringResource(R.string.myGroupRoom),
+            onLeftClick = {},
+        )
+        Column(
+            Modifier
+                .background(colors.Black)
+                .fillMaxSize()
+                .padding(horizontal = 20.dp)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
-                contentDescription = null,
-                tint = colors.White
-            )
-            Spacer(modifier = Modifier.width(95.dp))
-            Text(
-                text = stringResource(R.string.myGroupRoom),
-                color = colors.White,
-                style = typography.bigtitle_b700_s22_h24
-            )
-        }
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-        FilterRow(selectedIndex = selectedIndex, onSelect = { selectedIndex = it })
+            FilterRow(selectedIndex = selectedIndex, onSelect = { selectedIndex = it })
 
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-        // 리스트
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(filteredList) { item ->
-                CardItemRoom(
-                    title = item.title,
-                    participants = item.participants,
-                    maxParticipants = item.maxParticipants,
-                    isRecruiting = item.isRecruiting,
-                    endDate = item.endDate,
-                    imageRes = item.imageRes,
-                    onClick = { onCardClick(item) }
-                )
+            // 리스트
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(filteredList) { item ->
+                    CardItemRoom(
+                        title = item.title,
+                        participants = item.participants,
+                        maxParticipants = item.maxParticipants,
+                        isRecruiting = item.isRecruiting,
+                        endDate = item.endDate,
+                        imageRes = item.imageRes,
+                        onClick = { onCardClick(item) }
+                    )
+                }
             }
         }
     }

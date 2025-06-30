@@ -19,7 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FloatingButton
+import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
 import com.texthip.thip.ui.myPage.viewModel.MyPageViewModel
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
@@ -47,7 +49,12 @@ fun GroupPageScreen(
         ) {
             // 상단바
             item {
-                MainTopAppBar()
+                LogoTopAppBar(
+                    leftIcon = painterResource(R.drawable.ic_done),
+                    hasNotification = false,
+                    onLeftClick = { },
+                    onRightClick = { }
+                )
                 Spacer(Modifier.height(16.dp))
             }
             // 검색창
