@@ -2,10 +2,8 @@ package com.texthip.thip.ui.common.topappbar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -39,39 +37,38 @@ fun GradationTopAppBar(
 
     Box(
         modifier = Modifier
+            .fillMaxWidth()
             .background(brush = bgColor)
             .padding(horizontal = 20.dp)
             .height(56.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_back),
-                contentDescription = "Back Button",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .clickable { onLeftClick() }
-            )
+        Icon(
+            painter = painterResource(R.drawable.ic_arrow_back),
+            contentDescription = "Back Button",
+            tint = Color.Unspecified,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .clickable { onLeftClick() }
+        )
 
-            if (isImageVisible) {
-                CountingBar(
-                    modifier = Modifier.width(236.dp),
-                    count = count,
-                )
-            }
-
-            Icon(
-                painter = painterResource(R.drawable.ic_more),
-                contentDescription = "More Options",
-                tint = Color.Unspecified,
+        if (isImageVisible) {
+            CountingBar(
                 modifier = Modifier
-                    .clickable { onRightClick() }
+                    .width(236.dp)
+                    .align(Alignment.Center),
+                count = count,
             )
         }
+
+        Icon(
+            painter = painterResource(R.drawable.ic_more),
+            contentDescription = "More Options",
+            tint = Color.Unspecified,
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .clickable { onRightClick() }
+        )
     }
 }
 
