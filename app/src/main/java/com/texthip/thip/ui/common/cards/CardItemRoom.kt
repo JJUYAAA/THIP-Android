@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.common.cards
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,16 +41,26 @@ fun CardItemRoom(
     isRecruiting: Boolean,
     endDate: Int, // 남은 일 수 (예: 3)
     imageRes: Int? = R.drawable.bookcover_sample,
+    hasBorder: Boolean = false,   // <-- 추가
     onClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .then(
+                if (hasBorder)
+                    Modifier
+                        .border(
+                            width = 1.dp,
+                            color = colors.Grey02,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                else Modifier
+            )
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = colors.DarkGrey50
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
@@ -121,6 +132,7 @@ fun CardItemRoom(
 }
 
 
+
 @Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360)
 @Composable
 fun CardItemRoomPreview() {
@@ -140,6 +152,24 @@ fun CardItemRoomPreview() {
             isRecruiting = false,
             endDate = 3,
             imageRes = R.drawable.bookcover_sample
+        )
+        CardItemRoom(
+            title = "모임방 이름입니다. 모임방 이름입니다.",
+            participants = 22,
+            maxParticipants = 30,
+            isRecruiting = true,
+            endDate = 3,
+            imageRes = R.drawable.bookcover_sample,
+            hasBorder = true
+        )
+        CardItemRoom(
+            title = "모임방 이름입니다. 모임방 이름입니다.",
+            participants = 22,
+            maxParticipants = 30,
+            isRecruiting = false,
+            endDate = 3,
+            imageRes = R.drawable.bookcover_sample,
+            hasBorder = true
         )
     }
 }

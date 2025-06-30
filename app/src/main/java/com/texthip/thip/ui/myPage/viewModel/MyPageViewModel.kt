@@ -24,13 +24,21 @@ class MyPageViewModel : ViewModel() {
     // 초기 데이터 세팅 (실제에선 repository/remote에서 받아옴)
     init {
         _myGroups.value = listOf(
+            MyGroupCardData("호르몬 체인지 완독하는 방", 22, R.drawable.bookcover_sample, 40, "uibowl1"),
+            MyGroupCardData("호르몬 체인지 완독하는 방", 22, R.drawable.bookcover_sample, 40, "uibowl1"),
             MyGroupCardData("호르몬 체인지 완독하는 방", 22, R.drawable.bookcover_sample, 40, "uibowl1")
         )
         _deadlineRooms.value = listOf(
-            CardItemRoomData("시집만 읽는 사람들 3월", 22, 30, true, 3, R.drawable.bookcover_sample),
-            CardItemRoomData("일본 소설 좋아하는 사람들", 22, 30, true, 3, R.drawable.bookcover_sample),
-            CardItemRoomData("명작 같이 읽기방", 22, 30, true, 3, R.drawable.bookcover_sample)
+            CardItemRoomData("시집만 읽는 사람들 3월", 22, 30, true, 3, R.drawable.bookcover_sample, 0), // 문학
+            CardItemRoomData("일본 소설 좋아하는 사람들", 22, 30, true, 3, R.drawable.bookcover_sample, 0), // 문학
+            CardItemRoomData("명작 같이 읽기방", 22, 30, true, 3, R.drawable.bookcover_sample, 0), // 문학
+
+            CardItemRoomData("물리책 읽는 방", 13, 20, true, 1, R.drawable.bookcover_sample, 1), // 과학·IT
+            CardItemRoomData("코딩 과학 동아리", 12, 15, true, 5, R.drawable.bookcover_sample, 1), // 과학·IT
+
+            CardItemRoomData("사회과학 인문 탐구", 8, 12, true, 4, R.drawable.bookcover_sample, 2), // 사회과학
         )
+
     }
 
     // 선택 장르 변경

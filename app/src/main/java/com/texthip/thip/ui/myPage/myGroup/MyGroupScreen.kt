@@ -106,84 +106,96 @@ fun MyGroupListFilterScreenPreview() {
             participants = 22,
             maxParticipants = 30,
             isRecruiting = true,
-            endDate = 3
+            endDate = 3,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = false,
-            endDate = 30
+            endDate = 30,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = true,
-            endDate = 1
+            endDate = 1,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = false,
-            endDate = 3
+            endDate = 3,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = true,
-            endDate = 3
+            endDate = 3,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = false,
-            endDate = 30
+            endDate = 30,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = true,
-            endDate = 1
+            endDate = 1,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = false,
-            endDate = 3
+            endDate = 3,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = true,
-            endDate = 3
+            endDate = 3,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = false,
-            endDate = 30
+            endDate = 30,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = true,
-            endDate = 1
+            endDate = 1,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
             isRecruiting = false,
-            endDate = 3
+            endDate = 3,
+            genreIndex = 0
         )
     )
     MyGroupScreen(allDataList = dataList)

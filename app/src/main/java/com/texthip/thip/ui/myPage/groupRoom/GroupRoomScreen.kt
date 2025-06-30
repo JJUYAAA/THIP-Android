@@ -282,35 +282,40 @@ fun GroupRoomDetailScreenPreview_AllCases() {
             participants = 19,
             maxParticipants = 25,
             isRecruiting = true,
-            endDate = 2
+            endDate = 2,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
             participants = 12,
             maxParticipants = 16,
             isRecruiting = true,
-            endDate = 6
+            endDate = 6,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
             participants = 30,
             maxParticipants = 30,
             isRecruiting = false,
-            endDate = 0
+            endDate = 0,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
             participants = 10,
             maxParticipants = 12,
             isRecruiting = true,
-            endDate = 8
+            endDate = 8,
+            genreIndex = 0
         ),
         CardItemRoomData(
             title = "에세이 나눔방",
             participants = 14,
             maxParticipants = 20,
             isRecruiting = true,
-            endDate = 4
+            endDate = 4,
+            genreIndex = 0
         )
     )
 
