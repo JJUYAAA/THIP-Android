@@ -36,6 +36,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun NotificationCard(
     modifier: Modifier = Modifier,
+    badgeText: String,
     title: String,
     message: String,
     timeAgo: String,
@@ -65,7 +66,6 @@ fun NotificationCard(
                 // 뱃지
                 Box(
                     modifier = Modifier
-                        .size(width = 40.dp, height = 24.dp)
                         .clip(RoundedCornerShape(13.dp))
                         .border(
                             width = 1.dp,
@@ -75,7 +75,9 @@ fun NotificationCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.group),
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp, vertical = 2.dp),
+                        text = badgeText,
                         color = if (isRead) colors.Grey01 else colors.Grey,
                         style = typography.menu_sb600_s12_h20
                     )
@@ -149,6 +151,7 @@ fun PreviewNotificationCards() {
         // 안읽은 알림
         NotificationCard(
             title = "같이 읽기를 시작했어요!",
+            badgeText = "모임",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
             timeAgo = "12",
             isRead = isRead
@@ -159,9 +162,34 @@ fun PreviewNotificationCards() {
         // 읽은 알림
         NotificationCard(
             title = "같이 읽기를 시작했어요!",
+            badgeText = "모임",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
             timeAgo = "12",
             isRead = true
+        )
+
+        NotificationCard(
+            title = "같이 읽기를 시작했어요!",
+            badgeText = "피드",
+            message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
+            timeAgo = "12",
+            isRead = false
+        )
+
+        NotificationCard(
+            title = "같이 읽기를 시작했어요!",
+            badgeText = "좋아요",
+            message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
+            timeAgo = "12",
+            isRead = isRead
+        )
+
+        NotificationCard(
+            title = "같이 읽기를 시작했어요!",
+            badgeText = "댓글",
+            message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
+            timeAgo = "12",
+            isRead = isRead
         )
     }
 
