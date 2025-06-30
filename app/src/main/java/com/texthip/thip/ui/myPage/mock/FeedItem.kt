@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.data
+package com.texthip.thip.ui.myPage.mock
 
 data class FeedItem(
     val id: Int,
