@@ -45,6 +45,7 @@ fun ProfileBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .padding( vertical = 12.dp),
             .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
