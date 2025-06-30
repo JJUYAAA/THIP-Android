@@ -112,7 +112,7 @@ fun MyPageScreen(
                         .padding(bottom = 16.dp)
                 )
                 MenuItemButton(
-                    text = stringResource(R.string.alert_settings),
+                    text = stringResource(R.string.notification_settings),
                     icon = painterResource(R.drawable.ic_notice),
                     contentColor = White,
                     backgroundColor = DarkGrey02,
