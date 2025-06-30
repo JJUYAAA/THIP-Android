@@ -2,7 +2,7 @@
     <string name="app_name">Thip</string>
 
     <!--   view 컴포넌트    -->
-    <string name="reading_user_num">🔥%d명이 읽기에 참여중이에요!🔥</string>
+    <string name="reading_user_num">🔥 %d명이 읽기에 참여중이에요! 🔥</string>
 
     <!--   header 컴포넌트    -->
     <string name="subscribe">구독</string>
@@ -44,6 +44,11 @@
     <!--    TextField 컴포넌트    -->
     <string name="error_page_over">해당 도서는 %1$dp까지만 있습니다.</string>
 
+    <!--    top app bar 컴포넌트    -->
+    <string name="subscriber">님의 구독자</string>
+    <string name="next">다음</string>
+    <string name="page_name">페이지명</string>
+
     <!--    myGroup 컴포넌트    -->
     <string name="onGoing">진행중</string>
     <string name="recruiting">모집중</string>
@@ -59,5 +64,6 @@
     <string name="groupParticipant">%1$s명 참여</string>
     <string name="groupProgress">"%1$s의 진행도 "</string>
     <string name="groupSearchPlaceHolder">모임방 참여할 사람!</string>
+
 
 </resources>

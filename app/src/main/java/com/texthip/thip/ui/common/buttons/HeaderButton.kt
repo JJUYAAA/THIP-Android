@@ -10,10 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,19 +23,17 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun HeaderButton(
     modifier: Modifier = Modifier,
     text: String,
+    enabled: Boolean = false,
     onClick: () -> Unit = {},
 ) {
-    var isClicked by remember { mutableStateOf(false) }
-
     Box(
         modifier = modifier
             .background(
-                color = if (isClicked) colors.Purple else colors.Grey02,
+                color = if (enabled) colors.Purple else colors.Grey02,
                 shape = RoundedCornerShape(20.dp)
             )
-            .clickable {
-                isClicked = !isClicked
-                onClick()
+            .let {
+                if (enabled) it.clickable(onClick = onClick) else it
             }
             .padding(vertical = 4.dp, horizontal = 12.dp),
         contentAlignment = Alignment.Center,
@@ -60,8 +54,17 @@ private fun HeaderButtonPreview() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // 비활성 상태
         HeaderButton(
             text = stringResource(R.string.finish),
+            enabled = false
+        )
+
+        // 활성 상태
+        HeaderButton(
+            text = stringResource(R.string.finish),
+            enabled = true,
+            onClick = { }
         )
     }
 }
