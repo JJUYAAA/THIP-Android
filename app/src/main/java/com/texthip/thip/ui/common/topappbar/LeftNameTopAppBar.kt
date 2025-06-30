@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.common.topappbar
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ fun LeftNameTopAppBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .background(color = colors.Black)
             .padding(horizontal = 20.dp, vertical = 20.dp),
         contentAlignment = Alignment.CenterStart
     ) {
