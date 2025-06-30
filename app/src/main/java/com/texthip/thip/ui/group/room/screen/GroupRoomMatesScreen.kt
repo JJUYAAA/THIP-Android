@@ -2,6 +2,7 @@ package com.texthip.thip.ui.group.room.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,7 +21,11 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 @Composable
 fun GroupRoomMatesScreen() {
     val scrollState = rememberScrollState()
-    Column {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         DefaultTopAppBar(
             title = stringResource(R.string.group_room_mates),
             onLeftClick = {},

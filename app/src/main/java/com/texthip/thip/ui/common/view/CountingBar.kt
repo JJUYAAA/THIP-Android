@@ -2,9 +2,7 @@ package com.texthip.thip.ui.common.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -21,25 +19,21 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun CountingBar(
     modifier: Modifier = Modifier,
-    count: Int
+    content: String,
 ) {
-    Box(
+    Row(
         modifier = modifier
             .background(colors.DarkGrey02, shape = RoundedCornerShape(16.dp))
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(R.string.reading_user_num, count),
-                color = colors.NeonGreen,
-                style = typography.menu_r400_s14_h24,
-                maxLines = 1
-            )
-        }
+        Text(
+            content,
+            color = colors.NeonGreen,
+            style = typography.menu_r400_s14_h24,
+            maxLines = 1
+        )
     }
 }
 
@@ -47,7 +41,6 @@ fun CountingBar(
 @Composable
 private fun CountingBarPrev() {
     CountingBar(
-        count = 200,
-        modifier = Modifier.fillMaxWidth()
+        content = stringResource(R.string.reading_user_num, 200),
     )
 }
