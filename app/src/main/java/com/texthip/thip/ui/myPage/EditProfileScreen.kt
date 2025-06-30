@@ -2,6 +2,7 @@ package com.texthip.thip.ui.myPage.screen
 
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,11 +41,36 @@ import com.texthip.thip.ui.theme.White
 fun EditProfileScreen() {
     var selectedIndex by rememberSaveable { mutableStateOf(-1) }
     val roleCards = listOf(
-        RoleItem(stringResource(R.string.literature),stringResource(R.string.literary_person), R.drawable.character_literature,NeonGreen),
-        RoleItem(stringResource(R.string.science_it),stringResource(R.string.scientist), R.drawable.character_science,Lavendar),
-        RoleItem(stringResource(R.string.social_science),stringResource(R.string.sociologist), R.drawable.character_sociology,Orange),
-        RoleItem(stringResource(R.string.art),stringResource(R.string.artist), R.drawable.character_art, Pink),
-        RoleItem(stringResource(R.string.humanities),stringResource(R.string.philosopher), R.drawable.character_humanities, Skyblue)
+        RoleItem(
+            stringResource(R.string.literature),
+            stringResource(R.string.literary_person),
+            R.drawable.character_literature,
+            NeonGreen
+        ),
+        RoleItem(
+            stringResource(R.string.science_it),
+            stringResource(R.string.scientist),
+            R.drawable.character_science,
+            Lavendar
+        ),
+        RoleItem(
+            stringResource(R.string.social_science),
+            stringResource(R.string.sociologist),
+            R.drawable.character_sociology,
+            Orange
+        ),
+        RoleItem(
+            stringResource(R.string.art),
+            stringResource(R.string.artist),
+            R.drawable.character_art,
+            Pink
+        ),
+        RoleItem(
+            stringResource(R.string.humanities),
+            stringResource(R.string.philosopher),
+            R.drawable.character_humanities,
+            Skyblue
+        )
     )
     Scaffold(
         containerColor = Black,
@@ -60,7 +87,7 @@ fun EditProfileScreen() {
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(horizontal = 20.dp)
-                .fillMaxSize(),
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(40.dp))

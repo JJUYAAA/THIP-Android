@@ -17,12 +17,11 @@ class SavedFeedViewModel: ViewModel() {
                 book_title = "라랄ㄹ라라",
                 auth_name = "야야야",
                 time_ago = 15,
-                content = "진짜최공진짜최공진차최공",
+                content = "진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공",
                 like_count = 25,
                 comment_count = 4,
                 is_liked = false,
-                is_saved = true,
-                imageUrl = R.drawable.bookcover_sample
+                is_saved = true
             ),
             FeedItem(
                 id = 2,
@@ -51,8 +50,7 @@ class SavedFeedViewModel: ViewModel() {
                 like_count = 25,
                 comment_count = 4,
                 is_liked = false,
-                is_saved = true,
-                imageUrl = R.drawable.bookcover_sample
+                is_saved = true
             ),
             FeedItem(
                 id = 4,
