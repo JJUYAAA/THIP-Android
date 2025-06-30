@@ -36,7 +36,8 @@ fun CountingBar(
             Text(
                 text = stringResource(R.string.reading_user_num, count),
                 color = colors.NeonGreen,
-                style = typography.menu_r400_s14_h24
+                style = typography.menu_r400_s14_h24,
+                maxLines = 1
             )
         }
     }
