@@ -37,7 +37,8 @@ fun AuthorHeader(
     profileImage: Painter?,
     nickname: String,
     badgeText: String,
-    buttonText: String
+    buttonText: String,
+    onButtonClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -83,7 +84,7 @@ fun AuthorHeader(
                 .size(width = 51.dp, height = 35.dp),
             text = buttonText,
             textStyle = typography.menu_m500_s14_h24,
-            onClick = {}
+            onClick = onButtonClick
         )
     }
 }
