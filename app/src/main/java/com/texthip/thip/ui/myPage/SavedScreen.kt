@@ -120,20 +120,20 @@ fun FeedContent(viewModel: SavedFeedViewModel = viewModel()) {
     LazyColumn {
         items(feedList, key = { it.id }) { feed ->
             val bookImagePainter = feed.imageUrl?.let { painterResource(it) }
-            val profileImagePainter = feed.user_profile_image?.let { painterResource(it) }
+            val profileImagePainter = feed.userProfileImage?.let { painterResource(it) }
 
             SavedFeedCard(
-                user_name = feed.user_name,
-                user_role = feed.user_role,
+                user_name = feed.userName,
+                user_role = feed.userRole,
                 user_profile_image = profileImagePainter,
-                book_title = feed.book_title,
-                auth_name = feed.auth_name,
-                time_ago = feed.time_ago,
+                book_title = feed.bookTitle,
+                auth_name = feed.authName,
+                time_ago = feed.timeAgo,
                 content = feed.content,
-                like_count = feed.like_count,
-                comment_count = feed.comment_count,
-                is_like = feed.is_liked,
-                is_saved = feed.is_saved,
+                like_count = feed.likeCount,
+                comment_count = feed.commentCount,
+                is_like = feed.isLiked,
+                is_saved = feed.isSaved,
                 imageRes = bookImagePainter,
                 onBookmarkClick = { viewModel.toggleBookmark(feed.id) },
                 onLikeClick = { viewModel.toggleLike(feed.id) }

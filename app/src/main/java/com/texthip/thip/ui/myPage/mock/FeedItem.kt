@@ -2,17 +2,17 @@ package com.texthip.thip.ui.myPage.mock
 
 data class FeedItem(
     val id: Int,
-    val user_profile_image: Int? = null,
-    val user_name: String,
-    val user_role: String,
-    val book_title: String,
-    val auth_name: String,
-    val time_ago: Int,
+    val userProfileImage: Int? = null,
+    val userName: String,
+    val userRole: String,
+    val bookTitle: String,
+    val authName: String,
+    val timeAgo: Int,
     val content: String,
-    val like_count: Int,
-    val comment_count: Int,
-    val is_liked: Boolean,
-    val is_saved: Boolean,
+    val likeCount: Int,
+    val commentCount: Int,
+    val isLiked: Boolean,
+    val isSaved: Boolean,
     val imageUrl: Int? = null
 )
 
