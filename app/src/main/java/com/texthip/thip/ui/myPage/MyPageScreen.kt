@@ -26,10 +26,8 @@ import com.texthip.thip.ui.common.header.AuthorHeader
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.LeftNameTopAppBar
 import com.texthip.thip.ui.theme.Black
-import com.texthip.thip.ui.theme.DarkGrey02
-import com.texthip.thip.ui.theme.Red
+import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.ui.theme.White
 
 @Composable
 fun MyPageScreen(
@@ -70,7 +68,7 @@ fun MyPageScreen(
                 Text(
                     text = stringResource(R.string.my_activity),
                     style = typography.smalltitle_sb600_s18_h24,
-                    color = White,
+                    color = colors.White,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 12.dp)
@@ -78,8 +76,8 @@ fun MyPageScreen(
                 MenuItemButton(
                     text = stringResource(R.string.saved),
                     icon = painterResource(R.drawable.ic_save),
-                    contentColor = White,
-                    backgroundColor = DarkGrey02,
+                    contentColor = colors.White,
+                    backgroundColor = colors.DarkGrey02,
                     hasRightIcon = true,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {}
@@ -88,8 +86,8 @@ fun MyPageScreen(
                 MenuItemButton(
                     text = stringResource(R.string.reactions),
                     icon = painterResource(R.drawable.ic_heart),
-                    contentColor = White,
-                    backgroundColor = DarkGrey02,
+                    contentColor = colors.White,
+                    backgroundColor = colors.DarkGrey02,
                     hasRightIcon = true,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {}
@@ -104,7 +102,7 @@ fun MyPageScreen(
                 Text(
                     text = stringResource(R.string.menu),
                     style = typography.smalltitle_sb600_s18_h24,
-                    color = White,
+                    color = colors.White,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 12.dp)
@@ -112,8 +110,8 @@ fun MyPageScreen(
                 MenuItemButton(
                     text = stringResource(R.string.notification_settings),
                     icon = painterResource(R.drawable.ic_notice),
-                    contentColor = White,
-                    backgroundColor = DarkGrey02,
+                    contentColor = colors.White,
+                    backgroundColor = colors.DarkGrey02,
                     hasRightIcon = true,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {}
@@ -122,8 +120,8 @@ fun MyPageScreen(
                 MenuItemButton(
                     text = stringResource(R.string.guide),
                     icon = painterResource(R.drawable.ic_guide),
-                    contentColor = White,
-                    backgroundColor = DarkGrey02,
+                    contentColor = colors.White,
+                    backgroundColor = colors.DarkGrey02,
                     hasRightIcon = true,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {}
@@ -132,8 +130,8 @@ fun MyPageScreen(
                 MenuItemButton(
                     text = stringResource(R.string.customer_service),
                     icon = painterResource(R.drawable.ic_center),
-                    contentColor = White,
-                    backgroundColor = DarkGrey02,
+                    contentColor = colors.White,
+                    backgroundColor = colors.DarkGrey02,
                     hasRightIcon = true,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {}
@@ -142,8 +140,8 @@ fun MyPageScreen(
                 MenuItemButton(
                     text = stringResource(R.string.delete_account),
                     icon = painterResource(R.drawable.ic_bye),
-                    contentColor = White,
-                    backgroundColor = DarkGrey02,
+                    contentColor = colors.White,
+                    backgroundColor = colors.DarkGrey02,
                     hasRightIcon = true,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {}
@@ -152,8 +150,8 @@ fun MyPageScreen(
                 MenuItemButton(
                     text = stringResource(R.string.log_out),
                     icon = painterResource(R.drawable.ic_logout),
-                    contentColor = Red,
-                    backgroundColor = DarkGrey02,
+                    contentColor = colors.Red,
+                    backgroundColor = colors.DarkGrey02,
                     hasRightIcon = false,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {

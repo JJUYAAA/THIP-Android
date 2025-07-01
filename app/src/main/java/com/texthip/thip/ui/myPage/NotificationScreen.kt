@@ -24,9 +24,8 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
 import com.texthip.thip.ui.common.modal.Toast
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
-import com.texthip.thip.ui.theme.Black
+import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.ui.theme.White
 import kotlinx.coroutines.delay
 
 @Composable
@@ -57,11 +56,10 @@ fun NotificationScreen() {
                     date = "2025년 6월 29일 22시 30분",
                     modifier = Modifier.fillMaxWidth()
                 )
-//                Spacer(modifier = Modifier.height(37.dp))
             }
         }
         Scaffold(
-            containerColor = Black,
+            containerColor = colors.Black,
             topBar = {
                 InputTopAppBar(
                     title = stringResource(R.string.notification_settings),
@@ -81,7 +79,7 @@ fun NotificationScreen() {
                 Text(
                     text = stringResource(R.string.push_notification),
                     style = typography.smalltitle_sb600_s18_h24,
-                    color = White,
+                    color = colors.White,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 12.dp)
@@ -90,7 +88,7 @@ fun NotificationScreen() {
                     Text(
                         text = stringResource(R.string.notification_description),
                         style = typography.menu_r400_s14_h24,
-                        color = White,
+                        color = colors.White,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 8.dp)

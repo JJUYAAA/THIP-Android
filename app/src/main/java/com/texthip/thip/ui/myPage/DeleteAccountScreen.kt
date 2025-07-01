@@ -2,7 +2,15 @@ package com.texthip.thip.ui.myPage.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -26,18 +34,19 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.CheckboxButton
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.theme.*
+import com.texthip.thip.ui.theme.DarkGrey02
+import com.texthip.thip.ui.theme.Red
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun DeleteAccountScreen() {
     var isChecked by rememberSaveable { mutableStateOf(false) }
-    val backgroundColor = if (isChecked) Purple else Grey02
+    val backgroundColor = if (isChecked) colors.Purple else colors.Grey02
     var isDialogVisible by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = Black,
+        containerColor = colors.Black,
         topBar = {
             DefaultTopAppBar(
                 title = stringResource(R.string.delete_account),
@@ -89,7 +98,7 @@ fun DeleteAccountScreen() {
                     Text(
                         text = stringResource(R.string.leave_thip_notice_title),
                         style = typography.menu_m500_s16_h24,
-                        color = White
+                        color = colors.White
                     )
                     Spacer(modifier = Modifier.height(40.dp))
                     Text(
@@ -108,13 +117,13 @@ fun DeleteAccountScreen() {
                     Text(
                         text = stringResource(R.string.leave_thip_notice_4),
                         style = typography.copy_r400_s14,
-                        color = White
+                        color = colors.White
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
                         text = stringResource(R.string.leave_thip_notice_5),
                         style = typography.copy_r400_s14,
-                        color = White
+                        color = colors.White
                     )
                 }
             }
@@ -123,7 +132,7 @@ fun DeleteAccountScreen() {
                 Text(
                     text = stringResource(R.string.leave_thip_agree),
                     style = typography.copy_r400_s14,
-                    color = White,
+                    color = colors.White,
                     modifier = Modifier.weight(1f)
                 )
                 CheckboxButton(

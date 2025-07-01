@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
-import com.texthip.thip.ui.common.buttons.HeaderButton
 import com.texthip.thip.ui.common.buttons.OptionChipButton
 import com.texthip.thip.ui.common.cards.NotificationCard
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar

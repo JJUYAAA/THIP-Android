@@ -2,15 +2,12 @@ package com.texthip.thip.ui.myPage.screen
 
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,14 +25,8 @@ import com.texthip.thip.ui.common.forms.BaseInputTextField
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.myPage.component.RoleCard
 import com.texthip.thip.ui.myPage.mock.RoleItem
-import com.texthip.thip.ui.theme.Black
-import com.texthip.thip.ui.theme.Lavendar
-import com.texthip.thip.ui.theme.NeonGreen
-import com.texthip.thip.ui.theme.Orange
-import com.texthip.thip.ui.theme.Pink
-import com.texthip.thip.ui.theme.Skyblue
+import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.ui.theme.White
 
 @Composable
 fun EditProfileScreen() {
@@ -45,35 +36,35 @@ fun EditProfileScreen() {
             stringResource(R.string.literature),
             stringResource(R.string.literary_person),
             R.drawable.character_literature,
-            NeonGreen
+            colors.NeonGreen
         ),
         RoleItem(
             stringResource(R.string.science_it),
             stringResource(R.string.scientist),
             R.drawable.character_science,
-            Lavendar
+            colors.Lavendar
         ),
         RoleItem(
             stringResource(R.string.social_science),
             stringResource(R.string.sociologist),
             R.drawable.character_sociology,
-            Orange
+            colors.Orange
         ),
         RoleItem(
             stringResource(R.string.art),
             stringResource(R.string.artist),
             R.drawable.character_art,
-            Pink
+            colors.Pink
         ),
         RoleItem(
             stringResource(R.string.humanities),
             stringResource(R.string.philosopher),
             R.drawable.character_humanities,
-            Skyblue
+            colors.Skyblue
         )
     )
     Scaffold(
-        containerColor = Black,
+        containerColor = colors.Black,
         topBar = {
             InputTopAppBar(
                 title = stringResource(R.string.edit_profile),
@@ -94,7 +85,7 @@ fun EditProfileScreen() {
             Text(
                 text = stringResource(R.string.change_nickname),
                 style = typography.smalltitle_sb600_s18_h24,
-                color = White,
+                color = colors.White,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 12.dp)
@@ -107,7 +98,7 @@ fun EditProfileScreen() {
             Text(
                 text = stringResource(R.string.edit_role),
                 style = typography.smalltitle_sb600_s18_h24,
-                color = White,
+                color = colors.White,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
@@ -115,7 +106,7 @@ fun EditProfileScreen() {
             Text(
                 text = stringResource(R.string.role_description),
                 style = typography.copy_r400_s14,
-                color = White,
+                color = colors.White,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 12.dp)
@@ -123,7 +114,7 @@ fun EditProfileScreen() {
             Text(
                 text = stringResource(R.string.choice_one),
                 style = typography.info_r400_s12,
-                color = NeonGreen,
+                color = colors.NeonGreen,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 12.dp)
@@ -140,7 +131,7 @@ fun EditProfileScreen() {
                         genre = RoleItem.genre,
                         role = RoleItem.role,
                         imageResId = RoleItem.imageResId,
-                        genreColor = White,
+                        genreColor = colors.White,
                         roleColor = RoleItem.roleColor,
                         selected = selectedIndex == index,
                         onClick = { selectedIndex = index }

@@ -76,7 +76,7 @@ fun SavedFeedCard(
         Text(
             text = feedItem.content,
             style = typography.feedcopy_r400_s14_h20,
-            color = White,
+            color = colors.White,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
@@ -88,12 +88,12 @@ fun SavedFeedCard(
                 modifier = Modifier.clickable { onLikeClick() },
                 painter = painterResource(R.drawable.ic_heart),
                 contentDescription = null,
-                tint = if (feedItem.isLiked) Red else colors.White
+                tint = if (feedItem.isLiked) colors.Red else colors.White
             )
             Text(
                 text = feedItem.likeCount.toString(),
                 style = typography.feedcopy_r400_s14_h20,
-                color = White,
+                color = colors.White,
                 modifier = Modifier.padding(start = 5.dp, end = 12.dp)
             )
             Icon(
@@ -104,7 +104,7 @@ fun SavedFeedCard(
             Text(
                 text = feedItem.commentCount.toString(),
                 style = typography.feedcopy_r400_s14_h20,
-                color = White,
+                color = colors.White,
                 modifier = Modifier.padding(start = 5.dp, end = 12.dp)
             )
             Spacer(modifier = Modifier.weight(1f))

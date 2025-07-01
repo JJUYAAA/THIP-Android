@@ -39,6 +39,7 @@ import com.texthip.thip.ui.myPage.viewmodel.SavedBookViewModel
 import com.texthip.thip.ui.myPage.viewmodel.SavedFeedViewModel
 import com.texthip.thip.ui.theme.Black
 import com.texthip.thip.ui.theme.Grey02
+import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.ui.theme.White
 
@@ -65,7 +66,7 @@ fun SavedScreen() {
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
                     containerColor = Color.Transparent,
-                    contentColor = White,
+                    contentColor = colors.White,
                     indicator = { tabPositions ->
                         val tabPosition = tabPositions[selectedTabIndex]
 
@@ -87,8 +88,8 @@ fun SavedScreen() {
                             modifier = Modifier.width(60.dp),
                             selected = selected,
                             onClick = { selectedTabIndex = index },
-                            selectedContentColor = White,
-                            unselectedContentColor = Grey02,
+                            selectedContentColor = colors.White,
+                            unselectedContentColor = colors.Grey02,
                             text = {
                                 Box(
                                     contentAlignment = Alignment.Center

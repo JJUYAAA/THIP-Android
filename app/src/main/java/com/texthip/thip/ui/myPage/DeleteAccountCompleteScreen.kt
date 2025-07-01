@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,15 +22,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.theme.Black
+import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.ui.theme.White
 
 
 @Composable
 fun DeleteAccountCompleteScreen() {
     Scaffold(
-        containerColor = Black,
+        containerColor = colors.Black,
         topBar = {
             DefaultTopAppBar(
                 isRightIconVisible = false,
@@ -50,7 +48,7 @@ fun DeleteAccountCompleteScreen() {
             Text(
                 text = stringResource(R.string.delete_account_complete),
                 style = typography.title_b700_s20_h24,
-                color = White,
+                color = colors.White,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -59,7 +57,7 @@ fun DeleteAccountCompleteScreen() {
             Text(
                 text = stringResource(R.string.see_you_again),
                 style = typography.menu_m500_s16_h24,
-                color = White,
+                color = colors.White,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()

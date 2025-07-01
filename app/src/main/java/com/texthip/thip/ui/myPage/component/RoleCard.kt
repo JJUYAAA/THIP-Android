@@ -33,6 +33,7 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.theme.DarkGrey
 import com.texthip.thip.ui.theme.NeonGreen
 import com.texthip.thip.ui.theme.Pink
+import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.ui.theme.White
 
@@ -52,12 +53,12 @@ fun RoleCard(
     val backgroundBrush = if (selected) {
         Brush.verticalGradient(
             colors = listOf(
-                Color.Black.copy(alpha = 0.7f), //상단은 어둡게
-                Color.White.copy(alpha = 0.2f)  //하단은 밝게
+                colors.Black.copy(alpha = 0.7f), //상단은 어둡게
+                colors.White.copy(alpha = 0.2f)  //하단은 밝게
             )
         )
     } else {
-        SolidColor(Color.Black.copy(alpha = 0.3f))
+        SolidColor(colors.Black.copy(alpha = 0.3f))
     }
     Box(
         modifier = modifier
