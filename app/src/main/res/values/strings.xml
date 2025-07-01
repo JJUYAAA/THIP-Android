@@ -74,6 +74,8 @@
     <string name="menu">메뉴</string>
     <string name="likes">좋아요</string>
     <string name="comments">댓글</string>
+    <string name="feed">피드</string>
+    <string name="book">책</string>
     <string name="edit_profile">프로필 편집</string>
     <string name="change_nickname">닉네임 변경</string>
     <string name="edit_role">칭호 편집</string>
@@ -82,7 +84,6 @@
 
     <string name="ask_account_deletion">정말로 탈퇴하시겠어요?</string>
     <string name="delete_account_description">\'예\'를 누르면 모든 기록이 사라져요.</string>
-
 
     <string name="literature">문학</string>
     <string name="literary_person">문학가</string>
