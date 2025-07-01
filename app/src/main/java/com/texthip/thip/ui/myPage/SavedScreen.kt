@@ -123,18 +123,9 @@ fun FeedContent(viewModel: SavedFeedViewModel = viewModel()) {
             val profileImagePainter = feed.userProfileImage?.let { painterResource(it) }
 
             SavedFeedCard(
-                user_name = feed.userName,
-                user_role = feed.userRole,
-                user_profile_image = profileImagePainter,
-                book_title = feed.bookTitle,
-                auth_name = feed.authName,
-                time_ago = feed.timeAgo,
-                content = feed.content,
-                like_count = feed.likeCount,
-                comment_count = feed.commentCount,
-                is_like = feed.isLiked,
-                is_saved = feed.isSaved,
-                imageRes = bookImagePainter,
+                feedItem = feed,
+                bookImage = bookImagePainter,
+                profileImage = profileImagePainter,
                 onBookmarkClick = { viewModel.toggleBookmark(feed.id) },
                 onLikeClick = { viewModel.toggleLike(feed.id) }
             )
