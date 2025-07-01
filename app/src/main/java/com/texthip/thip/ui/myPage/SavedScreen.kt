@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,7 +46,7 @@ import com.texthip.thip.ui.theme.White
 
 @Composable
 fun SavedScreen() {
-    val tabs = listOf("피드", "책")
+    val tabs = listOf(stringResource(R.string.feed), stringResource(R.string.book))
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
 
     Scaffold(
@@ -91,14 +92,11 @@ fun SavedScreen() {
                             selectedContentColor = colors.White,
                             unselectedContentColor = colors.Grey02,
                             text = {
-                                Box(
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = title,
-                                        style = typography.smalltitle_sb600_s18_h24
-                                    )
-                                }
+                                Text(
+                                    textAlign = TextAlign.Center,
+                                    text = title,
+                                    style = typography.smalltitle_sb600_s18_h24
+                                )
                             }
                         )
                     }
