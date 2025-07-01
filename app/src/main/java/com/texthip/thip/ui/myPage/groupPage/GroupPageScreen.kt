@@ -43,8 +43,7 @@ fun GroupPageScreen(
     ) {
         LazyColumn(
             Modifier
-                .fillMaxSize()
-                .padding(bottom = 32.dp), // FAB 공간 확보
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             // 상단바

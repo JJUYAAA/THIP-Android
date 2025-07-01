@@ -23,7 +23,7 @@ fun MyGroupPager(
     // Pager 상태
     val pagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { groupCards.size }
+        pageCount = { maxOf(1, groupCards.size) }
     )
 
     Box(

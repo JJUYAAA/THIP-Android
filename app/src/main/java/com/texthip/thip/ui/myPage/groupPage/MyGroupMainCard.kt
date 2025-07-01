@@ -52,7 +52,7 @@ fun MyGroupMainCard(
         end = Offset(1000f, 1000f)
     )
 
-    val progressState by remember {
+    val progressState by remember(data.progress) {
         mutableFloatStateOf(data.progress / 100f)
     }
 

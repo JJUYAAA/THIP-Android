@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.myPage.groupPage
 
+import android.R.attr.textStyle
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +32,7 @@ fun SearchTextField(
     onValueChange: (String) -> Unit
 ) {
     var value by rememberSaveable { mutableStateOf("") }
+    val textStyle = typography.menu_r400_s14_h24.copy(lineHeight = 20.sp) // 기본값 제공
 
     Box(
         Modifier
@@ -40,7 +42,11 @@ fun SearchTextField(
     ) {
         OutlinedTextField(
             value = value,
-            onValueChange = onValueChange,
+            onValueChange = { newValue ->
+                value = newValue
+                onValueChange(newValue)
+            },
+            textStyle = textStyle,
             modifier = Modifier
                 .fillMaxWidth(),
             placeholder = {

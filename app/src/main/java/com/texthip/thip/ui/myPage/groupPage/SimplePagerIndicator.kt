@@ -15,9 +15,9 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
 fun SimplePagerIndicator(
+    modifier: Modifier = Modifier,
     pageCount: Int,
-    currentPage: Int,
-    modifier: Modifier = Modifier
+    currentPage: Int
 ) {
     Row(
         modifier = modifier,

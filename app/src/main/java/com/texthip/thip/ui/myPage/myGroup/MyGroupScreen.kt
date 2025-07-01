@@ -50,6 +50,7 @@ fun MyGroupScreen(
         Modifier
             .background(colors.Black)
             .fillMaxSize()
+            .padding(bottom = 20.dp)
     ) {
         DefaultTopAppBar(
             title = stringResource(R.string.myGroupRoom),
