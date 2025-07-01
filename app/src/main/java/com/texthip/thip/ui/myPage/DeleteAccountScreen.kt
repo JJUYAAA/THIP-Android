@@ -148,8 +148,7 @@ fun DeleteAccountScreen() {
             Dialog(onDismissRequest = { isDialogVisible = false }) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(colors.Black.copy(alpha = 0.5f)),
+                        .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     DialogPopup(
