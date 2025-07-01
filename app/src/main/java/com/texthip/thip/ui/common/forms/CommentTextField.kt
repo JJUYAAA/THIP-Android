@@ -40,6 +40,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun CommentTextField(
     modifier: Modifier = Modifier,
+    hint: String,
     input: String,
     onInputChange: (String) -> Unit,
     onSendClick: () -> Unit,
@@ -88,7 +89,6 @@ fun CommentTextField(
             }
         }
 
-        // 텍스트 필드 영역
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -109,7 +109,7 @@ fun CommentTextField(
                 decorationBox = { innerTextField ->
                     if (input.isEmpty()) {
                         Text(
-                            text = replyTo?.let { "" } ?: "00님에게 댓글을 남겨보세요.",
+                            text = hint,
                             color = colors.Grey02,
                             style = typography.menu_r400_s14_h24
                         )
@@ -154,9 +154,9 @@ private fun CommentTextFieldPreview() {
     ThipTheme {
         CommentTextField(
             input = input,
+            hint = "00님에게 댓글을 남겨보세요.",
             onInputChange = { input = it },
             onSendClick = {
-                // 전송 처리 로직
                 input = ""
                 replyTo = null
             },
