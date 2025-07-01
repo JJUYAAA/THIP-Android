@@ -62,4 +62,5 @@
     <string name="group_room_chat">오늘의 한마디</string>
     <string name="group_room_chat_description">모임방 멤버들과 간단한 인사를 나눠보세요!</string>
     <string name="group_room_mates">독서메이트</string>
+    <string name="comment_to">님에게 답글 작성</string>
 </resources>
