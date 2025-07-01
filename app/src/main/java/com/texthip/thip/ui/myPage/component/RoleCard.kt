@@ -52,8 +52,8 @@ fun RoleCard(
     val backgroundBrush = if (selected) {
         Brush.verticalGradient(
             colors = listOf(
-                Color.Black.copy(alpha = 0.6f), //상단은 어둡게
-                Color.White.copy(alpha = 0.3f)  //하단은 밝게
+                Color.Black.copy(alpha = 0.7f), //상단은 어둡게
+                Color.White.copy(alpha = 0.2f)  //하단은 밝게
             )
         )
     } else {
@@ -64,11 +64,11 @@ fun RoleCard(
             .width(162.dp)
             .height(100.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(brush = backgroundBrush, shape = RoundedCornerShape(16.dp))
+            .background(brush = backgroundBrush, shape = RoundedCornerShape(12.dp))
             .border(
                 width = 1.dp,
                 color = borderColor,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(12.dp)
             )
             .clickable { onClick() }
     ) {
@@ -101,7 +101,7 @@ fun RoleCard(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000)
+@Preview(showBackground = true, backgroundColor = 0xFF121212)
 @Composable
 fun RoleCardPreview() {
     var selected1 by rememberSaveable { mutableStateOf(true) }

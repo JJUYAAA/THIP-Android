@@ -37,7 +37,6 @@ val DarkGrey = Color(0xFF3D3D3D)
 val DarkGrey50 = Color(0x803D3D3D)
 val DarkGrey02 = Color(0xFF282828)
 val DarkGrey01 = Color(0x4B4B4B4B)
-
 val Black = Color(0xFF121212)
 val Black50 = Color(0x80121212)
 val Black10 = Color(0x1A121212)
