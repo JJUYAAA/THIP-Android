@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
-import com.texthip.thip.ui.common.modal.Toast
+import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -49,7 +49,7 @@ fun NotificationScreen() {
                     .padding(horizontal = 15.dp, vertical = 15.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
-                Toast(
+                ToastWithDate(
                     message = stringResource(
                         if (message == "push_on") R.string.push_on else R.string.push_off
                     ),

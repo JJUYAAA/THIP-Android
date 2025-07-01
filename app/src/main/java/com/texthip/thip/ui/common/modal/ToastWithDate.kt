@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.common.modal
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +22,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun Toast(
+fun ToastWithDate(
     modifier: Modifier = Modifier,
     message: String,
     date: String
@@ -35,7 +36,7 @@ fun Toast(
                 color = colors.Grey02,
                 shape = RoundedCornerShape(12.dp)
             )
-            .padding(horizontal = 15.dp, vertical = 15.dp)
+            .padding(15.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -59,7 +60,7 @@ fun Toast(
 @Preview(showBackground = true)
 @Composable
 fun ToastPrev() {
-    Toast(
+    ToastWithDate(
         message = stringResource(R.string.push_off),
         date = "2025년 6월 29일 22시 30분",
         modifier = Modifier.fillMaxWidth()

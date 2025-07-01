@@ -33,6 +33,7 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.theme.DarkGrey
 import com.texthip.thip.ui.theme.NeonGreen
 import com.texthip.thip.ui.theme.Pink
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.ui.theme.White
@@ -102,34 +103,36 @@ fun RoleCard(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF121212)
+@Preview
 @Composable
 fun RoleCardPreview() {
     var selected1 by rememberSaveable { mutableStateOf(true) }
     var selected2 by rememberSaveable { mutableStateOf(false) }
 
-    Row(
-        modifier = Modifier.padding(20.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        RoleCard(
-            genre = "문학",
-            role = "문학가",
-            imageResId = R.drawable.character_literature,
-            genreColor = White,
-            roleColor = NeonGreen,
-            selected = selected1,
-            onClick = { selected1 = !selected1 }
-        )
+    ThipTheme {
+        Row(
+            modifier = Modifier.padding(20.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            RoleCard(
+                genre = "문학",
+                role = "문학가",
+                imageResId = R.drawable.character_literature,
+                genreColor = White,
+                roleColor = NeonGreen,
+                selected = selected1,
+                onClick = { selected1 = !selected1 }
+            )
 
-        RoleCard(
-            genre = "예술",
-            role = "예술가",
-            imageResId = R.drawable.character_art,
-            genreColor = White,
-            roleColor = Pink,
-            selected = selected2,
-            onClick = { selected2 = !selected2 }
-        )
+            RoleCard(
+                genre = "예술",
+                role = "예술가",
+                imageResId = R.drawable.character_art,
+                genreColor = White,
+                roleColor = Pink,
+                selected = selected2,
+                onClick = { selected2 = !selected2 }
+            )
+        }
     }
 }
