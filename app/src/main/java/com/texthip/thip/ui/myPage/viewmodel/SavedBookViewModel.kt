@@ -5,17 +5,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.texthip.thip.ui.myPage.mock.BookItem
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 
 class SavedBookViewModel : ViewModel() {
 
-    var bookList by mutableStateOf<List<BookItem>>(emptyList())
-        private set
+    private val _bookList = MutableStateFlow<List<BookItem>>(emptyList())
+    val bookList: StateFlow<List<BookItem>> = _bookList
+
     init {
         loadMockBooks()
     }
 
     private fun loadMockBooks() {
-        bookList = listOf(
+        _bookList.value = listOf(
             BookItem(
                 id = 1,
                 title = "이기적 유전자",
@@ -84,7 +88,7 @@ class SavedBookViewModel : ViewModel() {
     }
 
     fun toggleBookmark(id: Int) {
-        bookList = bookList.map {
+        _bookList.value = _bookList.value.map {
             if (it.id == id) it.copy(isSaved = !it.isSaved) else it
         }
     }

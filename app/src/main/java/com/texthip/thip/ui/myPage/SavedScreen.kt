@@ -144,7 +144,7 @@ fun FeedContent(viewModel: SavedFeedViewModel = viewModel()) {
 
 @Composable
 fun BookContent(viewModel: SavedBookViewModel = viewModel()) {
-    val books = viewModel.bookList
+    val books by viewModel.bookList.collectAsState()
 
     LazyColumn {
         items(items = books, key = { it.id }) { book ->

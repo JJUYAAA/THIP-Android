@@ -11,75 +11,76 @@ class SavedFeedViewModel: ViewModel() {
         listOf(
             FeedItem(
                 id = 1,
-                user_profile_image = R.drawable.character_art,
-                user_name = "user",
-                user_role = "학생",
-                book_title = "라랄ㄹ라라",
-                auth_name = "야야야",
-                time_ago = 15,
+                userProfileImage = R.drawable.character_art,
+                userName = "user",
+                userRole = "학생",
+                bookTitle = "라랄ㄹ라라",
+                authName = "야야야",
+                timeAgo = 15,
                 content = "진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공",
-                like_count = 25,
-                comment_count = 4,
-                is_liked = false,
-                is_saved = true
+                likeCount = 25,
+                commentCount = 4,
+                isLiked = false,
+                isSaved = true
             ),
             FeedItem(
                 id = 2,
-                user_profile_image = R.drawable.character_art,
-                user_name = "user",
-                user_role = "학생",
-                book_title = "라랄ㄹ라라",
-                auth_name = "야야야",
-                time_ago = 15,
-                content = "진짜최공진짜최공진차최공",
-                like_count = 25,
-                comment_count = 4,
-                is_liked = false,
-                is_saved = true,
+                userProfileImage = R.drawable.character_art,
+                userName = "user",
+                userRole = "학생",
+                bookTitle = "라랄ㄹ라라",
+                authName = "야야야",
+                timeAgo = 15,
+                content = "너무 재밌네요..",
+                likeCount = 25,
+                commentCount = 4,
+                isLiked = false,
+                isSaved = true,
                 imageUrl = R.drawable.bookcover_sample
             ),
             FeedItem(
                 id = 3,
-                user_profile_image = R.drawable.character_art,
-                user_name = "user",
-                user_role = "학생",
-                book_title = "라랄ㄹ라라",
-                auth_name = "야야야",
-                time_ago = 15,
-                content = "진짜최공진짜최공진차최공",
-                like_count = 25,
-                comment_count = 4,
-                is_liked = false,
-                is_saved = true
+                userProfileImage = R.drawable.character_art,
+                userName = "user",
+                userRole = "학생",
+                bookTitle = "라랄ㄹ라라",
+                authName = "야야야",
+                timeAgo = 15,
+                content = "너무 재밌네요..",
+                likeCount = 25,
+                commentCount = 4,
+                isLiked = false,
+                isSaved = true,
+                imageUrl = R.drawable.bookcover_sample
             ),
             FeedItem(
                 id = 4,
-                user_profile_image = R.drawable.character_literature,
-                user_name = "user",
-                user_role = "학생",
-                book_title = "라랄ㄹ라라",
-                auth_name = "야야야",
-                time_ago = 15,
+                userProfileImage = R.drawable.character_art,
+                userName = "user",
+                userRole = "학생",
+                bookTitle = "책이름책이름",
+                authName = "저자이름저자이름",
+                timeAgo = 25,
                 content = "진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공",
-                like_count = 25,
-                comment_count = 4,
-                is_liked = false,
-                is_saved = true
+                likeCount = 25,
+                commentCount = 4,
+                isLiked = false,
+                isSaved = true,
+                imageUrl = R.drawable.bookcover_sample
             ),
             FeedItem(
                 id = 5,
-                user_profile_image = R.drawable.character_sociology,
-                user_name = "user",
-                user_role = "학생",
-                book_title = "라랄ㄹ라라",
-                auth_name = "야야야",
-                time_ago = 15,
-                content = "진짜최공진짜최공진차최공",
-                like_count = 25,
-                comment_count = 4,
-                is_liked = false,
-                is_saved = true,
-                imageUrl = R.drawable.bookcover_sample
+                userProfileImage = R.drawable.character_art,
+                userName = "user",
+                userRole = "학생",
+                bookTitle = "책이름책이름",
+                authName = "저자이름저자이름",
+                timeAgo = 25,
+                content = "진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공",
+                likeCount = 25,
+                commentCount = 4,
+                isLiked = true,
+                isSaved = true
             ),
 
 
@@ -89,13 +90,13 @@ class SavedFeedViewModel: ViewModel() {
 
     fun toggleBookmark(id: Int) {
         _feeds.value = _feeds.value.map {
-            if (it.id == id) it.copy(is_saved = !it.is_saved) else it
+            if (it.id == id) it.copy(isSaved = !it.isSaved) else it
         }
     }
 
     fun toggleLike(id: Int) {
         _feeds.value = _feeds.value.map {
-            if (it.id == id) it.copy(is_liked = !it.is_liked) else it
+            if (it.id == id) it.copy(isLiked = !it.isLiked) else it
         }
     }
 }
