@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.common.cards
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -41,6 +42,8 @@ fun CardAlarm(
     message: String,
     timeAgo: String,
     isRead: Boolean = false,
+    containerColorUnread: Color = colors.DarkGrey,  // 안읽음 상태의 배경색
+    containerColorRead: Color = colors.DarkGrey02, // 읽음 상태의 배경색
     onClick: () -> Unit = {}
 ) {
     Card(
@@ -48,7 +51,7 @@ fun CardAlarm(
             .fillMaxWidth()
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = if (isRead) colors.DarkGrey else colors.DarkGrey02
+            containerColor = if (isRead) containerColorUnread else containerColorRead
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(12.dp)
