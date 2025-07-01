@@ -39,6 +39,11 @@
     <!--    카드 컴포넌트    -->
     <string name="time_ago">시간 전</string>
     <string name="change">변경</string>
+    <string name="CardItemEndDate">"%1$s일 뒤 "</string>
+    <string name="CardItemEnd">모집 마감</string>
+    <string name="CardItemFinish">종료</string>
+    <string name="CardItemParticipant">%1$s명 참여</string>
+    <string name="CardItemParicipantCount">%1$s / %2$s명</string>
 
     <!--    TextField 컴포넌트    -->
     <string name="error_page_over">해당 도서는 %1$dp까지만 있습니다.</string>
@@ -63,6 +68,12 @@
     <string name="groupParticipant">%1$s명 참여</string>
     <string name="groupProgress">"%1$s의 진행도 "</string>
     <string name="groupSearchPlaceHolder">모임방 참여할 사람!</string>
+    <string name="cardItemEndDate">%1$s일 뒤 모집 마감</string>
+    <string name="GroupRoomScreenParticipantCount">%1$s / %2$s</string>
+    <string name="GroupRoomScreenEndDate">%1$s일 남음</string>
+    <string name="GroupRoomScreenParticipant">참여하기</string>
+    <string name="GroupRoomScreenCancle">참여 취소하기</string>
+    <string name="GroupRoomScreenEnd">모집 마감하기</string>
 
 
 </resources>

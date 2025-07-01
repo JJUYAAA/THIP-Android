@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -106,7 +107,7 @@ fun CardItemRoomSmall(
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "${endDate}일 뒤 모집 마감",
+                        text = stringResource(R.string.cardItemEndDate, endDate),
                         color = colors.Red,
                         style = typography.menu_sb600_s12_h20
                     )

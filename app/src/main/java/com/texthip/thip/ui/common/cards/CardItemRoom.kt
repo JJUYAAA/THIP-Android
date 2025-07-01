@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -110,9 +111,13 @@ fun CardItemRoom(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = if (isRecruiting) {
-                                "$participants / ${maxParticipants}명"
+                                stringResource(
+                                    R.string.CardItemParicipantCount,
+                                    participants,
+                                    maxParticipants
+                                )
                             } else {
-                                "${participants}명 참여"
+                                stringResource(R.string.CardItemParticipant, participants)
                             },
                             color = colors.White,
                             style = typography.info_m500_s12,
@@ -120,7 +125,13 @@ fun CardItemRoom(
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                     Text(
-                        text = "${endDate}일 뒤 " + if (isRecruiting) "모집 마감" else "종료",
+                        text = stringResource(
+                            R.string.CardItemEndDate,
+                            endDate
+                        ) + if (isRecruiting) stringResource(
+                            R.string.CardItemEnd
+                        ) else stringResource(R.string.CardItemFinish),
+
                         color = if (isRecruiting) colors.Red else colors.Grey01,
                         style = typography.menu_sb600_s12_h20,
                         maxLines = 1
@@ -130,7 +141,6 @@ fun CardItemRoom(
         }
     }
 }
-
 
 
 @Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360)

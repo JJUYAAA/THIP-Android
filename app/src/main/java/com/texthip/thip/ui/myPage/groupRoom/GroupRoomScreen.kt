@@ -148,7 +148,11 @@ fun GroupRoomScreen(
                         }
                         Spacer(Modifier.height(12.dp))
                         Text(
-                            text = "${detail.members} / ${detail.maxMembers}",
+                            text = stringResource(
+                                R.string.GroupRoomScreenParticipantCount,
+                                detail.members,
+                                detail.maxMembers
+                            ),
                             style = typography.info_r400_s12,
                             color = colors.White
                         )
@@ -172,7 +176,10 @@ fun GroupRoomScreen(
                                 color = colors.White
                             )
                             Text(
-                                text = "${detail.daysLeft}일 남음",
+                                text = stringResource(
+                                    R.string.GroupRoomScreenEndDate,
+                                    detail.daysLeft
+                                ),
                                 style = typography.info_m500_s12,
                                 color = colors.NeonGreen
                             )
@@ -242,9 +249,9 @@ fun GroupRoomScreen(
 
         // 하단 버튼
         val buttonText = when (buttonType) {
-            BottomButtonType.JOIN -> "참여하기"
-            BottomButtonType.CANCEL -> "참여 취소하기"
-            BottomButtonType.CLOSE -> "모집 마감하기"
+            BottomButtonType.JOIN -> stringResource(R.string.GroupRoomScreenParticipant)
+            BottomButtonType.CANCEL -> stringResource(R.string.GroupRoomScreenCancle)
+            BottomButtonType.CLOSE -> stringResource(R.string.GroupRoomScreenEnd)
         }
         val buttonColor = when (buttonType) {
             BottomButtonType.JOIN -> colors.Purple
