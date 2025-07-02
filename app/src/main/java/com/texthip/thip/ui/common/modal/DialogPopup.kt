@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -47,7 +45,7 @@ fun DialogPopup(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxSize()
         ) {
-            Column {
+            Column (){
                 Text(
                     text = title,
                     color = colors.White,
@@ -61,7 +59,6 @@ fun DialogPopup(
                 )
             }
 
-            //TODO: 추후 버튼 공통 컴포넌트로 변경
             Row(
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxWidth()
@@ -71,14 +68,14 @@ fun DialogPopup(
                     contentColor = colors.White,
                     backgroundColor = colors.Grey02,
                     modifier = Modifier.weight(1f),
-                    onClick = {},
+                    onClick = onCancel,
                 )
                 ActionMediumButton(
                     text = stringResource(R.string.yes),
                     contentColor = colors.White,
                     backgroundColor = colors.Purple,
                     modifier = Modifier.weight(1f),
-                    onClick = {},
+                    onClick = onConfirm,
                 )
             }
 

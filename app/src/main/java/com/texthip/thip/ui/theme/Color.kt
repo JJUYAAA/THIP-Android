@@ -20,6 +20,7 @@ val OrangeSub = Color(0xFFFF8B17)
 val genreColor = Color(0xFFB5B35D)
 val Skyblue = Color(0xFFA1D5FF)
 val SkyblueSub = Color(0xFF6DB5EE)
+val Pink = Color(0xFFFF8BAC)
 val Lavendar = Color(0xFFC8A5FF)
 val LavendaSub = Color(0xFFA76FFF)
 val Yellow = Color(0xFFFFECA7)
@@ -36,7 +37,6 @@ val DarkGrey = Color(0xFF3D3D3D)
 val DarkGrey50 = Color(0x803D3D3D)
 val DarkGrey02 = Color(0xFF282828)
 val DarkGrey01 = Color(0x4B4B4B4B)
-
 val Black = Color(0xFF121212)
 val Black50 = Color(0x80121212)
 val Black10 = Color(0x1A121212)
@@ -57,6 +57,7 @@ data class ThipColors(
     val genreColor: Color,
     val Skyblue: Color,
     val SkyblueSub: Color,
+    val Pink: Color,
     val Lavendar: Color,
     val LavendaSub: Color,
     val Yellow: Color,
@@ -91,6 +92,7 @@ val defaultThipColors = ThipColors(
     genreColor = genreColor,
     Skyblue = Skyblue,
     SkyblueSub = SkyblueSub,
+    Pink = Pink,
     Lavendar = Lavendar,
     LavendaSub = LavendaSub,
     Yellow = Yellow,

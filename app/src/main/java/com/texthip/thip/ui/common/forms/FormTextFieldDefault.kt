@@ -4,6 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,7 +36,8 @@ fun FormTextFieldDefault(
     hint: String,
     showLimit: Boolean = false,
     limit: Int = 10,
-    showIcon: Boolean = true
+    showIcon: Boolean = true,
+    containerColor: Color = colors.Black
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     val myStyle = typography.menu_r400_s14_h24.copy(lineHeight = 14.sp)
@@ -41,7 +45,8 @@ fun FormTextFieldDefault(
     // 글자수 제한 적용
     val displayText = if (showLimit && text.length > limit) text.substring(0, limit) else text
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier
+        .height(48.dp)) {
         OutlinedTextField(
             value = displayText,
             onValueChange = {
@@ -56,15 +61,14 @@ fun FormTextFieldDefault(
                 )
             },
             textStyle = myStyle,
-            modifier = Modifier
-                .size(width = 320.dp, height = 48.dp),
+            modifier = Modifier.fillMaxSize(),
             shape = RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = colors.White,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                focusedContainerColor = colors.Black,
-                unfocusedContainerColor = colors.Black,
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = containerColor,
                 cursorColor = colors.NeonGreen
             ),
             trailingIcon = {

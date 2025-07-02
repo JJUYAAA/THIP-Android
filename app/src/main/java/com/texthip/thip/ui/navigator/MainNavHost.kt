@@ -7,7 +7,7 @@ import androidx.navigation.NavHostController
 import com.texthip.thip.ui.bookSearch.screen.BookSearchScreen
 import com.texthip.thip.ui.feed.screen.FeedScreen
 import com.texthip.thip.ui.group.screen.GroupScreen
-import com.texthip.thip.ui.myPage.MyPageScreen
+import com.texthip.thip.ui.myPage.screen.MyPageScreen
 
 @Composable
 fun MainNavHost(navController: NavHostController) {
@@ -15,6 +15,12 @@ fun MainNavHost(navController: NavHostController) {
         composable(Routes.Feed.route) { FeedScreen(navController) }
         composable(Routes.Group.route) { GroupScreen(navController) }
         composable(Routes.BookSearch.route) { BookSearchScreen(navController) }
-        composable(Routes.MyPage.route) { MyPageScreen(navController) }
+        composable(Routes.MyPage.route) {
+            MyPageScreen(
+                navController,
+                nickname = "ThipUser01",
+                badgeText = "문학가"
+            )
+        }
     }
 }
