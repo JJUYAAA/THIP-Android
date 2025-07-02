@@ -10,8 +10,8 @@ import com.texthip.thip.ui.common.buttons.OptionChipButton
 
 @Composable
 fun FilterRow(
-    selectedIndex: Int,
-    onSelect: (Int) -> Unit
+    selectedStates: BooleanArray,
+    onToggle: (Int) -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -19,14 +19,13 @@ fun FilterRow(
         OptionChipButton(
             text = stringResource(R.string.onGoing),
             isFilled = true,
-            isSelected = selectedIndex == 0,
-            onClick = { onSelect(0) }
+            onClick = { onToggle(0) }
         )
         OptionChipButton(
             text = stringResource(R.string.recruiting),
             isFilled = true,
-            isSelected = selectedIndex == 1,
-            onClick = { onSelect(1) }
+            onClick = { onToggle(1) }
         )
     }
 }
+

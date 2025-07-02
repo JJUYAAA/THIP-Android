@@ -36,16 +36,22 @@ fun MyGroupScreen(
     allDataList: List<CardItemRoomData>,
     onCardClick: (CardItemRoomData) -> Unit = {}
 ) {
-    var selectedIndex by remember { mutableStateOf(0) }
+    var selectedStates by remember { mutableStateOf(booleanArrayOf(false, false)) }
+    // [0] = 진행중, [1] = 모집중
 
-    // 필터링
-    val filteredList = remember(selectedIndex, allDataList) {
-        if (selectedIndex == 0) {
+    val filteredList = remember(selectedStates, allDataList) {
+        // 둘 다 false면 전체, 둘 다 true면 전체
+        if (selectedStates.all { !it } || selectedStates.all { it }) {
+            allDataList
+        } else if (selectedStates[0]) {
             allDataList.filter { !it.isRecruiting }
-        } else {
+        } else if (selectedStates[1]) {
             allDataList.filter { it.isRecruiting }
+        } else {
+            allDataList // safety, but 위에서 이미 걸러짐
         }
     }
+
     Column(
         Modifier
             .background(colors.Black)
@@ -64,11 +70,15 @@ fun MyGroupScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            FilterRow(selectedIndex = selectedIndex, onSelect = { selectedIndex = it })
+            FilterRow(
+                selectedStates = selectedStates,
+                onToggle = { idx ->
+                    selectedStates = selectedStates.copyOf().also { it[idx] = !it[idx] }
+                }
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 리스트
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxSize()
