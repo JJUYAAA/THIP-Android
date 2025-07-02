@@ -156,7 +156,7 @@ fun PreviewMyGroupMainCard() {
                 members = 22,
                 imageRes = R.drawable.bookcover_sample,
                 progress = 42,
-                nickname = "uibowl님의"
+                nickname = "uibowl"
             ),
             onClick = {}
         )
