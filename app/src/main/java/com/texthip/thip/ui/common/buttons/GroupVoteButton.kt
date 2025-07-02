@@ -31,19 +31,21 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupVoteButton(
+    modifier: Modifier = Modifier,
     options: List<String>,
-    voteResults: List<Int>
+    voteResults: List<Int>,
+    selectedIndex: Int?, // 외부에서 전달받은 선택 상태
+    onOptionSelected: (Int?) -> Unit // 클릭 시 선택 변경 콜백
 ) {
-    var selectedIndex by remember { mutableStateOf<Int?>(null) }
+    val hasVoted = selectedIndex != null
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         options.forEachIndexed { index, option ->
             val isSelected = selectedIndex == index
-            val hasVoted = selectedIndex != null
             val votePercent = if (hasVoted) voteResults.getOrNull(index)?.coerceIn(0, 100) ?: 0 else 0
 
             val animatedPercent by animateFloatAsState(
@@ -72,10 +74,13 @@ fun GroupVoteButton(
                     .background(color = backgroundColor, shape = RoundedCornerShape(12.dp))
                     .height(44.dp)
                     .clickable {
-                        selectedIndex = if (isSelected) null else index
+                        if (isSelected) {
+                            onOptionSelected(null) // -1 → 취소 의미
+                        } else {
+                            onOptionSelected(index)
+                        }
                     }
             ) {
-                // 퍼센트 채우기
                 if (hasVoted) {
                     Box(
                         modifier = Modifier
@@ -102,7 +107,7 @@ fun GroupVoteButton(
                     )
                     if (hasVoted) {
                         Text(
-                            text = "${votePercent}%",
+                            text = "$votePercent%",
                             color = textColor,
                             style = fontStyle
                         )
@@ -118,13 +123,16 @@ fun GroupVoteButton(
 private fun GroupVoteButtonPreview() {
     val options = listOf("밥", "국수", "고기")
     val results = listOf(20, 30, 50)
+    var selected by remember { mutableStateOf<Int?>(null) }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         GroupVoteButton(
             options = options,
-            voteResults = results
+            voteResults = results,
+            selectedIndex = selected,
+            onOptionSelected = { selected = it }
         )
     }
 }

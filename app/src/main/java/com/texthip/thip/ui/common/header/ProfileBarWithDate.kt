@@ -3,17 +3,16 @@ package com.texthip.thip.ui.common.header
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,39 +38,43 @@ fun ProfileBarWithDate(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        if (profileImage != null) {
-            Image(
-                painter = profileImage,
-                contentDescription = "프로필 이미지",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clip(CircleShape)
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clip(CircleShape)
-                    .background(colors.Grey)
-            )
+        Row {
+            if (profileImage != null) {
+                Image(
+                    painter = profileImage,
+                    contentDescription = "프로필 이미지",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(CircleShape)
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(colors.Grey)
+                )
+            }
+            Spacer(modifier = Modifier.width(4.dp))
+            Column {
+                Text(
+                    text = nickname,
+                    style = typography.menu_sb600_s12,
+                    color = colors.White
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = dateText,
+                    style = typography.timedate_r400_s11,
+                    color = colors.Grey01
+                )
+            }
         }
-        Spacer(modifier = Modifier.width(8.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = nickname,
-                style = typography.menu_sb600_s12,
-                color = colors.White
-            )
-            Text(
-                text = dateText,
-                style = typography.timedate_r400_s11,
-                color = colors.Grey01
-            )
-        }
+
         Icon(
             painter = painterResource(R.drawable.ic_more),
             contentDescription = "메뉴",
@@ -82,6 +85,7 @@ fun ProfileBarWithDate(
         )
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewProfileBarWithDate() {
