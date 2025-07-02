@@ -1,7 +1,6 @@
 package com.texthip.thip.ui.myPage.groupRoom
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,16 +29,16 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.common.cards.CardRoomBook
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.myPage.myGroup.CardItemRoomData
+import com.texthip.thip.ui.myPage.myGroup.GroupCardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupRoomScreen(
     detail: GroupRoomData,
-    buttonType: BottomButtonType,
+    buttonType: GroupBottomButtonType,
     onBottomButtonClick: () -> Unit = {},
-    onRecommendationClick: (CardItemRoomData) -> Unit = {}
+    onRecommendationClick: (GroupCardItemRoomData) -> Unit = {}
 ) {
     Box(Modifier.fillMaxSize()) {
         Column {
@@ -249,14 +248,14 @@ fun GroupRoomScreen(
 
         // 하단 버튼
         val buttonText = when (buttonType) {
-            BottomButtonType.JOIN -> stringResource(R.string.GroupRoomScreenParticipant)
-            BottomButtonType.CANCEL -> stringResource(R.string.GroupRoomScreenCancle)
-            BottomButtonType.CLOSE -> stringResource(R.string.GroupRoomScreenEnd)
+            GroupBottomButtonType.JOIN -> stringResource(R.string.GroupRoomScreenParticipant)
+            GroupBottomButtonType.CANCEL -> stringResource(R.string.GroupRoomScreenCancle)
+            GroupBottomButtonType.CLOSE -> stringResource(R.string.GroupRoomScreenEnd)
         }
         val buttonColor = when (buttonType) {
-            BottomButtonType.JOIN -> colors.Purple
-            BottomButtonType.CANCEL -> colors.Red
-            BottomButtonType.CLOSE -> colors.Grey02
+            GroupBottomButtonType.JOIN -> colors.Purple
+            GroupBottomButtonType.CANCEL -> colors.Red
+            GroupBottomButtonType.CLOSE -> colors.Grey02
         }
 
         Button(
@@ -283,7 +282,7 @@ fun GroupRoomScreen(
 @Composable
 fun GroupRoomDetailScreenPreview_AllCases() {
     val recommendations = listOf(
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
             participants = 19,
             maxParticipants = 25,
@@ -291,7 +290,7 @@ fun GroupRoomDetailScreenPreview_AllCases() {
             endDate = 2,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
             participants = 12,
             maxParticipants = 16,
@@ -299,7 +298,7 @@ fun GroupRoomDetailScreenPreview_AllCases() {
             endDate = 6,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
             participants = 30,
             maxParticipants = 30,
@@ -307,7 +306,7 @@ fun GroupRoomDetailScreenPreview_AllCases() {
             endDate = 0,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
             participants = 10,
             maxParticipants = 12,
@@ -315,7 +314,7 @@ fun GroupRoomDetailScreenPreview_AllCases() {
             endDate = 8,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "에세이 나눔방",
             participants = 14,
             maxParticipants = 20,
@@ -325,7 +324,7 @@ fun GroupRoomDetailScreenPreview_AllCases() {
         )
     )
 
-    val bookData = BookData(
+    val bookData = GroupBookData(
         title = "심장보다 단단한 토마토 한 알",
         author = "고선지",
         publisher = "푸른출판사",
@@ -361,19 +360,19 @@ fun GroupRoomDetailScreenPreview_AllCases() {
         // 1. 참여 가능한 경우(참여하기)
         GroupRoomScreen(
             detail = detailJoin,
-            buttonType = BottomButtonType.JOIN,
+            buttonType = GroupBottomButtonType.JOIN,
             onBottomButtonClick = {}
         )
         // 2. 참여 중인 경우(참여 취소하기)
         GroupRoomScreen(
             detail = detailCancel,
-            buttonType = BottomButtonType.CANCEL,
+            buttonType = GroupBottomButtonType.CANCEL,
             onBottomButtonClick = {}
         )
         // 3. 내가 호스트인 경우(모집 마감하기)
         GroupRoomScreen(
             detail = detailHost,
-            buttonType = BottomButtonType.CLOSE,
+            buttonType = GroupBottomButtonType.CLOSE,
             onBottomButtonClick = {}
         )
     }

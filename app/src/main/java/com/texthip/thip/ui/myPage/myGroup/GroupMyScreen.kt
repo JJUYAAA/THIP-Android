@@ -9,32 +9,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.ui.common.cards.CardItemRoom
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
-import com.texthip.thip.ui.theme.ThipTheme.typography
 import androidx.compose.foundation.lazy.items
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 
 @Composable
-fun MyGroupScreen(
-    allDataList: List<CardItemRoomData>,
-    onCardClick: (CardItemRoomData) -> Unit = {}
+fun GroupMyScreen(
+    allDataList: List<GroupCardItemRoomData>,
+    onCardClick: (GroupCardItemRoomData) -> Unit = {}
 ) {
     var selectedStates by remember { mutableStateOf(booleanArrayOf(false, false)) }
     // [0] = 진행중, [1] = 모집중
@@ -70,7 +62,7 @@ fun MyGroupScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            FilterRow(
+            GroupMyRoomFilterRow(
                 selectedStates = selectedStates,
                 onToggle = { idx ->
                     selectedStates = selectedStates.copyOf().also { it[idx] = !it[idx] }
@@ -104,7 +96,7 @@ fun MyGroupScreen(
 @Composable
 fun MyGroupListFilterScreenPreview() {
     val dataList = listOf(
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -112,7 +104,7 @@ fun MyGroupListFilterScreenPreview() {
             endDate = 3,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -120,7 +112,7 @@ fun MyGroupListFilterScreenPreview() {
             endDate = 30,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -128,7 +120,7 @@ fun MyGroupListFilterScreenPreview() {
             endDate = 1,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -136,7 +128,7 @@ fun MyGroupListFilterScreenPreview() {
             endDate = 3,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -144,7 +136,7 @@ fun MyGroupListFilterScreenPreview() {
             endDate = 3,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -152,7 +144,7 @@ fun MyGroupListFilterScreenPreview() {
             endDate = 30,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -160,7 +152,7 @@ fun MyGroupListFilterScreenPreview() {
             endDate = 1,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -168,7 +160,7 @@ fun MyGroupListFilterScreenPreview() {
             endDate = 3,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -176,7 +168,7 @@ fun MyGroupListFilterScreenPreview() {
             endDate = 3,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -184,7 +176,7 @@ fun MyGroupListFilterScreenPreview() {
             endDate = 30,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -192,7 +184,7 @@ fun MyGroupListFilterScreenPreview() {
             endDate = 1,
             genreIndex = 0
         ),
-        CardItemRoomData(
+        GroupCardItemRoomData(
             title = "모임방 이름입니다. 모임방...",
             participants = 22,
             maxParticipants = 30,
@@ -201,5 +193,5 @@ fun MyGroupListFilterScreenPreview() {
             genreIndex = 0
         )
     )
-    MyGroupScreen(allDataList = dataList)
+    GroupMyScreen(allDataList = dataList)
 }

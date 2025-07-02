@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -58,17 +57,17 @@ fun GroupPageScreen(
             }
             // 검색창
             item {
-                SearchTextField(onValueChange = { })
+                GroupSearchTextField(onValueChange = { })
                 Spacer(Modifier.height(32.dp))
             }
             // 내 모임방 헤더 + 카드
             item {
-                MainSectionHeader(
+                GroupMySectionHeader(
                     onClick = { viewModel.onMyGroupHeaderClick() }
                 )
                 Spacer(Modifier.height(20.dp))
 
-                MyGroupPager(
+                GroupPager(
                     groupCards = myGroups,
                     onCardClick = { viewModel.onMyGroupCardClick(it) }
                 )
@@ -85,7 +84,7 @@ fun GroupPageScreen(
             }
             // 마감 임박한 독서 모임방
             item {
-                DeadlineRoomSection(
+                GroupDeadlineRoomSection(
                     rooms = deadlineRooms,
                     selectedGenre = selectedGenre,
                     onRoomClick = { viewModel.onRoomCardClick(it) },

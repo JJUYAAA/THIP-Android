@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.myPage.groupPage
 
-import android.R.attr.textStyle
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +27,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun SearchTextField(
+fun GroupSearchTextField(
     onValueChange: (String) -> Unit
 ) {
     var value by rememberSaveable { mutableStateOf("") }
@@ -81,6 +80,6 @@ fun SearchTextField(
 @Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360)
 @Composable
 fun PreviewSearchTextField() {
-    SearchTextField(onValueChange = {})
+    GroupSearchTextField(onValueChange = {})
 }
 

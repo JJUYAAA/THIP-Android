@@ -37,8 +37,8 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun MyGroupMainCard(
-    data: MyGroupCardData,
+fun GroupMainCard(
+    data: GroupCardData,
     backgroundColor: Color = Color.White,
     onClick: () -> Unit = {}
 ) {
@@ -147,8 +147,8 @@ fun MyGroupMainCard(
 @Preview(showBackground = true, backgroundColor = 0xFF222222, widthDp = 380, heightDp = 170)
 @Composable
 fun PreviewMyGroupMainCard() {
-    MyGroupMainCard(
-        data = MyGroupCardData(
+    GroupMainCard(
+        data = GroupCardData(
             title = "호르몬 체인지 완독하는 방",
             members = 22,
             imageRes = R.drawable.bookcover_sample,

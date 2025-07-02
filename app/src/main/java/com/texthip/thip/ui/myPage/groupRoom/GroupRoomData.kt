@@ -1,6 +1,6 @@
 package com.texthip.thip.ui.myPage.groupRoom
 
-import com.texthip.thip.ui.myPage.myGroup.CardItemRoomData
+import com.texthip.thip.ui.myPage.myGroup.GroupCardItemRoomData
 
 data class GroupRoomData(
     val title: String,
@@ -11,8 +11,6 @@ data class GroupRoomData(
     val maxMembers: Int,
     val daysLeft: Int,
     val genre: String,
-    val bookData: BookData,
-    val recommendations: List<CardItemRoomData>
+    val bookData: GroupBookData,
+    val recommendations: List<GroupCardItemRoomData>
 )
-
-enum class BottomButtonType { JOIN, CANCEL, CLOSE }

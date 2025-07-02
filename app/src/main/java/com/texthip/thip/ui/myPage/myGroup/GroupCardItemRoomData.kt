@@ -2,7 +2,7 @@ package com.texthip.thip.ui.myPage.myGroup
 
 import com.texthip.thip.R
 
-data class CardItemRoomData(
+data class GroupCardItemRoomData(
     val title: String,
     val participants: Int,
     val maxParticipants: Int,

@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
-fun MyGroupPager(
-    groupCards: List<MyGroupCardData>,
-    onCardClick: (MyGroupCardData) -> Unit
+fun GroupPager(
+    groupCards: List<GroupCardData>,
+    onCardClick: (GroupCardData) -> Unit
 ) {
     // Pager 상태
     val pagerState = rememberPagerState(
@@ -55,7 +55,7 @@ fun MyGroupPager(
                         alpha = if (pagerState.currentPage == page) 1f else 0.7f
                     }
             ) {
-                MyGroupMainCard(
+                GroupMainCard(
                     data = groupCards[page],
                     onClick = { onCardClick(groupCards[page]) },
                     backgroundColor = bgColor // Card에서 배경색 파라미터 추가
@@ -77,21 +77,21 @@ fun MyGroupPager(
 @Composable
 fun PreviewMyGroupPager() {
     val list = listOf(
-        MyGroupCardData(
+        GroupCardData(
             title = "호르몬 체인지 완독하는 방",
             members = 22,
             imageRes = com.texthip.thip.R.drawable.bookcover_sample,
             progress = 40,
             nickname = "uibowl1님"
         ),
-        MyGroupCardData(
+        GroupCardData(
             title = "명작 읽기방",
             members = 10,
             imageRes = com.texthip.thip.R.drawable.bookcover_sample,
             progress = 70,
             nickname = "joyce님"
         ),
-        MyGroupCardData(
+        GroupCardData(
             title = "또 다른 방",
             members = 13,
             imageRes = com.texthip.thip.R.drawable.bookcover_sample,
@@ -99,6 +99,6 @@ fun PreviewMyGroupPager() {
             nickname = "other님"
         )
     )
-    MyGroupPager(groupCards = list, onCardClick = {})
+    GroupPager(groupCards = list, onCardClick = {})
 }
 

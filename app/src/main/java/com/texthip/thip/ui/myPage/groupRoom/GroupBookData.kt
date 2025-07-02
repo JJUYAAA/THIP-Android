@@ -2,7 +2,7 @@ package com.texthip.thip.ui.myPage.groupRoom
 
 import com.texthip.thip.R
 
-data class BookData(
+data class GroupBookData(
     val title: String,
     val author: String,
     val publisher: String,
