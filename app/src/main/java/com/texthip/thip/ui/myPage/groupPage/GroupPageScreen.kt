@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,6 +23,7 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
 import com.texthip.thip.ui.myPage.viewModel.MyPageViewModel
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 
@@ -31,13 +33,12 @@ fun GroupPageScreen(
     viewModel: MyPageViewModel = viewModel()
 ) {
     val myGroups by viewModel.myGroups.collectAsState()
-    val deadlineRooms by viewModel.deadlineRooms.collectAsState()
-    val selectedGenre by viewModel.selectedGenreIndex.collectAsState()
-    val genres = viewModel.genres
+    val roomSections by viewModel.roomSections.collectAsState()
 
     Box(
         Modifier
             .background(colors.Black)
+            .padding(bottom = 32.dp)
             .fillMaxSize()
     ) {
         LazyColumn(
@@ -84,12 +85,9 @@ fun GroupPageScreen(
             }
             // 마감 임박한 독서 모임방
             item {
-                GroupDeadlineRoomSection(
-                    rooms = deadlineRooms,
-                    selectedGenre = selectedGenre,
-                    onRoomClick = { viewModel.onRoomCardClick(it) },
-                    genres = genres,
-                    onGenreSelect = { viewModel.selectGenre(it) }
+                GroupRoomDeadlineSection(
+                    roomSections = roomSections,
+                    onRoomClick = { viewModel.onRoomCardClick(it) }
                 )
             }
         }
@@ -102,10 +100,11 @@ fun GroupPageScreen(
 }
 
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360, heightDp = 900)
+@Preview()
 @Composable
 fun PreviewMainGroupScreen() {
-    val previewViewModel = remember { MyPageViewModel() }
-    GroupPageScreen(viewModel = previewViewModel)
+    ThipTheme {
+        val previewViewModel = remember { MyPageViewModel() }
+        GroupPageScreen(viewModel = previewViewModel)
+    }
 }
-

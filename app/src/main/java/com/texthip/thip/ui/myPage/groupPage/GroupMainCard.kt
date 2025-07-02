@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -144,17 +145,19 @@ fun GroupMainCard(
 }
 
 
-@Preview(showBackground = true, backgroundColor = 0xFF222222, widthDp = 380, heightDp = 170)
+@Preview()
 @Composable
 fun PreviewMyGroupMainCard() {
-    GroupMainCard(
-        data = GroupCardData(
-            title = "호르몬 체인지 완독하는 방",
-            members = 22,
-            imageRes = R.drawable.bookcover_sample,
-            progress = 42,
-            nickname = "uibowl님의"
-        ),
-        onClick = {}
-    )
+    ThipTheme {
+        GroupMainCard(
+            data = GroupCardData(
+                title = "호르몬 체인지 완독하는 방",
+                members = 22,
+                imageRes = R.drawable.bookcover_sample,
+                progress = 42,
+                nickname = "uibowl님의"
+            ),
+            onClick = {}
+        )
+    }
 }
