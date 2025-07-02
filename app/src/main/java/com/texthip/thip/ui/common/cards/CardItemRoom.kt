@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -143,43 +144,45 @@ fun CardItemRoom(
 }
 
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360)
+@Preview()
 @Composable
 fun CardItemRoomPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        CardItemRoom(
-            title = "모임방 이름입니다. 모임방 이름입니다.",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = true,
-            endDate = 3,
-            imageRes = R.drawable.bookcover_sample
-        )
-        CardItemRoom(
-            title = "모임방 이름입니다. 모임방 이름입니다.",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = false,
-            endDate = 3,
-            imageRes = R.drawable.bookcover_sample
-        )
-        CardItemRoom(
-            title = "모임방 이름입니다. 모임방 이름입니다.",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = true,
-            endDate = 3,
-            imageRes = R.drawable.bookcover_sample,
-            hasBorder = true
-        )
-        CardItemRoom(
-            title = "모임방 이름입니다. 모임방 이름입니다.",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = false,
-            endDate = 3,
-            imageRes = R.drawable.bookcover_sample,
-            hasBorder = true
-        )
+    ThipTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            CardItemRoom(
+                title = "모임방 이름입니다. 모임방 이름입니다.",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = true,
+                endDate = 3,
+                imageRes = R.drawable.bookcover_sample
+            )
+            CardItemRoom(
+                title = "모임방 이름입니다. 모임방 이름입니다.",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = false,
+                endDate = 3,
+                imageRes = R.drawable.bookcover_sample
+            )
+            CardItemRoom(
+                title = "모임방 이름입니다. 모임방 이름입니다.",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = true,
+                endDate = 3,
+                imageRes = R.drawable.bookcover_sample,
+                hasBorder = true
+            )
+            CardItemRoom(
+                title = "모임방 이름입니다. 모임방 이름입니다.",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = false,
+                endDate = 3,
+                imageRes = R.drawable.bookcover_sample,
+                hasBorder = true
+            )
+        }
     }
 }
