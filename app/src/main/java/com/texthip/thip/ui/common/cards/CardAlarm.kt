@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.common.cards
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,12 +35,15 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 
 @Composable
-fun NotificationCard(
+fun CardAlarm(
     modifier: Modifier = Modifier,
+    badgeText: String,
     title: String,
     message: String,
     timeAgo: String,
     isRead: Boolean = false,
+    containerColorUnread: Color = colors.DarkGrey,  // 안읽음 상태의 배경색
+    containerColorRead: Color = colors.DarkGrey02, // 읽음 상태의 배경색
     onClick: () -> Unit = {}
 ) {
     Card(
@@ -47,7 +51,7 @@ fun NotificationCard(
             .fillMaxWidth()
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = if (isRead) colors.DarkGrey else colors.DarkGrey02
+            containerColor = if (isRead) containerColorUnread else containerColorRead
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(12.dp)
@@ -65,7 +69,6 @@ fun NotificationCard(
                 // 뱃지
                 Box(
                     modifier = Modifier
-                        .size(width = 40.dp, height = 24.dp)
                         .clip(RoundedCornerShape(13.dp))
                         .border(
                             width = 1.dp,
@@ -75,7 +78,9 @@ fun NotificationCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.group),
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp, vertical = 2.dp),
+                        text = badgeText,
                         color = if (isRead) colors.Grey01 else colors.Grey,
                         style = typography.menu_sb600_s12_h20
                     )
@@ -147,8 +152,9 @@ fun PreviewNotificationCards() {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // 안읽은 알림
-        NotificationCard(
+        CardAlarm(
             title = "같이 읽기를 시작했어요!",
+            badgeText = "모임",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
             timeAgo = "12",
             isRead = isRead
@@ -157,11 +163,36 @@ fun PreviewNotificationCards() {
         }
 
         // 읽은 알림
-        NotificationCard(
+        CardAlarm(
             title = "같이 읽기를 시작했어요!",
+            badgeText = "모임",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
             timeAgo = "12",
             isRead = true
+        )
+
+        CardAlarm(
+            title = "같이 읽기를 시작했어요!",
+            badgeText = "피드",
+            message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
+            timeAgo = "12",
+            isRead = false
+        )
+
+        CardAlarm(
+            title = "같이 읽기를 시작했어요!",
+            badgeText = "좋아요",
+            message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
+            timeAgo = "12",
+            isRead = isRead
+        )
+
+        CardAlarm(
+            title = "같이 읽기를 시작했어요!",
+            badgeText = "댓글",
+            message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
+            timeAgo = "12",
+            isRead = isRead
         )
     }
 

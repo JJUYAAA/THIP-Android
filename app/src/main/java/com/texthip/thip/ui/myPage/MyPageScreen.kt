@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.screen
+package com.texthip.thip.ui.myPage
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,8 +11,8 @@ import androidx.navigation.NavController
 @Composable
 fun MyPageScreen(navController: NavController) {
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.Companion.fillMaxSize(),
+        contentAlignment = Alignment.Companion.Center
     ) {
         Text(text = "MyPage Screen")
     }

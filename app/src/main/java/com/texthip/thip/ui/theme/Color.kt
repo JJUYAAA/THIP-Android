@@ -17,6 +17,7 @@ val Mint = Color(0xFFA0F8E8)
 val MintSub = Color(0xFF4FD9C0)
 val Orange = Color(0xFFFDB770)
 val OrangeSub = Color(0xFFFF8B17)
+val genreColor = Color(0xFFB5B35D)
 val Skyblue = Color(0xFFA1D5FF)
 val SkyblueSub = Color(0xFF6DB5EE)
 val Lavendar = Color(0xFFC8A5FF)
@@ -53,6 +54,7 @@ data class ThipColors(
     val MintSub: Color,
     val Orange: Color,
     val OrangeSub: Color,
+    val genreColor: Color,
     val Skyblue: Color,
     val SkyblueSub: Color,
     val Lavendar: Color,
@@ -86,6 +88,7 @@ val defaultThipColors = ThipColors(
     MintSub = MintSub,
     Orange = Orange,
     OrangeSub = OrangeSub,
+    genreColor = genreColor,
     Skyblue = Skyblue,
     SkyblueSub = SkyblueSub,
     Lavendar = Lavendar,

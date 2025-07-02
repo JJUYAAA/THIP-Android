@@ -30,22 +30,24 @@ fun OptionChipButton(
     modifier: Modifier = Modifier,
     text: String,
     isFilled: Boolean = false,
+    isSelected: Boolean? = null,  // 추가
     onClick: () -> Unit,
 ) {
     var isClicked by remember { mutableStateOf(false) }
+    val checked = isSelected ?: isClicked
 
     val textColor = when {
         isFilled -> colors.White
-        isClicked -> colors.Purple
+        checked -> colors.Purple
         else -> colors.Grey01
     }
     val backgroundColor = when {
-        isFilled && isClicked -> colors.Purple
+        isFilled && checked -> colors.Purple
         isFilled -> colors.DarkGrey
         else -> Color.Transparent
     }
     val borderColor = when {
-        !isFilled && isClicked -> colors.Purple
+        !isFilled && checked -> colors.Purple
         !isFilled -> colors.Grey02
         else -> Color.Transparent
     }
@@ -62,7 +64,7 @@ fun OptionChipButton(
                 shape = RoundedCornerShape(20.dp)
             )
             .clickable {
-                isClicked = !isClicked
+                if (isSelected == null) isClicked = !isClicked
                 onClick()
             }
             .padding(vertical = 8.dp, horizontal = 12.dp),

@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +35,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun DetailedDarkCard(
+fun CardRoomBook(
     modifier: Modifier = Modifier,
     title: String,
     author: String,
@@ -109,16 +110,34 @@ fun DetailedDarkCard(
                 ) {
                     Spacer(modifier = Modifier.height(7.dp))
 
-                    Text(
-                        text = "$author 저 · $publisher",
-                        color = colors.White,
-                        style = typography.info_m500_s12,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.card_author, author),
+                            color = colors.White,
+                            style = typography.info_m500_s12,
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
 
+                        Text(
+                            text = "·",
+                            color = colors.Grey02,
+                            style = typography.info_m500_s12,
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        Text(
+                            text = publisher,
+                            color = colors.White,
+                            style = typography.info_m500_s12,
+                        )
+
+                    }
                     Spacer(modifier = Modifier.height(21.dp))
 
                     Text(
-                        text = "도서 소개",
+                        text = stringResource(R.string.card_book_explain),
                         color = colors.White,
                         style = typography.info_m500_s12,
                     )
@@ -141,13 +160,13 @@ fun DetailedDarkCard(
 
 @Preview
 @Composable
-fun PreviewDetailedDarkCard() {
+fun PreviewCardRoomBook() {
 
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        DetailedDarkCard(
+        CardRoomBook(
             title = "도서명을 입력, 예시까지 최대 입력 후...",
             author = "저자명",
             publisher = "출판사",
