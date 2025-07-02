@@ -113,12 +113,12 @@ fun CardItemRoom(
                         Text(
                             text = if (isRecruiting) {
                                 stringResource(
-                                    R.string.CardItemParicipantCount,
+                                    R.string.card_item_participant_count,
                                     participants,
                                     maxParticipants
                                 )
                             } else {
-                                stringResource(R.string.CardItemParticipant, participants)
+                                stringResource(R.string.card_item_participant, participants)
                             },
                             color = colors.White,
                             style = typography.info_m500_s12,
@@ -127,11 +127,11 @@ fun CardItemRoom(
                     Spacer(modifier = Modifier.height(5.dp))
                     Text(
                         text = stringResource(
-                            R.string.CardItemEndDate,
+                            R.string.card_item_end_date,
                             endDate
                         ) + if (isRecruiting) stringResource(
-                            R.string.CardItemEnd
-                        ) else stringResource(R.string.CardItemFinish),
+                            R.string.card_item_end
+                        ) else stringResource(R.string.card_item_finish),
 
                         color = if (isRecruiting) colors.Red else colors.Grey01,
                         style = typography.menu_sb600_s12_h20,

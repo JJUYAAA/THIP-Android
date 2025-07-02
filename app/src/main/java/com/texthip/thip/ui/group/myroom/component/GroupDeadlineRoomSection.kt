@@ -238,7 +238,7 @@ fun PreviewGroupRoomPagerSection() {
 
         val roomSections = listOf(
             GroupRoomSectionData(
-                title = stringResource(R.string.deadlineString),
+                title = stringResource(R.string.deadline_string),
                 rooms = deadlineRooms,
                 genres = genres
             ),

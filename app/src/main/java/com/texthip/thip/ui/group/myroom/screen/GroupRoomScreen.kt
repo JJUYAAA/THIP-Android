@@ -90,7 +90,7 @@ fun GroupRoomScreen(
 
                 //소개글
                 Text(
-                    text = stringResource(R.string.groupRoomDesc),
+                    text = stringResource(R.string.group_room_desc),
                     style = typography.menu_sb600_s14_h24,
                     color = colors.White,
                 )
@@ -120,7 +120,7 @@ fun GroupRoomScreen(
                                 tint = colors.White
                             )
                             Text(
-                                text = stringResource(R.string.groupPeroid),
+                                text = stringResource(R.string.group_period),
                                 style = typography.view_m500_s12_h20,
                                 color = colors.White
                             )
@@ -144,7 +144,7 @@ fun GroupRoomScreen(
                                 tint = colors.White
                             )
                             Text(
-                                text = stringResource(R.string.groupMate),
+                                text = stringResource(R.string.group_mate),
                                 style = typography.view_m500_s12_h20,
                                 color = colors.White
                             )
@@ -152,7 +152,7 @@ fun GroupRoomScreen(
                         Spacer(Modifier.height(12.dp))
                         Text(
                             text = stringResource(
-                                R.string.GroupRoomScreenParticipantCount,
+                                R.string.group_room_screen_participant_count,
                                 detail.members,
                                 detail.maxMembers
                             ),
@@ -174,13 +174,13 @@ fun GroupRoomScreen(
                     ) {
                         Row {
                             Text(
-                                text = stringResource(R.string.groupRecruiting),
+                                text = stringResource(R.string.group_recruiting),
                                 style = typography.info_m500_s12,
                                 color = colors.White
                             )
                             Text(
                                 text = stringResource(
-                                    R.string.GroupRoomScreenEndDate,
+                                    R.string.group_room_screen_end_date,
                                     detail.daysLeft
                                 ),
                                 style = typography.info_m500_s12,
@@ -197,7 +197,7 @@ fun GroupRoomScreen(
                     ) {
                         Row {
                             Text(
-                                text = stringResource(R.string.groupGenre),
+                                text = stringResource(R.string.group_genre),
                                 style = typography.info_m500_s12,
                                 color = colors.White
                             )
@@ -224,7 +224,7 @@ fun GroupRoomScreen(
 
                 Spacer(Modifier.height(40.dp))
                 Text(
-                    text = stringResource(R.string.groupRecommend),
+                    text = stringResource(R.string.group_recommend),
                     style = typography.smalltitle_sb600_s18_h24,
                     color = colors.White
                 )
@@ -252,9 +252,9 @@ fun GroupRoomScreen(
 
         // 하단 버튼
         val buttonText = when (buttonType) {
-            GroupBottomButtonType.JOIN -> stringResource(R.string.GroupRoomScreenParticipant)
-            GroupBottomButtonType.CANCEL -> stringResource(R.string.GroupRoomScreenCancle)
-            GroupBottomButtonType.CLOSE -> stringResource(R.string.GroupRoomScreenEnd)
+            GroupBottomButtonType.JOIN -> stringResource(R.string.group_room_screen_participant)
+            GroupBottomButtonType.CANCEL -> stringResource(R.string.group_room_screen_cancel)
+            GroupBottomButtonType.CLOSE -> stringResource(R.string.group_room_screen_end)
         }
         val buttonColor = when (buttonType) {
             GroupBottomButtonType.JOIN -> colors.Purple

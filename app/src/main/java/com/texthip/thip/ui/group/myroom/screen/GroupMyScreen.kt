@@ -54,7 +54,7 @@ fun GroupMyScreen(
             .fillMaxSize()
     ) {
         DefaultTopAppBar(
-            title = stringResource(R.string.myGroupRoom),
+            title = stringResource(R.string.my_group_room),
             onLeftClick = {},
         )
         Column(

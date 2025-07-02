@@ -17,7 +17,7 @@ fun GroupMyRoomFilterRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         OptionChipButton(
-            text = stringResource(R.string.onGoing),
+            text = stringResource(R.string.on_going),
             isFilled = true,
             onClick = { onToggle(0) }
         )

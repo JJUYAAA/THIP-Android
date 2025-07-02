@@ -107,7 +107,7 @@ fun CardItemRoomSmall(
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = stringResource(R.string.cardItemEndDate, endDate),
+                        text = stringResource(R.string.card_item_end_date_recruit, endDate),
                         color = colors.Red,
                         style = typography.menu_sb600_s12_h20
                     )

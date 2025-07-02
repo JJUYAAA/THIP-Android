@@ -108,7 +108,7 @@ fun GroupMainCard(
                         )
                         Spacer(Modifier.width(2.dp))
                         Text(
-                            text = stringResource(R.string.groupParticipant, data.members),
+                            text = stringResource(R.string.group_participant, data.members),
                             color = colors.Grey02,
                             style = typography.menu_sb600_s12,
                         )
@@ -117,7 +117,7 @@ fun GroupMainCard(
                     // 닉네임 + 진행도
                     Row(verticalAlignment = Alignment.Bottom) {
                         Text(
-                            text = stringResource(R.string.groupProgress, data.nickname),
+                            text = stringResource(R.string.group_progress, data.nickname),
                             color = colors.Grey02,
                             style = typography.view_m500_s14
                         )

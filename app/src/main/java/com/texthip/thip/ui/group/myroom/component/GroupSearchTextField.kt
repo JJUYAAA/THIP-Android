@@ -50,7 +50,7 @@ fun GroupSearchTextField(
                 .fillMaxWidth(),
             placeholder = {
                 Text(
-                    text = stringResource(R.string.groupSearchPlaceHolder),
+                    text = stringResource(R.string.group_search_placeholder),
                     color = colors.Grey02,
                     style = typography.menu_r400_s14_h24.copy(lineHeight = 2.sp)
                 )

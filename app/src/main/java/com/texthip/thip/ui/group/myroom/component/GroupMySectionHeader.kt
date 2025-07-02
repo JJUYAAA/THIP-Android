@@ -28,7 +28,7 @@ fun GroupMySectionHeader(onClick: (() -> Unit)? = null) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(R.string.myGroup),
+            text = stringResource(R.string.my_group),
             style = typography.title_b700_s20_h24,
             color = colors.White
         )
