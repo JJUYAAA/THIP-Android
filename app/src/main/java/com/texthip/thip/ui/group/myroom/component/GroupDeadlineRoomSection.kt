@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.groupPage
+package com.texthip.thip.ui.group.myroom.component
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -17,7 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardItemRoom
-import com.texthip.thip.ui.myPage.myGroup.GroupCardItemRoomData
+import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData
+import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -72,8 +73,8 @@ fun GroupRoomDeadlineSection(
                         .background(
                             brush = Brush.verticalGradient(
                                 colors = listOf(
-                                    colors.White.copy(alpha = if (isCurrent) 0.3f else 0.2f),
-                                    colors.Black.copy(alpha = if (isCurrent) 0.2f else 0.15f)
+                                    colors.White.copy(0.25f),
+                                    colors.Black.copy(0.2f)
                                 )
                             ),
                             shape = RoundedCornerShape(14.dp)

@@ -1,6 +1,4 @@
-package com.texthip.thip.ui.myPage.groupPage
-
-import com.texthip.thip.ui.myPage.myGroup.GroupCardItemRoomData
+package com.texthip.thip.ui.group.myroom.mock
 
 data class GroupRoomSectionData(
     val title: String,

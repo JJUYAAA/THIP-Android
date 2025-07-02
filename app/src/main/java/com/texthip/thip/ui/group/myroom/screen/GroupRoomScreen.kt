@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.groupRoom
+package com.texthip.thip.ui.group.myroom.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +29,10 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.common.cards.CardRoomBook
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.myPage.myGroup.GroupCardItemRoomData
+import com.texthip.thip.ui.group.myroom.mock.GroupBookData
+import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
+import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
+import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 

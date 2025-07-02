@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.groupPage
+package com.texthip.thip.ui.group.myroom.component
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.R
+import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
@@ -81,21 +83,21 @@ fun PreviewMyGroupPager() {
             GroupCardData(
                 title = "호르몬 체인지 완독하는 방",
                 members = 22,
-                imageRes = com.texthip.thip.R.drawable.bookcover_sample,
+                imageRes = R.drawable.bookcover_sample,
                 progress = 40,
                 nickname = "uibowl1님"
             ),
             GroupCardData(
                 title = "명작 읽기방",
                 members = 10,
-                imageRes = com.texthip.thip.R.drawable.bookcover_sample,
+                imageRes = R.drawable.bookcover_sample,
                 progress = 70,
                 nickname = "joyce님"
             ),
             GroupCardData(
                 title = "또 다른 방",
                 members = 13,
-                imageRes = com.texthip.thip.R.drawable.bookcover_sample,
+                imageRes = R.drawable.bookcover_sample,
                 progress = 10,
                 nickname = "other님"
             )

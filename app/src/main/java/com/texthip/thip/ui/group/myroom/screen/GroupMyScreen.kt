@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.myGroup
+package com.texthip.thip.ui.group.myroom.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +22,8 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import androidx.compose.foundation.lazy.items
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
+import com.texthip.thip.ui.group.myroom.component.GroupMyRoomFilterRow
 
 @Composable
 fun GroupMyScreen(

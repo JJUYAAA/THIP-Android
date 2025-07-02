@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.groupPage
+package com.texthip.thip.ui.group.myroom.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography

@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.groupRoom
+package com.texthip.thip.ui.group.myroom.mock
 
 import com.texthip.thip.R
 

@@ -1,14 +1,11 @@
-package com.texthip.thip.ui.myPage.viewModel
+package com.texthip.thip.ui.group.myroom.mock
 
 import androidx.lifecycle.ViewModel
-import com.texthip.thip.ui.myPage.groupPage.GroupCardData
-import com.texthip.thip.ui.myPage.groupPage.GroupRoomSectionData
-import com.texthip.thip.ui.myPage.myGroup.GroupCardItemRoomData
+import com.texthip.thip.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import com.texthip.thip.R
 
-class MyPageViewModel : ViewModel() {
+class GroupViewModel : ViewModel() {
 
     private val _myGroups = MutableStateFlow<List<GroupCardData>>(emptyList())
     val myGroups: StateFlow<List<GroupCardData>> = _myGroups

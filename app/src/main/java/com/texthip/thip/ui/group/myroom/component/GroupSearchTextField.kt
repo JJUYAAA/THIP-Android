@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.groupPage
+package com.texthip.thip.ui.group.myroom.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth

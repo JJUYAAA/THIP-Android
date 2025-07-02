@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.myGroup
+package com.texthip.thip.ui.group.myroom.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
