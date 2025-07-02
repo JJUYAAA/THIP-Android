@@ -38,7 +38,7 @@ fun CardItemRoomSmall(
     title: String,
     participants: Int,
     maxParticipants: Int,
-    endDate: Int, // 남은 일 수 (예: 3)
+    endDate: Int,
     imageRes: Int? = R.drawable.bookcover_sample_small,
     onClick: () -> Unit = {}
 ) {
@@ -99,11 +99,28 @@ fun CardItemRoomSmall(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
 
-                        Text (
-                            text = "$participants / ${maxParticipants}명",
-                            color = colors.White,
-                            style = typography.info_m500_s12
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(
+                                    R.string.card_item_participant_count,
+                                    participants,
+                                ),
+                                style = typography.menu_sb600_s12,
+                                color = colors.White
+                            )
+                            Spacer(modifier = Modifier.width(2.dp))
+
+                            Text(
+                                text = stringResource(
+                                    R.string.card_item_participant_count_max,
+                                    maxParticipants
+                                ),
+                                style = typography.info_m500_s12,
+                                color = colors.Grey
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(

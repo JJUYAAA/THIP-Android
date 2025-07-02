@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,10 +54,6 @@ fun GroupMainCard(
         start = Offset(0f, 0f),
         end = Offset(1000f, 1000f)
     )
-
-    val progressState by remember(data.progress) {
-        mutableFloatStateOf(data.progress / 100f)
-    }
 
     Card(
         modifier = Modifier
@@ -107,11 +104,22 @@ fun GroupMainCard(
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(Modifier.width(2.dp))
-                        Text(
-                            text = stringResource(R.string.group_participant, data.members),
-                            color = colors.Grey02,
-                            style = typography.menu_sb600_s12,
-                        )
+
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.group_participant, data.members),
+                                color = colors.Grey02,
+                                style = typography.menu_sb600_s12,
+                            )
+                            Spacer(Modifier.width(2.dp))
+                            Text(
+                                text = stringResource(R.string.group_participant_string),
+                                color = colors.Grey02,
+                                style = typography.info_m500_s12,
+                            )
+                        }
                     }
                     Spacer(Modifier.height(16.dp))
                     // 닉네임 + 진행도
@@ -121,6 +129,7 @@ fun GroupMainCard(
                             color = colors.Grey02,
                             style = typography.view_m500_s14
                         )
+                        Spacer(Modifier.width(4.dp))
                         Text(
                             text = "${data.progress}%",
                             color = colors.Purple,
@@ -128,16 +137,21 @@ fun GroupMainCard(
                         )
                     }
                     Spacer(Modifier.height(10.dp))
-                    // ProgressBar
-                    LinearProgressIndicator(
-                        progress = { progressState },
+
+                    val percentage = data.progress.toFloat()
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(7.dp),
-                        color = colors.Purple,
-                        trackColor = colors.Grey02,
-                        gapSize = (-5).dp  // 간격 제거
-                    )
+                            .height(8.dp)
+                            .background(color = colors.Grey02, shape = RoundedCornerShape(12.dp))
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(fraction = percentage / 100f)
+                                .fillMaxHeight()
+                                .background(color = colors.Purple, shape = RoundedCornerShape(12.dp))
+                        )
+                    }
                     Spacer(Modifier.height(2.dp))
                 }
             }

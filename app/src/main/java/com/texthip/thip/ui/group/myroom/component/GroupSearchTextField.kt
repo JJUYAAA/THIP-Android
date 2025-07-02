@@ -31,7 +31,7 @@ fun GroupSearchTextField(
     onValueChange: (String) -> Unit
 ) {
     var value by rememberSaveable { mutableStateOf("") }
-    val textStyle = typography.menu_r400_s14_h24.copy(lineHeight = 20.sp) // 기본값 제공
+    val textStyle = typography.menu_r400_s14_h24.copy(lineHeight = 20.sp)
 
     Box(
         Modifier

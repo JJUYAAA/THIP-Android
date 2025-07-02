@@ -74,7 +74,7 @@ fun CardInputBook(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "$author 저",
+                text = stringResource(R.string.card_input_author, author),
                 style = typography.view_m500_s12_h20,
                 color = colors.Grey01
             )

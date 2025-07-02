@@ -41,9 +41,9 @@ fun CardItemRoom(
     participants: Int,
     maxParticipants: Int,
     isRecruiting: Boolean,
-    endDate: Int, // 남은 일 수 (예: 3)
+    endDate: Int,
     imageRes: Int? = R.drawable.bookcover_sample,
-    hasBorder: Boolean = false,   // <-- 추가
+    hasBorder: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     Card(
@@ -110,21 +110,51 @@ fun CardItemRoom(
                             tint = Color.White
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = if (isRecruiting) {
-                                stringResource(
-                                    R.string.card_item_participant_count,
-                                    participants,
-                                    maxParticipants
+
+                        if (isRecruiting) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(
+                                        R.string.card_item_participant_count,
+                                        participants,
+                                    ),
+                                    style = typography.menu_sb600_s12,
+                                    color = colors.White
                                 )
-                            } else {
-                                stringResource(R.string.card_item_participant, participants)
-                            },
-                            color = colors.White,
-                            style = typography.info_m500_s12,
-                        )
+                                Spacer(modifier = Modifier.width(2.dp))
+
+                                Text(
+                                    text = stringResource(
+                                        R.string.card_item_participant_count_max,
+                                        maxParticipants
+                                    ),
+                                    style = typography.info_m500_s12,
+                                    color = colors.Grey
+                                )
+                            }
+                        } else {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.card_item_participant, participants),
+                                    style = typography.menu_sb600_s12,
+                                    color = colors.White
+                                )
+                                Spacer(modifier = Modifier.width(2.dp))
+
+                                Text(
+                                    text = stringResource(R.string.card_item_participant_string),
+                                    style = typography.info_m500_s12,
+                                    color = colors.Grey
+                                )
+                            }
+                        }
                     }
                     Spacer(modifier = Modifier.height(5.dp))
+
                     Text(
                         text = stringResource(
                             R.string.card_item_end_date,

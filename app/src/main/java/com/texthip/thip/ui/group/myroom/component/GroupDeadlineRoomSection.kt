@@ -29,7 +29,7 @@ fun GroupRoomDeadlineSection(
     roomSections: List<GroupRoomSectionData>,
     onRoomClick: (GroupCardItemRoomData) -> Unit
 ) {
-    val cardWidth = 320.dp  // 카드 폭 원하는 값으로 맞추기!
+    val cardWidth = 320.dp
     val pageSpacing = 12.dp
 
     val pagerState = rememberPagerState(

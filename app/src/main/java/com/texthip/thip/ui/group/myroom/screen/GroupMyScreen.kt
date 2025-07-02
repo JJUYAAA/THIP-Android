@@ -33,10 +33,8 @@ fun GroupMyScreen(
     onCardClick: (GroupCardItemRoomData) -> Unit = {}
 ) {
     var selectedStates by remember { mutableStateOf(booleanArrayOf(false, false)) }
-    // [0] = 진행중, [1] = 모집중
 
     val filteredList = remember(selectedStates, allDataList) {
-        // 둘 다 false면 전체, 둘 다 true면 전체
         if (selectedStates.all { !it } || selectedStates.all { it }) {
             allDataList
         } else if (selectedStates[0]) {
@@ -44,7 +42,7 @@ fun GroupMyScreen(
         } else if (selectedStates[1]) {
             allDataList.filter { it.isRecruiting }
         } else {
-            allDataList // safety, but 위에서 이미 걸러짐
+            allDataList
         }
     }
 

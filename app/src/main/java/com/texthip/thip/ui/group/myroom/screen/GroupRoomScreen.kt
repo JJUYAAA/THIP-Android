@@ -100,7 +100,7 @@ fun GroupRoomScreen(
                     style = typography.copy_r400_s12_h20,
                     color = colors.Grey,
                     modifier = Modifier
-                        .padding(top = 4.dp, bottom = 18.dp)
+                        .padding(top = 5.dp, bottom = 18.dp)
                 )
 
 
@@ -119,6 +119,7 @@ fun GroupRoomScreen(
                                 contentDescription = "모임 활동기간",
                                 tint = colors.White
                             )
+                            Spacer(Modifier.width(2.dp))
                             Text(
                                 text = stringResource(R.string.group_period),
                                 style = typography.view_m500_s12_h20,
@@ -127,7 +128,11 @@ fun GroupRoomScreen(
                         }
                         Spacer(Modifier.height(12.dp))
                         Text(
-                            text = detail.period,
+                            text = stringResource(
+                                R.string.group_room_period,
+                                detail.startDate,
+                                detail.endDate
+                            ),
                             style = typography.info_r400_s12,
                             color = colors.Grey
                         )
@@ -143,6 +148,7 @@ fun GroupRoomScreen(
                                 contentDescription = "참여 중인 독서 메이트",
                                 tint = colors.White
                             )
+                            Spacer(Modifier.width(2.dp))
                             Text(
                                 text = stringResource(R.string.group_mate),
                                 style = typography.view_m500_s12_h20,
@@ -150,15 +156,27 @@ fun GroupRoomScreen(
                             )
                         }
                         Spacer(Modifier.height(12.dp))
-                        Text(
-                            text = stringResource(
-                                R.string.group_room_screen_participant_count,
-                                detail.members,
-                                detail.maxMembers
-                            ),
-                            style = typography.info_r400_s12,
-                            color = colors.White
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(
+                                    R.string.group_room_screen_participant_count,
+                                    detail.members
+                                ),
+                                style = typography.info_r400_s12,
+                                color = colors.White
+                            )
+                            Spacer(Modifier.width(2.dp))
+                            Text(
+                                text = stringResource(
+                                    R.string.group_room_screen_participant_count_max,
+                                    detail.maxMembers
+                                ),
+                                style = typography.info_m500_s12,
+                                color = colors.Grey
+                            )
+                        }
                     }
                 }
 
@@ -178,6 +196,7 @@ fun GroupRoomScreen(
                                 style = typography.info_m500_s12,
                                 color = colors.White
                             )
+                            Spacer(Modifier.width(4.dp))
                             Text(
                                 text = stringResource(
                                     R.string.group_room_screen_end_date,
@@ -201,6 +220,7 @@ fun GroupRoomScreen(
                                 style = typography.info_m500_s12,
                                 color = colors.White
                             )
+                            Spacer(Modifier.width(4.dp))
                             Text(
                                 text = detail.genre,
                                 style = typography.info_m500_s12,
@@ -211,7 +231,7 @@ fun GroupRoomScreen(
                     }
                 }
 
-                Spacer(Modifier.height(62.dp))
+                Spacer(Modifier.height(30.dp))
 
                 //읽을 책 정보
                 CardRoomBook(
@@ -341,7 +361,8 @@ fun GroupRoomDetailScreenPreview_AllCases() {
             title = "시집만 읽는 사람들 3월",
             isSecret = true,
             description = "‘시집만 읽는 사람들’ 3월 모임입니다. 이번 달 모임에서는 심장보다 단단한 토마토 한 알을 함께 읽어요.",
-            period = "2025.01.12 ~ 2025.02.12",
+            startDate = "2025.01.12",
+            endDate = "2025.02.12",
             members = 22,
             maxMembers = 30,
             daysLeft = 4,
