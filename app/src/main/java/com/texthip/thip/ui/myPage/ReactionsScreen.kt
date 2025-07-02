@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.OptionChipButton
-import com.texthip.thip.ui.common.cards.NotificationCard
+import com.texthip.thip.ui.common.cards.CardAlarm
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.myPage.mock.ReactionItem
 import com.texthip.thip.ui.theme.Black
@@ -30,21 +30,30 @@ import com.texthip.thip.ui.theme.Black
 fun ReactionsScreen() {
     //추후 뷰모델로 수정 예정
     val reactions = listOf(
-        ReactionItem("@user 1님의 피드 글","어쩌구 저쩌구 콘텐츠 내용입니다.어쩌구 저쩌구 콘텐츠 내용입니다.어쩌구 저쩌구 콘텐츠 내용입니다.", "2",true),
-        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "7", true),
-        ReactionItem("@user 3님의 기록", "어쩌구 저쩌구 콘텐츠 내용입니다.", "17", true),
-        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "7", true),
-        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "7", true),
-        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "7", true),
-        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "7", true),
-        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "7", true),
-        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "7", true),
-        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "7", true),
-        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "7", true),
-        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "7", true)
+        ReactionItem("@user 1님의 피드 글","어쩌구 저쩌구 콘텐츠 내용입니다.어쩌구 저쩌구 콘텐츠 내용입니다.어쩌구 저쩌구 콘텐츠 내용입니다.","좋아요", "2"),
+        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.","댓글","7"),
+        ReactionItem("@user 3님의 기록", "어쩌구 저쩌구 콘텐츠 내용입니다.","댓글", "17"),
+        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "좋아요", "25"),
+        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.","댓글", "7"),
+        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.","댓글", "7"),
+        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "좋아요", "7"),
+        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.","댓글", "7"),
+        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.","댓글", "7"),
+        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "좋아요", "7"),
+        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.","댓글", "7"),
+        ReactionItem("@user 1님의 글", "어쩌구 저쩌구 콘텐츠 내용입니다.", "좋아요", "7")
     )
     var isLikesSelected by remember { mutableStateOf(false) }
     var isCommentsSelected by remember { mutableStateOf(false) }
+    val filteredReactions = reactions.filter { item ->
+        when {
+            isLikesSelected && isCommentsSelected -> true
+            isLikesSelected -> item.type == stringResource(R.string.likes)
+            isCommentsSelected -> item.type == stringResource(R.string.comments)
+            else -> true
+        }
+    }
+
     Scaffold(
         containerColor = Black,
         topBar = {
@@ -63,16 +72,14 @@ fun ReactionsScreen() {
             Row(modifier = Modifier.padding(start = 20.dp, top = 20.dp, bottom = 20.dp)) {
                 OptionChipButton(
                     text = stringResource(R.string.likes),
-                    isFilled = true,
-                    onClick = {
-                    }
+                    isFilled = isLikesSelected,
+                    onClick = {isLikesSelected = !isLikesSelected}
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 OptionChipButton(
                     text = stringResource(R.string.comments),
-                    isFilled = true,
-                    onClick = {
-                    }
+                    isFilled = isCommentsSelected,
+                    onClick = {isCommentsSelected = !isCommentsSelected}
                 )
 
             }
@@ -82,12 +89,13 @@ fun ReactionsScreen() {
                     .padding(horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                items(reactions) { item ->
-                    NotificationCard(
+                items(filteredReactions) { item ->
+                    CardAlarm(
                         title = item.title,
                         message = item.message,
                         timeAgo = item.timeAgo,
-                        isRead = item.isRead,
+                        isRead = true,
+                        badgeText = item.type,
                         onClick = {}
                     )
                 }

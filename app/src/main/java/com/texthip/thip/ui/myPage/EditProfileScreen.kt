@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.myPage.screen
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -21,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
-import com.texthip.thip.ui.common.forms.BaseInputTextField
+import com.texthip.thip.ui.common.forms.FormTextFieldDefault
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.myPage.component.RoleCard
 import com.texthip.thip.ui.myPage.mock.RoleItem
@@ -91,7 +92,12 @@ fun EditProfileScreen() {
                     .padding(bottom = 12.dp)
             )
             //TODO 컴포넌트 수정 필요 -> text count 추가, boolean 값으로 icon, limit 설정가능하도록
-            BaseInputTextField(
+            FormTextFieldDefault(
+                modifier = Modifier.fillMaxWidth(),
+                showLimit = true,
+                limit = 10,
+                showIcon = false,
+                containerColor = colors.DarkGrey02,
                 hint = stringResource(R.string.change_nickname)
             )
             Spacer(modifier = Modifier.height(40.dp))
