@@ -19,7 +19,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun MainSectionHeader(onClick: (() -> Unit)? = null) {
+fun GroupMySectionHeader(onClick: (() -> Unit)? = null) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -46,5 +46,5 @@ fun MainSectionHeader(onClick: (() -> Unit)? = null) {
 @Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360)
 @Composable
 fun PreviewMainSectionHeader() {
-    MainSectionHeader(){}
+    GroupMySectionHeader(){}
 }

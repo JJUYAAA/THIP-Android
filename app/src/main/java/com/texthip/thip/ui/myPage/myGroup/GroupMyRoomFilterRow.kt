@@ -9,7 +9,7 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.OptionChipButton
 
 @Composable
-fun FilterRow(
+fun GroupMyRoomFilterRow(
     selectedStates: BooleanArray,
     onToggle: (Int) -> Unit
 ) {
