@@ -33,6 +33,7 @@ import com.texthip.thip.ui.group.myroom.mock.GroupBookData
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -281,103 +282,105 @@ fun GroupRoomScreen(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360, heightDp = 900)
+@Preview()
 @Composable
 fun GroupRoomDetailScreenPreview_AllCases() {
-    val recommendations = listOf(
-        GroupCardItemRoomData(
-            title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
-            participants = 19,
-            maxParticipants = 25,
-            isRecruiting = true,
-            endDate = 2,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
-            participants = 12,
-            maxParticipants = 16,
-            isRecruiting = true,
-            endDate = 6,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
-            participants = 30,
-            maxParticipants = 30,
-            isRecruiting = false,
-            endDate = 0,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
-            participants = 10,
-            maxParticipants = 12,
-            isRecruiting = true,
-            endDate = 8,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "에세이 나눔방",
-            participants = 14,
-            maxParticipants = 20,
-            isRecruiting = true,
-            endDate = 4,
-            genreIndex = 0
+    ThipTheme {
+        val recommendations = listOf(
+            GroupCardItemRoomData(
+                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
+                participants = 19,
+                maxParticipants = 25,
+                isRecruiting = true,
+                endDate = 2,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
+                participants = 12,
+                maxParticipants = 16,
+                isRecruiting = true,
+                endDate = 6,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
+                participants = 30,
+                maxParticipants = 30,
+                isRecruiting = false,
+                endDate = 0,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
+                participants = 10,
+                maxParticipants = 12,
+                isRecruiting = true,
+                endDate = 8,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "에세이 나눔방",
+                participants = 14,
+                maxParticipants = 20,
+                isRecruiting = true,
+                endDate = 4,
+                genreIndex = 0
+            )
         )
-    )
 
-    val bookData = GroupBookData(
-        title = "심장보다 단단한 토마토 한 알",
-        author = "고선지",
-        publisher = "푸른출판사",
-        description = "‘시집만 읽는 사람들’ 3월 모임에서 읽는 시집. 상처받고 단단해진 마음을 담은 감동적인 시와 해설이 어우러진 책으로, 읽는 이로 하여금 자신의 이야기를 투영하게 하는 힘이 있다.",
-        imageRes = R.drawable.bookcover_sample
-    )
+        val bookData = GroupBookData(
+            title = "심장보다 단단한 토마토 한 알",
+            author = "고선지",
+            publisher = "푸른출판사",
+            description = "‘시집만 읽는 사람들’ 3월 모임에서 읽는 시집. 상처받고 단단해진 마음을 담은 감동적인 시와 해설이 어우러진 책으로, 읽는 이로 하여금 자신의 이야기를 투영하게 하는 힘이 있다.",
+            imageRes = R.drawable.bookcover_sample
+        )
 
-    val detailJoin = GroupRoomData(
-        title = "시집만 읽는 사람들 3월",
-        isSecret = true,
-        description = "‘시집만 읽는 사람들’ 3월 모임입니다. 이번 달 모임에서는 심장보다 단단한 토마토 한 알을 함께 읽어요.",
-        period = "2025.01.12 ~ 2025.02.12",
-        members = 22,
-        maxMembers = 30,
-        daysLeft = 4,
-        genre = "고전 문학",
-        bookData = bookData,
-        recommendations = recommendations
-    )
-    val detailCancel = detailJoin.copy(
-        title = "참여 중인 독서모임",
-        isSecret = false,
-        members = 17
-    )
-    val detailHost = detailJoin.copy(
-        title = "내가 호스트인 독서모임",
-        isSecret = false,
-        members = 30,
-        maxMembers = 30
-    )
+        val detailJoin = GroupRoomData(
+            title = "시집만 읽는 사람들 3월",
+            isSecret = true,
+            description = "‘시집만 읽는 사람들’ 3월 모임입니다. 이번 달 모임에서는 심장보다 단단한 토마토 한 알을 함께 읽어요.",
+            period = "2025.01.12 ~ 2025.02.12",
+            members = 22,
+            maxMembers = 30,
+            daysLeft = 4,
+            genre = "고전 문학",
+            bookData = bookData,
+            recommendations = recommendations
+        )
+        val detailCancel = detailJoin.copy(
+            title = "참여 중인 독서모임",
+            isSecret = false,
+            members = 17
+        )
+        val detailHost = detailJoin.copy(
+            title = "내가 호스트인 독서모임",
+            isSecret = false,
+            members = 30,
+            maxMembers = 30
+        )
 
-    Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
-        // 1. 참여 가능한 경우(참여하기)
-        GroupRoomScreen(
-            detail = detailJoin,
-            buttonType = GroupBottomButtonType.JOIN,
-            onBottomButtonClick = {}
-        )
-        // 2. 참여 중인 경우(참여 취소하기)
-        GroupRoomScreen(
-            detail = detailCancel,
-            buttonType = GroupBottomButtonType.CANCEL,
-            onBottomButtonClick = {}
-        )
-        // 3. 내가 호스트인 경우(모집 마감하기)
-        GroupRoomScreen(
-            detail = detailHost,
-            buttonType = GroupBottomButtonType.CLOSE,
-            onBottomButtonClick = {}
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
+            // 1. 참여 가능한 경우(참여하기)
+            GroupRoomScreen(
+                detail = detailJoin,
+                buttonType = GroupBottomButtonType.JOIN,
+                onBottomButtonClick = {}
+            )
+            // 2. 참여 중인 경우(참여 취소하기)
+            GroupRoomScreen(
+                detail = detailCancel,
+                buttonType = GroupBottomButtonType.CANCEL,
+                onBottomButtonClick = {}
+            )
+            // 3. 내가 호스트인 경우(모집 마감하기)
+            GroupRoomScreen(
+                detail = detailHost,
+                buttonType = GroupBottomButtonType.CLOSE,
+                onBottomButtonClick = {}
+            )
+        }
     }
 }
 

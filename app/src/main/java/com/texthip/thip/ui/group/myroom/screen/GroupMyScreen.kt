@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.ui.common.cards.CardItemRoom
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,7 @@ import androidx.compose.foundation.lazy.items
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.myroom.component.GroupMyRoomFilterRow
+import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
 fun GroupMyScreen(
@@ -50,7 +52,6 @@ fun GroupMyScreen(
         Modifier
             .background(colors.Black)
             .fillMaxSize()
-            .padding(bottom = 20.dp)
     ) {
         DefaultTopAppBar(
             title = stringResource(R.string.myGroupRoom),
@@ -75,7 +76,9 @@ fun GroupMyScreen(
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(20.dp),
-                modifier = Modifier.fillMaxSize()
+                contentPadding = PaddingValues(bottom = 20.dp),
+                modifier = Modifier
+                    .fillMaxSize()
             ) {
                 items(filteredList) { item ->
                     CardItemRoom(
@@ -94,106 +97,108 @@ fun GroupMyScreen(
 }
 
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360, heightDp = 800)
+@Preview()
 @Composable
 fun MyGroupListFilterScreenPreview() {
-    val dataList = listOf(
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = true,
-            endDate = 3,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = false,
-            endDate = 30,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = true,
-            endDate = 1,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = false,
-            endDate = 3,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = true,
-            endDate = 3,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = false,
-            endDate = 30,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = true,
-            endDate = 1,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = false,
-            endDate = 3,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = true,
-            endDate = 3,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = false,
-            endDate = 30,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = true,
-            endDate = 1,
-            genreIndex = 0
-        ),
-        GroupCardItemRoomData(
-            title = "모임방 이름입니다. 모임방...",
-            participants = 22,
-            maxParticipants = 30,
-            isRecruiting = false,
-            endDate = 3,
-            genreIndex = 0
+    ThipTheme {
+        val dataList = listOf(
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = true,
+                endDate = 3,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = false,
+                endDate = 30,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = true,
+                endDate = 1,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = false,
+                endDate = 3,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = true,
+                endDate = 3,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = false,
+                endDate = 30,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = true,
+                endDate = 1,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = false,
+                endDate = 3,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = true,
+                endDate = 3,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = false,
+                endDate = 30,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = true,
+                endDate = 1,
+                genreIndex = 0
+            ),
+            GroupCardItemRoomData(
+                title = "모임방 이름입니다. 모임방...",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = false,
+                endDate = 3,
+                genreIndex = 0
+            )
         )
-    )
-    GroupMyScreen(allDataList = dataList)
+        GroupMyScreen(allDataList = dataList)
+    }
 }
