@@ -6,7 +6,7 @@
 
     <!--   header 컴포넌트    -->
     <string name="subscribe">구독</string>
-    <string name="subscriber_num">%02d명이 구독중</string>
+    <string name="subscriber_num">명이 구독중</string>
     <string name="influencer">공식 인플루언서</string>
     <string name="hours_ago">%d시간 전</string>
 
@@ -40,6 +40,8 @@
     <string name="time_ago">시간 전</string>
     <string name="group">모임</string>
     <string name="change">변경</string>
+    <string name="record_book">기록장</string>
+    <string name="vote_title">🔥모임방의 뜨거운 감자</string>
 
     <!--    TextField 컴포넌트    -->
     <string name="error_page_over">해당 도서는 %1$dp까지만 있습니다.</string>
@@ -48,4 +50,18 @@
     <string name="subscriber">님의 구독자</string>
     <string name="next">다음</string>
     <string name="page_name">페이지명</string>
+    <string name="current_page">현재 페이지 %d</string>
+    <string name="percent">%</string>
+
+    <!--    group room    -->
+    <string name="introduction_content">소개글</string>
+    <string name="group_active_period">모임 활동기간</string>
+    <string name="book_mate">독서메이트</string>
+    <string name="participate_num">%d명이 참여 중</string>
+    <string name="genre">장르</string>
+    <string name="group_room_chat">오늘의 한마디</string>
+    <string name="group_room_chat_description">모임방 멤버들과 간단한 인사를 나눠보세요!</string>
+    <string name="group_room_mates">독서메이트</string>
+    <string name="comment_to">님에게 답글 작성</string>
+    <string name="group_room_chat_hint">메이트들과 간단한 인사를 나눠보세요!</string>
 </resources>
