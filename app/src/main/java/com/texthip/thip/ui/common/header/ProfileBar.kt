@@ -91,7 +91,7 @@ fun ProfileBar(
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
-                    text = stringResource(R.string.subscriber_num, subscriberCount),
+                    text = stringResource(R.string.subscriber_num),
                     style = typography.timedate_r400_s11,
                     color = colors.Grey01
                 )
