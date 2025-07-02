@@ -56,7 +56,7 @@ fun GradationTopAppBar(
             CountingBar(
                 modifier = Modifier
                     .align(Alignment.Center),
-                content = stringResource(R.string.reading_user_num, 200)
+                content = stringResource(R.string.reading_user_num, count)
             )
         }
 
