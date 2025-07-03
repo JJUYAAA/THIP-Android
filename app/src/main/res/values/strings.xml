@@ -160,4 +160,6 @@
     <string name="leave_room">방 나가기</string>
     <string name="report_room">방 신고하기</string>
     <string name="delete_room">방 삭제하기</string>
+    <string name="tilde">~</string>
+    <string name="page">p</string>
 </resources>
