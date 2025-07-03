@@ -57,7 +57,7 @@ fun GroupMainCard(
 
     Card(
         modifier = Modifier
-            .width(320.dp)
+            .fillMaxWidth()
             .height(176.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(18.dp),
