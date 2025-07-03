@@ -157,5 +157,7 @@
     <string name="group_room_mates">독서메이트</string>
     <string name="comment_to">님에게 답글 작성</string>
     <string name="group_room_chat_hint">메이트들과 간단한 인사를 나눠보세요!</string>
-
+    <string name="leave_room">방 나가기</string>
+    <string name="report_room">방 신고하기</string>
+    <string name="delete_room">방 삭제하기</string>
 </resources>
