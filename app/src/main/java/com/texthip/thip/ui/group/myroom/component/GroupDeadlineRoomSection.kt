@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,8 +31,7 @@ fun GroupRoomDeadlineSection(
     roomSections: List<GroupRoomSectionData>,
     onRoomClick: (GroupCardItemRoomData) -> Unit
 ) {
-    val cardWidth = 320.dp
-    val pageSpacing = 12.dp
+    val sideMargin = 30.dp
 
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -48,16 +49,21 @@ fun GroupRoomDeadlineSection(
                 .height(588.dp),
             contentAlignment = Alignment.Center
         ) {
-            val horizontalPadding = ((maxWidth - cardWidth) / 2).coerceAtLeast(0.dp)
+            val horizontalPadding = sideMargin
+            val cardWidth = maxWidth - (horizontalPadding * 2)
+            val scale = 0.9f
+            val desiredGap = 12.dp // TODO: 이 부분을 10dp로 하면 양 옆의 카드에 살짝 다음 내용이 보여서 12정도가 어떤지 
+
+            val pageSpacing = (-(cardWidth - (cardWidth * scale)) / 2) + desiredGap
 
             HorizontalPager(
                 state = pagerState,
-                contentPadding = PaddingValues(horizontal = horizontalPadding),
+                contentPadding = PaddingValues(horizontal = 30.dp),
                 pageSpacing = pageSpacing,
                 modifier = Modifier.fillMaxWidth()
             ) { page ->
                 val section = roomSections[page]
-                var selectedGenre by remember { mutableStateOf(0) }
+                var selectedGenre by remember { mutableIntStateOf(0) }
 
                 val isCurrent = pagerState.currentPage == page
                 val scale = if (isCurrent) 1f else 0.9f
@@ -79,7 +85,7 @@ fun GroupRoomDeadlineSection(
                             ),
                             shape = RoundedCornerShape(14.dp)
                         )
-                        .padding(vertical = 20.dp, horizontal = 12.dp)
+                        .padding(vertical = 20.dp, horizontal = 20.dp)
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
