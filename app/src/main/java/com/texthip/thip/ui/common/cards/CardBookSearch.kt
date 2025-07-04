@@ -35,8 +35,7 @@ fun CardBookSearch(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 8.dp),
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 이미지
