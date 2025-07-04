@@ -162,4 +162,8 @@
     <string name="delete_room">방 삭제하기</string>
     <string name="tilde">~</string>
     <string name="page">p</string>
+    <string name="group_record">그룹 기록</string>
+    <string name="my_record">내 기록</string>
+    <string name="view_by_page">페이지별 보기</string>
+    <string name="view_by_all">총평 보기</string>
 </resources>
