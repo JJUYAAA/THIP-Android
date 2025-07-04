@@ -5,9 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -16,82 +13,123 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
 import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.common.bottomsheet.CustomBottomSheet
+import com.texthip.thip.ui.common.header.HeaderMenuBarTab
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookSearchBottomSheet(
     onDismiss: () -> Unit,
-    onBookSelect: (BookData) -> Unit
+    onBookSelect: (BookData) -> Unit,
+    onRequestBook: () -> Unit,
+    savedBooks: List<BookData> = emptyList(),
+    groupBooks: List<BookData> = emptyList(),
+    defaultTab: Int = 0
 ) {
-    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
-    val tabs = listOf("저장한 책", "모임 책")
+    // 책이 있는지 여부 체크
+    val hasBooks = savedBooks.isNotEmpty() || groupBooks.isNotEmpty()
+    var selectedTab by rememberSaveable { mutableIntStateOf(defaultTab) }
+    val tabs = listOf(
+        stringResource(R.string.group_saved_book), stringResource(R.string.group_book)
+    )
+    val books = if (selectedTab == 0) savedBooks else groupBooks
 
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-        containerColor = colors.DarkGrey
+    CustomBottomSheet(
+        onDismiss = onDismiss
     ) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 20.dp)
         ) {
             // 검색창
             SearchBookTextField(
-                hint = "책 제목, 저자검색",
-                onSearch = { /* 실제 검색 구현 시 여기에 */ }
+                hint = stringResource(R.string.group_book_search_hint),
+                onSearch = { /* 검색 구현 */ }
             )
             Spacer(Modifier.height(20.dp))
-            // 탭
-            TabRow(
+        }
+
+        if (hasBooks) {
+            HeaderMenuBarTab(
+                titles = tabs,
                 selectedTabIndex = selectedTab,
-                containerColor = colors.DarkGrey02,
-                contentColor = colors.White,
-                indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                        color = colors.White,
-                        height = 2.dp
-                    )
-                }
+                onTabSelected = { selectedTab = it },
+                indicatorColor = ThipTheme.colors.White,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
             ) {
-                tabs.forEachIndexed { idx, tab ->
-                    Tab(
-                        selected = selectedTab == idx,
-                        onClick = { selectedTab = idx },
-                        text = { Text(tab, color = if (selectedTab == idx) colors.White else colors.Grey03) }
+                Spacer(Modifier.height(20.dp))
+                if (books.isEmpty()) {
+                    EmptyBookSheetContent(onRequestBook = onRequestBook)
+                } else {
+                    BookListWithScrollbar(
+                        books = books,
+                        onBookClick = onBookSelect
                     )
                 }
             }
-            Spacer(Modifier.height(10.dp))
-            // 리스트 + 스크롤바
-            BookListWithScrollbar(
-                books = if (selectedTab == 0) dummySavedBooks else dummyGroupBooks,
-                onBookClick = onBookSelect
+        } else {
+            // 탭 없이 바로 안내화면
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+            ) {
+                Spacer(Modifier.height(20.dp))
+                EmptyBookSheetContent(onRequestBook = onRequestBook)
+            }
+        }
+    }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewBookSearchBottomSheet_HasBooks() {
+    ThipTheme {
+        var showSheet by remember { mutableStateOf(true) }
+        if (showSheet) {
+            BookSearchBottomSheet(
+                onDismiss = { showSheet = false },
+                onBookSelect = {},
+                onRequestBook = {},
+                savedBooks = dummySavedBooks,   // 데이터 있음
+                groupBooks = dummyGroupBooks,
+                defaultTab = 0
             )
         }
     }
 }
 
-@Preview()
+@Preview(showBackground = true)
 @Composable
-fun PreviewBookSearchBottomSheet() {
+fun PreviewBookSearchBottomSheet_Empty() {
     ThipTheme {
         var showSheet by remember { mutableStateOf(true) }
-        val onBookSelect: (BookData) -> Unit = {}
-
         if (showSheet) {
             BookSearchBottomSheet(
                 onDismiss = { showSheet = false },
-                onBookSelect = onBookSelect
+                onBookSelect = {},
+                onRequestBook = {},
+                savedBooks = emptyList(),   // 데이터 없음
+                groupBooks = emptyList(),
+                defaultTab = 0
             )
         }
     }

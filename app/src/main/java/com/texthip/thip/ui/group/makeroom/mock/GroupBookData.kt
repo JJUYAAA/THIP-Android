@@ -9,9 +9,21 @@ data class BookData(
 
 val dummySavedBooks = listOf(
     BookData("토마토 컬러면", R.drawable.bookcover_sample),
+    BookData("사슴",  R.drawable.bookcover_sample),
+    BookData("토마토 컬러면", R.drawable.bookcover_sample),
+    BookData("사슴",  R.drawable.bookcover_sample),
+    BookData("토마토 컬러면", R.drawable.bookcover_sample),
+    BookData("사슴",  R.drawable.bookcover_sample),
+    BookData("토마토 컬러면", R.drawable.bookcover_sample),
     BookData("사슴",  R.drawable.bookcover_sample)
 )
 val dummyGroupBooks = listOf(
+    BookData("명작 읽기방",  R.drawable.bookcover_sample),
+    BookData("또 다른 방",  R.drawable.bookcover_sample),
+    BookData("명작 읽기방",  R.drawable.bookcover_sample),
+    BookData("또 다른 방",  R.drawable.bookcover_sample),
+    BookData("명작 읽기방",  R.drawable.bookcover_sample),
+    BookData("또 다른 방",  R.drawable.bookcover_sample),
     BookData("명작 읽기방",  R.drawable.bookcover_sample),
     BookData("또 다른 방",  R.drawable.bookcover_sample)
 )

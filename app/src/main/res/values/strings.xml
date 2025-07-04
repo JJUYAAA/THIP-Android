@@ -169,5 +169,13 @@
 
     <!--    group makeroom    -->
     <string name="group_making_group">모임 만들기</string>
+    <string name="group_saved_book">저장한 책</string>
+    <string name="group_book">모임 책</string>
+    <string name="group_book_search_hint">책 제목, 저자 검색</string>
+    <string name="group_register_book">책 등록하기</string>
+    <string name="group_register_book_comment">현재 등록된 책이 아닙니다.\n원하시는 책을 신청해주세요.</string>
+    <string name="group_request_book">책 신청</string>
+    <string name="group_thip_email">texthip2025@gmail.com</string>
+    <string name="group_request_book_comment">이메일로 책 제목, 출판사를 보내주시면\n빠른 시일내로 책을 추가해드릴게요!</string>
 
 </resources>
