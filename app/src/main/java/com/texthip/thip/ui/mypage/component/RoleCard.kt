@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.component
+package com.texthip.thip.ui.mypage.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

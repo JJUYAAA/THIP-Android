@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.screen
+package com.texthip.thip.ui.mypage.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.screen
+package com.texthip.thip.ui.mypage.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,7 +23,7 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.OptionChipButton
 import com.texthip.thip.ui.common.cards.CardAlarm
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.myPage.mock.ReactionItem
+import com.texthip.thip.ui.mypage.mock.ReactionItem
 import com.texthip.thip.ui.theme.Black
 
 @Composable
