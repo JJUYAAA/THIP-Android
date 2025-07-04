@@ -28,7 +28,7 @@ fun ActionBarButton(
     likeCount: Int,
     commentCount: Int,
     isSaveVisible: Boolean = false,
-    isSaved: Boolean,
+    isSaved: Boolean = false,
     isPinVisible: Boolean = false,
     onLikeClick: () -> Unit = {},
     onCommentClick: () -> Unit = {},
