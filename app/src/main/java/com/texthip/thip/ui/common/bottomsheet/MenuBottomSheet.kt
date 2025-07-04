@@ -28,7 +28,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
@@ -68,7 +67,6 @@ fun MenuBottomSheet(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .blur(5.dp)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
