@@ -158,4 +158,7 @@
     <string name="comment_to">님에게 답글 작성</string>
     <string name="group_room_chat_hint">메이트들과 간단한 인사를 나눠보세요!</string>
 
+    <!--    group makeroom    -->
+    <string name="group_making_group">모임 만들기</string>
+
 </resources>
