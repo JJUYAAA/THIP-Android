@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
@@ -31,17 +33,21 @@ fun OptionChipButton(
     text: String,
     isFilled: Boolean = false,
     isSelected: Boolean? = null,  // 추가
+    enabled: Boolean = true,
+    textStyle: TextStyle = typography.info_r400_s12,
     onClick: () -> Unit,
 ) {
     var isClicked by remember { mutableStateOf(false) }
     val checked = isSelected ?: isClicked
 
     val textColor = when {
+        !enabled && isFilled -> colors.Grey02
         isFilled -> colors.White
         checked -> colors.Purple
         else -> colors.Grey01
     }
     val backgroundColor = when {
+        !enabled && isFilled -> colors.DarkGrey02
         isFilled && checked -> colors.Purple
         isFilled -> colors.DarkGrey
         else -> Color.Transparent
@@ -63,16 +69,17 @@ fun OptionChipButton(
                 color = borderColor,
                 shape = RoundedCornerShape(20.dp)
             )
-            .clickable {
+            .clickable(enabled = enabled) {
                 if (isSelected == null) isClicked = !isClicked
                 onClick()
             }
-            .padding(vertical = 8.dp, horizontal = 12.dp),
+            .height(30.dp)
+            .padding(horizontal = 12.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = text,
-            style = typography.info_r400_s12,
+            style = textStyle,
             color = textColor
         )
     }
