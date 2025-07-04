@@ -176,4 +176,7 @@
     <string name="annotation">\@</string>
     <string name="space_bar">\ </string>
     <string name="reply_to">00님에게 댓글을 남겨보세요.</string>
+    <!--    group makeroom    -->
+    <string name="group_making_group">모임 만들기</string>
+
 </resources>
