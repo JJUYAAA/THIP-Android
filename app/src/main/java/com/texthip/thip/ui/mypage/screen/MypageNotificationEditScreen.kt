@@ -1,12 +1,14 @@
 package com.texthip.thip.ui.mypage.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,20 +60,20 @@ fun NotificationScreen() {
                 )
             }
         }
-        Scaffold(
-            containerColor = colors.Black,
-            topBar = {
-                InputTopAppBar(
-                    title = stringResource(R.string.notification_settings),
-                    isRightButtonEnabled = true,
-                    onLeftClick = {},
-                    onRightClick = {}
-                )
-            }
-        ) { innerPadding ->
+        Column(
+            Modifier
+                .background(colors.Black)
+                .fillMaxSize()
+        ) {
+            InputTopAppBar(
+                title = stringResource(R.string.notification_settings),
+                isRightButtonEnabled = true,
+                onLeftClick = {},
+                onRightClick = {}
+            )
+            Spacer(modifier = Modifier.height(40.dp))
             Column(
                 modifier = Modifier
-                    .padding(innerPadding)
                     .padding(horizontal = 20.dp)
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally

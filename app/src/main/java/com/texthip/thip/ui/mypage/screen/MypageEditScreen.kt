@@ -1,14 +1,15 @@
 package com.texthip.thip.ui.mypage.screen
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -63,20 +64,19 @@ fun EditProfileScreen() {
             colors.Skyblue
         )
     )
-    Scaffold(
-        containerColor = colors.Black,
-        topBar = {
-            InputTopAppBar(
-                title = stringResource(R.string.edit_profile),
-                isRightButtonEnabled = true,
-                onLeftClick = {},
-                onRightClick = {}
-            )
-        }
-    ) { innerPadding ->
+    Column(
+        Modifier
+            .background(colors.Black)
+            .fillMaxSize()
+    ) {
+        InputTopAppBar(
+            title = stringResource(R.string.edit_profile),
+            isRightButtonEnabled = true,
+            onLeftClick = {},
+            onRightClick = {}
+        )
         Column(
             modifier = Modifier
-                .padding(innerPadding)
                 .padding(horizontal = 20.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
