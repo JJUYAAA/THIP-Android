@@ -21,7 +21,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 
 
 @Composable
-fun BookListWithScrollbar(
+fun GroupBookListWithScrollbar(
     books: List<BookData>,
     onBookClick: (BookData) -> Unit
 ) {
@@ -62,7 +62,7 @@ fun BookListWithScrollbar(
 fun PreviewBookListWithScrollbar() {
     ThipTheme {
         Column {
-            BookListWithScrollbar(
+            GroupBookListWithScrollbar(
                 books = List(20) { BookData("Book $it", R.drawable.bookcover_sample) },
                 onBookClick = {}
             )

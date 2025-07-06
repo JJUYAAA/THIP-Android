@@ -22,12 +22,11 @@ import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
 import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
 import com.texthip.thip.ui.theme.ThipTheme
-import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.common.bottomsheet.CustomBottomSheet
 import com.texthip.thip.ui.common.header.HeaderMenuBarTab
 
 @Composable
-fun BookSearchBottomSheet(
+fun GroupBookSearchBottomSheet(
     onDismiss: () -> Unit,
     onBookSelect: (BookData) -> Unit,
     onRequestBook: () -> Unit,
@@ -77,7 +76,7 @@ fun BookSearchBottomSheet(
                 if (books.isEmpty()) {
                     EmptyBookSheetContent(onRequestBook = onRequestBook)
                 } else {
-                    BookListWithScrollbar(
+                    GroupBookListWithScrollbar(
                         books = books,
                         onBookClick = onBookSelect
                     )
@@ -105,7 +104,7 @@ fun PreviewBookSearchBottomSheet_HasBooks() {
     ThipTheme {
         var showSheet by remember { mutableStateOf(true) }
         if (showSheet) {
-            BookSearchBottomSheet(
+            GroupBookSearchBottomSheet(
                 onDismiss = { showSheet = false },
                 onBookSelect = {},
                 onRequestBook = {},
@@ -123,7 +122,7 @@ fun PreviewBookSearchBottomSheet_Empty() {
     ThipTheme {
         var showSheet by remember { mutableStateOf(true) }
         if (showSheet) {
-            BookSearchBottomSheet(
+            GroupBookSearchBottomSheet(
                 onDismiss = { showSheet = false },
                 onBookSelect = {},
                 onRequestBook = {},
