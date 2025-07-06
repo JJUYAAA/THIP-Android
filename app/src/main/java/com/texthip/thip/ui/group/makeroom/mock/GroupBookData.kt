@@ -4,7 +4,8 @@ import com.texthip.thip.R
 
 data class BookData(
     val title: String,
-    val imageRes: Int // drawable 리소스 or 이미지 URL
+    val imageRes: Int, // drawable 리소스 or 이미지 URL
+    val author: String? = null
 )
 
 val dummySavedBooks = listOf(
