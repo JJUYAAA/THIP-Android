@@ -186,5 +186,24 @@
     <string name="group_request_book">책 신청</string>
     <string name="group_thip_email">texthip2025@gmail.com</string>
     <string name="group_request_book_comment">이메일로 책 제목, 출판사를 보내주시면\n빠른 시일내로 책을 추가해드릴게요!</string>
+    <string name="group_select_book_title">책 선택</string>
+    <string name="group_book_genre">책 장르</string>
+    <string name="group_genre_select_comment">책을 가장 잘 설명하는 장르를 하나 골라주세요</string>
+    <string name="group_room_title">방 제목</string>
+    <string name="group_room_title_hint">방 제목을 입력해주세요</string>
+    <string name="group_room_explain">한 줄 소개</string>
+    <string name="group_room_explain_hint">방에 대한 짧은 소개글을 작성해주세요</string>
+    <string name="group_room_duration_title">모임 활동기간</string>
+    <string name="group_room_duration_comment">모임 활동 기간은 최대 3개월까지 설정 가능합니다.</string>
+    <string name="group_room_duration_error">(선택된 기간: %1$d일)</string>
+    <string name="group_room_member_limit_title">인원 제한</string>
+    <string name="group_room_member_limit_comment">모집 인원은 최대 30명까지 입력할 수 있습니다.</string>
+    <string name="group_room_limit">명의 독서 메이트를 모집합니다</string>
+    <string name="group_genre_selected_comment">1개만 선택 가능합니다.</string>
+    <string name="group_selected_book_author">%1$s 저</string>
+    <string name="group_password_hint">4자리 숫자로 입장 비밀번호를 설정</string>
+    <string name="group_year">년</string>
+    <string name="group_month">월</string>
+    <string name="group_day">일</string>
 
 </resources>
