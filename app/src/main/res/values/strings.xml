@@ -196,5 +196,10 @@
     <string name="group_year">년</string>
     <string name="group_month">월</string>
     <string name="group_day">일</string>
+    <string name="group_private_option">공개 설정</string>
+    <string name="group_private_comment">비공개로 설정하기</string>
+    <string name="group_private_warning_message">4자리 숫자를 입력해주세요.</string>
+    <string name="group_room_duration_active_comment">%1$d월 %2$d일 자정에 자동으로 모집 마감되고 활동이 가능합니다.</string>
+    <string name="group_book_search">검색해서 찾기</string>
 
 </resources>

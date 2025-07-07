@@ -28,9 +28,9 @@ fun GroupRoomDurationPicker(
     val maxDate = today.plusMonths(3)
 
     // 날짜 상태
-    var startYear by rememberSaveable { mutableStateOf(today.year) }
-    var startMonth by rememberSaveable { mutableStateOf(today.monthValue) }
-    var startDay by rememberSaveable { mutableStateOf(today.dayOfMonth) }
+    var startYear by rememberSaveable { mutableIntStateOf(today.year) }
+    var startMonth by rememberSaveable { mutableIntStateOf(today.monthValue) }
+    var startDay by rememberSaveable { mutableIntStateOf(today.dayOfMonth) }
 
     // 유효한 날짜 범위 계산
     val years = remember { (today.year..maxDate.year).toList() }
@@ -210,7 +210,11 @@ fun GroupRoomDurationPicker(
                 }
                 else -> {
                     Text(
-                        text = "${startDate.monthValue}월 ${startDate.dayOfMonth}일 자정에 자동으로 모집 마감되고 활동이 가능합니다.",
+                        text = stringResource(
+                            R.string.group_room_duration_active_comment,
+                            startDate.monthValue,
+                            startDate.dayOfMonth
+                        ),
                         style = typography.info_r400_s12,
                         color = colors.NeonGreen,
                         textAlign = TextAlign.End,
