@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -31,6 +32,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun ActionMediumButton(
     text: String,
     icon: Painter? = null,
+    iconSize: Int = 24,
+    iconTint: Color = Color.Unspecified,
     contentColor: Color,
     backgroundColor: Color,
     hasRightIcon: Boolean = false,
@@ -55,6 +58,7 @@ fun ActionMediumButton(
                 painter = icon,
                 contentDescription = null,
                 tint = contentColor,
+                modifier = Modifier.size(iconSize.dp)
             )
         }
 
