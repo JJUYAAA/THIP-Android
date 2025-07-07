@@ -7,7 +7,7 @@ data class FeedItem(
     val userRole: String,
     val bookTitle: String,
     val authName: String,
-    val timeAgo: Int,
+    val timeAgo: String,
     val content: String,
     val likeCount: Int,
     val commentCount: Int,

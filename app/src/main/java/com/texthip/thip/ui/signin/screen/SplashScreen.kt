@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.signin
+package com.texthip.thip.ui.signin.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
