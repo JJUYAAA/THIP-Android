@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -125,6 +126,8 @@ fun MySubscriptionScreen(
             subscriberCount = 100
         ),
     )
+    val context = LocalContext.current
+
     var members by remember { mutableStateOf(initialmembers) }
     var toastMessage by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -190,12 +193,15 @@ fun MySubscriptionScreen(
                                     if (it.nickname == nickname) it.copy(isSubscribed = !it.isSubscribed)
                                     else it
                                 }
-                                toastMessage = if (members.find { it.nickname == nickname }?.isSubscribed == true) {
-                                    "@$nickname 님을 구독했어요"
-                                } else {
-                                    "@$nickname 님을 구독취소했어요"
-                                }                            }
-                        )                    }
+                                toastMessage =
+                                    if (members.find { it.nickname == nickname }?.isSubscribed == true) {
+                                        context.getString(R.string.toast_subscribe, nickname)
+                                    } else {
+                                        context.getString(R.string.toast_unsubscribe, nickname)
+                                    }
+                            }
+                        )
+                    }
                 }
             }
         }
