@@ -71,7 +71,6 @@ fun LoginScreen() {
             text = stringResource(R.string.google_login),
             icon = painterResource(R.drawable.ic_google),
             iconSize = 21,
-            iconTint = Color.Unspecified,
             contentColor = colors.Black,
             backgroundColor = colors.White,
             hasRightIcon = false,

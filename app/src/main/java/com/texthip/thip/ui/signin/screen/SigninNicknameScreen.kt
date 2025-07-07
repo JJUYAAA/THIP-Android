@@ -48,6 +48,7 @@ fun SigninNicknameScreen() {
                     .fillMaxWidth()
                     .padding(bottom = 12.dp)
             )
+            //TODO 컴포넌트 수정필요 -> 경고 메시지 처리
             FormTextFieldDefault(
                 hint = stringResource(R.string.nickname_condition),
                 showLimit = true,

@@ -107,6 +107,7 @@ fun SigninDoneScreen(nickname: String, profileImageResId: Int?, role: String) {
                     modifier = Modifier
                         .padding(bottom = 4.dp)
                 )
+                //TODO role color는  role과 매핑되도록 수정 필요
                 Text(
                     text = role,
                     style = typography.copy_r400_s14,

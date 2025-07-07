@@ -57,7 +57,7 @@ fun ActionMediumButton(
             Icon(
                 painter = icon,
                 contentDescription = null,
-                tint = contentColor,
+                tint = iconTint,
                 modifier = Modifier.size(iconSize.dp)
             )
         }
