@@ -44,7 +44,7 @@ fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
     var roomDescription by remember { mutableStateOf("") }
     var meetingStartDate by remember { mutableStateOf(LocalDate.now()) }
     var meetingEndDate by remember { mutableStateOf(LocalDate.now().plusDays(1)) }
-    var selectedCount by remember { mutableStateOf(30) }
+    var selectedCount by remember { mutableIntStateOf(30) }
     var isPrivate by remember { mutableStateOf(false) }
     var password by remember { mutableStateOf("") }
 
@@ -200,9 +200,9 @@ fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier = Modifier.padding(top = 32.dp))
 
-                // --- 공개 설정 ---
+
                 Text(
-                    text = "공개 설정",
+                    text = stringResource(R.string.group_private_option),
                     style = typography.smalltitle_sb600_s18_h24,
                     color = colors.White
                 )
@@ -213,7 +213,7 @@ fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "비공개로 설정하기",
+                        text = stringResource(R.string.group_private_comment),
                         style = typography.menu_r400_s14_h24,
                         color = colors.White
                     )
@@ -233,7 +233,7 @@ fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
                         onValueChange = { password = it },
                         hint = stringResource(R.string.group_password_hint),
                         showWarning = password.isNotEmpty() && password.length < 4,
-                        warningMessage = "4자리 숫자를 입력해주세요.",
+                        warningMessage = stringResource(R.string.group_private_warning_message),
                         maxLength = 4,
                         isNumberOnly = true,
                         keyboardType = KeyboardType.NumberPassword

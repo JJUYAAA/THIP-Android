@@ -66,7 +66,7 @@ fun GroupSelectBook(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "검색해서 찾기",
+                    text = stringResource(R.string.group_book_search),
                     style = typography.menu_m500_s16_h24,
                     color = colors.Grey
                 )
@@ -121,18 +121,13 @@ fun GroupSelectBook(
     }
 }
 
-// -------------------------
-// 프리뷰용 더미 BookData
-// -------------------------
+
 private val dummyBook = BookData(
     title = "호르몬 체인지",
-    imageRes = R.drawable.bookcover_sample, // drawable 샘플로 교체
+    imageRes = R.drawable.bookcover_sample,
     author = "최정화"
 )
 
-// -------------------------
-// PREVIEW: 책 미선택 상태
-// -------------------------
 @Preview(showBackground = true)
 @Composable
 fun GroupSelectBookPreview_Unselected() {
@@ -145,9 +140,6 @@ fun GroupSelectBookPreview_Unselected() {
     }
 }
 
-// -------------------------
-// PREVIEW: 책 선택된 상태
-// -------------------------
 @Preview(showBackground = true)
 @Composable
 fun GroupSelectBookPreview_Selected() {
