@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -38,6 +40,7 @@ fun AuthorHeader(
     nickname: String,
     badgeText: String,
     buttonText: String,
+    buttonWidth: Dp? = null,
     onButtonClick: () -> Unit = {}
 ) {
     Row(
@@ -81,9 +84,15 @@ fun AuthorHeader(
         }
         OutlinedButton(
             modifier = Modifier
-                .size(width = 51.dp, height = 35.dp),
+                .then(
+                    if (buttonWidth != null)
+                        Modifier
+                            .width(buttonWidth)
+                            .height(33.dp)
+                    else Modifier
+                ),
             text = buttonText,
-            textStyle = typography.menu_m500_s14_h24,
+            textStyle = typography.view_m500_s14,
             onClick = onButtonClick
         )
     }
@@ -97,7 +106,8 @@ fun PreviewAuthorHeader() {
             profileImage = null,
             nickname = "열자자제한열열자제한",
             badgeText = "칭호칭호칭호",
-            buttonText = "구독"
+            buttonText = "구독",
+            buttonWidth = 60.dp
         )
     }
 }
