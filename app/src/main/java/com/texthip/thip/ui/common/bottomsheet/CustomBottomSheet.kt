@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.common.bottomsheet
 
-// com.texthip.thip.ui.common.bottomsheet.CustomBottomSheet.kt
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -27,7 +26,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun CustomBottomSheet(
     onDismiss: () -> Unit,
-    // 핵심: ColumnScope로 slot 전달!
     content: @Composable ColumnScope.() -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -97,10 +95,10 @@ fun CustomBottomSheet(
                         }
                     )
                 }
-                .clickable(enabled = true) {} // 내부 클릭 먹히게
+                .clickable(enabled = true) {}
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                content() // <--- 이 부분이 핵심! slot에 원하는 Compose UI를 전달
+                content()
             }
         }
     }
@@ -114,7 +112,6 @@ fun PreviewCustomBottomSheet() {
 
     ThipTheme {
         Box(Modifier.fillMaxSize()) {
-            // 배경 컨텐츠 예시
             Text(
                 text = "Main Content Area",
                 color = Color.White,

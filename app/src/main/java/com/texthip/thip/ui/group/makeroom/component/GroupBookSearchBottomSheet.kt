@@ -83,7 +83,6 @@ fun GroupBookSearchBottomSheet(
                 }
             }
         } else {
-            // 탭 없이 바로 안내화면
             Column(
                 Modifier
                     .fillMaxWidth()
