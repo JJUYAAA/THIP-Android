@@ -132,14 +132,6 @@ fun GroupRoomDeadlineSection(
                 }
             }
         }
-
-        SimplePagerIndicator(
-            pageCount = roomSections.size,
-            currentPage = pagerState.currentPage,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 8.dp)
-        )
     }
 }
 
