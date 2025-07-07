@@ -24,6 +24,7 @@ val Pink = Color(0xFFFF8BAC)
 val Lavendar = Color(0xFFC8A5FF)
 val LavendaSub = Color(0xFFA76FFF)
 val Yellow = Color(0xFFFFECA7)
+val KakaoYellow = Color(0xFFFEE500)
 
 val PureWhite = Color(0xFFFFFFFF)
 val White = Color(0xFFFEFEFE)
@@ -61,6 +62,7 @@ data class ThipColors(
     val Lavendar: Color,
     val LavendaSub: Color,
     val Yellow: Color,
+    val KakaoYellow: Color,
     val PureWhite: Color,
     val White: Color,
     val Grey50: Color,
@@ -96,6 +98,7 @@ val defaultThipColors = ThipColors(
     Lavendar = Lavendar,
     LavendaSub = LavendaSub,
     Yellow = Yellow,
+    KakaoYellow = KakaoYellow,
     PureWhite = PureWhite,
     White = White,
     Grey50 = Grey50,
