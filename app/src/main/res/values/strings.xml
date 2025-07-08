@@ -166,4 +166,9 @@
     <string name="my_record">내 기록</string>
     <string name="view_by_page">페이지별 보기</string>
     <string name="view_by_all">총평 보기</string>
+
+    <!--    alarm    -->
+    <string name="alarm_feed">피드</string>
+    <string name="alarm_group">모임</string>
+    <string name="alarm_string">알림</string>
 </resources>
