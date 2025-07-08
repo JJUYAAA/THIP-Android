@@ -63,75 +63,79 @@ fun GroupNoteScreen() {
             onLeftClick = {}
         )
 
-        Column {
-            HeaderMenuBarTab(
-                titles = tabs,
-                selectedTabIndex = selectedTabIndex,
-                onTabSelected = { selectedTabIndex = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp)
-            )
+        HeaderMenuBarTab(
+            titles = tabs,
+            selectedTabIndex = selectedTabIndex,
+            onTabSelected = { selectedTabIndex = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp, bottom = 56.dp)
+        )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                FilterButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 20.dp),
-                    selectedOption = selectedFilter,
-                    options = filters,
-                    onOptionSelected = { selectedFilter = it }
-                )
-                FilterHeaderSection(
-                    firstPage = firstPage,
-                    lastPage = lastPage,
-                    isTotalSelected = isTotalSelected,
-                    totalEnabled = totalEnabled,
-                    onFirstPageChange = { firstPage = it },
-                    onLastPageChange = { lastPage = it },
-                    onTotalToggle = { isTotalSelected = !isTotalSelected },
-                )
-            }
-
-            // 피드 리스트 영역
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 82.dp),
-            ) {
-                item{
-                    Row(
-                        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 16.dp, top = 20.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.ic_information),
-                            contentDescription = null,
-                            tint = colors.White,
-                        )
-                        Text(
-                            text = stringResource(R.string.group_note_info),
-                            modifier = Modifier.padding(start = 8.dp),
-                            color = colors.Grey01,
-                            style = typography.info_r400_s12
-                        )
-                    }
+        // 피드 리스트 영역
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 82.dp),
+        ) {
+            item {
+                Row(
+                    modifier = Modifier.padding(
+                        start = 20.dp,
+                        end = 20.dp,
+                        bottom = 16.dp,
+                        top = 20.dp
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Icon(
+                        painterResource(R.drawable.ic_information),
+                        contentDescription = null,
+                        tint = colors.White,
+                    )
+                    Text(
+                        text = stringResource(R.string.group_note_info),
+                        modifier = Modifier.padding(start = 8.dp),
+                        color = colors.Grey01,
+                        style = typography.info_r400_s12
+                    )
                 }
-                items(filteredItems) { item ->
-                    when (item) {
-                        is GroupNoteRecord -> TextCommentCard(data = item)
-                        is GroupNoteVote -> VoteCommentCard(data = item)
-                    }
+            }
+            items(filteredItems) { item ->
+                when (item) {
+                    is GroupNoteRecord -> TextCommentCard(data = item)
+                    is GroupNoteVote -> VoteCommentCard(data = item)
                 }
             }
         }
     }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 136.dp),
+    ) {
+        FilterHeaderSection(
+            firstPage = firstPage,
+            lastPage = lastPage,
+            isTotalSelected = isTotalSelected,
+            totalEnabled = totalEnabled,
+            onFirstPageChange = { firstPage = it },
+            onLastPageChange = { lastPage = it },
+            onTotalToggle = { isTotalSelected = !isTotalSelected },
+        )
+
+        FilterButton(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 20.dp),
+            selectedOption = selectedFilter,
+            options = filters,
+            onOptionSelected = { selectedFilter = it }
+        )
+    }
+
     FloatingButton(
         icon = painterResource(id = R.drawable.ic_plus),
         onClick = { /* 새 글 작성 */ }
