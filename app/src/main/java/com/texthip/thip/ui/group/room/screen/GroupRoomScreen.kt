@@ -31,7 +31,7 @@ import com.texthip.thip.ui.group.room.component.GroupRoomBody
 import com.texthip.thip.ui.group.room.component.GroupRoomHeader
 import com.texthip.thip.ui.group.room.mock.GroupRoomBodyData
 import com.texthip.thip.ui.group.room.mock.GroupRoomHeaderData
-import com.texthip.thip.ui.group.room.mock.VoteData
+import com.texthip.thip.ui.group.room.mock.mockVoteData
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
@@ -85,27 +85,7 @@ fun GroupRoomScreen() {
                         bookAuthor = "최정화",
                         currentPage = 100,
                         percentage = 50,
-                        voteList = listOf(
-                            VoteData(
-                                description = "투표 내용입니다...",
-                                options = listOf("김땡땡", "이땡땡", "박땡땡", "최땡땡", "정땡땡"),
-                                votes = listOf(50, 10, 20, 15, 5)
-                            ),
-                            VoteData(
-                                description = "옆으로 넘긴 다른 투표 01",
-                                options = listOf("어쩌구", "저쩌구", "삼번", "사번"),
-                                votes = listOf(25, 45, 20, 10)
-                            ),
-                            VoteData(
-                                description = "옆으로 넘긴 다른 투표 02",
-                                options = listOf(
-                                    "투표 제목과 항목 버튼이 가로 스크롤되고",
-                                    "아래 캐러셀 닷은",
-                                    "위치 그대로, 강조점만 바뀌도록."
-                                ),
-                                votes = listOf(40, 35, 25)
-                            )
-                        )
+                        voteList = mockVoteData
                     )
                 )
             }
