@@ -116,6 +116,15 @@ fun GroupNoteScreen() {
             .fillMaxWidth()
             .padding(top = 136.dp),
     ) {
+        FilterButton(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 20.dp),
+            selectedOption = selectedFilter,
+            options = filters,
+            onOptionSelected = { selectedFilter = it }
+        )
+
         FilterHeaderSection(
             firstPage = firstPage,
             lastPage = lastPage,
@@ -124,15 +133,6 @@ fun GroupNoteScreen() {
             onFirstPageChange = { firstPage = it },
             onLastPageChange = { lastPage = it },
             onTotalToggle = { isTotalSelected = !isTotalSelected },
-        )
-
-        FilterButton(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 20.dp),
-            selectedOption = selectedFilter,
-            options = filters,
-            onOptionSelected = { selectedFilter = it }
         )
     }
 
