@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,11 +24,15 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun TextCommentCard(
+    modifier: Modifier = Modifier,
     data: GroupNoteRecord,
 ) {
     var isLiked by remember { mutableStateOf(data.isLiked) }
 
     Column(
+        modifier = modifier
+            .blur(if (data.isLocked) 5.dp else 0.dp)
+            .padding(vertical = 16.dp, horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ProfileBar(
@@ -75,6 +80,7 @@ fun TextCommentCardPreview() {
             commentCount = 123,
             isLiked = true,
             isWriter = false,
+            isLocked = false,
             recordId = 1
         )
     )

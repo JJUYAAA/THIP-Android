@@ -2,12 +2,15 @@ package com.texthip.thip.ui.group.note.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +26,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun VoteCommentCard(
+    modifier: Modifier = Modifier,
     data: GroupNoteVote,
 ) {
     var isLiked by remember { mutableStateOf(data.isLiked) }
@@ -31,6 +35,9 @@ fun VoteCommentCard(
     val hasVoted = voteItems.any { it.isVoted }
 
     Column(
+        modifier = modifier
+            .blur(if (data.isLocked) 5.dp else 0.dp)
+            .padding(vertical = 16.dp, horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ProfileBar(
@@ -78,7 +85,7 @@ fun VoteCommentCard(
             onLikeClick = {
                 isLiked = !isLiked
             },
-            onCommentClick = {  },
+            onCommentClick = { },
         )
     }
 }
@@ -98,6 +105,7 @@ private fun VoteCommentCardPreview() {
             commentCount = 123,
             isLiked = true,
             isWriter = false,
+            isLocked = false,
             voteId = 1,
             voteItems = listOf(
                 VoteItem(1, "김땡땡", 90, false),

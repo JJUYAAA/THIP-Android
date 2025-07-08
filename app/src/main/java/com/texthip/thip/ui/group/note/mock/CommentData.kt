@@ -12,6 +12,7 @@ sealed class GroupNoteItem {
     abstract val commentCount: Int
     abstract val isLiked: Boolean
     abstract val isWriter: Boolean
+    abstract val isLocked: Boolean
 }
 
 data class GroupNoteRecord(
@@ -25,6 +26,7 @@ data class GroupNoteRecord(
     override val commentCount: Int,
     override val isLiked: Boolean,
     override val isWriter: Boolean,
+    override val isLocked: Boolean,
     val recordId: Int
 ) : GroupNoteItem()
 
@@ -40,6 +42,7 @@ data class GroupNoteVote(
     override val isLiked: Boolean,
     override val isWriter: Boolean,
     val voteId: Int,
+    override val isLocked: Boolean,
     val voteItems: List<VoteItem>
 ) : GroupNoteItem()
 
@@ -62,6 +65,7 @@ val mockGroupNoteItems: List<GroupNoteItem> = listOf(
         commentCount = 123,
         isLiked = true,
         isWriter = false,
+        isLocked = false,
         recordId = 1
     ),
     GroupNoteVote(
@@ -75,6 +79,7 @@ val mockGroupNoteItems: List<GroupNoteItem> = listOf(
         commentCount = 123,
         isLiked = false,
         isWriter = false,
+        isLocked = true,
         voteId = 1,
         voteItems = listOf(
             VoteItem(1, "김땡땡", 90, false),
@@ -92,6 +97,7 @@ val mockGroupNoteItems: List<GroupNoteItem> = listOf(
         commentCount = 123,
         isLiked = false,
         isWriter = true,
+        isLocked = false,
         recordId = 1
     ),
     GroupNoteVote(
@@ -105,6 +111,7 @@ val mockGroupNoteItems: List<GroupNoteItem> = listOf(
         commentCount = 123,
         isLiked = true,
         isWriter = true,
+        isLocked = false,
         voteId = 1,
         voteItems = listOf(
             VoteItem(1, "김땡땡", 90, false),
