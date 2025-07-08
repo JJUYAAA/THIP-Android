@@ -1,7 +1,8 @@
 package com.texthip.thip.ui.group.room.mock
 
+import com.texthip.thip.ui.group.note.mock.VoteItem
+
 data class VoteData(
     val description: String,
-    val options: List<String>,
-    val votes: List<Int>
+    val voteItems: List<VoteItem>
 )

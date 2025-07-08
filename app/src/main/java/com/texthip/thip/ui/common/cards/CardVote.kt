@@ -16,12 +16,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GroupVoteButton
+import com.texthip.thip.ui.group.note.mock.VoteItem
 import com.texthip.thip.ui.group.room.mock.VoteData
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -33,8 +35,11 @@ fun CardVote(
     val pageCount = voteData.size
     val pagerState = rememberPagerState(pageCount = { pageCount })
 
-    // 각 투표에 따라 투표한거 기록
+    // 각 페이지별 상태 기억: 선택 인덱스, 선택 여부 포함한 voteItems
     val selectedIndexes = remember { mutableStateMapOf<Int, Int?>() }
+    val voteItemStates = remember {
+        voteData.map { it.voteItems.toMutableStateList() }.toMutableStateList()
+    }
 
     Column(
         modifier = Modifier
@@ -50,29 +55,35 @@ fun CardVote(
             modifier = Modifier.padding(horizontal = 12.dp)
         )
 
-
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxWidth()
         ) { page ->
-            val item = voteData[page]
+            val voteItems = voteItemStates[page]
             val selectedIndex = selectedIndexes[page]
+            val hasVoted = voteItems.any { it.isVoted }
 
             Column(
                 modifier = Modifier.padding(horizontal = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(
-                    text = item.description,
+                    text = voteData[page].description,
                     style = typography.info_m500_s12,
                     color = colors.White,
                 )
 
                 GroupVoteButton(
-                    options = item.options,
-                    voteResults = item.votes,
+                    voteItems = voteItems,
                     selectedIndex = selectedIndex,
-                    onOptionSelected = { selectedIndexes[page] = it }
+                    hasVoted = hasVoted,
+                    onOptionSelected = { index ->
+                        selectedIndexes[page] = if (selectedIndex == index) null else index
+
+                        voteItemStates[page] = voteItems.mapIndexed { i, item ->
+                            item.copy(isVoted = i == index && selectedIndex != index)
+                        }.toMutableStateList()
+                    }
                 )
             }
         }
@@ -101,18 +112,30 @@ private fun CardVotePreview() {
     val mockVoteData = listOf(
         VoteData(
             description = "투표 내용입니다...",
-            options = listOf("김땡땡", "이땡땡", "박땡땡", "최땡땡", "정땡땡"),
-            votes = listOf(50, 10, 20, 15, 5)
+            voteItems = listOf(
+                VoteItem(1, "김땡땡", 50, false),
+                VoteItem(2, "이땡땡", 10, false),
+                VoteItem(3, "박땡땡", 20, false),
+                VoteItem(4, "최땡땡", 15, false),
+                VoteItem(5, "정땡땡", 5, false)
+            )
         ),
         VoteData(
             description = "옆으로 넘긴 다른 투표 01",
-            options = listOf("어쩌구", "저쩌구", "삼번", "사번"),
-            votes = listOf(25, 45, 20, 10)
+            voteItems = listOf(
+                VoteItem(1, "어쩌구", 25, false),
+                VoteItem(2, "저쩌구", 45, false),
+                VoteItem(3, "삼번", 20, false),
+                VoteItem(4, "사번", 10, false)
+            )
         ),
         VoteData(
             description = "옆으로 넘긴 다른 투표 02",
-            options = listOf("투표 제목과 항목 버튼이 가로 스크롤되고", "아래 캐러셀 닷은", "위치 그대로, 강조점만 바뀌도록."),
-            votes = listOf(40, 35, 25)
+            voteItems = listOf(
+                VoteItem(1, "투표 제목과 항목 버튼이 가로 스크롤되고", 40, false),
+                VoteItem(2, "아래 캐러셀 닷은", 35, false),
+                VoteItem(3, "위치 그대로, 강조점만 바뀌도록.", 25, false)
+            )
         )
     )
 
