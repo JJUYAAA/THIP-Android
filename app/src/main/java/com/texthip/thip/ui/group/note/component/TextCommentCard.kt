@@ -2,12 +2,14 @@ package com.texthip.thip.ui.group.note.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +31,7 @@ fun TextCommentCard(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ProfileBar(
+            modifier = Modifier.padding(0.dp),
 //            profileImage = data.profileImageUrl,
             profileImage = painterResource(R.drawable.character_literature),
             topText = data.nickName,
