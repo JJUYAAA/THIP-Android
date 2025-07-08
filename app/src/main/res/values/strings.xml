@@ -171,4 +171,5 @@
     <string name="alarm_feed">피드</string>
     <string name="alarm_group">모임</string>
     <string name="alarm_string">알림</string>
+    <string name="alarm_notification_comment">새로운 알림이 없어요</string>
 </resources>
