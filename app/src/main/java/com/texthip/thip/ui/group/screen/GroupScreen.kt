@@ -90,7 +90,7 @@ fun GroupScreen(
                 roomSections = roomSections,
                 onRoomClick = { viewModel.onRoomCardClick(it) }
             )
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(102.dp))
         }
         // 오른쪽 하단 FAB
         FloatingButton(

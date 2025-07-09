@@ -185,7 +185,8 @@
     <string name="group_register_book_comment">현재 등록된 책이 아닙니다.\n원하시는 책을 신청해주세요.</string>
     <string name="group_request_book">책 신청</string>
     <string name="group_thip_email">texthip2025@gmail.com</string>
-    <string name="group_request_book_comment">이메일로 책 제목, 출판사를 보내주시면\n빠른 시일내로 책을 추가해드릴게요!</string>
+    <string name="group_request_book_comment_1">이메일로 책 제목, 출판사를 보내주시면</string>
+    <string name="group_request_book_comment_2">빠른 시일내로 책을 추가해드릴게요!</string>
     <string name="group_select_book_title">책 선택</string>
     <string name="group_book_genre">책 장르</string>
     <string name="group_genre_select_comment">책을 가장 잘 설명하는 장르를 하나 골라주세요</string>

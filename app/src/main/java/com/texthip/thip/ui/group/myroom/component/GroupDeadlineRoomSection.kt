@@ -44,8 +44,7 @@ fun GroupRoomDeadlineSection(
     ) {
         BoxWithConstraints(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(588.dp),
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             val horizontalPadding = sideMargin
