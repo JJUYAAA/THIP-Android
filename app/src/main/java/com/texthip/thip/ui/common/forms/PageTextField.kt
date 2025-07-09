@@ -36,12 +36,18 @@ fun PageTextField(
     ) {
         BasicTextField(
             value = text,
-            onValueChange = onTextChange,
+            onValueChange = { newText ->
+                // 숫자만 필터링
+                if (newText.all { it.isDigit() }) {
+                    onTextChange(newText)
+                }
+            },
             textStyle = typography.copy_r400_s14.copy(color = colors.White),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number
             ),
             cursorBrush = SolidColor(colors.NeonGreen),
+            maxLines = 1,
         )
     }
 }
