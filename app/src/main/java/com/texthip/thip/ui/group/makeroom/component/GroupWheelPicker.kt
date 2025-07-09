@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.ui.group.makeroom.util.WheelPickerUtils
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import kotlinx.coroutines.launch
@@ -38,7 +39,6 @@ fun <T> GroupWheelPicker(
 ) {
     if (items.isEmpty()) return
 
-    // 아이템이 하나인 경우 스크롤 비활성화
     val isScrollEnabled = items.size > 1
     val circular = isCircular && items.size > 2
 
@@ -53,28 +53,16 @@ fun <T> GroupWheelPicker(
     val spacingPx = with(density) { 9.dp.toPx() }
     val itemSpacing = itemHeightPx + spacingPx
 
-    // index가 음수/양수 모두에서 올바르게 작동하도록
     fun getCircularIndex(index: Int): Int {
-        val size = items.size
-        return ((index % size) + size) % size
+        return WheelPickerUtils.getCircularIndex(index, items.size)
     }
 
-    // offset을 항상 0 ~ (items.size-1)*itemSpacing 범위로
     fun normalizeOffset(offset: Float): Float {
-        if (!circular) return offset
-        val total = items.size * itemSpacing
-        return ((offset % total) + total) % total
+        return WheelPickerUtils.normalizeOffset(offset, itemSpacing, items.size, circular)
     }
 
-    // 오프셋을 아이템 인덱스로 변환 (0이 중앙)
     fun offsetToIndex(offset: Float): Int {
-        val total = items.size * itemSpacing
-        val normalized = if (circular) normalizeOffset(offset) else offset
-        val centerIndex = (-normalized / itemSpacing).roundToInt()
-        return if (circular) getCircularIndex(centerIndex) else centerIndex.coerceIn(
-            0,
-            items.size - 1
-        )
+        return WheelPickerUtils.offsetToIndex(offset, itemSpacing, items.size, circular)
     }
 
     // 선택 아이템이 바뀌면 중앙에 오도록 offset 이동

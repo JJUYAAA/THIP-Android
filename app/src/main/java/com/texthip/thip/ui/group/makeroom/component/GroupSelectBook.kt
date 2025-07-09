@@ -45,7 +45,6 @@ fun GroupSelectBook(
         Spacer(modifier = Modifier.height(20.dp))
 
         if (selectedBook == null) {
-            // 미선택 상태: 기존 검색 UI
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
