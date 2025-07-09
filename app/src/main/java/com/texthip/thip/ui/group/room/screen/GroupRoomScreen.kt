@@ -25,12 +25,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
-import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheetItem
 import com.texthip.thip.ui.common.topappbar.GradationTopAppBar
 import com.texthip.thip.ui.group.room.component.GroupRoomBody
 import com.texthip.thip.ui.group.room.component.GroupRoomHeader
 import com.texthip.thip.ui.group.room.mock.GroupRoomBodyData
 import com.texthip.thip.ui.group.room.mock.GroupRoomHeaderData
+import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.group.room.mock.mockVoteData
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
