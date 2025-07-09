@@ -48,6 +48,20 @@ fun FilterButton(
             .fillMaxWidth(),
         contentAlignment = Alignment.TopEnd
     ) {
+        // 바깥 클릭 감지(expanded 상태에서만 보이도록 함)
+        if (expanded) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        expanded = false
+                    }
+            )
+        }
+
         // 버튼 영역
         Row(
             modifier = Modifier
