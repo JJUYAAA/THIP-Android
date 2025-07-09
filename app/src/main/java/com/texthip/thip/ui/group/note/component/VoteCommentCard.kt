@@ -47,7 +47,6 @@ fun VoteCommentCard(
             bottomText = data.page.toString() + stringResource(R.string.page),
             bottomTextColor = colors.Purple,
             showSubscriberInfo = false,
-//            hoursAgo = data.postDate
             hoursAgo = data.postDate
         )
 
