@@ -44,7 +44,12 @@ fun GroupRegisterBookScreen(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.padding(top = 8.dp))
 
             Text(
-                text = stringResource(R.string.group_request_book_comment),
+                text = stringResource(R.string.group_request_book_comment_1),
+                style = typography.copy_r400_s14,
+                color = colors.White
+            )
+            Text(
+                text = stringResource(R.string.group_request_book_comment_2),
                 style = typography.copy_r400_s14,
                 color = colors.White
             )
