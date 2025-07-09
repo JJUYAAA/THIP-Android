@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -43,8 +44,8 @@ fun CardAlarm(
     message: String,
     timeAgo: String,
     isRead: Boolean = false,
-    containerColorUnread: Color = colors.DarkGrey,  // 안읽음 상태의 배경색
-    containerColorRead: Color = colors.DarkGrey02, // 읽음 상태의 배경색
+    containerColorUnread: Color = colors.DarkGrey02,  // 안읽음 상태의 배경색
+    containerColorRead: Color = colors.DarkGrey03, // 읽음 상태의 배경색
     onClick: () -> Unit = {}
 ) {
     Card(
@@ -112,7 +113,6 @@ fun CardAlarm(
                         ) {
                             // 안읽음 상태일 때만 빨간 점
                             if (!isRead) {
-                                Spacer(modifier = Modifier.width(8.dp))
                                 Box(
                                     modifier = Modifier
                                         .size(6.dp)
@@ -125,13 +125,16 @@ fun CardAlarm(
                                 text = timeAgo + stringResource(R.string.time_ago),
                                 style = typography.timedate_r400_s11,
                                 color = if (isRead) colors.Grey02 else colors.Grey01,
+                                modifier = Modifier
+                                    .padding(top = 7.dp, end = 2.dp)
+                                    .offset(y = (-5).dp)
                             )
                         }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Text(
                 text = message,
