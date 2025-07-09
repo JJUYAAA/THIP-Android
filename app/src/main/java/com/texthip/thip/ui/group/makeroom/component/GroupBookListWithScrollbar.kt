@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -34,9 +35,9 @@ fun GroupBookListWithScrollbar(
     ) {
         Column(
             Modifier
+                .fillMaxWidth()
                 .verticalScroll(scrollState)
                 .drawVerticalScrollbar(scrollState)
-                .fillMaxWidth()
         ) {
             books.forEach { book ->
                 CardBookSearch(
@@ -48,6 +49,7 @@ fun GroupBookListWithScrollbar(
                 Spacer(modifier = Modifier.height(12.dp))
                 Spacer(modifier = Modifier
                     .fillMaxWidth()
+                    .padding(end = 6.dp)
                     .height(1.dp)
                     .background(color = colors.Grey02)
                 )

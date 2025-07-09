@@ -31,12 +31,11 @@ fun GroupBookSearchBottomSheet(
     onBookSelect: (BookData) -> Unit,
     onRequestBook: () -> Unit,
     savedBooks: List<BookData> = emptyList(),
-    groupBooks: List<BookData> = emptyList(),
-    defaultTab: Int = 0
+    groupBooks: List<BookData> = emptyList()
 ) {
     // 책이 있는지 여부 체크
     val hasBooks = savedBooks.isNotEmpty() || groupBooks.isNotEmpty()
-    var selectedTab by rememberSaveable { mutableIntStateOf(defaultTab) }
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     val tabs = listOf(
         stringResource(R.string.group_saved_book), stringResource(R.string.group_book)
     )
@@ -108,8 +107,7 @@ fun PreviewBookSearchBottomSheet_HasBooks() {
                 onBookSelect = {},
                 onRequestBook = {},
                 savedBooks = dummySavedBooks,   // 데이터 있음
-                groupBooks = dummyGroupBooks,
-                defaultTab = 0
+                groupBooks = dummyGroupBooks
             )
         }
     }
@@ -126,8 +124,7 @@ fun PreviewBookSearchBottomSheet_Empty() {
                 onBookSelect = {},
                 onRequestBook = {},
                 savedBooks = emptyList(),   // 데이터 없음
-                groupBooks = emptyList(),
-                defaultTab = 0
+                groupBooks = emptyList()
             )
         }
     }
