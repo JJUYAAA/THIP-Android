@@ -55,7 +55,7 @@ fun GroupScreen(
             // 상단바
             LogoTopAppBar(
                 leftIcon = painterResource(R.drawable.ic_done),
-                hasNotification = true,
+                hasNotification = false,
                 onLeftClick = { },
                 onRightClick = { }
             )
