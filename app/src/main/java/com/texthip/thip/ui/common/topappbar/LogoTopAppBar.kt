@@ -31,7 +31,7 @@ fun LogoTopAppBar(
     val rightIcon = if (hasNotification) {
         painterResource(R.drawable.ic_notice_yes)
     } else {
-        painterResource(R.drawable.ic_notice)
+        painterResource(R.drawable.ic_notification)
     }
 
     Box(
