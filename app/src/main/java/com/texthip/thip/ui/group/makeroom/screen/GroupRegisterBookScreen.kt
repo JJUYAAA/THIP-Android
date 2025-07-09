@@ -37,7 +37,7 @@ fun GroupRegisterBookScreen(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(R.string.group_thip_email),
+                text = stringResource(R.string.customer_center_email),
                 style = typography.smalltitle_sb600_s18_h24,
                 color = colors.White
             )
