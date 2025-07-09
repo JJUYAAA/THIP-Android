@@ -1,7 +1,12 @@
 package com.texthip.thip.ui.group.makeroom.component
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,9 +30,10 @@ fun EmptyBookSheetContent(
             .padding(bottom = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_notice),
-            contentDescription = null
+        Icon(
+            painter = painterResource(id = R.drawable.ic_notification),
+            contentDescription = null,
+            tint = colors.Grey02
         )
         Spacer(Modifier.height(12.dp))
         Text(
