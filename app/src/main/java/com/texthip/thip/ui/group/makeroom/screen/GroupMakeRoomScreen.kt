@@ -45,7 +45,7 @@ fun GroupMakeRoomScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
-    val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
+    val genres = viewModel.genres
 
     // 에러 메시지 표시
     LaunchedEffect(uiState.errorMessage) {

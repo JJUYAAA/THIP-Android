@@ -19,7 +19,7 @@ open class GroupMakeRoomViewModel(
     private val _uiState = MutableStateFlow(GroupMakeRoomUiState())
     val uiState: StateFlow<GroupMakeRoomUiState> = _uiState.asStateFlow()
 
-    private val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
+    val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
 
     // 책 선택
     fun selectBook(book: BookData) {
@@ -77,7 +77,7 @@ open class GroupMakeRoomViewModel(
         val currentState = _uiState.value
 
         if (!currentState.isFormValid) {
-            onError("입력 정보를 확인해주세요")
+            //onError("입력 정보를 확인해주세요")
             return
         }
 
@@ -91,10 +91,10 @@ open class GroupMakeRoomViewModel(
                 if (result.isSuccess) {
                     onSuccess()
                 } else {
-                    onError(result.message ?: "그룹 생성에 실패했습니다")
+                    //onError(result.message ?: "그룹 생성에 실패했습니다")
                 }
             } catch (e: Exception) {
-                onError("네트워크 오류가 발생했습니다: ${e.message}")
+                //onError("네트워크 오류가 발생했습니다: ${e.message}")
             } finally {
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }
