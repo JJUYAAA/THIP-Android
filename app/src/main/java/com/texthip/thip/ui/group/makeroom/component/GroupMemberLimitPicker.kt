@@ -67,20 +67,6 @@ fun MemberLimitPicker(
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
-
-        // 안내 메시지
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Text(
-                text = stringResource(R.string.group_room_member_limit_comment),
-                style = typography.info_r400_s12,
-                color = colors.NeonGreen,
-                textAlign = TextAlign.End,
-                modifier = Modifier.padding(top = 12.dp)
-            )
-        }
     }
 }
 

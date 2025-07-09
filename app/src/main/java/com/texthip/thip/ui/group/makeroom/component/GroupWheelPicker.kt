@@ -32,7 +32,7 @@ fun <T> GroupWheelPicker(
     selectedItem: T,
     onItemSelected: (T) -> Unit,
     displayText: (T) -> String = { it.toString() },
-    selectedBackgroundColor: Color = colors.DarkGrey50,
+    selectedBackgroundColor: Color = colors.DarkGrey,
     itemHeight: Int = 20,
     isCircular: Boolean = true
 ) {

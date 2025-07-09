@@ -121,8 +121,7 @@ fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
-                        text = if (selectedGenreIndex >= 0) stringResource(R.string.group_genre_selected_comment)
-                        else stringResource(R.string.group_genre_select_comment),
+                        text = stringResource(R.string.group_genre_select_comment),
                         style = typography.info_r400_s12,
                         color = colors.NeonGreen
                     )
@@ -255,8 +254,7 @@ fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
                     showBookSearchSheet = false
                 },
                 savedBooks = dummySavedBooks,
-                groupBooks = dummyGroupBooks,
-                defaultTab = 0
+                groupBooks = dummyGroupBooks
             )
         }
     }

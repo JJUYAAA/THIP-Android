@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -27,67 +28,97 @@ import java.time.LocalDate
 
 @Composable
 fun GroupDatePicker(
-    modifier: Modifier = Modifier,
-    year: Int,
-    month: Int,
-    day: Int,
-    years: List<Int>,
-    months: List<Int>,
-    days: List<Int>,
-    onYearSelected: (Int) -> Unit,
-    onMonthSelected: (Int) -> Unit,
-    onDaySelected: (Int) -> Unit
+    selectedDate: LocalDate,
+    minDate: LocalDate,
+    maxDate: LocalDate,
+    onDateSelected: (LocalDate) -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    // 선택된 날짜에서 년/월/일 추출
+    val year = selectedDate.year
+    val month = selectedDate.monthValue
+    val day = selectedDate.dayOfMonth
+
+    // 유효한 범위 계산
+    val years = (minDate.year..maxDate.year).toList()
+    val months = (1..12).toList()
+    val days = (1..selectedDate.lengthOfMonth()).toList()
+
     Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // 년도 선택기
-        GroupWheelPicker(
-            modifier = Modifier.width(48.dp),
-            items = years,
-            selectedItem = year,
-            onItemSelected = onYearSelected,
-            displayText = { it.toString() }
-        )
-        Spacer(modifier = Modifier.width(2.dp))
-        Text(
-            text = stringResource(R.string.group_year),
-            style = typography.info_r400_s12,
-            color = colors.White
-        )
-        Spacer(modifier = Modifier.width(4.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            GroupWheelPicker(
+                modifier = Modifier.width(48.dp),
+                items = years,
+                selectedItem = year,
+                onItemSelected = { newYear ->
+                    val newDate = try {
+                        LocalDate.of(newYear, month, day)
+                    } catch (e: Exception) {
+                        LocalDate.of(newYear, month, 1)
+                    }
+                    onDateSelected(newDate)
+                },
+                displayText = { it.toString() }
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Text(
+                text = stringResource(R.string.group_year),
+                style = typography.info_r400_s12,
+                color = colors.White
+            )
+        }
 
-        // 월 선택기
-        GroupWheelPicker(
-            modifier = Modifier.width(32.dp),
-            items = months,
-            selectedItem = month,
-            onItemSelected = onMonthSelected,
-            displayText = { it.toString() }
-        )
-        Spacer(modifier = Modifier.width(2.dp))
-        Text(
-            text = stringResource(R.string.group_month),
-            style = typography.info_r400_s12,
-            color = colors.White
-        )
-        Spacer(modifier = Modifier.width(4.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            GroupWheelPicker(
+                modifier = Modifier.width(32.dp),
+                items = months,
+                selectedItem = month,
+                onItemSelected = { newMonth ->
+                    val newDate = try {
+                        LocalDate.of(year, newMonth, day)
+                    } catch (e: Exception) {
+                        LocalDate.of(year, newMonth, 1)
+                    }
+                    onDateSelected(newDate)
+                },
+                displayText = { it.toString() }
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Text(
+                text = stringResource(R.string.group_month),
+                style = typography.info_r400_s12,
+                color = colors.White
+            )
+        }
 
-        // 일 선택기
-        GroupWheelPicker(
-            modifier = Modifier.width(32.dp),
-            items = days,
-            selectedItem = day,
-            onItemSelected = onDaySelected,
-            displayText = { it.toString() }
-        )
-        Spacer(modifier = Modifier.width(2.dp))
-        Text(
-            text = stringResource(R.string.group_day),
-            style = typography.info_r400_s12,
-            color = colors.White
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            GroupWheelPicker(
+                modifier = Modifier.width(32.dp),
+                items = days,
+                selectedItem = day,
+                onItemSelected = { newDay ->
+                    val newDate = LocalDate.of(year, month, newDay)
+                    onDateSelected(newDate)
+                },
+                displayText = { it.toString() }
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Text(
+                text = stringResource(R.string.group_day),
+                style = typography.info_r400_s12,
+                color = colors.White
+            )
+        }
     }
 }
 
@@ -96,22 +127,11 @@ fun GroupDatePicker(
 fun DatePickerGroupPreview() {
     ThipTheme {
         val today = LocalDate.now()
-        val years = (2020..2030).toList()
-        val months = (1..12).toList()
-        val getDaysInMonth = { year: Int, month: Int ->
-            val date = LocalDate.of(year, month, 1)
-            (1..date.lengthOfMonth()).toList()
-        }
-
-        // 각각 독립적으로 관리!
-        var startYear by remember { mutableStateOf(today.year) }
-        var startMonth by remember { mutableStateOf(today.monthValue) }
-        var startDay by remember { mutableStateOf(today.dayOfMonth) }
-
         val tomorrow = today.plusDays(1)
-        var endYear by remember { mutableStateOf(tomorrow.year) }
-        var endMonth by remember { mutableStateOf(tomorrow.monthValue) }
-        var endDay by remember { mutableStateOf(tomorrow.dayOfMonth) }
+        val maxDate = today.plusMonths(12)
+
+        var startDate by remember { mutableStateOf(today) }
+        var endDate by remember { mutableStateOf(tomorrow) }
 
         Box(
             modifier = Modifier
@@ -124,28 +144,23 @@ fun DatePickerGroupPreview() {
                 // 시작 날짜
                 Text("시작 날짜", color = colors.White)
                 GroupDatePicker(
-                    year = startYear,
-                    month = startMonth,
-                    day = startDay,
-                    years = years,
-                    months = months,
-                    days = getDaysInMonth(startYear, startMonth),
-                    onYearSelected = { startYear = it },
-                    onMonthSelected = { startMonth = it },
-                    onDaySelected = { startDay = it }
+                    selectedDate = startDate,
+                    minDate = today,
+                    maxDate = maxDate,
+                    onDateSelected = { newDate ->
+                        startDate = newDate
+                    }
                 )
+
                 // 끝 날짜
                 Text("끝 날짜", color = colors.White)
                 GroupDatePicker(
-                    year = endYear,
-                    month = endMonth,
-                    day = endDay,
-                    years = years,
-                    months = months,
-                    days = getDaysInMonth(endYear, endMonth),
-                    onYearSelected = { endYear = it },
-                    onMonthSelected = { endMonth = it },
-                    onDaySelected = { endDay = it }
+                    selectedDate = endDate,
+                    minDate = today,
+                    maxDate = maxDate,
+                    onDateSelected = { newDate ->
+                        endDate = newDate
+                    }
                 )
             }
         }

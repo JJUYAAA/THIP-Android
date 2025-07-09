@@ -25,80 +25,61 @@ fun GroupRoomDurationPicker(
     onDateRangeSelected: (LocalDate, LocalDate) -> Unit = { _, _ -> }
 ) {
     val today = LocalDate.now()
-    val maxDate = today.plusMonths(3)
+    val maxDate = today.plusMonths(12)
+    var isInitialized by rememberSaveable { mutableStateOf(false) }
 
-    // 날짜 상태
-    var startYear by rememberSaveable { mutableIntStateOf(today.year) }
-    var startMonth by rememberSaveable { mutableIntStateOf(today.monthValue) }
-    var startDay by rememberSaveable { mutableIntStateOf(today.dayOfMonth) }
-
-    // 유효한 날짜 범위 계산
-    val years = remember { (today.year..maxDate.year).toList() }
-
-    // 월 범위 계산 (년도에 따라 동적으로)
-    val months = remember(startYear) {
-        when (startYear) {
-            today.year -> (today.monthValue..12).toList()
-            maxDate.year -> (1..maxDate.monthValue).toList()
-            else -> (1..12).toList()
-        }
-    }
-
-    // 일 범위 계산 (년도, 월에 따라 동적으로)
-    val days = remember(startYear, startMonth) {
-        val selectedDate = LocalDate.of(startYear, startMonth, 1)
-        val startDayOfMonth = if (startYear == today.year && startMonth == today.monthValue) {
-            today.dayOfMonth
-        } else {
-            1
-        }
-
-        val endDayOfMonth = if (startYear == maxDate.year && startMonth == maxDate.monthValue) {
-            minOf(selectedDate.lengthOfMonth(), maxDate.dayOfMonth)
-        } else {
-            selectedDate.lengthOfMonth()
-        }
-
-        (startDayOfMonth..endDayOfMonth).toList()
-    }
-
-    // 날짜 유효성 검사 및 자동 보정
-    LaunchedEffect(startYear, startMonth, days) {
-        if (startDay !in days) {
-            startDay = days.lastOrNull() ?: startDay
-        }
-    }
-
-    // 오늘 이전 날짜 선택 방지
-    LaunchedEffect(startYear, startMonth, startDay) {
-        val selectedDate = LocalDate.of(startYear, startMonth, startDay)
-        if (selectedDate.isBefore(today)) {
-            startYear = today.year
-            startMonth = today.monthValue
-            startDay = today.dayOfMonth
-        }
-    }
-
-    // 날짜 객체로 변환
-    val startDate = remember(startYear, startMonth, startDay) {
-        try {
-            LocalDate.of(startYear, startMonth, startDay)
-        } catch (e: Exception) {
-            // 유효하지 않은 날짜인 경우 오늘 날짜로 fallback
-            today
-        }
-    }
-    val endDate = remember(startDate) { startDate.plusDays(1) }
-
-    // 90일 초과 체크
-    val daysBetween = ChronoUnit.DAYS.between(startDate, endDate)
-    val isOverLimit = daysBetween > 90
-
+    var startDate by rememberSaveable { mutableStateOf(today) }
+    var endDate by rememberSaveable { mutableStateOf(today.plusDays(1)) }
     var isPickerTouched by rememberSaveable { mutableStateOf(false) }
 
-    // 날짜 변경 시 콜백
+    // 첫 시작 시에만 모든 날짜를 오늘 기준으로 초기화
+    LaunchedEffect(Unit) {
+        if (!isInitialized) {
+            startDate = today
+            endDate = today.plusDays(1)
+            isInitialized = true
+        }
+    }
+
+    // 날짜 범위 계산
+    val daysBetween = ChronoUnit.DAYS.between(startDate, endDate)
+    val isOverLimit = daysBetween > 91
+
+    // 날짜 선택 콜백
     LaunchedEffect(startDate, endDate) {
-        onDateRangeSelected(startDate, endDate)
+        if (endDate.isAfter(startDate)) {
+            onDateRangeSelected(startDate, endDate)
+        }
+    }
+
+    // 날짜 유효성 검사 및 자동 조정
+    LaunchedEffect(startDate) {
+        val adjustedStartDate = when {
+            startDate.isBefore(today) -> today
+            startDate.isAfter(maxDate) -> maxDate
+            else -> startDate
+        }
+
+        if (adjustedStartDate != startDate) {
+            startDate = adjustedStartDate
+        }
+
+        // 끝 날짜가 시작 날짜보다 빠르면 조정
+        if (endDate.isBefore(startDate.plusDays(1))) {
+            endDate = startDate.plusDays(1)
+        }
+    }
+
+    LaunchedEffect(endDate) {
+        val adjustedEndDate = when {
+            endDate.isAfter(maxDate) -> maxDate
+            endDate.isBefore(startDate.plusDays(1)) -> startDate.plusDays(1)
+            else -> endDate
+        }
+
+        if (adjustedEndDate != endDate) {
+            endDate = adjustedEndDate
+        }
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
@@ -107,83 +88,59 @@ fun GroupRoomDurationPicker(
             style = typography.smalltitle_sb600_s18_h24,
             color = colors.White
         )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp, start = 12.dp, end = 12.dp),
+                .padding(top = 12.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 시작 날짜
+            // 시작 날짜 Picker
             GroupDatePicker(
-                year = startYear,
-                month = startMonth,
-                day = startDay,
-                years = years,
-                months = months,
-                days = days,
-                onYearSelected = { newYear ->
-                    startYear = newYear
-                    // 년도 변경 시 월 유효성 검사
-                    val validMonths = when (newYear) {
-                        today.year -> (today.monthValue..12).toList()
-                        maxDate.year -> (1..maxDate.monthValue).toList()
-                        else -> (1..12).toList()
-                    }
-                    if (startMonth !in validMonths) {
-                        startMonth = validMonths.first()
-                    }
+                selectedDate = startDate,
+                minDate = today,
+                maxDate = maxDate,
+                onDateSelected = { newDate ->
+                    startDate = newDate
                 },
-                onMonthSelected = { newMonth ->
-                    startMonth = newMonth
-                    // 월 변경 시 일 유효성 검사
-                    val tempDate = LocalDate.of(startYear, newMonth, 1)
-                    val validStartDay = if (startYear == today.year && newMonth == today.monthValue) {
-                        today.dayOfMonth
-                    } else {
-                        1
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onPress = { isPickerTouched = true }
+                        )
                     }
-
-                    val validEndDay = if (startYear == maxDate.year && newMonth == maxDate.monthValue) {
-                        minOf(tempDate.lengthOfMonth(), maxDate.dayOfMonth)
-                    } else {
-                        tempDate.lengthOfMonth()
-                    }
-
-                    if (startDay < validStartDay) {
-                        startDay = validStartDay
-                    } else if (startDay > validEndDay) {
-                        startDay = validEndDay
-                    }
-                },
-                onDaySelected = { startDay = it },
-                modifier = Modifier.pointerInput(Unit) {
-                    detectTapGestures(
-                        onPress = { isPickerTouched = true }
-                    )
-                }
             )
+
             // 구분자
             Text(
                 text = "~",
                 style = typography.info_r400_s12,
                 color = colors.White,
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = Modifier.padding(horizontal = 10.dp)
             )
-            // 종료 날짜(선택 불가, 읽기 전용)
+
+            // 끝 날짜 Picker
             GroupDatePicker(
-                year = endDate.year,
-                month = endDate.monthValue,
-                day = endDate.dayOfMonth,
-                years = years, // 전체 년도 범위 제공
-                months = (1..12).toList(), // 전체 월 범위 제공
-                days = (1..LocalDate.of(endDate.year, endDate.monthValue, 1).lengthOfMonth()).toList(), // 해당 월의 전체 일 범위 제공
-                onYearSelected = {},
-                onMonthSelected = {},
-                onDaySelected = {},
-                modifier = Modifier // 비활성화 UI 추가 가능
+                selectedDate = endDate,
+                minDate = today,
+                maxDate = maxDate,
+                onDateSelected = { newDate ->
+                    endDate = newDate
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onPress = { isPickerTouched = true }
+                        )
+                    }
             )
         }
+
         // 안내/에러 메시지
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -201,7 +158,7 @@ fun GroupRoomDurationPicker(
                 }
                 !isPickerTouched -> {
                     Text(
-                        text = stringResource(R.string.group_room_duration_comment),
+                        text = stringResource(R.string.group_room_duration_initial_comment),
                         style = typography.info_r400_s12,
                         color = colors.NeonGreen,
                         textAlign = TextAlign.End,
@@ -221,21 +178,6 @@ fun GroupRoomDurationPicker(
                         modifier = Modifier.padding(top = 12.dp)
                     )
                 }
-            }
-        }
-        // 에러 메시지: 90일 초과
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            if (isOverLimit) {
-                Text(
-                    text = stringResource(R.string.group_room_duration_error, daysBetween),
-                    style = typography.info_r400_s12,
-                    color = colors.Red,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
             }
         }
     }
