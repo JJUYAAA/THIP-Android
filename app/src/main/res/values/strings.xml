@@ -167,6 +167,10 @@
     <string name="view_by_page">페이지별 보기</string>
     <string name="view_by_all">총평 보기</string>
     <string name="group_note_info">내 진행도에 따라 일부 댓글은 블러처리됩니다.</string>
+    <string name="write_reply">답글작성</string>
+    <string name="annotation">\@</string>
+    <string name="space_bar">\ </string>
+    <string name="reply_to">00님에게 댓글을 남겨보세요.</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>
