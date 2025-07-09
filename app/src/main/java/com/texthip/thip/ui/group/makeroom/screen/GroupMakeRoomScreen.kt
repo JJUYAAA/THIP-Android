@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.group.makeroom.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -18,63 +17,60 @@ import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
 import com.texthip.thip.ui.common.forms.WarningTextField
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
-import com.texthip.thip.ui.group.makeroom.component.GroupSelectBook
 import com.texthip.thip.ui.group.makeroom.component.GroupBookSearchBottomSheet
 import com.texthip.thip.ui.group.makeroom.component.GroupInputField
 import com.texthip.thip.ui.group.makeroom.component.GroupRoomDurationPicker
+import com.texthip.thip.ui.group.makeroom.component.GroupSelectBook
 import com.texthip.thip.ui.group.makeroom.component.MemberLimitPicker
+import com.texthip.thip.ui.group.makeroom.component.SectionDivider
 import com.texthip.thip.ui.group.makeroom.mock.BookData
-import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
+import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomRequest
 import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
+import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
+import com.texthip.thip.ui.group.makeroom.viewmodel.ApiResult
+import com.texthip.thip.ui.group.makeroom.viewmodel.GroupCreateResponse
+import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
+import com.texthip.thip.ui.group.makeroom.viewmodel.GroupRepository
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
+
 
 @Composable
-fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
+fun GroupMakeRoomScreen(
+    viewModel: GroupMakeRoomViewModel,
+    onNavigateBack: () -> Unit,
+    onGroupCreated: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
-
-    var selectedBook by remember { mutableStateOf<BookData?>(null) }
-    var showBookSearchSheet by remember { mutableStateOf(false) }
     val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
-    var selectedGenreIndex by remember { mutableIntStateOf(-1) }
-    var roomTitle by remember { mutableStateOf("") }
-    var roomDescription by remember { mutableStateOf("") }
-    var meetingStartDate by remember { mutableStateOf(LocalDate.now()) }
-    var meetingEndDate by remember { mutableStateOf(LocalDate.now().plusDays(1)) }
-    var selectedCount by remember { mutableIntStateOf(30) }
-    var isPrivate by remember { mutableStateOf(false) }
-    var password by remember { mutableStateOf("") }
 
-    val daysBetween = ChronoUnit.DAYS.between(meetingStartDate, meetingEndDate)
-    val isDurationValid = (daysBetween in 1..90)
-    val isCountValid = selectedCount in 2..30
-    val isPasswordValid = !isPrivate || (password.length == 4)
-
-    val isButtonEnabled = selectedBook != null &&
-            selectedGenreIndex >= 0 &&
-            roomTitle.isNotBlank() &&
-            roomDescription.isNotBlank() &&
-            isDurationValid &&
-            isCountValid &&
-            isPasswordValid
+    // 에러 메시지 표시
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { message ->
+            viewModel.clearError()
+        }
+    }
 
     Box {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .then(if (showBookSearchSheet) Modifier.blur(5.dp) else Modifier),
+                .then(if (uiState.showBookSearchSheet) Modifier.blur(5.dp) else Modifier),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             InputTopAppBar(
                 title = stringResource(R.string.group_making_group),
-                isRightButtonEnabled = isButtonEnabled,
-                onLeftClick = {},
+                isRightButtonEnabled = uiState.isFormValid && !uiState.isLoading,
+                onLeftClick = onNavigateBack,
                 onRightClick = {
-                    // 완료 버튼 클릭 로직
+                    viewModel.createGroup(
+                        onSuccess = onGroupCreated,
+                        onError = { /* 에러는 uiState.errorMessage로 처리 */ }
+                    )
                 }
             )
 
@@ -88,19 +84,12 @@ fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.padding(top = 20.dp))
 
                 GroupSelectBook(
-                    selectedBook = selectedBook,
-                    onChangeBookClick = { showBookSearchSheet = true },
-                    onSelectBookClick = { showBookSearchSheet = true }
+                    selectedBook = uiState.selectedBook,
+                    onChangeBookClick = { viewModel.toggleBookSearchSheet(true) },
+                    onSelectBookClick = { viewModel.toggleBookSearchSheet(true) }
                 )
 
-                Spacer(modifier = Modifier.padding(top = 32.dp))
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colors.DarkGrey02)
-                )
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+                SectionDivider()
 
                 Text(
                     text = stringResource(R.string.group_book_genre),
@@ -111,8 +100,8 @@ fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
                 GenreChipRow(
                     modifier = Modifier.width(18.dp),
                     genres = genres,
-                    selectedIndex = selectedGenreIndex,
-                    onSelect = { selectedGenreIndex = it }
+                    selectedIndex = uiState.selectedGenreIndex,
+                    onSelect = viewModel::selectGenre
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -127,78 +116,39 @@ fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
                     )
                 }
 
-                Spacer(modifier = Modifier.padding(top = 32.dp))
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colors.DarkGrey02)
-                )
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+                SectionDivider()
 
                 GroupInputField(
                     title = stringResource(R.string.group_room_title),
                     hint = stringResource(R.string.group_room_title_hint),
-                    value = roomTitle,
+                    value = uiState.roomTitle,
                     maxLength = 15,
-                    onValueChange = { roomTitle = it }
+                    onValueChange = viewModel::updateRoomTitle
                 )
 
-                Spacer(modifier = Modifier.padding(top = 32.dp))
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colors.DarkGrey02)
-                )
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+                SectionDivider()
 
                 GroupInputField(
                     title = stringResource(R.string.group_room_explain),
                     hint = stringResource(R.string.group_room_explain_hint),
-                    value = roomDescription,
-                    onValueChange = { roomDescription = it }
+                    value = uiState.roomDescription,
+                    onValueChange = viewModel::updateRoomDescription
                 )
 
-                Spacer(modifier = Modifier.padding(top = 32.dp))
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colors.DarkGrey02)
-                )
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+                SectionDivider()
 
                 GroupRoomDurationPicker(
-                    onDateRangeSelected = { startDate, endDate ->
-                        meetingStartDate = startDate
-                        meetingEndDate = endDate
-                    }
+                    onDateRangeSelected = viewModel::setDateRange
                 )
 
-                Spacer(modifier = Modifier.padding(bottom = 32.dp))
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colors.DarkGrey02)
-                )
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+                SectionDivider()
 
                 MemberLimitPicker(
-                    selectedCount = selectedCount,
-                    onCountSelected = { selectedCount = it }
+                    selectedCount = uiState.memberLimit,
+                    onCountSelected = viewModel::setMemberLimit
                 )
 
-                Spacer(modifier = Modifier.padding(bottom = 32.dp))
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colors.DarkGrey02)
-                )
-                Spacer(modifier = Modifier.padding(top = 32.dp))
-
+                SectionDivider()
 
                 Text(
                     text = stringResource(R.string.group_private_option),
@@ -217,21 +167,18 @@ fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
                         color = colors.White
                     )
                     ToggleSwitchButton(
-                        isChecked = isPrivate,
-                        onToggleChange = {
-                            isPrivate = it
-                            if (!it) password = ""
-                        }
+                        isChecked = uiState.isPrivate,
+                        onToggleChange = viewModel::togglePrivate
                     )
                 }
 
-                if (isPrivate) {
+                if (uiState.isPrivate) {
                     Spacer(modifier = Modifier.height(12.dp))
                     WarningTextField(
-                        value = password,
-                        onValueChange = { password = it },
+                        value = uiState.password,
+                        onValueChange = viewModel::updatePassword,
                         hint = stringResource(R.string.group_password_hint),
-                        showWarning = password.isNotEmpty() && password.length < 4,
+                        showWarning = uiState.password.isNotEmpty() && uiState.password.length < 4,
                         warningMessage = stringResource(R.string.group_private_warning_message),
                         maxLength = 4,
                         isNumberOnly = true,
@@ -243,27 +190,67 @@ fun GroupMakeRoomScreen(modifier: Modifier = Modifier) {
             }
         }
 
-        if (showBookSearchSheet) {
+        if (uiState.showBookSearchSheet) {
             GroupBookSearchBottomSheet(
-                onDismiss = { showBookSearchSheet = false },
+                onDismiss = { viewModel.toggleBookSearchSheet(false) },
                 onBookSelect = { book: BookData ->
-                    selectedBook = book
-                    showBookSearchSheet = false
+                    viewModel.selectBook(book)
+                    viewModel.toggleBookSearchSheet(false)
                 },
                 onRequestBook = {
-                    showBookSearchSheet = false
+                    viewModel.toggleBookSearchSheet(false)
                 },
                 savedBooks = dummySavedBooks,
                 groupBooks = dummyGroupBooks
             )
         }
+
+        // 로딩 인디케이터
+        /*if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(colors.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = colors.NeonGreen)
+            }
+        }*/
     }
 }
+
 
 @Preview
 @Composable
 private fun GroupMakeRoomScreenPreview() {
+    // Preview용 MockViewModel 생성
+    val mockViewModel = object : GroupMakeRoomViewModel(MockGroupRepository()) {
+        // 필요한 경우 Preview용 초기 상태 설정
+        init {
+            // 예시: 미리 선택된 책이 있는 상태로 Preview
+            // selectBook(BookData(id = "1", title = "예시 책", author = "작가"))
+            // selectGenre(0)
+        }
+    }
+
     ThipTheme {
-        GroupMakeRoomScreen()
+        GroupMakeRoomScreen(
+            viewModel = mockViewModel,
+            onNavigateBack = { },
+            onGroupCreated = { }
+        )
+    }
+}
+
+// Preview용 Mock Repository
+class MockGroupRepository : GroupRepository {
+    override suspend fun createGroup(request: GroupMakeRoomRequest): ApiResult<GroupCreateResponse> {
+        return ApiResult(
+            isSuccess = true,
+            data = GroupCreateResponse(
+                groupId = "mock_group_id",
+                groupName = "Mock Group"
+            )
+        )
     }
 }
