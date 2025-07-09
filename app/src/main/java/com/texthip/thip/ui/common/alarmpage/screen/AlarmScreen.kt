@@ -42,13 +42,11 @@ fun AlarmScreen(
     val filteredList = when {
         selectedStates[0] && !selectedStates[1] -> alarms.filter { it.badgeText == stringResource(R.string.alarm_feed) }
         !selectedStates[0] && selectedStates[1] -> alarms.filter { it.badgeText == stringResource(R.string.alarm_group) }
-        selectedStates[0] && selectedStates[1] -> alarms
         else -> alarms
     }
 
     Column(
         Modifier
-            .background(colors.Black)
             .fillMaxSize()
     ) {
         DefaultTopAppBar(
@@ -57,7 +55,6 @@ fun AlarmScreen(
         )
         Column(
             Modifier
-                .background(colors.Black)
                 .fillMaxSize()
                 .padding(horizontal = 20.dp)
         ) {
@@ -69,29 +66,23 @@ fun AlarmScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             if (filteredList.isEmpty()) {
+
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_notification),
-                            contentDescription = null,
-                            tint = colors.Grey02,
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = stringResource(R.string.alarm_notification_comment),
-                            style = typography.smalltitle_sb600_s16_h20,
-                            color = colors.Grey01
-                        )
-                    }
-
+                    Icon(
+                        painter = painterResource(R.drawable.ic_notification),
+                        contentDescription = null,
+                        tint = colors.Grey02,
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = stringResource(R.string.alarm_notification_comment),
+                        style = typography.smalltitle_sb600_s16_h20,
+                        color = colors.Grey01
+                    )
                 }
             } else {
                 LazyColumn(
