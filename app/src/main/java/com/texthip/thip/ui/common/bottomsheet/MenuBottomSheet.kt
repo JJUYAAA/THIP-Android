@@ -39,21 +39,26 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import kotlinx.coroutines.launch
 
+private const val BOTTOM_SHEET_HIDDEN_OFFSET = 300f
+private const val BOTTOM_SHEET_VISIBLE_OFFSET = 0f
+private const val BOTTOM_SHEET_DISMISS_THRESHOLD = 100f
+private const val ANIMATION_DURATION = 300
+
 @Composable
 fun MenuBottomSheet(
     items: List<MenuBottomSheetItem>,
     onDismiss: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val animatableOffset = remember { Animatable(300f) } // 시작 위치 아래
-    var offsetY by remember { mutableFloatStateOf(0f) }
+    val animatableOffset = remember { Animatable(BOTTOM_SHEET_HIDDEN_OFFSET) } // 시작 위치 아래
+    var offsetY by remember { mutableFloatStateOf(BOTTOM_SHEET_VISIBLE_OFFSET) }
     var isDismissing by remember { mutableStateOf(false) }
 
     // 등장 애니메이션
     LaunchedEffect(Unit) {
         animatableOffset.animateTo(
-            targetValue = 0f,
-            animationSpec = tween(durationMillis = 300)
+            targetValue = BOTTOM_SHEET_VISIBLE_OFFSET,
+            animationSpec = tween(durationMillis = ANIMATION_DURATION)
         )
     }
 
@@ -68,7 +73,10 @@ fun MenuBottomSheet(
                 if (!isDismissing) {
                     isDismissing = true
                     scope.launch {
-                        animatableOffset.animateTo(300f, tween(300))
+                        animatableOffset.animateTo(
+                            BOTTOM_SHEET_HIDDEN_OFFSET,
+                            tween(ANIMATION_DURATION)
+                        )
                         onDismiss()
                     }
                 }
@@ -101,14 +109,17 @@ fun MenuBottomSheet(
                             }
                         },
                         onDragEnd = {
-                            if (offsetY > 100f && !isDismissing) {
+                            if (offsetY > BOTTOM_SHEET_DISMISS_THRESHOLD && !isDismissing) {
                                 isDismissing = true
                                 scope.launch {
-                                    animatableOffset.animateTo(300f, tween(300))
+                                    animatableOffset.animateTo(
+                                        BOTTOM_SHEET_HIDDEN_OFFSET,
+                                        tween(ANIMATION_DURATION)
+                                    )
                                     onDismiss()
                                 }
                             } else {
-                                offsetY = 0f
+                                offsetY = BOTTOM_SHEET_VISIBLE_OFFSET
                             }
                         }
                     )
