@@ -1,13 +1,9 @@
-package com.texthip.thip.ui.myPage.viewmodel
+package com.texthip.thip.ui.mypage.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.texthip.thip.ui.myPage.mock.BookItem
+import com.texthip.thip.ui.mypage.mock.BookItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 
 class SavedBookViewModel : ViewModel() {
 

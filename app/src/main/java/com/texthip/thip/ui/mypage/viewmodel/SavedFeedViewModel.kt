@@ -1,8 +1,8 @@
-package com.texthip.thip.ui.myPage.viewmodel
+package com.texthip.thip.ui.mypage.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.texthip.thip.R
-import com.texthip.thip.ui.myPage.mock.FeedItem
+import com.texthip.thip.ui.mypage.mock.FeedItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -16,7 +16,7 @@ class SavedFeedViewModel: ViewModel() {
                 userRole = "학생",
                 bookTitle = "라랄ㄹ라라",
                 authName = "야야야",
-                timeAgo = 15,
+                timeAgo = "15시간 전",
                 content = "진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공",
                 likeCount = 25,
                 commentCount = 4,
@@ -30,7 +30,7 @@ class SavedFeedViewModel: ViewModel() {
                 userRole = "학생",
                 bookTitle = "라랄ㄹ라라",
                 authName = "야야야",
-                timeAgo = 15,
+                timeAgo = "15시간 전",
                 content = "너무 재밌네요..",
                 likeCount = 25,
                 commentCount = 4,
@@ -45,7 +45,7 @@ class SavedFeedViewModel: ViewModel() {
                 userRole = "학생",
                 bookTitle = "라랄ㄹ라라",
                 authName = "야야야",
-                timeAgo = 15,
+                timeAgo = "15시간 전",
                 content = "너무 재밌네요..",
                 likeCount = 25,
                 commentCount = 4,
@@ -60,7 +60,7 @@ class SavedFeedViewModel: ViewModel() {
                 userRole = "학생",
                 bookTitle = "책이름책이름",
                 authName = "저자이름저자이름",
-                timeAgo = 25,
+                timeAgo = "15시간 전",
                 content = "진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공",
                 likeCount = 25,
                 commentCount = 4,
@@ -75,7 +75,7 @@ class SavedFeedViewModel: ViewModel() {
                 userRole = "학생",
                 bookTitle = "책이름책이름",
                 authName = "저자이름저자이름",
-                timeAgo = 25,
+                timeAgo = "15시간 전",
                 content = "진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공진짜최공진짜최공진차최공",
                 likeCount = 25,
                 commentCount = 4,

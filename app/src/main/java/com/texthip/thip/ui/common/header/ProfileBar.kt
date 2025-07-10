@@ -40,7 +40,7 @@ fun ProfileBar(
     bottomTextColor: Color = colors.NeonGreen, // todo: 서버에서 색 보내주는걸로 받기?
     showSubscriberInfo: Boolean,
     subscriberCount: Int = 0,
-    hoursAgo: Int = 0,
+    hoursAgo: String = "",
     onClick: () -> Unit = { }
 ) {
     Row(
@@ -107,7 +107,7 @@ fun ProfileBar(
             }
         } else {
             Text(
-                text = stringResource(R.string.hours_ago, hoursAgo),
+                text = hoursAgo,
                 style = typography.timedate_r400_s11,
                 color = colors.Grey01
             )
@@ -132,7 +132,7 @@ fun PreviewProfileBar() {
                 topText = "user.04",
                 bottomText = stringResource(R.string.influencer),
                 showSubscriberInfo = false,
-                hoursAgo = 7
+                hoursAgo = "10시간 전"
             )
         }
     }

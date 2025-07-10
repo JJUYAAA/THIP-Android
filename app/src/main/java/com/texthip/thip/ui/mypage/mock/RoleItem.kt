@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.mock
+package com.texthip.thip.ui.mypage.mock
 
 import androidx.compose.ui.graphics.Color
 

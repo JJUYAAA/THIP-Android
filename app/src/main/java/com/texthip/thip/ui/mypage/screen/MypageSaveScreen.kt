@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.screen
+package com.texthip.thip.ui.mypage.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -29,9 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.myPage.component.BookContent
-import com.texthip.thip.ui.myPage.component.FeedContent
-import com.texthip.thip.ui.theme.Black
+import com.texthip.thip.ui.mypage.component.BookContent
+import com.texthip.thip.ui.mypage.component.FeedContent
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.ui.theme.White
@@ -41,18 +39,17 @@ fun SavedScreen() {
     val tabs = listOf(stringResource(R.string.feed), stringResource(R.string.book))
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
 
-    Scaffold(
-        containerColor = Black,
-        topBar = {
-            DefaultTopAppBar(
-                title = stringResource(R.string.saved),
-                onLeftClick = {},
-            )
-        }
-    ) { innerPadding ->
+    Column(
+        Modifier
+            .background(colors.Black)
+            .fillMaxSize()
+    ) {
+        DefaultTopAppBar(
+            title = stringResource(R.string.saved),
+            onLeftClick = {},
+        )
         Column(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
         ) {
             Box(modifier = Modifier.width(160.dp).padding(start = 20.dp)) {
