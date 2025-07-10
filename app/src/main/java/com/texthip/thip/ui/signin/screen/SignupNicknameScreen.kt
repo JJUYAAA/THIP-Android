@@ -78,8 +78,8 @@ fun SigninNicknameScreen() {
             )
             WarningTextField(
                 containerColor = colors.DarkGrey02,
-                text = nickname,
-                onTextChange = {
+                value = nickname,
+                onValueChange = {
                     nickname = it
                     showWarning = false // 입력 중에는 경고 숨기기
                 },
@@ -87,7 +87,7 @@ fun SigninNicknameScreen() {
                 showWarning = showWarning,
                 showIcon = false,
                 showLimit = true,
-                limit = 10,
+                maxLength = 10,
                 warningMessage = warningMessageResId?.let { stringResource(it) } ?: ""
             )
         }
