@@ -214,5 +214,4 @@
     <string name="group_book_search">검색해서 찾기</string>
     <string name="group_room_duration_initial_comment">모임방 활동이 시작되면, 독서메이트 모집이 자동으로 종료돼요.</string>
     <string name="group_input_count">%1$d / %2$d</string>
-
 </resources>
