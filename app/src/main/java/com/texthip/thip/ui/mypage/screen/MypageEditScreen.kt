@@ -66,7 +66,6 @@ fun EditProfileScreen() {
     )
     Column(
         Modifier
-            .background(colors.Black)
             .fillMaxSize()
     ) {
         InputTopAppBar(
