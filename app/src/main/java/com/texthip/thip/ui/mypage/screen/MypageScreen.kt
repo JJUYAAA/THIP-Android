@@ -109,7 +109,7 @@ fun MyPageScreen(
                 )
                 MenuItemButton(
                     text = stringResource(R.string.notification_settings),
-                    icon = painterResource(R.drawable.ic_notice),
+                    icon = painterResource(R.drawable.ic_notification),
                     contentColor = colors.White,
                     backgroundColor = colors.DarkGrey02,
                     hasRightIcon = true,
