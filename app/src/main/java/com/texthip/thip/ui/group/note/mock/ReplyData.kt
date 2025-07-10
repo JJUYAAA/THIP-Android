@@ -29,7 +29,7 @@ data class ReplyItem(
 )
 
 data class CommentResponse(
-    val commentList: List<CommentItem>
+    val commentData: List<CommentItem>
 )
 
 val mockComment = CommentItem(
@@ -74,7 +74,7 @@ val mockComment = CommentItem(
 )
 
 val mockCommentList = CommentResponse(
-    commentList = listOf(
+    commentData = listOf(
         mockComment, mockComment
     )
 )
