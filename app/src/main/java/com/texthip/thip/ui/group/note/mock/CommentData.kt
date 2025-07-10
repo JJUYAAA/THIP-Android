@@ -2,7 +2,7 @@ package com.texthip.thip.ui.group.note.mock
 
 sealed class GroupNoteItem {
 //    abstract val postDate: String
-    abstract val postDate: Int // TODO: String으로 바꾸기
+    abstract val postDate: String
     abstract val page: Int
     abstract val userId: Int
     abstract val nickName: String
@@ -16,7 +16,7 @@ sealed class GroupNoteItem {
 }
 
 data class GroupNoteRecord(
-    override val postDate: Int,
+    override val postDate: String,
     override val page: Int,
     override val userId: Int,
     override val nickName: String,
@@ -31,7 +31,7 @@ data class GroupNoteRecord(
 ) : GroupNoteItem()
 
 data class GroupNoteVote(
-    override val postDate: Int,
+    override val postDate: String,
     override val page: Int,
     override val userId: Int,
     override val nickName: String,
@@ -56,7 +56,7 @@ data class VoteItem(
 val mockGroupNoteItems: List<GroupNoteItem> = listOf(
     GroupNoteRecord(
         page = 132,
-        postDate = 12,
+        postDate = "12시간 전",
         userId = 1,
         nickName = "user.01",
         profileImageUrl = "https://example.com/profile.jpg",
@@ -70,7 +70,7 @@ val mockGroupNoteItems: List<GroupNoteItem> = listOf(
     ),
     GroupNoteVote(
         page = 12,
-        postDate = 12,
+        postDate = "12시간 전",
         userId = 1,
         nickName = "user.01",
         profileImageUrl = "https://example.com/profile.jpg",
@@ -88,7 +88,7 @@ val mockGroupNoteItems: List<GroupNoteItem> = listOf(
     ),
     GroupNoteRecord(
         page = 132,
-        postDate = 12,
+        postDate = "12시간 전",
         userId = 1,
         nickName = "user.01",
         profileImageUrl = "https://example.com/profile.jpg",
@@ -102,7 +102,7 @@ val mockGroupNoteItems: List<GroupNoteItem> = listOf(
     ),
     GroupNoteVote(
         page = 12,
-        postDate = 12,
+        postDate = "12시간 전",
         userId = 1,
         nickName = "user.01",
         profileImageUrl = "https://example.com/profile.jpg",

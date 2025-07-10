@@ -44,7 +44,6 @@ fun TextCommentCard(
             bottomText = data.page.toString() + stringResource(R.string.page),
             bottomTextColor = colors.Purple,
             showSubscriberInfo = false,
-//            hoursAgo = data.postDate
             hoursAgo = data.postDate
         )
 
@@ -72,7 +71,7 @@ fun TextCommentCardPreview() {
     TextCommentCard(
         data = GroupNoteRecord(
             page = 132,
-            postDate = 12,
+            postDate = "12시간 전",
             userId = 1,
             nickName = "user.01",
             profileImageUrl = "https://example.com/profile.jpg",

@@ -95,7 +95,7 @@ fun VoteCommentCard(
 private fun VoteCommentCardPreview() {
     VoteCommentCard(
         data = GroupNoteVote(
-            postDate = 12,
+            postDate = "12시간 전",
             page = 12,
             userId = 1,
             nickName = "user.01",
