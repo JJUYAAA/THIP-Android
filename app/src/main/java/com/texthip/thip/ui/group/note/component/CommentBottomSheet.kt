@@ -43,6 +43,9 @@ fun CommentBottomSheet(
             onSendReply = { replyText, commentId, replyTo ->
                 onSendReply(replyText, commentId, replyTo)
                 inputText = ""
+            },
+            onReplyClick = { replyItem ->
+                replyingTo = replyItem
             }
         )
 
@@ -71,11 +74,12 @@ fun CommentBottomSheet(
 private fun CommentBottomSheetPreview() {
     ThipTheme {
         var showSheet by remember { mutableStateOf(true) }
-
-        CommentBottomSheet(
-            commentResponse = listOf(mockComment, mockComment, mockComment),
-            onDismiss = { showSheet = false },
-            onSendReply = { _, _, _ -> }
-        )
+        if (showSheet) {
+            CommentBottomSheet(
+                commentResponse = listOf(mockComment, mockComment, mockComment),
+                onDismiss = { showSheet = false },
+                onSendReply = { _, _, _ -> }
+            )
+        }
     }
 }

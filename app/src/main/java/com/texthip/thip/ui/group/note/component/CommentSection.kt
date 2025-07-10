@@ -16,13 +16,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.ui.common.modal.drawVerticalScrollbar
 import com.texthip.thip.ui.group.note.mock.CommentItem
+import com.texthip.thip.ui.group.note.mock.ReplyItem
 import com.texthip.thip.ui.group.note.mock.mockComment
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
 fun CommentList(
     commentList: List<CommentItem>,
-    onSendReply: (String, Int?, String?) -> Unit
+    onSendReply: (String, Int?, String?) -> Unit,
+    onReplyClick: (ReplyItem) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -40,7 +42,8 @@ fun CommentList(
             commentList.forEach { commentItem ->
                 CommentSection(
                     commentItem = commentItem,
-                    onSendReply = onSendReply
+                    onSendReply = onSendReply,
+                    onReplyClick = onReplyClick
                 )
             }
         }
@@ -50,7 +53,8 @@ fun CommentList(
 @Composable
 fun CommentSection(
     commentItem: CommentItem,
-    onSendReply: (String, Int?, String?) -> Unit
+    onSendReply: (String, Int?, String?) -> Unit,
+    onReplyClick: (ReplyItem) -> Unit
 ) {
     Box {
         Column(
@@ -63,14 +67,30 @@ fun CommentSection(
             CommentItem(
                 data = commentItem,
                 onReplyClick = {
-                    onSendReply
+                    onReplyClick(
+                        ReplyItem(
+                            replyId = commentItem.commentId,
+                            userId = commentItem.userId,
+                            nickName = commentItem.nickName,
+                            parentNickname = "", // 댓글에는 parentNickname이 필요 없음
+                            genreName = commentItem.genreName,
+                            profileImageUrl = commentItem.profileImageUrl,
+                            content = commentItem.content,
+                            postDate = commentItem.postDate,
+                            isWriter = commentItem.isWriter,
+                            isLiked = commentItem.isLiked,
+                            likeCount = commentItem.likeCount
+                        )
+                    )
                 }
             )
 
             commentItem.replyList.forEach { reply ->
                 ReplyItem(
                     data = reply,
-                    onReplyClick = { onSendReply }
+                    onReplyClick = {
+                        onReplyClick(reply)
+                    }
                 )
             }
         }
@@ -86,8 +106,9 @@ fun CommentSectionPreview() {
                 commentList = listOf(
                     mockComment, mockComment, mockComment
                 ),
-                onSendReply = { text, replyId, parentNickname ->
-                    println("전송됨: '$text' → replyId: $replyId, to: @$parentNickname")
+                onSendReply = { _, _, _ -> },
+                onReplyClick = { replyItem ->
+                    // Handle reply click
                 }
             )
         }
