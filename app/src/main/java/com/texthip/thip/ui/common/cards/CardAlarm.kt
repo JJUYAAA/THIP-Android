@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -86,11 +87,12 @@ fun CardAlarm(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
                 // 내용 (제목, 빨간 점, 시간, 메시지)
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -98,7 +100,7 @@ fun CardAlarm(
                     ) {
                         Text(
                             text = title,
-                            style = typography.menu_sb600_s14_h24,
+                            style = typography.view_m500_s14,
                             color = if (isRead) colors.Grey01 else colors.White,
                             modifier = Modifier.weight(1f),
                             maxLines = 1,
@@ -121,7 +123,7 @@ fun CardAlarm(
 
                             Text(
                                 text = timeAgo + stringResource(R.string.time_ago),
-                                style = typography.view_m500_s12_h20,
+                                style = typography.timedate_r400_s11,
                                 color = if (isRead) colors.Grey02 else colors.Grey01,
                             )
                         }
@@ -129,7 +131,7 @@ fun CardAlarm(
                 }
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = message,
