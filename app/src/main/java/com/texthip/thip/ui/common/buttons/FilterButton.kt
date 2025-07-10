@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,15 +43,32 @@ fun FilterButton(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.End
+    Box(
+        modifier = modifier
+            .fillMaxWidth(),
+        contentAlignment = Alignment.TopEnd
     ) {
+        // 바깥 클릭 감지(expanded 상태에서만 보이도록 함)
+        if (expanded) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        expanded = false
+                    }
+            )
+        }
+
+        // 버튼 영역
         Row(
             modifier = Modifier
+                .height(36.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = null // 클릭 효과 제거
+                    indication = null
                 ) { expanded = !expanded },
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
@@ -68,46 +86,41 @@ fun FilterButton(
                 tint = colors.Grey02,
                 modifier = Modifier.size(24.dp)
             )
-
         }
 
-        // 드롭다운 애니메이션 박스
+        // 드롭다운
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.TopEnd
+            Column(
+                modifier = Modifier
+                    .padding(top = 36.dp) // 버튼 아래로 띄우기
+                    .width(144.dp)
+                    .border(
+                        width = 1.dp,
+                        color = colors.Grey01,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .background(color = colors.Black, shape = RoundedCornerShape(16.dp))
+                    .padding(vertical = 20.dp, horizontal = 12.dp)
+                    .align(Alignment.TopEnd), // 오버레이 위치 고정
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .width(144.dp)
-                        .border(
-                            width = 1.dp,
-                            color = colors.Grey01,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .background(color = colors.Black, shape = RoundedCornerShape(16.dp))
-                        .padding(vertical = 20.dp, horizontal = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    options.forEach { option ->
-                        val isSelected = option == selectedOption
-                        Text(
-                            text = option,
-                            color = if (isSelected) colors.White else colors.Grey02,
-                            style = typography.feedcopy_r400_s14_h20,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onOptionSelected(option)
-                                    expanded = false
-                                }
-                        )
-                    }
+                options.forEach { option ->
+                    val isSelected = option == selectedOption
+                    Text(
+                        text = option,
+                        color = if (isSelected) colors.White else colors.Grey02,
+                        style = typography.feedcopy_r400_s14_h20,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onOptionSelected(option)
+                                expanded = false
+                            }
+                    )
                 }
             }
         }

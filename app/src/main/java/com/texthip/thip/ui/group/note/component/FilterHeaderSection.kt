@@ -38,7 +38,7 @@ fun FilterHeaderSection(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp),
+            .padding(horizontal = 20.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -61,7 +61,7 @@ fun FilterHeaderSection(
                 text = stringResource(R.string.view_by_all),
                 isFilled = true,
                 isSelected = isTotalSelected,
-                enabled = totalEnabled, // ✅ 추가된 enabled 인자
+                enabled = totalEnabled,
                 textStyle = typography.menu_r400_s14_h24,
                 onClick = onTotalToggle
             )

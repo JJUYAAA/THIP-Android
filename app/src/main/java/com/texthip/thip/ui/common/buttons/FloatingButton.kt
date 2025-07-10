@@ -24,13 +24,14 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
 fun FloatingButton(
+    modifier: Modifier = Modifier,
     icon: Painter,
     onClick: () -> Unit = { }
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(end = 20.dp, bottom = 32.dp),
         contentAlignment = Alignment.BottomEnd
@@ -45,7 +46,6 @@ fun FloatingButton(
             contentColor = colors.NeonGreen,
             shape = CircleShape,
             modifier = Modifier
-                .padding(16.dp)
                 .size(56.dp)
                 .border(width = 2.dp, color = colors.NeonGreen50, shape = CircleShape)
         ) {
