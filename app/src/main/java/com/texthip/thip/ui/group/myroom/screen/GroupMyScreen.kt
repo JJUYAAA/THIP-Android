@@ -70,11 +70,11 @@ fun GroupMyScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(20.dp),
-                contentPadding = PaddingValues(bottom = 20.dp),
+                contentPadding = PaddingValues(top = 10.dp, bottom = 20.dp),
                 modifier = Modifier
                     .fillMaxSize()
             ) {
