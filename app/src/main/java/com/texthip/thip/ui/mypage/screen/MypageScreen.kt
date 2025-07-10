@@ -1,5 +1,6 @@
-package com.texthip.thip.ui.myPage.screen
+package com.texthip.thip.ui.mypage.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,19 +37,18 @@ fun MyPageScreen(
     badgeText: String
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
-    Scaffold(
-        containerColor = Black,
-        topBar = {
-            LeftNameTopAppBar(
-                title = stringResource(R.string.my_page),
-                leftIcon = painterResource(R.drawable.ic_search),
-                rightIcon = painterResource(R.drawable.ic_plus)
-            )
-        }
-    ) { innerPadding ->
+    Column(
+        Modifier
+            .background(colors.Black)
+            .fillMaxSize()
+    ) {
+        LeftNameTopAppBar(
+            title = stringResource(R.string.my_page),
+            leftIcon = painterResource(R.drawable.ic_search),
+            rightIcon = painterResource(R.drawable.ic_plus)
+        )
         Column(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
         ) {
             Spacer(modifier = Modifier.height(40.dp))

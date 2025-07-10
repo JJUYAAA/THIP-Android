@@ -25,7 +25,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun ToastWithDate(
     modifier: Modifier = Modifier,
     message: String,
-    date: String
+    date: String? = null
 ) {
     Box(
         modifier = modifier
@@ -41,18 +41,20 @@ fun ToastWithDate(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = if (date != null) Arrangement.SpaceBetween else Arrangement.Start
         ) {
             Text(
                 text = message,
                 color = colors.White,
                 style = typography.view_m500_s12_h20
             )
-            Text(
-                text = date,
-                color = colors.Grey02,
-                style = typography.timedate_r400_s11
-            )
+            if (date != null) {
+                Text(
+                    text = date,
+                    color = colors.Grey02,
+                    style = typography.timedate_r400_s11
+                )
+            }
         }
     }
 }

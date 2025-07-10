@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.mock
+package com.texthip.thip.ui.mypage.mock
 
 data class BookItem(
     val id: Int,

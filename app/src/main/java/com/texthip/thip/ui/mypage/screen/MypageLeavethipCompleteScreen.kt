@@ -1,6 +1,7 @@
-package com.texthip.thip.ui.myPage.screen
+package com.texthip.thip.ui.mypage.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,19 +28,18 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun DeleteAccountCompleteScreen() {
-    Scaffold(
-        containerColor = colors.Black,
-        topBar = {
-            DefaultTopAppBar(
-                isRightIconVisible = false,
-                isTitleVisible = false,
-                onLeftClick = {},
-            )
-        }
-    ) { innerPadding ->
+    Column(
+        Modifier
+            .background(colors.Black)
+            .fillMaxSize()
+    ) {
+        DefaultTopAppBar(
+            isRightIconVisible = false,
+            isTitleVisible = false,
+            onLeftClick = {},
+        )
         Column(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center

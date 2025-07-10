@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.screen
+package com.texthip.thip.ui.mypage.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,47 +44,20 @@ fun DeleteAccountScreen() {
     val backgroundColor = if (isChecked) colors.Purple else colors.Grey02
     var isDialogVisible by rememberSaveable { mutableStateOf(false) }
 
-    Scaffold(
-        containerColor = colors.Black,
-        topBar = {
-            DefaultTopAppBar(
-                title = stringResource(R.string.delete_account),
-                onLeftClick = {},
-            )
-        },
-        bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .background(backgroundColor)
-                    .clickable(
-                        enabled = isChecked,
-                        onClick = {
-                            isDialogVisible = true
-                        }),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_bye),
-                    contentDescription = null,
-                    tint = colors.White
-                )
-                Text(
-                    text = stringResource(R.string.leave_thip),
-                    color = colors.White,
-                    style = typography.smalltitle_sb600_s18_h24,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-            }
-        }
-    ) { innerPadding ->
+    Column(
+        Modifier
+            .background(colors.Black)
+            .fillMaxSize()
+    ) {
+        DefaultTopAppBar(
+            title = stringResource(R.string.delete_account),
+            onLeftClick = {},
+        )
+        Spacer(modifier = Modifier.height(40.dp))
         Column(
             modifier = Modifier
-                .padding(20.dp)
-                .padding(innerPadding)
-                .fillMaxSize()
+                .weight(1f)
+                .padding(horizontal = 20.dp),
         ) {
             Box(
                 modifier = Modifier
@@ -143,6 +115,32 @@ fun DeleteAccountScreen() {
                     }
                 )
             }
+        }
+        Spacer(modifier = Modifier.height(55.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .background(backgroundColor)
+                .clickable(
+                    enabled = isChecked,
+                    onClick = {
+                        isDialogVisible = true
+                    }),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_bye),
+                contentDescription = null,
+                tint = colors.White
+            )
+            Text(
+                text = stringResource(R.string.leave_thip),
+                color = colors.White,
+                style = typography.smalltitle_sb600_s18_h24,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
         }
         if (isDialogVisible) {
             Dialog(onDismissRequest = { isDialogVisible = false }) {

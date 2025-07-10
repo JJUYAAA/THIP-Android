@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.myPage.component
+package com.texthip.thip.ui.mypage.component
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -7,7 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.texthip.thip.ui.myPage.viewmodel.SavedFeedViewModel
+import com.texthip.thip.ui.mypage.viewmodel.SavedFeedViewModel
 
 @Composable
 fun FeedContent(viewModel: SavedFeedViewModel = viewModel()) {
