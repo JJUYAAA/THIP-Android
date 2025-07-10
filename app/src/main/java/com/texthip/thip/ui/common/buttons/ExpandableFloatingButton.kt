@@ -51,7 +51,7 @@ fun ExpandableFloatingButton(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp), // TODO: 화면에서 버튼 위치 조정
+            .padding(end = 20.dp, bottom = 32.dp),
         contentAlignment = Alignment.BottomEnd
     ) {
         Column(
@@ -65,7 +65,7 @@ fun ExpandableFloatingButton(
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(bottom = 80.dp, end = 16.dp) // TODO: 화면에서 버튼 위치 조정
+                        .padding(bottom = 94.dp, end = 20.dp)
                         .width(184.dp)
                         .background(
                             color = colors.Black,
@@ -80,7 +80,6 @@ fun ExpandableFloatingButton(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     menuItems.forEachIndexed { index, item ->
-//                        if (index > 0) Spacer(modifier = Modifier.height(16.dp))
                         MenuItem(
                             icon = item.icon,
                             text = item.text,

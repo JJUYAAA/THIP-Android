@@ -26,8 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.ui.common.buttons.ExpandableFloatingButton
+import com.texthip.thip.ui.common.buttons.FabMenuItem
 import com.texthip.thip.ui.common.buttons.FilterButton
-import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.header.HeaderMenuBarTab
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.note.component.CommentBottomSheet
@@ -166,9 +167,19 @@ fun GroupNoteScreen() {
             )
         }
 
-        FloatingButton(
-            icon = painterResource(id = R.drawable.ic_plus),
-            onClick = { /* 새 글 작성 */ }
+        ExpandableFloatingButton(
+            menuItems = listOf(
+                FabMenuItem(
+                    icon = painterResource(R.drawable.ic_write),
+                    text = stringResource(R.string.write_record),
+                    onClick = { }
+                ),
+                FabMenuItem(
+                    icon = painterResource(R.drawable.ic_vote),
+                    text = stringResource(R.string.create_vote),
+                    onClick = { }
+                )
+            )
         )
     }
 
