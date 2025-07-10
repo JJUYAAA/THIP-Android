@@ -28,6 +28,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun VoteCommentCard(
     modifier: Modifier = Modifier,
     data: GroupNoteVote,
+    onCommentClick: () -> Unit = {}
 ) {
     var isLiked by remember { mutableStateOf(data.isLiked) }
     var selected by remember { mutableStateOf<Int?>(null) }
@@ -84,7 +85,7 @@ fun VoteCommentCard(
             onLikeClick = {
                 isLiked = !isLiked
             },
-            onCommentClick = { },
+            onCommentClick = { onCommentClick() },
         )
     }
 }

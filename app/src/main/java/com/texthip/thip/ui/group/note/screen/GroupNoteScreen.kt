@@ -15,10 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,11 +30,13 @@ import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.header.HeaderMenuBarTab
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.group.note.component.CommentBottomSheet
 import com.texthip.thip.ui.group.note.component.FilterHeaderSection
 import com.texthip.thip.ui.group.note.component.TextCommentCard
 import com.texthip.thip.ui.group.note.component.VoteCommentCard
 import com.texthip.thip.ui.group.note.mock.GroupNoteRecord
 import com.texthip.thip.ui.group.note.mock.GroupNoteVote
+import com.texthip.thip.ui.group.note.mock.mockComment
 import com.texthip.thip.ui.group.note.mock.mockGroupNoteItems
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -57,89 +61,130 @@ fun GroupNoteScreen() {
         else -> emptyList()
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        DefaultTopAppBar(
-            title = stringResource(R.string.record_book),
-            onLeftClick = {}
-        )
+    var isBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
+    var selectedNoteRecord by remember { mutableStateOf<GroupNoteRecord?>(null) }
+    var selectedNoteVote by remember { mutableStateOf<GroupNoteVote?>(null) }
 
-        HeaderMenuBarTab(
-            titles = tabs,
-            selectedTabIndex = selectedTabIndex,
-            onTabSelected = { selectedTabIndex = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp, bottom = 56.dp)
-        )
-
-        // 피드 리스트 영역
-        LazyColumn(
-            modifier = Modifier
+    Box(
+        if (isBottomSheetVisible) {
+            Modifier
                 .fillMaxSize()
-                .padding(bottom = 82.dp),
-        ) {
-            item {
-                Row(
-                    modifier = Modifier.padding(
-                        start = 20.dp,
-                        end = 20.dp,
-                        bottom = 16.dp,
-                        top = 20.dp
-                    ),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Icon(
-                        painterResource(R.drawable.ic_information),
-                        contentDescription = null,
-                        tint = colors.White,
-                    )
-                    Text(
-                        text = stringResource(R.string.group_note_info),
-                        modifier = Modifier.padding(start = 8.dp),
-                        color = colors.Grey01,
-                        style = typography.info_r400_s12
-                    )
+                .blur(5.dp)
+        } else {
+            Modifier.fillMaxSize()
+        }
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            DefaultTopAppBar(
+                title = stringResource(R.string.record_book),
+                onLeftClick = {}
+            )
+
+            HeaderMenuBarTab(
+                titles = tabs,
+                selectedTabIndex = selectedTabIndex,
+                onTabSelected = { selectedTabIndex = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, bottom = 56.dp)
+            )
+
+            // 피드 리스트 영역
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 82.dp),
+            ) {
+                item {
+                    Row(
+                        modifier = Modifier.padding(
+                            start = 20.dp,
+                            end = 20.dp,
+                            bottom = 16.dp,
+                            top = 20.dp
+                        ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.ic_information),
+                            contentDescription = null,
+                            tint = colors.White,
+                        )
+                        Text(
+                            text = stringResource(R.string.group_note_info),
+                            modifier = Modifier.padding(start = 8.dp),
+                            color = colors.Grey01,
+                            style = typography.info_r400_s12
+                        )
+                    }
                 }
-            }
-            items(filteredItems) { item ->
-                when (item) {
-                    is GroupNoteRecord -> TextCommentCard(data = item)
-                    is GroupNoteVote -> VoteCommentCard(data = item)
+                items(filteredItems) { item ->
+                    when (item) {
+                        is GroupNoteRecord -> TextCommentCard(
+                            data = item,
+                            onCommentClick = {
+                                selectedNoteRecord = item
+                                isBottomSheetVisible = true
+                            }
+                        )
+
+                        is GroupNoteVote -> VoteCommentCard(
+                            data = item,
+                            onCommentClick = {
+                                selectedNoteVote = item
+                                isBottomSheetVisible = true
+                            }
+                        )
+                    }
                 }
             }
         }
-    }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 136.dp),
-    ) {
-        FilterButton(
+        Box(
             modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 20.dp),
-            selectedOption = selectedFilter,
-            options = filters,
-            onOptionSelected = { selectedFilter = it }
-        )
+                .fillMaxWidth()
+                .padding(top = 136.dp),
+        ) {
+            FilterButton(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 20.dp),
+                selectedOption = selectedFilter,
+                options = filters,
+                onOptionSelected = { selectedFilter = it }
+            )
 
-        FilterHeaderSection(
-            firstPage = firstPage,
-            lastPage = lastPage,
-            isTotalSelected = isTotalSelected,
-            totalEnabled = totalEnabled,
-            onFirstPageChange = { firstPage = it },
-            onLastPageChange = { lastPage = it },
-            onTotalToggle = { isTotalSelected = !isTotalSelected },
+            FilterHeaderSection(
+                firstPage = firstPage,
+                lastPage = lastPage,
+                isTotalSelected = isTotalSelected,
+                totalEnabled = totalEnabled,
+                onFirstPageChange = { firstPage = it },
+                onLastPageChange = { lastPage = it },
+                onTotalToggle = { isTotalSelected = !isTotalSelected },
+            )
+        }
+
+        FloatingButton(
+            icon = painterResource(id = R.drawable.ic_plus),
+            onClick = { /* 새 글 작성 */ }
         )
     }
 
-    FloatingButton(
-        icon = painterResource(id = R.drawable.ic_plus),
-        onClick = { /* 새 글 작성 */ }
-    )
+    if (isBottomSheetVisible && (selectedNoteRecord != null || selectedNoteVote != null)) {
+        CommentBottomSheet(
+            commentResponse = listOf(mockComment, mockComment, mockComment),
+            onDismiss = {
+                isBottomSheetVisible = false
+                selectedNoteRecord = null
+                selectedNoteVote = null
+            },
+            onSendReply = { replyText, commentId, replyTo ->
+                // 댓글 전송 로직 구현
+            }
+        )
+    }
 }
 
 @Preview

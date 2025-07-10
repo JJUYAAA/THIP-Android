@@ -26,6 +26,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun TextCommentCard(
     modifier: Modifier = Modifier,
     data: GroupNoteRecord,
+    onCommentClick: () -> Unit = {}
 ) {
     var isLiked by remember { mutableStateOf(data.isLiked) }
 
@@ -60,7 +61,7 @@ fun TextCommentCard(
             onLikeClick = {
                 isLiked = !isLiked
             },
-            onCommentClick = {  },
+            onCommentClick = { onCommentClick() },
         )
     }
 }
