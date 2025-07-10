@@ -39,8 +39,9 @@ fun WarningTextField(
     showWarning: Boolean = false,
     showLimit: Boolean = true,
     limit: Int = 10,
-    showIcon: Boolean = false
-    ) {
+    showIcon: Boolean = false,
+    containerColor: Color = colors.Black
+) {
     //var text by rememberSaveable { mutableStateOf("") }
     val myStyle = typography.menu_r400_s14_h24.copy(lineHeight = 14.sp)
 
@@ -72,8 +73,8 @@ fun WarningTextField(
                     focusedTextColor = colors.White,
                     focusedIndicatorColor = if (showWarning) colors.Red else Color.Transparent,
                     unfocusedIndicatorColor = if (showWarning) colors.Red else Color.Transparent,
-                    focusedContainerColor = colors.Black,
-                    unfocusedContainerColor = colors.Black,
+                    focusedContainerColor = containerColor,
+                    unfocusedContainerColor = containerColor,
                     cursorColor = colors.NeonGreen
                 ),
                 trailingIcon = {
