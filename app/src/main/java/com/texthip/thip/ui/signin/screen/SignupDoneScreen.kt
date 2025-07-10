@@ -27,12 +27,18 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.signin.mock.SignupUserInfo
 import com.texthip.thip.ui.theme.Grey
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
+
+
 @Composable
-fun SigninDoneScreen(nickname: String, profileImageResId: Int?, role: String) {
+fun SignupDoneScreen(userInfo: SignupUserInfo) {
+    val nickname = userInfo.nickname
+    val profileImageResId = userInfo.profileImageResId
+    val role = userInfo.role
     Column(
         Modifier
             .background(colors.Black)
@@ -130,6 +136,10 @@ fun SigninDoneScreen(nickname: String, profileImageResId: Int?, role: String) {
 
 @Preview
 @Composable
-private fun SigninDoneScreenPrev() {
-    SigninDoneScreen("JJUYAA", profileImageResId = R.drawable.character_sociology, role = "칭호칭호")
+private fun SignupDoneScreenPrev() {
+    SignupDoneScreen(userInfo = SignupUserInfo(
+        nickname = "JJUYAA",
+        profileImageResId = R.drawable.character_sociology,
+        role = "칭호칭호"
+    ))
 }
