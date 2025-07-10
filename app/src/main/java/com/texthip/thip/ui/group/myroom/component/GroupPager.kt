@@ -21,16 +21,20 @@ fun GroupPager(
     groupCards: List<GroupCardData>,
     onCardClick: (GroupCardData) -> Unit
 ) {
-    val cardWidth = 320.dp
-    val pageSpacing = 6.dp
+    val scale = 0.86f
+    val desiredGap = 10.dp
 
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
             .height(192.dp)
     ) {
-        val screenWidth = maxWidth
-        val horizontalPadding = ((screenWidth - cardWidth) / 2).coerceAtLeast(0.dp)
+        val horizontalPadding = 30.dp
+        val cardWidth = maxWidth - (horizontalPadding * 2)
+
+        val pageSpacing = with(this) {
+            (-(cardWidth - (cardWidth * scale)) / 2f) + desiredGap
+        }
 
         val pagerState = rememberPagerState(
             initialPage = 0,
