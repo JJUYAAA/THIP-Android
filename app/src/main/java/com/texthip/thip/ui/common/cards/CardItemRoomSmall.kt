@@ -38,7 +38,7 @@ fun CardItemRoomSmall(
     title: String,
     participants: Int,
     maxParticipants: Int,
-    endDate: Int,
+    endDate: Int?,
     imageRes: Int? = R.drawable.bookcover_sample_small,
     onClick: () -> Unit = {}
 ) {
@@ -123,11 +123,14 @@ fun CardItemRoomSmall(
                         }
                     }
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = stringResource(R.string.card_item_end_date_recruit, endDate),
-                        color = colors.Red,
-                        style = typography.menu_sb600_s12_h20
-                    )
+
+                    endDate?.let {
+                        Text(
+                            text = stringResource(R.string.card_item_end_date_recruit, endDate),
+                            color = colors.Red,
+                            style = typography.menu_sb600_s12_h20
+                        )
+                    }
                 }
             }
         }

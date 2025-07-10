@@ -7,7 +7,7 @@ data class GroupCardItemRoomData(
     val participants: Int,
     val maxParticipants: Int,
     val isRecruiting: Boolean,
-    val endDate: Int, // 남은 일 수
+    val endDate: Int? = null, // 남은 일 수
     val imageRes: Int? = R.drawable.bookcover_sample,
     val genreIndex: Int // 장르 인덱스
 )

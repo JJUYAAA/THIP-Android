@@ -41,11 +41,13 @@ fun CardItemRoom(
     participants: Int,
     maxParticipants: Int,
     isRecruiting: Boolean,
-    endDate: Int,
+    endDate: Int? = null,
     imageRes: Int? = R.drawable.bookcover_sample,
     hasBorder: Boolean = false,
     onClick: () -> Unit = {}
 ) {
+    val paddingValues = if (endDate == null) 27.5.dp else 16.dp
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -93,7 +95,8 @@ fun CardItemRoom(
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Spacer(modifier = Modifier.height(paddingValues))
                     Text(
                         text = title,
                         color = colors.White,
@@ -139,7 +142,10 @@ fun CardItemRoom(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = stringResource(R.string.card_item_participant, participants),
+                                    text = stringResource(
+                                        R.string.card_item_participant,
+                                        participants
+                                    ),
                                     style = typography.menu_sb600_s12,
                                     color = colors.White
                                 )
@@ -153,20 +159,22 @@ fun CardItemRoom(
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(5.dp))
+                    endDate?.let {
+                        Spacer(modifier = Modifier.height(5.dp))
 
-                    Text(
-                        text = stringResource(
-                            R.string.card_item_end_date,
-                            endDate
-                        ) + if (isRecruiting) stringResource(
-                            R.string.card_item_end
-                        ) else stringResource(R.string.card_item_finish),
+                        Text(
+                            text = stringResource(
+                                R.string.card_item_end_date,
+                                endDate
+                            ) + if (isRecruiting) stringResource(
+                                R.string.card_item_end
+                            ) else stringResource(R.string.card_item_finish),
 
-                        color = if (isRecruiting) colors.Red else colors.Grey01,
-                        style = typography.menu_sb600_s12_h20,
-                        maxLines = 1
-                    )
+                            color = if (isRecruiting) colors.Red else colors.Grey01,
+                            style = typography.menu_sb600_s12_h20,
+                            maxLines = 1
+                        )
+                    }
                 }
             }
         }
@@ -210,6 +218,14 @@ fun CardItemRoomPreview() {
                 maxParticipants = 30,
                 isRecruiting = false,
                 endDate = 3,
+                imageRes = R.drawable.bookcover_sample,
+                hasBorder = true
+            )
+            CardItemRoom(
+                title = "모임방 이름입니다. 모임방 이름입니다.",
+                participants = 22,
+                maxParticipants = 30,
+                isRecruiting = false,
                 imageRes = R.drawable.bookcover_sample,
                 hasBorder = true
             )

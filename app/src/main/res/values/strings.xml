@@ -230,5 +230,7 @@
     <string name="toast_subscribe">%1$s 님을 구독했어요</string>
     <string name="toast_unsubscribe">%1$s 님을 구독취소했어요</string>
     <string name="subscribe_cancel">구독취소</string>
+    <string name="group_done_title">완료된 모임방</string>
+    <string name="group_done_user_comment">%1$s님이 참여했던 모임방들을 확인해보세요.</string>
 
 </resources>
