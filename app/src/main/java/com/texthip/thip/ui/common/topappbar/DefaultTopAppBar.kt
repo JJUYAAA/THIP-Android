@@ -31,7 +31,6 @@ fun DefaultTopAppBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = colors.Black)
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
         Icon(
