@@ -35,11 +35,11 @@ fun GenreChipButton(
         modifier = modifier
             .border(
                 width = 1.dp,
-                color = colors.White,
+                color = colors.Grey02,
                 shape = RoundedCornerShape(20.dp)
             )
             .background(color = Color.Transparent, shape = RoundedCornerShape(12.dp))
-            .padding(top = 4.dp, bottom = 4.dp, end = 8.dp, start = 12.dp)
+            .padding(top = 8.dp, bottom = 8.dp, end = 8.dp, start = 12.dp)
             .clickable {
                 onClick()
             },
@@ -47,11 +47,11 @@ fun GenreChipButton(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
                 text = text,
-                color = colors.White,
+                color = colors.Grey01,
                 style = typography.info_r400_s12,
             )
             Icon(

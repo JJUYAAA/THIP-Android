@@ -1,22 +1,16 @@
 package com.texthip.thip.ui.group.myroom.component
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,58 +22,76 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupSearchTextField(
-    onValueChange: (String) -> Unit
+    modifier: Modifier = Modifier,
+    value: String,
+    placeholder: String = stringResource(R.string.group_search_placeholder),
+    onValueChange: (String) -> Unit,
+    onClick: (() -> Unit)? = null
 ) {
-    var value by rememberSaveable { mutableStateOf("") }
-    val textStyle = typography.menu_r400_s14_h24.copy(lineHeight = 20.sp)
+    val textStyle = typography.menu_r400_s14_h24.copy(
+        fontSize = 14.sp,
+        lineHeight = 16.sp,
+        color = colors.White
+    )
+    val shape = RoundedCornerShape(12.dp)
+    val backgroundColor = colors.DarkGrey50
+    val cursorColor = colors.NeonGreen
 
     Box(
-        Modifier
+        modifier
             .padding(horizontal = 20.dp)
             .fillMaxWidth()
-            .height(48.dp)
+            .height(40.dp)
+            .clip(shape)
+            .background(backgroundColor),
+        contentAlignment = Alignment.CenterStart
     ) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = { newValue ->
-                value = newValue
-                onValueChange(newValue)
-            },
-            textStyle = textStyle,
-            modifier = Modifier
-                .fillMaxWidth(),
-            placeholder = {
-                Text(
-                    text = stringResource(R.string.group_search_placeholder),
-                    color = colors.Grey02,
-                    style = typography.menu_r400_s14_h24.copy(lineHeight = 2.sp)
-                )
-            },
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = colors.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedContainerColor = colors.DarkGrey,
-                unfocusedContainerColor = colors.DarkGrey,
-                cursorColor = colors.NeonGreen
-            ),
-            trailingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_search),
-                    contentDescription = "검색",
-                    tint = colors.White,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                singleLine = true,
+                textStyle = textStyle,
+                cursorBrush = SolidColor(cursorColor),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 12.dp, end = 8.dp),
+                decorationBox = { innerTextField ->
+                    Box(contentAlignment = Alignment.CenterStart) {
+                        if (value.isEmpty()) {
+                            Text(
+                                text = placeholder,
+                                color = colors.Grey02,
+                                style = typography.menu_r400_s14_h24.copy(
+                                    fontSize = 14.sp,
+                                    lineHeight = 16.sp
+                                )
+                            )
+                        }
+                        innerTextField()
+                    }
+                }
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.ic_search),
+                contentDescription = "검색",
+                tint = colors.White,
+                modifier = Modifier
+                    .padding(end = 12.dp)
+            )
+        }
     }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360)
 @Composable
-fun PreviewSearchTextField() {
-    GroupSearchTextField(onValueChange = {})
+fun PreviewGroupSearchTextField() {
+    var value by remember { mutableStateOf("") }
+    GroupSearchTextField(
+        value = value,
+        onValueChange = { value = it }
+    )
 }
-
