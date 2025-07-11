@@ -110,7 +110,7 @@ fun GroupMyScreen(
                     )
                     Text(
                         text = "참여 중인 모임방이 없어요",
-                        color = colors.White,
+                        color = colors.Grey01,
                         style = typography.smalltitle_sb600_s16_h20
                     )
                 }

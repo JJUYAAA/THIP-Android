@@ -96,7 +96,7 @@ fun CardItemRoomSmall(
                     Text(
                         text = title,
                         color = colors.White,
-                        style = typography.menu_sb600_s14_h24,
+                        style = if (isWide) typography.smalltitle_sb600_s18_h24 else typography.menu_sb600_s14_h24,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
