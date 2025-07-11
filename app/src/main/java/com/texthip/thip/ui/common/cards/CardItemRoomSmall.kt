@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.common.cards
 
+import android.R.attr.onClick
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -40,14 +42,24 @@ fun CardItemRoomSmall(
     maxParticipants: Int,
     endDate: Int?,
     imageRes: Int? = R.drawable.bookcover_sample_small,
+    isWide: Boolean = false,
     onClick: () -> Unit = {}
 ) {
-    Card(
-        modifier = modifier
+    val cardModifier = if (isWide) {
+        modifier
+            .fillMaxWidth()
+            .height(104.dp)
+    } else {
+        modifier
             .size(width = 232.dp, height = 104.dp)
+    }
+    val bgColor = if (isWide) colors.Black else colors.DarkGrey50
+
+    Card(
+        modifier = cardModifier
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = colors.DarkGrey50
+            containerColor = bgColor
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp)
@@ -137,18 +149,28 @@ fun CardItemRoomSmall(
     }
 }
 
-
-@Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360)
+@Preview()
 @Composable
 fun CardItemRoomSmallPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        CardItemRoomSmall(
-            title = "방 제목입니다 방 제목입니다",
-            participants = 22,
-            maxParticipants = 30,
-            endDate = 3,
-            imageRes = R.drawable.bookcover_sample
-        )
-
+    ThipTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            // 기본 카드
+            CardItemRoomSmall(
+                title = "방 제목입니다 방 제목입니다",
+                participants = 22,
+                maxParticipants = 30,
+                endDate = 3,
+                imageRes = R.drawable.bookcover_sample
+            )
+            // fillMaxWidth + 검정 배경 카드
+            CardItemRoomSmall(
+                title = "와이드 카드 fillMaxWidth",
+                participants = 18,
+                maxParticipants = 25,
+                endDate = 5,
+                imageRes = R.drawable.bookcover_sample,
+                isWide = true
+            )
+        }
     }
 }
