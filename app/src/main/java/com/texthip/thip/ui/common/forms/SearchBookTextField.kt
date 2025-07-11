@@ -1,105 +1,112 @@
 package com.texthip.thip.ui.common.forms
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.texthip.thip.R
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun SearchBookTextField(
     modifier: Modifier = Modifier,
+    text: String,
     hint: String,
+    onValueChange: (String) -> Unit,
     onSearch: (String) -> Unit = {}
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
-    val myStyle = typography.menu_r400_s14_h24.copy(lineHeight = 14.sp)
+    val myStyle = typography.menu_r400_s14_h24.copy(
+        fontSize = 14.sp,
+        lineHeight = 16.sp,
+        color = colors.White
+    )
+    val shape = RoundedCornerShape(12.dp)
+    val backgroundColor = colors.DarkGrey02
 
     Box(
-        modifier = modifier.height(48.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .height(40.dp)
+            .clip(shape)
+            .background(backgroundColor),
+        contentAlignment = Alignment.CenterStart
     ) {
-        OutlinedTextField(
-            value = text,
-            onValueChange = {
-                text = it
-            },
-            placeholder = {
-                Text(
-                    text = hint,
-                    color = colors.Grey02,
-                    style = myStyle
-                )
-            },
-            textStyle = myStyle,
-            modifier = Modifier.fillMaxSize(),
-            shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = colors.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedContainerColor = colors.DarkGrey02,
-                unfocusedContainerColor = colors.DarkGrey02,
-                cursorColor = colors.NeonGreen
-            ),
-            trailingIcon = {
-                Row(
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_x_circle_grey),
-                        contentDescription = "Clear text",
-                        modifier = Modifier
-                            .clickable { text = "" },
-                        tint = Color.Unspecified
-                    )
-
-                    Spacer(Modifier.width(20.dp))
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_search),
-                        contentDescription = "Search",
-                        modifier = Modifier
-                            .clickable { onSearch(text) },
-                        tint = colors.White
-                    )
-                    Spacer(Modifier.width(8.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            BasicTextField(
+                value = text,
+                onValueChange = { onValueChange(it) },
+                singleLine = true,
+                textStyle = myStyle,
+                cursorBrush = SolidColor(colors.NeonGreen),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 12.dp, end = 8.dp),
+                decorationBox = { innerTextField ->
+                    Box(contentAlignment = Alignment.CenterStart) {
+                        if (text.isEmpty()) {
+                            Text(
+                                text = hint,
+                                color = colors.Grey02,
+                                style = myStyle
+                            )
+                        }
+                        innerTextField()
+                    }
                 }
-            },
-            singleLine = true
-        )
+            )
+
+            Icon(
+                painter = painterResource(id = R.drawable.ic_x_circle_grey),
+                contentDescription = "Clear text",
+                modifier = Modifier
+                    .clickable { onValueChange("") },
+                tint = Color.Unspecified
+            )
+            Spacer(Modifier.width(20.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.ic_search),
+                contentDescription = "Search",
+                modifier = Modifier
+                    .clickable {
+                        onSearch(text)
+                    },
+                tint = colors.White
+            )
+            Spacer(Modifier.width(12.dp))
+        }
     }
 }
+
 
 @Preview()
 @Composable
 private fun SearchBookTextFieldPreview() {
-    SearchBookTextField(
-        hint = "책 제목, 저자검색",
-        onSearch = { /* 검색 실행 */ }
-    )
+    ThipTheme {
+        var text by rememberSaveable { mutableStateOf("") }
+        SearchBookTextField(
+            text = text,
+            hint = "책 제목, 저자검색",
+            onValueChange = { text = it },
+            onSearch = { /* 검색 실행 */ }
+        )
+    }
 }

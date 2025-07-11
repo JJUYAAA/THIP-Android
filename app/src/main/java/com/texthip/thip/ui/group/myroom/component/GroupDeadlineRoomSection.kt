@@ -77,7 +77,7 @@ fun GroupRoomDeadlineSection(
                         .background(
                             brush = Brush.verticalGradient(
                                 colors = listOf(
-                                    colors.White.copy(0.25f),
+                                    colors.White.copy(0.2f),
                                     colors.Black.copy(0.2f)
                                 )
                             ),
