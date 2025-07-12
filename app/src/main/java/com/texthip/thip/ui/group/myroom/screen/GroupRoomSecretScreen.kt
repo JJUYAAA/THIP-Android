@@ -162,7 +162,6 @@ fun GroupRoomSecretScreenPreview() {
         GroupRoomSecretScreen(
             onBackClick = {},
             onPasswordComplete = { password ->
-                println("Password entered: $password")
             },
             correctPassword = "1234"
         )

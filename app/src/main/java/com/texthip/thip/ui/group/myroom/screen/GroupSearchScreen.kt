@@ -183,13 +183,26 @@ fun GroupSearchScreen(
 
 
                     if (filteredRoomList.isEmpty()) {
-                        // 검색 결과가 없는 경우(임시로 넣어봤습니다 의논해봐야 할듯)
-                        Text(
-                            text = stringResource(R.string.group_no_search_result),
-                            modifier = Modifier.padding(top = 20.dp),
-                            color = colors.Grey01,
-                            style = typography.menu_r400_s14_h24
-                        )
+                        // 검색 결과가 없는 경우
+                        Column (
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = stringResource(R.string.group_no_search_result1),
+                                modifier = Modifier.padding(top = 20.dp),
+                                color = colors.White,
+                                style = typography.smalltitle_sb600_s18_h24
+                            )
+                            Text(
+                                text = stringResource(R.string.group_no_search_result2),
+                                modifier = Modifier.padding(top = 8.dp),
+                                color = colors.Grey,
+                                style = typography.copy_r400_s14
+                            )
+                        }
+
                     } else {
                         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                             filteredRoomList.forEach { room ->
