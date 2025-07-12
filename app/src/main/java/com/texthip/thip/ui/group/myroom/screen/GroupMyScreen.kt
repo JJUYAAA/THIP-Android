@@ -109,9 +109,16 @@ fun GroupMyScreen(
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
                     Text(
-                        text = "참여 중인 모임방이 없어요",
-                        color = colors.Grey01,
-                        style = typography.smalltitle_sb600_s16_h20
+                        text = stringResource(R.string.group_myroom_error_comment1),
+                        color = colors.White,
+                        style = typography.smalltitle_sb600_s18_h24
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = stringResource(R.string.group_myroom_error_comment2),
+                        color = colors.Grey,
+                        style = typography.copy_r400_s14
                     )
                 }
             }
