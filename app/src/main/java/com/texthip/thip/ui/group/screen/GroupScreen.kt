@@ -82,7 +82,7 @@ fun GroupScreen(
                 groupCards = myGroups,
                 onCardClick = { viewModel.onMyGroupCardClick(it) }
             )
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(32.dp))
 
             Spacer(
                 Modifier

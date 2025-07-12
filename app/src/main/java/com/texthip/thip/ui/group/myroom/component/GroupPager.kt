@@ -29,7 +29,6 @@ fun GroupPager(
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
-            .height(192.dp)
     ) {
         val horizontalPadding = 30.dp
         val cardWidth = maxWidth - (horizontalPadding * 2)
