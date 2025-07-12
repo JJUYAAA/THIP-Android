@@ -171,7 +171,8 @@
     <string name="group_no_recent_search">최근 검색어가 아직 없어요.</string>
     <string name="group_room_search_topappbar">모임 검색</string>
     <string name="group_searched_room_size">전체 %1$d</string>
-    <string name="group_no_search_result">검색 결과가 없습니다.</string>
+    <string name="group_no_search_result1">해당하는 모임방이 없어요</string>
+    <string name="group_no_search_result2">직접 모임방을 만들어보세요.</string>
     <string name="group_secret_screen_comment">비밀번호를 입력해주세요.</string>
     <string name="group_secret_screen_error_comment">비밀번호가 일치하지 않습니다.</string>
     <string name="group_participant_complete_alarm">모임방 참여가 완료되었어요!</string>
@@ -247,5 +248,9 @@
     <string name="group_participant_close_popup">모집을 마감하시겠습니까?</string>
     <string name="group_participant_close_comment">독서메이트 모집을 마감하면\n지금 바로 모임방 활동을 바로 시작할 수 있어요.</string>
     <string name="group_participant_close_alarm">독서메이트 모집을 성공적으로 마감했어요.</string>
+    <string name="group_no_room_exist">모임방이 아직 없어요</string>
+    <string name="group_no_room_error_comment">해당 장르의 모임방이 생기면 보여줄게요!</string>
+    <string name="group_empty_card_title">참여 중인 모임방이 없어요</string>
+    <string name="group_empty_card_description">모임방을 찾아 참여해보세요!</string>
 
 </resources>
