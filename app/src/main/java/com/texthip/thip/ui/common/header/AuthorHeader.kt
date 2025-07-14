@@ -35,6 +35,7 @@ fun AuthorHeader(
     buttonText: String = "",
     buttonWidth: Dp = 60.dp,
     showButton: Boolean = true,
+    profileImageSize: Dp = 54.dp,
     onButtonClick: () -> Unit = {}
 ) {
     Row(
@@ -48,13 +49,13 @@ fun AuthorHeader(
                 painter = rememberAsyncImagePainter(profileImage),
                 contentDescription = "작성자 장르이미지",
                 modifier = Modifier
-                    .size(54.dp)
+                    .size(profileImageSize)
                     .clip(CircleShape)
             )
         } else {
             Box(
                 modifier = Modifier
-                    .size(54.dp)
+                    .size(profileImageSize)
                     .clip(CircleShape)
                     .background(colors.Grey)
             )

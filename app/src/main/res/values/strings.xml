@@ -211,7 +211,7 @@
     <string name="group_input_count">%1$d / %2$d</string>
 
     <!--    splash screen   -->
-    <string name="thip">띱!</string>
+    <string name="splash_thip">띱!</string>
     <string name="splash_ment">하고 떠오른 그 문장을 나눠요</string>
 
     <!--    signin   -->
@@ -229,11 +229,12 @@
     <string name="genre_can_be_changed">이후 내 정보에서 변경이 가능해요.</string>
 
     <!--    feed   -->
-    <string name="my_subscription_list">내 구독 리스트</string>
+    <string name="my_thip_list">내 띱 리스트</string>
     <string name="whole_num">전체 %d</string>
-    <string name="toast_subscribe">%1$s 님을 구독 했어요</string>
-    <string name="toast_unsubscribe">%1$s 님을 구독 취소했어요</string>
-    <string name="subscribe_cancel">구독취소</string>
+    <string name="toast_thip">%1$s 님을 띱 했어요</string>
+    <string name="toast_thip_cancel">%1$s 님을 띱 취소했어요</string>
+    <string name="thip">띱 하기</string>
+    <string name="thip_cancel">띱 취소</string>
     <string name="create_feed">피드에 글을 작성해 보세요</string>
 
     <string name="group_participant_close_popup">모집을 마감하시겠습니까?</string>
