@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
 import com.texthip.thip.ui.common.forms.BookPageTextField
+import com.texthip.thip.ui.common.forms.DefaultTextField
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -35,6 +36,8 @@ fun GroupNoteCreateScreen() {
     var isGeneralReview by rememberSaveable { mutableStateOf(false) }
 
     val allRangeText = stringResource(R.string.all_range)
+
+    var opinionText by rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -109,6 +112,21 @@ fun GroupNoteCreateScreen() {
                         }
                     }
                 }
+            }
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.my_opinion_title),
+                    style = typography.smalltitle_sb600_s18_h24,
+                    color = colors.White
+                )
+
+                DefaultTextField(
+                    text = opinionText,
+                    onTextChange = { opinionText = it }
+                )
             }
         }
     }
