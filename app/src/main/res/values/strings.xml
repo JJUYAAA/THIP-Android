@@ -166,26 +166,6 @@
     <string name="my_record">내 기록</string>
     <string name="view_by_page">페이지별 보기</string>
     <string name="view_by_all">총평 보기</string>
-    <string name="group_note_info">내 진행도에 따라 일부 댓글은 블러처리됩니다.</string>
-    <string name="write_reply">답글작성</string>
-    <string name="annotation">\@</string>
-    <string name="space_bar">\ </string>
-    <string name="reply_to">00님에게 댓글을 남겨보세요.</string>
-    <string name="group_done_title">완료된 모임방</string>
-    <string name="group_done_user_comment">%1$s님이 참여했던 모임방들을 확인해보세요.</string>
-    <string name="group_room_search_hint">" 방 제목 혹은 책 제목을 검색해보세요."</string>
-    <string name="group_recent_search">최근 검색어</string>
-    <string name="group_no_recent_search">최근 검색어가 아직 없어요.</string>
-    <string name="group_room_search_topappbar">모임 검색</string>
-    <string name="group_searched_room_size">전체 %1$d</string>
-    <string name="group_no_search_result1">해당하는 모임방이 없어요</string>
-    <string name="group_no_search_result2">직접 모임방을 만들어보세요.</string>
-    <string name="group_secret_screen_comment">비밀번호를 입력해주세요.</string>
-    <string name="group_secret_screen_error_comment">비밀번호가 일치하지 않습니다.</string>
-    <string name="group_participant_complete_alarm">모임방 참여가 완료되었어요!</string>
-    <string name="group_participant_cancel_popup">참여를 취소하시겠어요?</string>
-    <string name="group_participant_cancel_comment">참여 취소 후 다시 참여할 수 있어요.</string>
-    <string name="group_participant_cancel_alarm">모임방 참여가 취소되었어요! 다른 방을 찾아보세요.</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>
@@ -251,9 +231,11 @@
     <!--    feed   -->
     <string name="my_subscription_list">내 구독 리스트</string>
     <string name="whole_num">전체 %d</string>
-    <string name="toast_subscribe">%1$s 님을 구독했어요</string>
-    <string name="toast_unsubscribe">%1$s 님을 구독취소했어요</string>
+    <string name="toast_subscribe">%1$s 님을 구독 했어요</string>
+    <string name="toast_unsubscribe">%1$s 님을 구독 취소했어요</string>
     <string name="subscribe_cancel">구독취소</string>
+    <string name="create_feed">피드에 글을 작성해 보세요</string>
+
     <string name="group_participant_close_popup">모집을 마감하시겠습니까?</string>
     <string name="group_participant_close_comment">독서메이트 모집을 마감하면\n지금 바로 모임방 활동을 바로 시작할 수 있어요.</string>
     <string name="group_participant_close_alarm">독서메이트 모집을 성공적으로 마감했어요.</string>

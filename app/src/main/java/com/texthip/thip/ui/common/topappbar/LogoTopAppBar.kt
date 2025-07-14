@@ -23,6 +23,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
 fun LogoTopAppBar(
+    modifier: Modifier = Modifier,
     leftIcon: Painter,
     hasNotification: Boolean,
     onLeftClick: () -> Unit = {},
