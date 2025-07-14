@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 
 data class MySubscriptionData(
-    val profileImageUrl: Painter? = null,
+    val profileImageUrl: String? = null,
     val nickname: String,
     val role: String,
     val roleColor: Color,

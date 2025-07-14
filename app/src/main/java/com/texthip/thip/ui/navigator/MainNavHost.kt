@@ -12,7 +12,9 @@ import com.texthip.thip.ui.mypage.screen.MyPageScreen
 @Composable
 fun MainNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Routes.Feed.route) {
-        composable(Routes.Feed.route) { FeedScreen(navController) }
+        composable(Routes.Feed.route) {
+            FeedScreen(navController = navController, nickname = "ThipUser01", userRole = "문학가")
+        }
         composable(Routes.Group.route) { GroupScreen(navController) }
         composable(Routes.BookSearch.route) { BookSearchScreen(navController) }
         composable(Routes.MyPage.route) {
