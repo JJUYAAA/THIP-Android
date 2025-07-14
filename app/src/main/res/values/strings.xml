@@ -52,9 +52,6 @@
     <string name="record_book">기록장</string>
     <string name="vote_title">🔥모임방의 뜨거운 감자</string>
 
-    <!--    TextField 컴포넌트    -->
-    <string name="error_page_over">해당 도서는 %1$dp까지만 있습니다.</string>
-
     <!--    top app bar 컴포넌트    -->
     <string name="subscriber">님의 구독자</string>
     <string name="next">다음</string>
@@ -153,6 +150,8 @@
     <string name="leave_room">방 나가기</string>
     <string name="report_room">방 신고하기</string>
     <string name="delete_room">방 삭제하기</string>
+
+    <!--    group note    -->
     <string name="tilde">~</string>
     <string name="page">p</string>
     <string name="group_record">그룹 기록</string>
@@ -164,6 +163,10 @@
     <string name="annotation">\@</string>
     <string name="space_bar">\ </string>
     <string name="reply_to">00님에게 댓글을 남겨보세요.</string>
+    <string name="page_to_record">기록할 페이지</string>
+    <string name="general_review">총평</string>
+    <string name="all_range">전체범위</string>
+    <string name="error_page_over">전체페이지를 초과할 수 없어요.</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>

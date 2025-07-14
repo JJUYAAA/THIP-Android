@@ -1,11 +1,12 @@
 package com.texthip.thip.ui.common.forms
 
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -41,27 +42,28 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun BookPageTextField(
     modifier: Modifier = Modifier,
-    bookPage: Int
+    bookTotalPage: Int,
+    enabled: Boolean = true,
+    text: String,
+    onValueChange: (String) -> Unit,
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
     var isError by rememberSaveable { mutableStateOf(false) }
     var errorMessageRes by rememberSaveable { mutableStateOf<Int?>(null) }
-    var errorMessageParam by rememberSaveable { mutableStateOf(0) }
 
     Column {
         OutlinedTextField(
             value = text,
             onValueChange = { newText: String ->
                 if (newText.isEmpty() || newText.all { it.isDigit() }) {
-                    text = newText
+                    onValueChange(newText)
+
                     if (newText.isNotEmpty()) {
                         val pageNum = newText.toInt()
-                        isError = pageNum > bookPage
-                        if (isError) {
-                            errorMessageRes = R.string.error_page_over
-                            errorMessageParam = bookPage
+                        isError = pageNum > bookTotalPage
+                        errorMessageRes = if (isError) {
+                            R.string.error_page_over
                         } else {
-                            errorMessageRes = null
+                            null
                         }
                     } else {
                         isError = false
@@ -69,51 +71,63 @@ fun BookPageTextField(
                     }
                 }
             },
-            visualTransformation = SuffixTransformation(
-                suffix = "/${bookPage}p",
-                suffixColor = colors.Grey02
-            ),
+            enabled = enabled,
+            visualTransformation = if (enabled) {
+                SuffixTransformation("/${bookTotalPage}p", colors.Grey02)
+            } else {
+                VisualTransformation.None
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = modifier.size(width = 320.dp, height = 48.dp),
+            modifier = modifier
+                .size(width = 320.dp, height = 48.dp)
+                .then(
+                    if (isError)
+                        Modifier.border(
+                            width = 1.dp,
+                            color = colors.Red,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                    else Modifier
+                ),
             textStyle = typography.menu_r400_s14_h24.copy(lineHeight = 12.sp),
             maxLines = 1,
             shape = RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = colors.White,
-                focusedIndicatorColor = if (isError) colors.Red else Color.Transparent,
-                unfocusedIndicatorColor = if (isError) colors.Red else Color.Transparent,
-                focusedContainerColor = colors.Black,
-                unfocusedContainerColor = colors.Black,
-                cursorColor = colors.NeonGreen
+                disabledTextColor = colors.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                focusedContainerColor = colors.DarkGrey02,
+                unfocusedContainerColor = colors.DarkGrey02,
+                disabledContainerColor = colors.DarkGrey02,
+                cursorColor = colors.NeonGreen,
             ),
             trailingIcon = {
-                if (text.isNotEmpty()) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_x_circle_white),
-                        contentDescription = "Clear text",
-                        modifier = Modifier.clickable {
-                            text = ""
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_x_circle_grey),
+                    contentDescription = "Clear text",
+                    modifier = Modifier.clickable {
+                        if (text.isNotEmpty()) {
+                            onValueChange("")
                             isError = false
                             errorMessageRes = null
-                        },
-                        tint = Color.Unspecified
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_x_circle),
-                        contentDescription = "Clear text"
-                    )
-                }
+                        }
+                    },
+                    tint = Color.Unspecified
+                )
             }
         )
 
-        if (isError && errorMessageRes != null) {
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(id = errorMessageRes!!, errorMessageParam),
-                color = colors.Red,
-                style = typography.menu_r400_s14_h24.copy(lineHeight = 12.sp)
-            )
+        Box(modifier = Modifier.height(22.dp)) {
+            if (isError && errorMessageRes != null) {
+                Text(
+                    modifier = Modifier.padding(start = 4.dp, top = 8.dp),
+                    text = stringResource(id = errorMessageRes!!),
+                    color = colors.Red,
+                    style = typography.menu_r400_s14_h24.copy(lineHeight = 12.sp)
+                )
+            }
         }
     }
 }
@@ -135,6 +149,7 @@ class SuffixTransformation(
         val offsetMapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int =
                 offset.coerceAtMost(original.length)
+
             override fun transformedToOriginal(offset: Int): Int =
                 offset.coerceAtMost(original.length)
         }
@@ -147,12 +162,18 @@ class SuffixTransformation(
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360, heightDp = 200)
 fun BookPageTextFieldPreviewEmpty() {
+    var text by rememberSaveable { mutableStateOf("") }
+
     Box(
         modifier = Modifier.size(width = 360.dp, height = 200.dp),
         contentAlignment = Alignment.Center
     ) {
         BookPageTextField(
-            bookPage = 456
+            bookTotalPage = 456,
+            text = text,
+            onValueChange = {
+                text = it
+            }
         )
     }
 }
