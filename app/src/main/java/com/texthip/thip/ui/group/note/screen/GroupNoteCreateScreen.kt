@@ -39,12 +39,14 @@ fun GroupNoteCreateScreen() {
 
     var opinionText by rememberSaveable { mutableStateOf("") }
 
+    val isFormFilled = pageText.isNotBlank() && opinionText.isNotBlank()
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         InputTopAppBar(
             title = stringResource(R.string.write_record),
-            isRightButtonEnabled = false,
+            isRightButtonEnabled = isFormFilled,
             onLeftClick = { /* 뒤로가기 동작 */ },
             onRightClick = { /* 완료 동작 */ }
         )
