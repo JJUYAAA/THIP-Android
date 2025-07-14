@@ -41,6 +41,7 @@ fun AuthorHeader(
     badgeText: String,
     buttonText: String,
     buttonWidth: Dp? = null,
+    showButton: Boolean = true,
     onButtonClick: () -> Unit = {}
 ) {
     Row(
@@ -54,13 +55,13 @@ fun AuthorHeader(
                 painter = profileImage,
                 contentDescription = "작성자 장르이미지",
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(54.dp)
                     .clip(CircleShape)
             )
         } else {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(54.dp)
                     .clip(CircleShape)
                     .background(colors.Grey)
             )
@@ -82,7 +83,8 @@ fun AuthorHeader(
                 maxLines = 1
             )
         }
-        OutlinedButton(
+        if (showButton) {
+            OutlinedButton(
             modifier = Modifier
                 .then(
                     if (buttonWidth != null)
@@ -94,7 +96,8 @@ fun AuthorHeader(
             text = buttonText,
             textStyle = typography.view_m500_s14,
             onClick = onButtonClick
-        )
+            )
+        }
     }
 }
 
@@ -102,12 +105,23 @@ fun AuthorHeader(
 @Composable
 fun PreviewAuthorHeader() {
     ThipTheme {
-        AuthorHeader(
-            profileImage = null,
-            nickname = "열자자제한열열자제한",
-            badgeText = "칭호칭호칭호",
-            buttonText = "구독",
-            buttonWidth = 60.dp
-        )
+        Column {
+            AuthorHeader(
+                profileImage = null,
+                nickname = "열자자제한열열자제한",
+                badgeText = "칭호칭호칭호",
+                buttonText = "구독",
+                buttonWidth = 60.dp,
+                modifier = Modifier.padding(bottom = 20.dp)
+            )
+            AuthorHeader(
+                profileImage = null,
+                nickname = "열자자제한열열자제한",
+                badgeText = "칭호칭호칭호",
+                buttonText = "구독",
+                buttonWidth = 60.dp,
+                showButton = false
+            )
+        }
     }
 }
