@@ -126,7 +126,6 @@
     <string name="group_progress">"%1$s님의 진행도 "</string>
     <string name="group_search_placeholder">모임방 참여할 사람!</string>
     <string name="group_room_screen_participant_count">%1$s</string>
-    <string name="group_room_screen_participant_count_max"> / %1$s명</string>
     <string name="group_room_screen_end_date">%1$s일 남음</string>
     <string name="group_room_screen_participant">참여하기</string>
     <string name="group_room_screen_cancel">참여 취소하기</string>
@@ -167,6 +166,8 @@
     <string name="general_review">총평</string>
     <string name="all_range">전체범위</string>
     <string name="error_page_over">전체페이지를 초과할 수 없어요.</string>
+    <string name="my_opinion_title">지금 읽은 그 부분, 어땠나요?</string>
+    <string name="my_opinion_placeholder">...한 생각이 들었어요.🤔</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>

@@ -170,7 +170,7 @@ fun GroupRoomScreen(
                             Spacer(Modifier.width(2.dp))
                             Text(
                                 text = stringResource(
-                                    R.string.group_room_screen_participant_count_max,
+                                    R.string.card_item_participant_count_max,
                                     detail.maxMembers
                                 ),
                                 style = typography.info_m500_s12,
