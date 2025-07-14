@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.common.forms
+package com.texthip.thip.ui.group.note.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +23,8 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun DefaultTextField(
+fun OpinionInputSection(
+    title: String = stringResource(R.string.my_opinion_title),
     text: String,
     onTextChange: (String) -> Unit,
     hint: String = stringResource(R.string.my_opinion_placeholder),
@@ -32,7 +33,13 @@ fun DefaultTextField(
     val isOverLimit = text.length > maxLength
     val displayCount = if (text.length > maxLength) maxLength else text.length
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            text = title,
+            style = typography.smalltitle_sb600_s18_h24,
+            color = colors.White
+        )
+
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -77,10 +84,10 @@ fun DefaultTextField(
 
 @Preview
 @Composable
-private fun DefaultTextFieldPreview() {
+private fun OpinionInputSectionPreview() {
     var text by rememberSaveable { mutableStateOf("") }
 
-    DefaultTextField(
+    OpinionInputSection(
         text = text,
         onTextChange = { text = it }
     )
