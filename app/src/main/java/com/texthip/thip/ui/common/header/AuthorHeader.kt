@@ -39,8 +39,8 @@ fun AuthorHeader(
     profileImage: Painter?,
     nickname: String,
     badgeText: String,
-    buttonText: String,
-    buttonWidth: Dp? = null,
+    buttonText: String = "",
+    buttonWidth: Dp = 60.dp,
     showButton: Boolean = true,
     onButtonClick: () -> Unit = {}
 ) {
@@ -111,14 +111,12 @@ fun PreviewAuthorHeader() {
                 nickname = "열자자제한열열자제한",
                 badgeText = "칭호칭호칭호",
                 buttonText = "구독",
-                buttonWidth = 60.dp,
                 modifier = Modifier.padding(bottom = 20.dp)
             )
             AuthorHeader(
                 profileImage = null,
                 nickname = "열자자제한열열자제한",
                 badgeText = "칭호칭호칭호",
-                buttonText = "구독",
                 buttonWidth = 60.dp,
                 showButton = false
             )
