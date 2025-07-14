@@ -1,8 +1,8 @@
 package com.texthip.thip.ui.common.forms
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -13,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -21,20 +20,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.texthip.thip.R
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun BorderedTextField(
     modifier: Modifier = Modifier,
-    hint: String
+    hint: String,
+    text: String,
+    onTextChange: (String) -> Unit,
+    onDelete: () -> Unit,
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
     val myStyle = typography.menu_r400_s14_h24.copy(lineHeight = 14.sp)
 
     OutlinedTextField(
         value = text,
-        onValueChange = { text = it },
+        onValueChange = onTextChange,
         placeholder = {
             Text(
                 text = hint,
@@ -43,7 +45,9 @@ fun BorderedTextField(
             )
         },
         textStyle = myStyle,
-        modifier = modifier.size(width = 320.dp, height = 48.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp),
         shape = RoundedCornerShape(12.dp),
         colors = TextFieldDefaults.colors(
             focusedTextColor = colors.White,
@@ -55,32 +59,36 @@ fun BorderedTextField(
         ),
 
         trailingIcon = {
-            if (text.isNotEmpty()) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_x_circle_white),
-                    contentDescription = "Clear text",
-                    modifier = Modifier.clickable { text = "" },
-                    tint = Color.Unspecified
-                )
-            } else {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_x_circle),
-                    contentDescription = "Clear text"
-                )
-            }
+            Icon(
+                painter = painterResource(
+                    if (text.isEmpty()) R.drawable.ic_x_circle_darkgrey
+                    else R.drawable.ic_x_circle_grey
+                ),
+                contentDescription = "Clear",
+                modifier = Modifier.clickable {
+                    onDelete()
+                },
+                tint = Color.Unspecified
+            )
         }
     )
 }
 
 @Composable
-@Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360, heightDp = 200)
+@Preview()
 fun BorderedTextFieldPreview() {
-    Box(
-        modifier = Modifier.size(width = 360.dp, height = 200.dp),
-        contentAlignment = Alignment.Center
-    ) {
+    ThipTheme {
+        var text by rememberSaveable { mutableStateOf("") }
+
         BorderedTextField(
-            hint = "가이드 텍스트를 입력"
+            hint = "가이드 텍스트를 입력",
+            text = text,
+            onTextChange = { newText ->
+                text = newText
+            },
+            onDelete = {
+                text = ""
+            },
         )
     }
 }
