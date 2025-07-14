@@ -94,6 +94,7 @@ fun BookPageTextField(
             shape = RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = colors.White,
+                unfocusedTextColor = colors.White,
                 disabledTextColor = colors.White,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
