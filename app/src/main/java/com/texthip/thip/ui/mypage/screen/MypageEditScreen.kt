@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +28,7 @@ import com.texthip.thip.ui.common.forms.FormTextFieldDefault
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.mypage.component.RoleCard
 import com.texthip.thip.ui.mypage.mock.RoleItem
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -125,18 +128,21 @@ fun EditProfileScreen() {
             )
 
 
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 152.dp), // 카드 최소 크기
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                userScrollEnabled = false,
             ) {
-                roleCards.forEachIndexed { index, RoleItem ->
+                items(roleCards.size) { index ->
                     RoleCard(
-                        genre = RoleItem.genre,
-                        role = RoleItem.role,
-                        imageResId = RoleItem.imageResId,
+                        genre = roleCards[index].genre,
+                        role = roleCards[index].role,
+                        imageResId = roleCards[index].imageResId,
                         genreColor = colors.White,
-                        roleColor = RoleItem.roleColor,
+                        roleColor = roleCards[index].roleColor,
                         selected = selectedIndex == index,
                         onClick = { selectedIndex = index }
                     )
@@ -150,5 +156,7 @@ fun EditProfileScreen() {
 @Preview
 @Composable
 private fun EditProfileScreenPrev() {
-    EditProfileScreen()
+    ThipTheme {
+        EditProfileScreen()
+    }
 }
