@@ -74,13 +74,15 @@ fun SearchBookTextField(
                 }
             )
 
-            Icon(
-                painter = painterResource(id = R.drawable.ic_x_circle_grey),
-                contentDescription = "Clear text",
-                modifier = Modifier
-                    .clickable { onValueChange("") },
-                tint = Color.Unspecified
-            )
+            if (text.isNotEmpty()) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_x_circle_grey),
+                    contentDescription = "Clear text",
+                    modifier = Modifier
+                        .clickable { onValueChange("") },
+                    tint = Color.Unspecified
+                )
+            }
             Spacer(Modifier.width(20.dp))
             Icon(
                 painter = painterResource(id = R.drawable.ic_search),

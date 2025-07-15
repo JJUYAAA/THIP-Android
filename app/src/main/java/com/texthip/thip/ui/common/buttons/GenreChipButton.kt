@@ -29,7 +29,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun GenreChipButton(
     modifier: Modifier = Modifier,
     text: String,
-    onClick: () -> Unit = { }
+    onClick: () -> Unit = {},
+    onCloseClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -60,6 +61,9 @@ fun GenreChipButton(
                 tint = Color.Unspecified,
                 modifier = Modifier
                     .size(20.dp)
+                    .clickable {
+                        onCloseClick()
+                    }
             )
         }
     }
