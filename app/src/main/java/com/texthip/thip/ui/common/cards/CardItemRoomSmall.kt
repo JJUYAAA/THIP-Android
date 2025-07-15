@@ -43,6 +43,7 @@ fun CardItemRoomSmall(
     endDate: Int?,
     imageRes: Int? = R.drawable.bookcover_sample_small,
     isWide: Boolean = false,
+    isSecret: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     val cardModifier = if (isWide) {
@@ -85,9 +86,17 @@ fun CardItemRoomSmall(
                             contentScale = ContentScale.Crop
                         )
                     }
+                    if (isSecret) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_secret_cover),
+                            contentDescription = "비밀방",
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
                 Column(
                     modifier = Modifier.fillMaxWidth()

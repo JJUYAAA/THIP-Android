@@ -57,9 +57,9 @@ fun GroupSearchScreen(
     // 샘플 모임방 리스트
     val roomList = listOf(
         GroupCardItemRoomData("aaa", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
-        GroupCardItemRoomData("bbb", 15, 20, true, 7, R.drawable.bookcover_sample, 1),
-        GroupCardItemRoomData("ccc", 10, 15, true, 5, R.drawable.bookcover_sample, 2),
-        GroupCardItemRoomData("ddd", 8, 12, false, 2, R.drawable.bookcover_sample, 3),
+        GroupCardItemRoomData("bbb", 15, 20, true, 7, R.drawable.bookcover_sample, 1, true),
+        GroupCardItemRoomData("ccc", 10, 15, true, 5, R.drawable.bookcover_sample, 2, true),
+        GroupCardItemRoomData("ddd", 8, 12, false, 2, R.drawable.bookcover_sample, 3, true),
         GroupCardItemRoomData("eee", 18, 25, true, 4, R.drawable.bookcover_sample, 4),
         GroupCardItemRoomData("fff", 12, 20, true, 1, R.drawable.bookcover_sample, 0),
         GroupCardItemRoomData("ggg", 10, 14, true, 6, R.drawable.bookcover_sample, 1),
@@ -197,7 +197,8 @@ fun GroupSearchScreen(
                                     maxParticipants = room.maxParticipants,
                                     endDate = room.endDate,
                                     imageRes = room.imageRes,
-                                    isWide = true
+                                    isWide = true,
+                                    isSecret = room.isSecret
                                 )
                                 Spacer(
                                     modifier = Modifier
@@ -266,7 +267,8 @@ fun GroupSearchScreen(
                                     maxParticipants = room.maxParticipants,
                                     endDate = room.endDate,
                                     imageRes = room.imageRes,
-                                    isWide = true
+                                    isWide = true,
+                                    isSecret = room.isSecret
                                 )
                                 Spacer(
                                     modifier = Modifier
