@@ -85,7 +85,7 @@ fun GroupSearchScreen(
                 // 정렬
                 when (selectedSortOption) {
                     "마감임박순" -> filtered.sortedBy { it.endDate }
-                    "최신순" -> filtered // 아직 미구현
+                    "최신순" -> filtered // TODO: 생성일 기준 정렬 필요
                     "참여많은순" -> filtered.sortedByDescending { it.participants }
                     else -> filtered
                 }

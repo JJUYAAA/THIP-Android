@@ -2,15 +2,12 @@ package com.texthip.thip.ui.common.forms
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -36,7 +34,7 @@ fun SingleDigitBox(
     value: String,
     onValueChange: (String) -> Unit,
     onBackspace: (() -> Unit)? = null,
-    containerColor: Color = colors.Black,
+    containerColor: Color = colors.darkGray01,
     borderColor: Color = Color.Transparent
 ) {
     val myStyle = typography.smalltitle_sb600_s18_h24.copy(
@@ -89,17 +87,19 @@ fun SingleDigitBox(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000)
+@Preview
 @Composable
 fun PreviewSingleDigitBox() {
-    var digit by rememberSaveable { mutableStateOf("") }
-    Box(
-        modifier = Modifier.size(60.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        SingleDigitBox(
-            value = digit,
-            onValueChange = { digit = it }
-        )
+    ThipTheme {
+        var digit by rememberSaveable { mutableStateOf("") }
+        Box(
+            modifier = Modifier.size(60.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            SingleDigitBox(
+                value = digit,
+                onValueChange = { digit = it }
+            )
+        }
     }
 }
