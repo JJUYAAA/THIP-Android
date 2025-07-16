@@ -1,6 +1,6 @@
 package com.texthip.thip.ui.group.myroom.screen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,6 +10,8 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipButton
 import com.texthip.thip.ui.theme.ThipTheme
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun GroupRecentSearchScreen(
