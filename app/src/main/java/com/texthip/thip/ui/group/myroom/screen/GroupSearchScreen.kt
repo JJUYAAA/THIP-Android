@@ -1,26 +1,8 @@
 package com.texthip.thip.ui.group.myroom.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,15 +10,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FilterButton
-import com.texthip.thip.ui.common.buttons.GenreChipButton
-import com.texthip.thip.ui.common.buttons.GenreChipRow
-import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme
-import com.texthip.thip.ui.theme.ThipTheme.colors
-import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupSearchScreen(
@@ -82,7 +59,6 @@ fun GroupSearchScreen(
                     (searchText.isBlank() || room.title.contains(searchText, ignoreCase = true)) &&
                             (selectedGenreIndex == -1 || room.genreIndex == selectedGenreIndex)
                 }
-                // 정렬
                 when (selectedSortOption) {
                     "마감임박순" -> filtered.sortedBy { it.endDate }
                     "최신순" -> filtered // TODO: 생성일 기준 정렬 필요
@@ -94,7 +70,7 @@ fun GroupSearchScreen(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -122,162 +98,51 @@ fun GroupSearchScreen(
                             recentSearches = listOf(query) + recentSearches
                         }
                         isSearched = true
+                        selectedGenreIndex = -1
                     }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 아직 검색어를 입력 안했을 때 + 최근 검색어 없을 때 화면
-                if (searchText.isBlank() && !isSearched && recentSearches.isEmpty()) {
-                    Text(
-                        text = stringResource(R.string.group_recent_search),
-                        color = colors.White,
-                        style = typography.menu_r400_s14_h24
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(R.string.group_no_recent_search),
-                        color = colors.Grey01,
-                        style = typography.menu_r400_s14_h24
-                    )
-                }
-                // 최근 검색어 있을 때
-                else if (searchText.isBlank() && !isSearched && recentSearches.isNotEmpty()) {
-                    Text(
-                        text = stringResource(R.string.group_recent_search),
-                        color = colors.White,
-                        style = typography.menu_r400_s14_h24
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    FlowRow(
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        maxLines = 2,
-                    ) {
-                        recentSearches.take(9).forEach { keyword ->
-                            GenreChipButton(
-                                text = keyword,
-                                onClick = {
-                                    searchText = keyword
-                                    isSearched = true
-                                },
-                                onCloseClick = {
-                                    recentSearches = recentSearches.filterNot { it == keyword }
-                                }
-                            )
-                        }
-                    }
-                }
-                // 검색어 입력 중
-                else if (searchText.isNotBlank() && !isSearched) {
-                    if (liveFilteredRoomList.isEmpty()) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = stringResource(R.string.group_no_search_result1),
-                                modifier = Modifier.padding(top = 20.dp),
-                                color = colors.White,
-                                style = typography.smalltitle_sb600_s18_h24
-                            )
-                            Text(
-                                text = stringResource(R.string.group_no_search_result2),
-                                modifier = Modifier.padding(top = 8.dp),
-                                color = colors.Grey,
-                                style = typography.copy_r400_s14
-                            )
-                        }
-                    } else {
-                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                            liveFilteredRoomList.forEach { room ->
-                                CardItemRoomSmall(
-                                    title = room.title,
-                                    participants = room.participants,
-                                    maxParticipants = room.maxParticipants,
-                                    endDate = room.endDate,
-                                    imageRes = room.imageRes,
-                                    isWide = true,
-                                    isSecret = room.isSecret
-                                )
-                                Spacer(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(1.dp)
-                                        .background(colors.DarkGrey02)
-                                )
-                            }
-                        }
-                    }
-                }
-                // 검색 버튼 터치 화면
-                else if (isSearched) {
-                    // 장르칩 표시
-                    GenreChipRow(
-                        modifier = Modifier.width(20.dp),
-                        genres = genres,
-                        selectedIndex = selectedGenreIndex,
-                        onSelect = { selectedGenreIndex = it }
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(R.string.group_searched_room_size, filteredRoomList.size),
-                            color = colors.Grey,
-                            style = typography.menu_m500_s14_h24
+                when {
+                    searchText.isBlank() && !isSearched && recentSearches.isEmpty() -> {
+                        GroupRecentSearchScreen(
+                            recentSearches = emptyList(),
+                            onSearchClick = {},
+                            onRemove = {}
                         )
                     }
-                    Spacer(
-                        modifier = Modifier
-                            .padding(top = 4.dp, bottom = 8.dp)
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(colors.DarkGrey02)
-                    )
-
-                    if (filteredRoomList.isEmpty()) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = stringResource(R.string.group_no_search_result1),
-                                modifier = Modifier.padding(top = 20.dp),
-                                color = colors.White,
-                                style = typography.smalltitle_sb600_s18_h24
-                            )
-                            Text(
-                                text = stringResource(R.string.group_no_search_result2),
-                                modifier = Modifier.padding(top = 8.dp),
-                                color = colors.Grey,
-                                style = typography.copy_r400_s14
-                            )
-                        }
-                    } else {
-                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                            filteredRoomList.forEach { room ->
-                                CardItemRoomSmall(
-                                    title = room.title,
-                                    participants = room.participants,
-                                    maxParticipants = room.maxParticipants,
-                                    endDate = room.endDate,
-                                    imageRes = room.imageRes,
-                                    isWide = true,
-                                    isSecret = room.isSecret
-                                )
-                                Spacer(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(1.dp)
-                                        .background(colors.DarkGrey02)
-                                )
+                    searchText.isBlank() && !isSearched && recentSearches.isNotEmpty() -> {
+                        GroupRecentSearchScreen(
+                            recentSearches = recentSearches,
+                            onSearchClick = { keyword ->
+                                searchText = keyword
+                                isSearched = true
+                            },
+                            onRemove = { keyword ->
+                                recentSearches = recentSearches.filterNot { it == keyword }
                             }
+                        )
+                    }
+                    searchText.isNotBlank() && !isSearched -> {
+                        if (liveFilteredRoomList.isEmpty()) {
+                            GroupEmptyResultScreen(
+                                mainText = stringResource(R.string.group_no_search_result1),
+                                subText = stringResource(R.string.group_no_search_result2)
+                            )
+                        } else {
+                            GroupLiveSearchResultScreen(
+                                roomList = liveFilteredRoomList
+                            )
                         }
+                    }
+                    isSearched -> {
+                        GroupFilteredSearchResultScreen(
+                            genres = genres,
+                            selectedGenreIndex = selectedGenreIndex,
+                            onGenreSelect = { selectedGenreIndex = it },
+                            resultCount = filteredRoomList.size,
+                            roomList = filteredRoomList,
+                        )
                     }
                 }
             }
@@ -296,10 +161,9 @@ fun GroupSearchScreen(
     }
 }
 
-
 @Preview
 @Composable
-fun GroupSearchScreenPreview() {
+fun PreviewGroupSearchScreen() {
     ThipTheme {
         GroupSearchScreen()
     }
