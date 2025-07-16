@@ -103,7 +103,7 @@ fun GroupRoomDeadlineSection(
                         )
                         Spacer(Modifier.height(20.dp))
 
-                        val cards = section.rooms.filter { it.genreIndex == selectedGenre }.take(4)
+                        val cards = section.rooms.filter { it.genreIndex == selectedGenre }
                         Column(
                             verticalArrangement = Arrangement.spacedBy(20.dp),
                             modifier = Modifier

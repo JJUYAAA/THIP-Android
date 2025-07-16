@@ -48,15 +48,15 @@ fun CardItemRoomSmall(
     val cardModifier = if (isWide) {
         modifier
             .fillMaxWidth()
-            .height(104.dp)
     } else {
         modifier
-            .size(width = 232.dp, height = 104.dp)
+            .width(232.dp)
     }
     val bgColor = if (isWide) colors.Black else colors.DarkGrey50
 
     Card(
         modifier = cardModifier
+            .height(104.dp)
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = bgColor

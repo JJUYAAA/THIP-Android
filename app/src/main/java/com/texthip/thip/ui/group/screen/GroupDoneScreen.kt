@@ -36,7 +36,6 @@ fun GroupDoneScreen(
 
     Column(
         Modifier
-            .background(colors.Black)
             .fillMaxSize()
     ) {
         DefaultTopAppBar(

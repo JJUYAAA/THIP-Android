@@ -46,8 +46,6 @@ fun CardItemRoom(
     hasBorder: Boolean = false,
     onClick: () -> Unit = {}
 ) {
-    val paddingValues = if (endDate == null) 27.5.dp else 16.dp
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -93,10 +91,11 @@ fun CardItemRoom(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                    .fillMaxWidth()
+                    .height(107.dp), // 이미지와 높이 맞추면 더 정확
+                    verticalArrangement = Arrangement.Center // 여기!
                 ) {
-
-                    Spacer(modifier = Modifier.height(paddingValues))
                     Text(
                         text = title,
                         color = colors.White,
@@ -143,7 +142,7 @@ fun CardItemRoom(
                             ) {
                                 Text(
                                     text = stringResource(
-                                        R.string.card_item_participant,
+                                        R.string.card_item_participating_count,
                                         participants
                                     ),
                                     style = typography.menu_sb600_s12,
