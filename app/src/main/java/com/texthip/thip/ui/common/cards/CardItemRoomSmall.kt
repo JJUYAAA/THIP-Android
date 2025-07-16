@@ -162,7 +162,7 @@ fun CardItemRoomSmall(
 fun CardItemRoomSmallPreview() {
     ThipTheme {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            // 기본 카드
+
             CardItemRoomSmall(
                 title = "방 제목입니다 방 제목입니다",
                 participants = 22,
@@ -170,7 +170,7 @@ fun CardItemRoomSmallPreview() {
                 endDate = 3,
                 imageRes = R.drawable.bookcover_sample
             )
-            // fillMaxWidth + 검정 배경 카드
+
             CardItemRoomSmall(
                 title = "와이드 카드 fillMaxWidth",
                 participants = 18,

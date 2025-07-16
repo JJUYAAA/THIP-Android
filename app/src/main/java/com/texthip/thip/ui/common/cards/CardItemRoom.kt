@@ -93,8 +93,8 @@ fun CardItemRoom(
                 Column(
                     modifier = Modifier
                     .fillMaxWidth()
-                    .height(107.dp), // 이미지와 높이 맞추면 더 정확
-                    verticalArrangement = Arrangement.Center // 여기!
+                    .height(107.dp),
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = title,
