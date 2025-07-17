@@ -255,4 +255,14 @@
     <string name="group_myroom_error_comment1">참여 중인 모임방이 없어요</string>
     <string name="group_myroom_error_comment2">첫번째 모임방에 참여해보세요</string>
 
+    <!--    book search   -->
+    <string name="book_popular_search">가장 많이 검색된 책</string>
+    <string name="book_search_topappbar">검색</string>
+    <string name="book_search_hint">책 제목, 작가명을 검색해보세요.</string>
+    <string name="book_no_search_result1">현재 등록된 책이 없어요.</string>
+    <string name="book_no_search_result2">원하는 책을 신청해주세요!</string>
+    <string name="book_search_date">%1$s. 기준</string>
+    <string name="book_no_most_search_result_comment_1">아직 순위가 집계되지 않았어요.</string>
+    <string name="book_no_most_search_result_comment_2">조금만 기다려주세요!</string>
+
 </resources>
