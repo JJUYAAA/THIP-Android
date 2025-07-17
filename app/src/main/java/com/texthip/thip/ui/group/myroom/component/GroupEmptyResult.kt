@@ -25,7 +25,6 @@ fun GroupEmptyResult(
     ) {
         Text(
             text = mainText,
-            modifier = Modifier.padding(top = 20.dp),
             color = colors.White,
             style = typography.smalltitle_sb600_s18_h24
         )

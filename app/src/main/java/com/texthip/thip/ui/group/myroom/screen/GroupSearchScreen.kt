@@ -37,7 +37,8 @@ import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
 fun GroupSearchScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    roomList: List<GroupCardItemRoomData>
 ) {
     var recentSearches by rememberSaveable {
         mutableStateOf(listOf("user.02", "ㅇㅇ", "훽후ㅣㅣ", "검색4", "검색5", "검색6"))
@@ -49,20 +50,9 @@ fun GroupSearchScreen(
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    // 샘플 장르, 정렬 옵션
+    // 장르, 정렬 옵션
     val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
     val sortOptions = listOf("마감임박순", "최신순", "참여많은순")
-
-    // 샘플 모임방 리스트
-    val roomList = listOf(
-        GroupCardItemRoomData("aaa", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
-        GroupCardItemRoomData("bbb", 15, 20, true, 7, R.drawable.bookcover_sample, 1, true),
-        GroupCardItemRoomData("ccc", 10, 15, true, 5, R.drawable.bookcover_sample, 2, true),
-        GroupCardItemRoomData("ddd", 8, 12, false, 2, R.drawable.bookcover_sample, 3, true),
-        GroupCardItemRoomData("eee", 18, 25, true, 4, R.drawable.bookcover_sample, 4),
-        GroupCardItemRoomData("fff", 12, 20, true, 1, R.drawable.bookcover_sample, 0),
-        GroupCardItemRoomData("ggg", 10, 14, true, 6, R.drawable.bookcover_sample, 1),
-    )
 
     val liveFilteredRoomList by remember(searchText) {
         derivedStateOf {
@@ -192,10 +182,21 @@ fun GroupSearchScreen(
     }
 }
 
+
 @Preview
 @Composable
 fun PreviewGroupSearchScreen() {
     ThipTheme {
-        GroupSearchScreen()
+        GroupSearchScreen(
+            roomList = listOf(
+                GroupCardItemRoomData("aaa", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
+                GroupCardItemRoomData("abc", 15, 20, true, 7, R.drawable.bookcover_sample, 1, true),
+                GroupCardItemRoomData("abcd", 10, 15, true, 5, R.drawable.bookcover_sample, 2, true),
+                GroupCardItemRoomData("abcde", 8, 12, false, 2, R.drawable.bookcover_sample, 3, true),
+                GroupCardItemRoomData("abcdef", 18, 25, true, 4, R.drawable.bookcover_sample, 4),
+                GroupCardItemRoomData("abcdefg", 12, 20, true, 1, R.drawable.bookcover_sample, 0),
+                GroupCardItemRoomData("abcdefgh", 10, 14, true, 6, R.drawable.bookcover_sample, 1)
+            )
+        )
     }
 }
