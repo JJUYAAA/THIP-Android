@@ -264,5 +264,16 @@
     <string name="book_search_date">%1$s. 기준</string>
     <string name="book_no_most_search_result_comment_1">아직 순위가 집계되지 않았어요.</string>
     <string name="book_no_most_search_result_comment_2">조금만 기다려주세요!</string>
+    <string name="search_recruiting_group_count">모집중인 모임방 %1$d개</string>
+    <string name="search_write_feed_comment">피드에 글 쓰기</string>
+    <string name="search_watch_feed">피드 글 둘러보기</string>
+    <string name="search_no_feed_comment_1">이 책으로 작성된 피드가 없어요.</string>
+    <string name="search_no_feed_comment_2">첫번째 피드를 작성해보세요!</string>
+    <string name="search_filter_popular">인기순</string>
+    <string name="search_filter_latest">최신순</string>
+    <string name="search_book_comment">소개</string>
+    <string name="search_book_author">%1$s 저 · %2$s</string>
+    <string name="group_filter_popular">인기순</string>
+    <string name="group_filter_deadline">마감임박순</string>
 
 </resources>

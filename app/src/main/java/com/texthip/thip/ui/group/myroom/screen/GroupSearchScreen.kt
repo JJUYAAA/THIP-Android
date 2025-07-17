@@ -46,12 +46,21 @@ fun GroupSearchScreen(
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearched by rememberSaveable { mutableStateOf(false) }
     var selectedGenreIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var selectedSortOption by rememberSaveable { mutableStateOf("마감임박순") }
+    var selectedSortOptionIndex by rememberSaveable { mutableIntStateOf(0) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
-    val sortOptions = listOf("마감임박순", "최신순", "참여많은순")
+    val genres = listOf(
+        stringResource(R.string.literature),
+        stringResource(R.string.science_it),
+        stringResource(R.string.social_science),
+        stringResource(R.string.humanities),
+        stringResource(R.string.art)
+    )
+    val sortOptions = listOf(
+        stringResource(R.string.group_filter_deadline),
+        stringResource(R.string.group_filter_popular)
+    )
 
     val liveFilteredRoomList by remember(searchText) {
         derivedStateOf {
@@ -62,7 +71,12 @@ fun GroupSearchScreen(
         }
     }
 
-    val filteredRoomList by remember(searchText, selectedGenreIndex, selectedSortOption, isSearched) {
+    val filteredRoomList by remember(
+        searchText,
+        selectedGenreIndex,
+        selectedSortOptionIndex,
+        isSearched
+    ) {
         derivedStateOf {
             if (!isSearched) emptyList()
             else {
@@ -70,10 +84,9 @@ fun GroupSearchScreen(
                     (searchText.isBlank() || room.title.contains(searchText, ignoreCase = true)) &&
                             (selectedGenreIndex == -1 || room.genreIndex == selectedGenreIndex)
                 }
-                when (selectedSortOption) {
-                    "마감임박순" -> filtered.sortedBy { it.endDate }
-                    "최신순" -> filtered // TODO: 생성일 기준 정렬 필요
-                    "참여많은순" -> filtered.sortedByDescending { it.participants }
+                when (selectedSortOptionIndex) {
+                    0 -> filtered.sortedBy { it.endDate }             // 마감임박순
+                    1 -> filtered.sortedByDescending { it.participants } // 인기순
                     else -> filtered
                 }
             }
@@ -131,6 +144,7 @@ fun GroupSearchScreen(
                             onRemove = {}
                         )
                     }
+
                     searchText.isBlank() && !isSearched && recentSearches.isNotEmpty() -> {
                         GroupRecentSearch(
                             recentSearches = recentSearches,
@@ -143,6 +157,7 @@ fun GroupSearchScreen(
                             }
                         )
                     }
+
                     searchText.isNotBlank() && !isSearched -> {
                         if (liveFilteredRoomList.isEmpty()) {
                             GroupEmptyResult(
@@ -155,6 +170,7 @@ fun GroupSearchScreen(
                             )
                         }
                     }
+
                     isSearched -> {
                         GroupFilteredSearchResult(
                             genres = genres,
@@ -173,9 +189,11 @@ fun GroupSearchScreen(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 176.dp, end = 20.dp),
-                selectedOption = selectedSortOption,
+                selectedOption = sortOptions[selectedSortOptionIndex],
                 options = sortOptions,
-                onOptionSelected = { selectedSortOption = it }
+                onOptionSelected = { selected ->
+                    selectedSortOptionIndex = sortOptions.indexOf(selected)
+                }
             )
         }
     }
@@ -190,8 +208,26 @@ fun PreviewGroupSearchScreen() {
             roomList = listOf(
                 GroupCardItemRoomData("aaa", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
                 GroupCardItemRoomData("abc", 15, 20, true, 7, R.drawable.bookcover_sample, 1, true),
-                GroupCardItemRoomData("abcd", 10, 15, true, 5, R.drawable.bookcover_sample, 2, true),
-                GroupCardItemRoomData("abcde", 8, 12, false, 2, R.drawable.bookcover_sample, 3, true),
+                GroupCardItemRoomData(
+                    "abcd",
+                    10,
+                    15,
+                    true,
+                    5,
+                    R.drawable.bookcover_sample,
+                    2,
+                    true
+                ),
+                GroupCardItemRoomData(
+                    "abcde",
+                    8,
+                    12,
+                    false,
+                    2,
+                    R.drawable.bookcover_sample,
+                    3,
+                    true
+                ),
                 GroupCardItemRoomData("abcdef", 18, 25, true, 4, R.drawable.bookcover_sample, 4),
                 GroupCardItemRoomData("abcdefg", 12, 20, true, 1, R.drawable.bookcover_sample, 0),
                 GroupCardItemRoomData("abcdefgh", 10, 14, true, 6, R.drawable.bookcover_sample, 1)
