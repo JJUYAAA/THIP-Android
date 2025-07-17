@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.myroom.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Text
@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 
 @Composable
-fun GroupRecentSearchScreen(
+fun GroupRecentSearch(
     recentSearches: List<String>,
     onSearchClick: (String) -> Unit,
     onRemove: (String) -> Unit

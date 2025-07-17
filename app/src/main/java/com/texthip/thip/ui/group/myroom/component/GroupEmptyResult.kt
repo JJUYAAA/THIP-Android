@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.myroom.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
-fun GroupEmptyResultScreen(
+fun GroupEmptyResult(
     mainText: String,
     subText: String
 ) {
