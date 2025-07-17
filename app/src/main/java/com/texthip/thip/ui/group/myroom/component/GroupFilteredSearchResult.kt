@@ -15,6 +15,8 @@ import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupFilteredSearchResult(
@@ -24,9 +26,6 @@ fun GroupFilteredSearchResult(
     resultCount: Int,
     roomList: List<GroupCardItemRoomData>
 ) {
-    val colors = ThipTheme.colors
-    val typography = ThipTheme.typography
-
     GenreChipRow(
         modifier = Modifier.width(20.dp),
         genres = genres,

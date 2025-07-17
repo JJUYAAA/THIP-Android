@@ -10,14 +10,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupEmptyResult(
     mainText: String,
     subText: String
 ) {
-    val colors = ThipTheme.colors
-    val typography = ThipTheme.typography
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

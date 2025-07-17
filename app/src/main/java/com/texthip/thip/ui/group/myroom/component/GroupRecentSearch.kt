@@ -12,6 +12,8 @@ import com.texthip.thip.ui.theme.ThipTheme
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupRecentSearch(
@@ -19,8 +21,6 @@ fun GroupRecentSearch(
     onSearchClick: (String) -> Unit,
     onRemove: (String) -> Unit
 ) {
-    val colors = ThipTheme.colors
-    val typography = ThipTheme.typography
     Text(
         text = stringResource(R.string.group_recent_search),
         color = colors.White,
