@@ -1,11 +1,13 @@
 package com.texthip.thip.ui.group.note.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +17,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,7 +36,9 @@ fun PageInputSection(
     onPageTextChange: (String) -> Unit,
     isGeneralReview: Boolean,
     onGeneralReviewToggle: (Boolean) -> Unit,
-    bookTotalPage: Int
+    bookTotalPage: Int,
+    onInfoClick: () -> Unit,
+    onInfoPositionCaptured: (LayoutCoordinates) -> Unit
 ) {
     val allRangeText = stringResource(R.string.all_range)
 
@@ -73,6 +79,12 @@ fun PageInputSection(
                     Icon(
                         painter = painterResource(R.drawable.ic_information),
                         contentDescription = null,
+                        modifier = Modifier
+                            .size(20.dp)
+                            .onGloballyPositioned { coordinates ->
+                                onInfoPositionCaptured(coordinates)
+                            }
+                            .clickable { onInfoClick() },
                         tint = colors.Grey02
                     )
 
@@ -107,5 +119,7 @@ private fun PageInputSectionPreview() {
         isGeneralReview = isGeneralReview,
         onGeneralReviewToggle = { isGeneralReview = it },
         bookTotalPage = 500,
+        onInfoClick = {},
+        onInfoPositionCaptured = {}
     )
 }
