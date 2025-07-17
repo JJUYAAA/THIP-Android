@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.makeroom.screen
+package com.texthip.thip.ui.group.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

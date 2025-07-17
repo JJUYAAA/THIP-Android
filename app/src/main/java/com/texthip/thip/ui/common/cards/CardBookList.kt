@@ -89,7 +89,8 @@ fun CardBookList(
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        IconButton(
+        // 북마크 아이콘 제거(쓰는 화면이 안보임)
+        /*IconButton(
             onClick = onBookmarkClick,
             modifier = Modifier.size(24.dp)
         ) {
@@ -98,7 +99,7 @@ fun CardBookList(
                 contentDescription = "북마크",
                 tint = if (isBookmarked) colors.Purple else colors.Grey01
             )
-        }
+        }*/
     }
 }
 
