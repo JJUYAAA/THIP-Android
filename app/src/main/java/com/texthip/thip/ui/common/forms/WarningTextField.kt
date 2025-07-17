@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -39,7 +38,7 @@ fun WarningTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     hint: String,
-    warningMessage: String = "경고 메시지를 입력해주세요.",
+    warningMessage: String = "",
     showWarning: Boolean = false,
     showLimit: Boolean = true,
     maxLength: Int = Int.MAX_VALUE,

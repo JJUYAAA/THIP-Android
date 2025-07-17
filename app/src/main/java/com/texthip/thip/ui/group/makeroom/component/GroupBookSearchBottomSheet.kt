@@ -40,6 +40,7 @@ fun GroupBookSearchBottomSheet(
         stringResource(R.string.group_saved_book), stringResource(R.string.group_book)
     )
     val books = if (selectedTab == 0) savedBooks else groupBooks
+    var searchText by rememberSaveable { mutableStateOf("") }
 
     CustomBottomSheet(
         onDismiss = onDismiss
@@ -52,7 +53,9 @@ fun GroupBookSearchBottomSheet(
             // 검색창
             SearchBookTextField(
                 hint = stringResource(R.string.group_book_search_hint),
-                onSearch = { /* 검색 구현 */ }
+                text = searchText,
+                onValueChange = { searchText = it },
+                onSearch = { /* 검색 구현 */ },
             )
             Spacer(Modifier.height(20.dp))
         }

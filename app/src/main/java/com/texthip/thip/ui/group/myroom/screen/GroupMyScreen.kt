@@ -22,10 +22,15 @@ import androidx.compose.ui.Modifier
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.myroom.component.GroupMyRoomFilterRow
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupMyScreen(
@@ -72,21 +77,48 @@ fun GroupMyScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-                contentPadding = PaddingValues(top = 10.dp, bottom = 20.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                items(filteredList) { item ->
-                    CardItemRoom(
-                        title = item.title,
-                        participants = item.participants,
-                        maxParticipants = item.maxParticipants,
-                        isRecruiting = item.isRecruiting,
-                        endDate = item.endDate,
-                        imageRes = item.imageRes,
-                        onClick = { onCardClick(item) }
+            if (filteredList.isNotEmpty()) {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                    contentPadding = PaddingValues(top = 10.dp, bottom = 20.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(filteredList) { item ->
+                        CardItemRoom(
+                            title = item.title,
+                            participants = item.participants,
+                            maxParticipants = item.maxParticipants,
+                            isRecruiting = item.isRecruiting,
+                            endDate = item.endDate,
+                            imageRes = item.imageRes,
+                            onClick = { onCardClick(item) }
+                        )
+                    }
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_notification),
+                        contentDescription = null,
+                        tint = colors.Grey02,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.group_myroom_error_comment1),
+                        color = colors.White,
+                        style = typography.smalltitle_sb600_s18_h24
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = stringResource(R.string.group_myroom_error_comment2),
+                        color = colors.Grey,
+                        style = typography.copy_r400_s14
                     )
                 }
             }
@@ -198,5 +230,13 @@ fun MyGroupListFilterScreenPreview() {
             )
         )
         GroupMyScreen(allDataList = dataList)
+    }
+}
+
+@Preview()
+@Composable
+fun MyGroupListEmptyScreenPreview() {
+    ThipTheme {
+        GroupMyScreen(allDataList = emptyList())
     }
 }

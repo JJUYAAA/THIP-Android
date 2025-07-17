@@ -14,7 +14,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,6 +43,7 @@ fun GroupScreen(
     val myGroups by viewModel.myGroups.collectAsState()
     val roomSections by viewModel.roomSections.collectAsState()
     val scrollState = rememberScrollState()
+    var searchText by remember { mutableStateOf("") }
 
     Box(
         Modifier
@@ -62,7 +65,11 @@ fun GroupScreen(
             Spacer(Modifier.height(16.dp))
 
             // 검색창
-            GroupSearchTextField(onValueChange = { })
+            GroupSearchTextField(
+                value = searchText,
+                onValueChange = {},
+                onClick = {}
+            )
             Spacer(Modifier.height(32.dp))
 
             // 내 모임방 헤더 + 카드
@@ -75,7 +82,7 @@ fun GroupScreen(
                 groupCards = myGroups,
                 onCardClick = { viewModel.onMyGroupCardClick(it) }
             )
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(32.dp))
 
             Spacer(
                 Modifier

@@ -32,7 +32,7 @@ fun ToastWithDate(
             .clip(RoundedCornerShape(12.dp))
             .background(color = colors.DarkGrey02)
             .border(
-                width = 2.dp,
+                width = 1.dp,
                 color = colors.Grey02,
                 shape = RoundedCornerShape(12.dp)
             )
