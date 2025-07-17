@@ -24,13 +24,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.texthip.thip.R
-import com.texthip.thip.ui.common.forms.SearchBookTextField
-import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.booksearch.component.BookEmptyResult
 import com.texthip.thip.ui.booksearch.component.BookFilteredSearchResult
 import com.texthip.thip.ui.booksearch.component.BookLiveSearchResult
 import com.texthip.thip.ui.booksearch.component.BookRecentSearch
 import com.texthip.thip.ui.booksearch.mock.BookData
+import com.texthip.thip.ui.common.forms.SearchBookTextField
+import com.texthip.thip.ui.common.topappbar.LeftNameTopAppBar
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
@@ -85,9 +85,8 @@ fun BookSearchScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            DefaultTopAppBar(
-                title = stringResource(R.string.book_search_topappbar),
-                onLeftClick = {},
+            LeftNameTopAppBar(
+                title = stringResource(R.string.book_search_topappbar)
             )
             Column(
                 modifier = Modifier
@@ -120,7 +119,7 @@ fun BookSearchScreen(
                         BookRecentSearch(
                             recentSearches = recentSearches,
                             popularBooks = popularBooks,
-                            popularBookDate = "01.12", // TODO: 서버로 날짜를 받아 오게 수정 
+                            popularBookDate = "01.12", // TODO: 서버로 날짜를 받아 오게 수정
                             onSearchClick = { keyword ->
                                 searchText = keyword
                                 isSearched = true
@@ -186,7 +185,7 @@ fun PreviewBookSearchScreen_Default() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun PreviewBookSearchScreen_EmptyPopular() {
     ThipTheme {
