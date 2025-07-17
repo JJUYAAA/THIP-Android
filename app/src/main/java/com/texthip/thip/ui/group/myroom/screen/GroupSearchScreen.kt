@@ -50,7 +50,6 @@ fun GroupSearchScreen(
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    // 장르, 정렬 옵션
     val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
     val sortOptions = listOf("마감임박순", "최신순", "참여많은순")
 

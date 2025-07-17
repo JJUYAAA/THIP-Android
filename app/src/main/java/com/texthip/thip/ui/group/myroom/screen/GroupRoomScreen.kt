@@ -401,7 +401,6 @@ fun GroupRoomScreen(
             )
         }
 
-        // 다이얼로그 팝업
         if (showDialog) {
             Box(
                 modifier = Modifier

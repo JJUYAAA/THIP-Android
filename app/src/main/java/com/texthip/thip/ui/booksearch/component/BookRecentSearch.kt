@@ -37,7 +37,6 @@ fun BookRecentSearch(
     onBookClick: (BookData) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        // 최근 검색어
         Text(
             text = stringResource(R.string.group_recent_search),
             color = colors.White,
@@ -66,10 +65,8 @@ fun BookRecentSearch(
                 }
             }
         }
-
         Spacer(modifier = Modifier.height(32.dp))
 
-        // 가장 많이 검색된 책 헤더
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -88,7 +85,6 @@ fun BookRecentSearch(
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 인기책 리스트만 LazyColumn, 나머지는 고정
         Box(modifier = Modifier
             .fillMaxWidth()
             .weight(1f, fill = true)
