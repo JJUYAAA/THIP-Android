@@ -288,7 +288,6 @@ fun BookDetailScreen(
                 }
             }
 
-            // FilterButton은 블러 처리에서 제외
             FilterButton(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -299,7 +298,6 @@ fun BookDetailScreen(
             )
         }
 
-        // 소개 전체보기 모달
         if (isIntroductionPopupVisible) {
             Box(
                 modifier = Modifier

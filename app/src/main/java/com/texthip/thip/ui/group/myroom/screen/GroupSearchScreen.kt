@@ -208,26 +208,8 @@ fun PreviewGroupSearchScreen() {
             roomList = listOf(
                 GroupCardItemRoomData("aaa", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
                 GroupCardItemRoomData("abc", 15, 20, true, 7, R.drawable.bookcover_sample, 1, true),
-                GroupCardItemRoomData(
-                    "abcd",
-                    10,
-                    15,
-                    true,
-                    5,
-                    R.drawable.bookcover_sample,
-                    2,
-                    true
-                ),
-                GroupCardItemRoomData(
-                    "abcde",
-                    8,
-                    12,
-                    false,
-                    2,
-                    R.drawable.bookcover_sample,
-                    3,
-                    true
-                ),
+                GroupCardItemRoomData("abcd", 10, 15, true, 5, R.drawable.bookcover_sample, 2, true),
+                GroupCardItemRoomData("abcde", 8, 12, false, 2, R.drawable.bookcover_sample, 3, true),
                 GroupCardItemRoomData("abcdef", 18, 25, true, 4, R.drawable.bookcover_sample, 4),
                 GroupCardItemRoomData("abcdefg", 12, 20, true, 1, R.drawable.bookcover_sample, 0),
                 GroupCardItemRoomData("abcdefgh", 10, 14, true, 6, R.drawable.bookcover_sample, 1)
