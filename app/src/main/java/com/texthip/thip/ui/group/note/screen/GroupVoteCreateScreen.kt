@@ -37,10 +37,12 @@ fun GroupVoteCreateScreen() {
     var options by rememberSaveable { mutableStateOf(mutableListOf("", "")) }
 
     val density = LocalDensity.current
-    var showTooltip by rememberSaveable { mutableStateOf(true) }
+    var showTooltip by rememberSaveable { mutableStateOf(false) }
 
     // Tooltip 위치 측정용 state
     val iconCoordinates = remember { mutableStateOf<LayoutCoordinates?>(null) }
+
+    var isEligible by rememberSaveable { mutableStateOf(false) } // TODO: 서버 데이터?
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
@@ -61,6 +63,7 @@ fun GroupVoteCreateScreen() {
                     onPageTextChange = { pageText = it },
                     isGeneralReview = isGeneralReview,
                     onGeneralReviewToggle = { isGeneralReview = it },
+                    isEligible = isEligible,
                     bookTotalPage = 600,
                     onInfoClick = { showTooltip = true },
                     onInfoPositionCaptured = { iconCoordinates.value = it }
@@ -100,7 +103,7 @@ fun GroupVoteCreateScreen() {
                 PopupModal(
                     text = stringResource(R.string.condition_of_general_review),
                     arrowPosition = ArrowPosition.RIGHT,
-                    isEligible = false,
+                    isEligible = isEligible,
                     onClose = { showTooltip = false }
                 )
             }

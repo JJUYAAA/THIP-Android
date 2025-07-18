@@ -23,6 +23,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 @Composable
 fun ToggleSwitchButton(
     isChecked: Boolean,
+    enabled: Boolean = true,
     onToggleChange: (Boolean) -> Unit
 ) {
     Switch(
@@ -31,11 +32,17 @@ fun ToggleSwitchButton(
         onCheckedChange = onToggleChange,
         colors = SwitchDefaults.colors(
             checkedThumbColor = colors.White,
+            disabledCheckedThumbColor = colors.White,
             checkedTrackColor = colors.Purple,
+            disabledCheckedTrackColor = colors.Purple,
             uncheckedThumbColor = colors.White,
+            disabledUncheckedThumbColor = colors.White,
             uncheckedTrackColor = colors.DarkGrey,
+            disabledUncheckedTrackColor = colors.DarkGrey,
             uncheckedBorderColor = Color.Transparent,
+            disabledUncheckedBorderColor = Color.Transparent,
         ),
+        enabled = enabled,
         thumbContent = {
             Icon(
                 painter = painterResource(R.drawable.ic_circle),

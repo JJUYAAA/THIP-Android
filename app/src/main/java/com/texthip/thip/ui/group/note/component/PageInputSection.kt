@@ -37,6 +37,7 @@ fun PageInputSection(
     isGeneralReview: Boolean,
     onGeneralReviewToggle: (Boolean) -> Unit,
     bookTotalPage: Int,
+    isEligible: Boolean,
     onInfoClick: () -> Unit,
     onInfoPositionCaptured: (LayoutCoordinates) -> Unit
 ) {
@@ -100,7 +101,8 @@ fun PageInputSection(
                     onToggleChange = { checked ->
                         onGeneralReviewToggle(checked)
                         onPageTextChange(if (checked) allRangeText else "")
-                    }
+                    },
+                    enabled = isEligible
                 )
             }
         }
@@ -119,6 +121,7 @@ private fun PageInputSectionPreview() {
         isGeneralReview = isGeneralReview,
         onGeneralReviewToggle = { isGeneralReview = it },
         bookTotalPage = 500,
+        isEligible = true,
         onInfoClick = {},
         onInfoPositionCaptured = {}
     )
