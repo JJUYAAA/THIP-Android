@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -61,6 +62,12 @@ fun BookDetailScreen(
     var isAlarmVisible by remember { mutableStateOf(true) }
     var isIntroductionPopupVisible by remember { mutableStateOf(false) }
     var isBookmarked by remember { mutableStateOf(false) }
+    var selectedFilterOption by remember { mutableIntStateOf(0) }
+
+    val filterOptions = listOf(
+        stringResource(R.string.search_filter_popular),
+        stringResource(R.string.search_filter_latest)
+    )
 
     // 알림 5초간 노출
     LaunchedEffect(Unit) {
@@ -292,9 +299,11 @@ fun BookDetailScreen(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 462.dp, start = 20.dp, end = 20.dp),
-                selectedOption = stringResource(R.string.search_filter_popular),
-                options = listOf(stringResource(R.string.search_filter_popular), stringResource(R.string.search_filter_latest)),
-                onOptionSelected = { /* TODO: 정렬 옵션 선택시 구현 */ }
+                selectedOption = filterOptions[selectedFilterOption],
+                options = filterOptions,
+                onOptionSelected = { option ->
+                    selectedFilterOption = filterOptions.indexOf(option)
+                }
             )
         }
 
