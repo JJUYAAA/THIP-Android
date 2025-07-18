@@ -278,6 +278,6 @@
     <string name="group_recruiting_title">모집중인 모임방</string>
     <string name="book_recruiting_empty_message">이 책으로 모집중인 모임방이 없어요.</string>
     <string name="book_recruiting_empty_sub_message">직접 모임방을 만들어보세요!</string>
-    <string name="group_recruiting_create_button">모임방 만들기\n</string>
+    <string name="group_recruiting_create_button">모임방 만들기</string>
 
 </resources>
