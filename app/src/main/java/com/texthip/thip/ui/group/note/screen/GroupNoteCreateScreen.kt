@@ -42,7 +42,7 @@ fun GroupNoteCreateScreen() {
     // Tooltip 위치 측정용 state
     val iconCoordinates = remember { mutableStateOf<LayoutCoordinates?>(null) }
 
-    var isEligible by rememberSaveable { mutableStateOf(false) } // TODO: 서버 데이터?
+    var isEligible by rememberSaveable { mutableStateOf(true) } // TODO: 서버 데이터?
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -92,7 +92,7 @@ fun GroupNoteCreateScreen() {
                 PopupModal(
                     text = stringResource(R.string.condition_of_general_review),
                     arrowPosition = ArrowPosition.RIGHT,
-                    isEligible = false,
+                    isEligible = isEligible,
                     onClose = { showTooltip = false }
                 )
             }
