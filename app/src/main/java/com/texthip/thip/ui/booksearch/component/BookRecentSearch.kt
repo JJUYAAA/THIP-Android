@@ -126,7 +126,7 @@ fun BookRecentSearch(
                                     .padding(top = 12.dp, bottom = 12.dp)
                                     .fillMaxWidth()
                                     .height(1.dp)
-                                    .background(ThipTheme.colors.DarkGrey02)
+                                    .background(colors.DarkGrey02)
                             )
                         }
                     }
