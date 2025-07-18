@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -38,16 +39,27 @@ fun CardItemRoomSmall(
     title: String,
     participants: Int,
     maxParticipants: Int,
-    endDate: Int,
+    endDate: Int?,
     imageRes: Int? = R.drawable.bookcover_sample_small,
+    isWide: Boolean = false,
+    isSecret: Boolean = false,
     onClick: () -> Unit = {}
 ) {
+    val cardModifier = if (isWide) {
+        modifier
+            .fillMaxWidth()
+    } else {
+        modifier
+            .width(232.dp)
+    }
+    val bgColor = if (isWide) colors.Black else colors.DarkGrey50
+
     Card(
-        modifier = modifier
-            .size(width = 232.dp, height = 104.dp)
+        modifier = cardModifier
+            .height(104.dp)
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = colors.DarkGrey50
+            containerColor = bgColor
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp)
@@ -73,9 +85,17 @@ fun CardItemRoomSmall(
                             contentScale = ContentScale.Crop
                         )
                     }
+                    if (isSecret) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_secret_cover),
+                            contentDescription = "비밀방",
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
                 Column(
                     modifier = Modifier.fillMaxWidth()
@@ -84,7 +104,7 @@ fun CardItemRoomSmall(
                     Text(
                         text = title,
                         color = colors.White,
-                        style = typography.menu_sb600_s14_h24,
+                        style = if (isWide) typography.smalltitle_sb600_s18_h24 else typography.menu_sb600_s14_h24,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -123,29 +143,42 @@ fun CardItemRoomSmall(
                         }
                     }
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = stringResource(R.string.card_item_end_date_recruit, endDate),
-                        color = colors.Red,
-                        style = typography.menu_sb600_s12_h20
-                    )
+
+                    endDate?.let {
+                        Text(
+                            text = stringResource(R.string.card_item_end_date_recruit, endDate),
+                            color = colors.Red,
+                            style = typography.menu_sb600_s12_h20
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-
-@Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360)
+@Preview()
 @Composable
 fun CardItemRoomSmallPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        CardItemRoomSmall(
-            title = "방 제목입니다 방 제목입니다",
-            participants = 22,
-            maxParticipants = 30,
-            endDate = 3,
-            imageRes = R.drawable.bookcover_sample
-        )
+    ThipTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
+            CardItemRoomSmall(
+                title = "방 제목입니다 방 제목입니다",
+                participants = 22,
+                maxParticipants = 30,
+                endDate = 3,
+                imageRes = R.drawable.bookcover_sample
+            )
+
+            CardItemRoomSmall(
+                title = "와이드 카드 fillMaxWidth",
+                participants = 18,
+                maxParticipants = 25,
+                endDate = 5,
+                imageRes = R.drawable.bookcover_sample,
+                isWide = true
+            )
+        }
     }
 }

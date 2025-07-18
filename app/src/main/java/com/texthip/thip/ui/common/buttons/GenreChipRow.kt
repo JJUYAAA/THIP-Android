@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
 fun GenreChipRow(
@@ -22,7 +23,13 @@ fun GenreChipRow(
                 text = genre,
                 isFilled = true,
                 isSelected = selectedIndex == idx,
-                onClick = { onSelect(idx) }
+                onClick = {
+                    if (selectedIndex == idx) {
+                        onSelect(-1)
+                    } else {
+                        onSelect(idx)
+                    }
+                }
             )
             if (idx < genres.size - 1) {
                 Spacer(modifier = modifier)
@@ -31,12 +38,14 @@ fun GenreChipRow(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360)
+@Preview()
 @Composable
 fun PreviewGenreChipRow() {
-    GenreChipRow(
-        genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술"),
-        selectedIndex = 0,
-        onSelect = {}
-    )
+    ThipTheme {
+        GenreChipRow(
+            genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술"),
+            selectedIndex = 0,
+            onSelect = {}
+        )
+    }
 }

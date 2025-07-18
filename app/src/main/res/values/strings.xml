@@ -42,7 +42,7 @@
     <string name="card_item_end_date">"%1$s일 뒤 "</string>
     <string name="card_item_end">모집 마감</string>
     <string name="card_item_finish">종료</string>
-    <string name="card_item_participant">%1$s명</string>
+    <string name="card_item_participating_count">%1$s명</string>
     <string name="card_item_participant_string">참여</string>
     <string name="card_item_participant_count">%1$s</string>
     <string name="card_item_participant_count_max"> / %1$s명</string>
@@ -162,6 +162,21 @@
     <string name="annotation">\@</string>
     <string name="space_bar">\ </string>
     <string name="reply_to">00님에게 댓글을 남겨보세요.</string>
+    <string name="group_done_title">완료된 모임방</string>
+    <string name="group_done_user_comment">%1$s님이 참여했던 모임방들을 확인해보세요.</string>
+    <string name="group_room_search_hint">" 방 제목 혹은 책 제목을 검색해보세요."</string>
+    <string name="group_recent_search">최근 검색어</string>
+    <string name="group_no_recent_search">최근 검색어가 아직 없어요.</string>
+    <string name="group_room_search_topappbar">모임 검색</string>
+    <string name="group_searched_room_size">전체 %1$d</string>
+    <string name="group_no_search_result1">해당하는 모임방이 없어요</string>
+    <string name="group_no_search_result2">직접 모임방을 만들어보세요.</string>
+    <string name="group_secret_screen_comment">비밀번호를 입력해주세요.</string>
+    <string name="group_secret_screen_error_comment">비밀번호가 일치하지 않습니다.</string>
+    <string name="group_participant_complete_alarm">모임방 참여가 완료되었어요!</string>
+    <string name="group_participant_cancel_popup">참여를 취소하시겠어요?</string>
+    <string name="group_participant_cancel_comment">참여 취소 후 다시 참여할 수 있어요.</string>
+    <string name="group_participant_cancel_alarm">모임방 참여가 취소되었어요! 다른 방을 찾아보세요.</string>
     <string name="page_to_record">기록할 페이지</string>
     <string name="general_review">총평</string>
     <string name="all_range">전체범위</string>
@@ -182,7 +197,7 @@
     <string name="group_making_group">모임 만들기</string>
     <string name="group_saved_book">저장한 책</string>
     <string name="group_book">모임 책</string>
-    <string name="group_book_search_hint">책 제목, 저자 검색</string>
+    <string name="group_book_search_hint"> 책 제목을 검색해보세요.</string>
     <string name="group_register_book">책 등록하기</string>
     <string name="group_register_book_comment">현재 등록된 책이 아닙니다.\n원하시는 책을 신청해주세요.</string>
     <string name="group_request_book">책 신청</string>
@@ -237,5 +252,14 @@
     <string name="toast_subscribe">%1$s 님을 구독했어요</string>
     <string name="toast_unsubscribe">%1$s 님을 구독취소했어요</string>
     <string name="subscribe_cancel">구독취소</string>
+    <string name="group_participant_close_popup">모집을 마감하시겠습니까?</string>
+    <string name="group_participant_close_comment">독서메이트 모집을 마감하면\n지금 바로 모임방 활동을 바로 시작할 수 있어요.</string>
+    <string name="group_participant_close_alarm">독서메이트 모집을 성공적으로 마감했어요.</string>
+    <string name="group_no_room_exist">모임방이 아직 없어요</string>
+    <string name="group_no_room_error_comment">해당 장르의 모임방이 생기면 보여줄게요!</string>
+    <string name="group_empty_card_title">참여 중인 모임방이 없어요</string>
+    <string name="group_empty_card_description">모임방을 찾아 참여해보세요!</string>
+    <string name="group_myroom_error_comment1">참여 중인 모임방이 없어요</string>
+    <string name="group_myroom_error_comment2">첫번째 모임방에 참여해보세요</string>
 
 </resources>
