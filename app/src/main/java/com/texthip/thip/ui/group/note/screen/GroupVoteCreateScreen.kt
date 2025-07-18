@@ -44,11 +44,18 @@ fun GroupVoteCreateScreen() {
 
     var isEligible by rememberSaveable { mutableStateOf(false) } // TODO: 서버 데이터?
 
+    // 완료 버튼 활성화 조건
+    val filledOptionsCount = options.count { it.isNotBlank() }
+    val isRightButtonEnabled =
+        (isGeneralReview || pageText.isNotBlank()) &&
+                title.isNotBlank() &&
+                filledOptionsCount >= 2
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             InputTopAppBar(
                 title = stringResource(R.string.create_vote),
-                isRightButtonEnabled = false,
+                isRightButtonEnabled = isRightButtonEnabled,
                 onLeftClick = { /* 뒤로가기 동작 */ },
                 onRightClick = { /* 완료 동작 */ }
             )
