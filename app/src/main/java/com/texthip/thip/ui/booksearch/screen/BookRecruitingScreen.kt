@@ -35,14 +35,10 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun BookRecruitingScreen(
-    allDataList: List<GroupCardItemRoomData>,
+    recruitingList: List<GroupCardItemRoomData>,
     onCardClick: (GroupCardItemRoomData) -> Unit = {},
     onCreateRoomClick: () -> Unit = {}
 ) {
-    val recruitingList = remember(allDataList) {
-        allDataList.filter { it.isRecruiting }
-    }
-
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -65,7 +61,7 @@ fun BookRecruitingScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(R.string.group_searched_room_size, allDataList.size),
+                        text = stringResource(R.string.group_searched_room_size, recruitingList.size),
                         color = colors.Grey,
                         style = typography.menu_m500_s14_h24
                     )
@@ -215,7 +211,7 @@ fun GroupRecruitingScreenPreview() {
         )
 
         BookRecruitingScreen(
-            allDataList = dataList
+            recruitingList = dataList
         )
     }
 }
@@ -225,7 +221,7 @@ fun GroupRecruitingScreenPreview() {
 fun GroupRecruitingScreenEmptyPreview() {
     ThipTheme {
         BookRecruitingScreen(
-            allDataList = emptyList()
+            recruitingList = emptyList()
         )
     }
 }
