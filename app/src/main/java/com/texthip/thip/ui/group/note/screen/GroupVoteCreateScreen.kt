@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -34,7 +35,7 @@ fun GroupVoteCreateScreen() {
     var isGeneralReview by rememberSaveable { mutableStateOf(false) }
 
     var title by rememberSaveable { mutableStateOf("") }
-    var options by rememberSaveable { mutableStateOf(mutableListOf("", "")) }
+    val options = remember { mutableStateListOf("", "") }
 
     val density = LocalDensity.current
     var showTooltip by rememberSaveable { mutableStateOf(false) }
@@ -81,15 +82,15 @@ fun GroupVoteCreateScreen() {
                     onTitleChange = { title = it },
                     options = options,
                     onOptionChange = { index, newText ->
-                        options = options.toMutableList().also { it[index] = newText }
+                        options[index] = newText
                     },
                     onAddOption = {
                         if (options.size < 5) {
-                            options = options.toMutableList().also { it.add("") }
+                            options.add("")
                         }
                     },
                     onRemoveOption = { index ->
-                        options = options.toMutableList().also { it.removeAt(index) }
+                        options.removeAt(index)
                     }
                 )
             }
