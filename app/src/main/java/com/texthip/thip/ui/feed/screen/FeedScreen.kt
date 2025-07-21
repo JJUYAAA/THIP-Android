@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +31,8 @@ import com.texthip.thip.ui.common.header.HeaderMenuBarTab
 import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
 import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
+import com.texthip.thip.ui.feed.component.MySubscribeBarlist
+import com.texthip.thip.ui.feed.mock.MySubscriptionData
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme
@@ -52,6 +55,56 @@ fun FeedScreen(
             addAll(feeds)
         }
     }
+    val mySubscriptions = listOf(
+        MySubscriptionData(
+            profileImageUrl = "https://example.com/image1.jpg",
+            nickname = "abcabcabcabc",
+            role = "문학가",
+            roleColor = colors.Orange
+        ),
+        MySubscriptionData(
+            profileImageUrl = "https://example.com/image.jpg",
+            nickname = "aaaaaaa",
+            role = "작가",
+            roleColor = colors.Orange
+        ),
+        MySubscriptionData(
+            profileImageUrl = "https://example.com/image1.jpg",
+            nickname = "abcabcabcabc",
+            role = "문학가",
+            roleColor = colors.Orange
+        ),
+        MySubscriptionData(
+            profileImageUrl = "https://example.com/image.jpg",
+            nickname = "aaaaaaa",
+            role = "작가",
+            roleColor = colors.Orange
+        ),
+        MySubscriptionData(
+            profileImageUrl = "https://example.com/image1.jpg",
+            nickname = "abcabcabcabc",
+            role = "문학가",
+            roleColor = colors.Orange
+        ),
+        MySubscriptionData(
+            profileImageUrl = "https://example.com/image.jpg",
+            nickname = "aaaaaaa",
+            role = "작가",
+            roleColor = colors.Orange
+        ),
+        MySubscriptionData(
+            profileImageUrl = "https://example.com/image1.jpg",
+            nickname = "abcabcabcabc",
+            role = "문학가",
+            roleColor = colors.Orange
+        ),
+        MySubscriptionData(
+            profileImageUrl = "https://example.com/image.jpg",
+            nickname = "aaaaaaa",
+            role = "작가",
+            roleColor = colors.Orange
+        )
+    )
     Box(modifier = Modifier.fillMaxSize()) {
         LogoTopAppBar(
             leftIcon = painterResource(R.drawable.ic_plusfriend),
@@ -155,6 +208,39 @@ fun FeedScreen(
                 //피드
                 item {
                     Spacer(modifier = Modifier.height(20.dp))
+                    MySubscribeBarlist(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        subscriptions = mySubscriptions,
+                        onClick = {
+                        }
+                    )
+                }
+                itemsIndexed(feedStateList, key = { _, item -> item.id }) { index, feed ->
+                    val profileImage = feed.userProfileImage?.let { painterResource(it) }
+                    val bookImage = feed.imageUrl?.let { painterResource(it) }
+
+                    SavedFeedCard(
+                        feedItem = feed,
+                        profileImage = profileImage,
+                        bookImage = bookImage,
+                        onBookmarkClick = {
+                            val updated = feed.copy(isSaved = !feed.isSaved)
+                            feedStateList[index] = updated
+                        },
+                        onLikeClick = {
+                            val updated = feed.copy(
+                                isLiked = !feed.isLiked,
+                                likeCount = if (feed.isLiked) feed.likeCount - 1 else feed.likeCount + 1
+                            )
+                            feedStateList[index] = updated
+                        }
+                    )
+                    if (index != feeds.lastIndex) {
+                        HorizontalDivider(
+                            color = colors.DarkGrey02,
+                            thickness = 10.dp
+                        )
+                    }
                 }
             }
         }
@@ -198,7 +284,7 @@ private fun FeedScreenPreview() {
         FeedScreen(
             nickname = "ThipUser01",
             userRole = "문학 칭호",
-            selectedTabIndex = 1,
+            selectedTabIndex = 0,
             feeds = mockFeeds,
             totalFeedCount = mockFeeds.size,
             followerProfileImageUrls = mockFollowerImages

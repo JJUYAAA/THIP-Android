@@ -8,6 +8,6 @@ data class MySubscriptionData(
     val nickname: String,
     val role: String,
     val roleColor: Color,
-    val subscriberCount: Int,
+    val subscriberCount: Int = 0,
     var isSubscribed: Boolean = true
 )
