@@ -13,6 +13,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,9 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.texthip.thip.R
+import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.header.AuthorHeader
 import com.texthip.thip.ui.common.header.HeaderMenuBarTab
 import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
+import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
+import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme
@@ -38,10 +43,15 @@ fun FeedScreen(
     userRole: String,
     feeds: List<FeedItem> = emptyList(),
     totalFeedCount: Int = 0,
-    selectedTabIndex: Int = 0
+    selectedTabIndex: Int = 0,
+    followerProfileImageUrls: List<String> = emptyList()
 ) {
     val selectedIndex = rememberSaveable { mutableIntStateOf(selectedTabIndex) }
-
+    val feedStateList = remember {
+        mutableStateListOf<FeedItem>().apply {
+            addAll(feeds)
+        }
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         LogoTopAppBar(
             leftIcon = painterResource(R.drawable.ic_plusfriend),
@@ -79,8 +89,13 @@ fun FeedScreen(
                         buttonWidth = 60.dp,
                         showButton = false
                     )
-                    //TODO '띱 하는중' 컴포넌트 만들고 추가
-
+                    Spacer(modifier = Modifier.height(16.dp))
+                    FeedSubscribeBarlist(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        followerProfileImageUrls = followerProfileImageUrls,
+                        onClick = {
+                        }
+                    )
                     Spacer(modifier = Modifier.height(40.dp))
                     Text(
                         text = stringResource(R.string.whole_num, totalFeedCount),
@@ -113,18 +128,21 @@ fun FeedScreen(
                         }
                     }
                 } else {
-                    itemsIndexed(feeds, key = { _, item -> item.id }) { index, feed ->
+                    itemsIndexed(feedStateList, key = { _, item -> item.id }) { index, feed ->
                         val bookImage = feed.imageUrl?.let { painterResource(it) }
-                        val profileImage = feed.userProfileImage?.let { painterResource(it) }
-
-                        SavedFeedCard(
+                        Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
+                        MyFeedCard(
                             feedItem = feed,
                             bookImage = bookImage,
-                            profileImage = profileImage,
-                            onBookmarkClick = {},
-                            onLikeClick = {}
+                            onLikeClick = {
+                                val updated = feed.copy(
+                                    isLiked = !feed.isLiked,
+                                    likeCount = if (feed.isLiked) feed.likeCount - 1 else feed.likeCount + 1
+                                )
+                                feedStateList[index] = updated
+                            },
                         )
-
+                        Spacer(modifier = Modifier.height(40.dp))
                         if (index != feeds.lastIndex) {
                             HorizontalDivider(
                                 color = colors.DarkGrey02,
@@ -140,6 +158,10 @@ fun FeedScreen(
                 }
             }
         }
+        FloatingButton(
+            icon = painterResource(id = R.drawable.ic_write),
+            onClick = {  }
+        )
     }
 }
 
@@ -160,9 +182,17 @@ private fun FeedScreenPreview() {
             commentCount = it,
             isLiked = false,
             isSaved = false,
-            //imageUrl = R.drawable.bookcover_sample
+            isLocked = it % 2 == 0,
+            imageUrl = R.drawable.bookcover_sample
         )
     }
+    val mockFollowerImages = listOf(
+        "https://example.com/image1.jpg",
+        "https://example.com/image2.jpg",
+        "https://example.com/image3.jpg",
+        "https://example.com/image4.jpg",
+        "https://example.com/image5.jpg"
+    )
 
     ThipTheme {
         FeedScreen(
@@ -170,7 +200,8 @@ private fun FeedScreenPreview() {
             userRole = "문학 칭호",
             selectedTabIndex = 1,
             feeds = mockFeeds,
-            totalFeedCount = mockFeeds.size
+            totalFeedCount = mockFeeds.size,
+            followerProfileImageUrls = mockFollowerImages
         )
     }
 }
