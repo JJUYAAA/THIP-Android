@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.group.note.component
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,7 +30,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun VoteCommentCard(
     modifier: Modifier = Modifier,
     data: GroupNoteVote,
-    onCommentClick: () -> Unit = {}
+    onCommentClick: () -> Unit = {},
+    onLongPress: () -> Unit = {}
 ) {
     var isLiked by remember { mutableStateOf(data.isLiked) }
     var selected by remember { mutableStateOf<Int?>(null) }
@@ -38,6 +41,11 @@ fun VoteCommentCard(
     Column(
         modifier = modifier
             .blur(if (data.isLocked) 5.dp else 0.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = { onLongPress() }
+                )
+            }
             .padding(vertical = 16.dp, horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {

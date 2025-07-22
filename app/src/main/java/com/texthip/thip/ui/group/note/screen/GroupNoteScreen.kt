@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.texthip.thip.R
+import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.buttons.ExpandableFloatingButton
 import com.texthip.thip.ui.common.buttons.FabMenuItem
 import com.texthip.thip.ui.common.buttons.FilterButton
@@ -42,6 +43,7 @@ import com.texthip.thip.ui.group.note.mock.GroupNoteRecord
 import com.texthip.thip.ui.group.note.mock.GroupNoteVote
 import com.texthip.thip.ui.group.note.mock.mockComment
 import com.texthip.thip.ui.group.note.mock.mockGroupNoteItems
+import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -66,9 +68,11 @@ fun GroupNoteScreen() {
         else -> emptyList()
     }
 
-    var isBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
+    var isCommentBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
     var selectedNoteRecord by remember { mutableStateOf<GroupNoteRecord?>(null) }
     var selectedNoteVote by remember { mutableStateOf<GroupNoteVote?>(null) }
+
+    var isMenuBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
 
     var showToast by remember { mutableStateOf(false) }
 
@@ -81,7 +85,7 @@ fun GroupNoteScreen() {
     }
 
     Box(
-        if (isBottomSheetVisible) {
+        if (isCommentBottomSheetVisible || isMenuBottomSheetVisible) {
             Modifier
                 .fillMaxSize()
                 .blur(5.dp)
@@ -153,7 +157,10 @@ fun GroupNoteScreen() {
                                 data = item,
                                 onCommentClick = {
                                     selectedNoteRecord = item
-                                    isBottomSheetVisible = true
+                                    isCommentBottomSheetVisible = true
+                                },
+                                onLongPress = {
+                                    isMenuBottomSheetVisible = true
                                 }
                             )
 
@@ -161,7 +168,10 @@ fun GroupNoteScreen() {
                                 data = item,
                                 onCommentClick = {
                                     selectedNoteVote = item
-                                    isBottomSheetVisible = true
+                                    isCommentBottomSheetVisible = true
+                                },
+                                onLongPress = {
+                                    isMenuBottomSheetVisible = true
                                 }
                             )
                         }
@@ -211,11 +221,11 @@ fun GroupNoteScreen() {
             )
         }
 
-        if (isBottomSheetVisible && (selectedNoteRecord != null || selectedNoteVote != null)) {
+        if (isCommentBottomSheetVisible && (selectedNoteRecord != null || selectedNoteVote != null)) {
             CommentBottomSheet(
                 commentResponse = listOf(mockComment, mockComment, mockComment),
                 onDismiss = {
-                    isBottomSheetVisible = false
+                    isCommentBottomSheetVisible = false
                     selectedNoteRecord = null
                     selectedNoteVote = null
                 },
@@ -224,6 +234,39 @@ fun GroupNoteScreen() {
                 }
             )
         }
+    }
+
+    if (isMenuBottomSheetVisible) {
+        val isWriter = selectedTabIndex == 1
+
+        val menuItems = if (isWriter) {
+            listOf(
+                MenuBottomSheetItem(
+                    text = stringResource(R.string.delete),
+                    color = colors.Red,
+                    onClick = {
+                        // TODO: 삭제 처리
+                        isMenuBottomSheetVisible = false
+                    }
+                )
+            )
+        } else {
+            listOf(
+                MenuBottomSheetItem(
+                    text = stringResource(R.string.report),
+                    color = colors.Red,
+                    onClick = {
+                        // TODO: 신고 처리
+                        isMenuBottomSheetVisible = false
+                    }
+                )
+            )
+        }
+
+        MenuBottomSheet(
+            items = menuItems,
+            onDismiss = { isMenuBottomSheetVisible = false }
+        )
     }
 }
 
