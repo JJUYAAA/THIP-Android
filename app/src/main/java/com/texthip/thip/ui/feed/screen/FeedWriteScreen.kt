@@ -1,5 +1,12 @@
 package com.texthip.thip.ui.feed.screen
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,22 +16,34 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipButton
 import com.texthip.thip.ui.common.buttons.GenreChipRow
@@ -41,8 +60,6 @@ import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 fun FeedWriteScreen(
@@ -64,6 +81,15 @@ fun FeedWriteScreen(
     var isPrivate by remember { mutableStateOf(false) }
     val showBookSearchSheet = remember { mutableStateOf(false) }
     val selectedBook = remember { mutableStateOf<BookData?>(null) }
+    val imageUris = remember { mutableStateListOf<Uri>() }
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            if (imageUris.size < 3) imageUris.add(it)
+        }
+    }
+    val isImageLimitReached = imageUris.size >= 3
     Box {
         Column(
             modifier = modifier
@@ -84,7 +110,7 @@ fun FeedWriteScreen(
                     .padding(horizontal = 20.dp),
                 verticalArrangement = Arrangement.Top,
             ) {
-                Spacer(modifier = Modifier.padding(top = 20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 GroupSelectBook(
                     selectedBook = selectedBook.value,
@@ -109,10 +135,69 @@ fun FeedWriteScreen(
                     style = typography.smalltitle_sb600_s18_h24,
                     color = colors.White
                 )
-                Spacer(modifier = Modifier.padding(top = 12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .size(80.dp)
+                                .background(color = colors.DarkGrey02)
+                                .border(width = 1.dp, color = if (isImageLimitReached) colors.DarkGrey else colors.Grey02,
+                                )
+                                .let {
+                                    if (!isImageLimitReached) it.clickable {
+                                        imagePickerLauncher.launch("image/*")
+                                    } else it // 클릭 비활성화
+                                },
 
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_plus),
+                                contentDescription = null,
+                                tint = if (isImageLimitReached) colors.DarkGrey else colors.White
+                            )
+                        }
+                    }
+                    items(imageUris.size) { index ->
+                        Box(modifier = Modifier.size(80.dp)) {
+                            Image(
+                                painter = rememberAsyncImagePainter(imageUris[index]),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                            IconButton(
+                                onClick = { imageUris.removeAt(index) },
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .size(24.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_x),
+                                    contentDescription = null,
+                                    tint = colors.White
+                                )
+                            }
+                        }
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.photo_count, imageUris.size, 3),
+                        style = typography.info_r400_s12,
+                        color = colors.NeonGreen,
+                    )
+                }
+                Spacer(modifier = Modifier.padding(top = 32.dp))
                 SectionDivider()
-
                 Text(
                     text = stringResource(R.string.group_private_option),
                     style = typography.smalltitle_sb600_s18_h24,
@@ -173,12 +258,19 @@ fun FeedWriteScreen(
                         horizontalArrangement = Arrangement.End
                     ) {
                         Text(
-                            text = "${selectedSubGenres.size}/5",
+                            text = stringResource(id = R.string.tag_count, selectedSubGenres.size, 5),
                             style = typography.info_r400_s12,
                             color = colors.NeonGreen,
                             )
                     }
                 }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = stringResource(R.string.selected_tags),
+                    style = typography.menu_r400_s14_h24,
+                    color = colors.White
+                )
+                Spacer(modifier = Modifier.height(12.dp))
                 if (selectedSubGenres.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     LazyRow(
@@ -189,19 +281,18 @@ fun FeedWriteScreen(
                             GenreChipButton(
                                 text = subGenre,
                                 onClick = {
-                                    // 칩을 클릭해도 제거되도록 할 수 있음
+                                    //해당 칩 눌렀을 때도 서브장르 삭제
                                     selectedSubGenres = selectedSubGenres - subGenre
                                 },
                                 onCloseClick = {
-                                    // X 버튼 클릭시 해당 서브장르 제거
+                                    //x버튼 누르면 서브장르 삭제
                                     selectedSubGenres = selectedSubGenres - subGenre
                                 }
                             )
                         }
                     }
                 }
-
-
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
 
@@ -219,18 +310,6 @@ fun FeedWriteScreen(
                 groupBooks = dummyGroupBooks
             )
         }
-
-        // 로딩 인디케이터
-        /*if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(colors.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = colors.NeonGreen)
-            }
-        }*/
     }
 }
 
