@@ -32,21 +32,21 @@ fun TextCommentCard(
     onLongPress: () -> Unit = {}
 ) {
     var isLiked by remember { mutableStateOf(data.isLiked) }
+    val isLocked = data.isLocked
 
     Column(
         modifier = modifier
-            .blur(if (data.isLocked) 5.dp else 0.dp)
+            .blur(if (isLocked) 5.dp else 0.dp)
             .pointerInput(Unit) {
-                detectTapGestures(
-                    onLongPress = { onLongPress() }
-                )
+                if (!isLocked) {
+                    detectTapGestures(onLongPress = { onLongPress() })
+                }
             }
             .padding(vertical = 16.dp, horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ProfileBar(
             modifier = Modifier.padding(0.dp),
-//            profileImage = data.profileImageUrl,
             profileImage = painterResource(R.drawable.character_literature),
             topText = data.nickName,
             bottomText = data.page.toString() + stringResource(R.string.page),
@@ -66,9 +66,11 @@ fun TextCommentCard(
             likeCount = data.likeCount,
             commentCount = data.commentCount,
             onLikeClick = {
-                isLiked = !isLiked
+                if (!isLocked) isLiked = !isLiked
             },
-            onCommentClick = { onCommentClick() },
+            onCommentClick = {
+                if (!isLocked) onCommentClick()
+            },
         )
     }
 }
