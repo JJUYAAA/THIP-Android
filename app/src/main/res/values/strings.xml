@@ -50,7 +50,8 @@
     <string name="card_book_explain">도서 소개</string>
     <string name="card_author">%1$s 저</string>
     <string name="record_book">기록장</string>
-    <string name="vote_title">🔥모임방의 뜨거운 감자</string>
+    <string name="vote_title">모임방의 뜨거운 감자</string>
+    <string name="no_vote">모임방에 생성된 투표가 없어요</string>
 
     <!--    top app bar 컴포넌트    -->
     <string name="subscriber">님의 구독자</string>

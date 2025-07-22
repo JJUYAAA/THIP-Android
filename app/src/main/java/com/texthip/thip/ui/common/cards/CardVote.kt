@@ -1,11 +1,13 @@
 package com.texthip.thip.ui.common.cards
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -14,9 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,16 +30,11 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun CardVote(
-    voteData: List<VoteData>
+    voteData: List<VoteData>,
+    onVoteClick: (VoteData) -> Unit = {}
 ) {
     val pageCount = voteData.size
     val pagerState = rememberPagerState(pageCount = { pageCount })
-
-    // 각 페이지별 상태 기억: 선택 인덱스, 선택 여부 포함한 voteItems
-    val selectedIndexes = remember { mutableStateMapOf<Int, Int?>() }
-    val voteItemStates = remember {
-        voteData.map { it.voteItems.toMutableStateList() }.toMutableStateList()
-    }
 
     Column(
         modifier = Modifier
@@ -55,52 +50,65 @@ fun CardVote(
             modifier = Modifier.padding(horizontal = 12.dp)
         )
 
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxWidth()
-        ) { page ->
-            val voteItems = voteItemStates[page]
-            val selectedIndex = selectedIndexes[page]
-            val hasVoted = voteItems.any { it.isVoted }
-
-            Column(
-                modifier = Modifier.padding(horizontal = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+        if (voteData.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .padding(vertical = 60.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = voteData[page].description,
+                    text = stringResource(R.string.no_vote),
                     style = typography.info_m500_s12,
-                    color = colors.White,
-                )
-
-                GroupVoteButton(
-                    voteItems = voteItems,
-                    selectedIndex = selectedIndex,
-                    hasVoted = hasVoted,
-                    onOptionSelected = { index ->
-                        selectedIndexes[page] = if (selectedIndex == index) null else index
-
-                        voteItemStates[page] = voteItems.mapIndexed { i, item ->
-                            item.copy(isVoted = i == index && selectedIndex != index)
-                        }.toMutableStateList()
-                    }
+                    color = colors.Grey
                 )
             }
-        }
+        } else {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxWidth()
+            ) { page ->
+                val vote = voteData[page]
+                val voteItems = vote.voteItems.take(3) // 최대 3개만
 
-        Row(
-            Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            repeat(pageCount) { iteration ->
-                val color = if (pagerState.currentPage == iteration) colors.White else colors.Grey02
-                Box(
+                Column(
                     modifier = Modifier
+                        .height(176.dp)
                         .padding(horizontal = 12.dp)
-                        .background(color, CircleShape)
-                        .size(4.dp)
-                )
+                        .clickable { onVoteClick(vote) }, // 전체 클릭 시 이동
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = vote.description,
+                        style = typography.info_m500_s12,
+                        color = colors.White,
+                    )
+
+                    GroupVoteButton(
+                        voteItems = voteItems,
+                        selectedIndex = null, // 표시용이므로 선택 없음
+                        hasVoted = false, // 투표 상태 없음
+                        onOptionSelected = { onVoteClick(vote) } // 어떤 항목을 눌러도 이동
+                    )
+                }
+            }
+
+            Row(
+                Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                repeat(pageCount) { iteration ->
+                    val color =
+                        if (pagerState.currentPage == iteration) colors.White else colors.Grey02
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp)
+                            .background(color, CircleShape)
+                            .size(4.dp)
+                    )
+                }
             }
         }
     }
@@ -109,5 +117,13 @@ fun CardVote(
 @Preview
 @Composable
 private fun CardVotePreview() {
-    CardVote(voteData = mockVoteData)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        CardVote(voteData = mockVoteData)
+        CardVote(voteData = emptyList())
+    }
 }
