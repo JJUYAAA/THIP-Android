@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.search.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +23,7 @@ import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
-fun GroupFilteredSearchResultScreen(
+fun GroupFilteredSearchResult(
     genres: List<String>,
     selectedGenreIndex: Int,
     onGenreSelect: (Int) -> Unit,
@@ -58,7 +58,7 @@ fun GroupFilteredSearchResultScreen(
             .background(colors.DarkGrey02)
     )
     if (roomList.isEmpty()) {
-        GroupEmptyResultScreen(
+        GroupEmptyResult(
             mainText = stringResource(R.string.group_no_search_result1),
             subText = stringResource(R.string.group_no_search_result2)
         )

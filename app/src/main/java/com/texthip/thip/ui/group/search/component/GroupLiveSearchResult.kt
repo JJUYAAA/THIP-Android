@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.search.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +15,7 @@ import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
-fun GroupLiveSearchResultScreen(
+fun GroupLiveSearchResult(
     roomList: List<GroupCardItemRoomData>
 ) {
     LazyColumn(

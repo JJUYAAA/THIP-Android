@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.search.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +29,10 @@ import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
+import com.texthip.thip.ui.group.search.component.GroupEmptyResult
+import com.texthip.thip.ui.group.search.component.GroupLiveSearchResult
+import com.texthip.thip.ui.group.search.component.GroupRecentSearch
+import com.texthip.thip.ui.group.search.component.GroupFilteredSearchResult
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
@@ -132,14 +136,14 @@ fun GroupSearchScreen(
 
                 when {
                     searchText.isBlank() && !isSearched && recentSearches.isEmpty() -> {
-                        GroupRecentSearchScreen(
+                        GroupRecentSearch(
                             recentSearches = emptyList(),
                             onSearchClick = {},
                             onRemove = {}
                         )
                     }
                     searchText.isBlank() && !isSearched && recentSearches.isNotEmpty() -> {
-                        GroupRecentSearchScreen(
+                        GroupRecentSearch(
                             recentSearches = recentSearches,
                             onSearchClick = { keyword ->
                                 searchText = keyword
@@ -152,18 +156,18 @@ fun GroupSearchScreen(
                     }
                     searchText.isNotBlank() && !isSearched -> {
                         if (liveFilteredRoomList.isEmpty()) {
-                            GroupEmptyResultScreen(
+                            GroupEmptyResult(
                                 mainText = stringResource(R.string.group_no_search_result1),
                                 subText = stringResource(R.string.group_no_search_result2)
                             )
                         } else {
-                            GroupLiveSearchResultScreen(
+                            GroupLiveSearchResult(
                                 roomList = liveFilteredRoomList
                             )
                         }
                     }
                     isSearched -> {
-                        GroupFilteredSearchResultScreen(
+                        GroupFilteredSearchResult(
                             genres = genres,
                             selectedGenreIndex = selectedGenreIndex,
                             onGenreSelect = { selectedGenreIndex = it },

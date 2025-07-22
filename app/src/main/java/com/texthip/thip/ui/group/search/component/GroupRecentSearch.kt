@@ -1,6 +1,9 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.search.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,12 +12,9 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipButton
 import com.texthip.thip.ui.theme.ThipTheme
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 
 @Composable
-fun GroupRecentSearchScreen(
+fun GroupRecentSearch(
     recentSearches: List<String>,
     onSearchClick: (String) -> Unit,
     onRemove: (String) -> Unit
