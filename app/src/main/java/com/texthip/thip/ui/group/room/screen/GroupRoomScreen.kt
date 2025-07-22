@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
@@ -25,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
+import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.GradationTopAppBar
 import com.texthip.thip.ui.group.room.component.GroupRoomBody
 import com.texthip.thip.ui.group.room.component.GroupRoomHeader
@@ -41,9 +43,13 @@ fun GroupRoomScreen() {
     val scrollState = rememberScrollState()
 
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var isLeaveDialogVisible by remember { mutableStateOf(false) }
+    var isDeleteDialogVisible by remember { mutableStateOf(false) }
+
+    val isOwner = false // 서버에서 받아오기
 
     Box(
-        if (isBottomSheetVisible) {
+        if (isBottomSheetVisible || isLeaveDialogVisible || isDeleteDialogVisible) {
             Modifier
                 .fillMaxSize()
                 .blur(5.dp)
@@ -98,28 +104,75 @@ fun GroupRoomScreen() {
     }
 
     if (isBottomSheetVisible) {
-        MenuBottomSheet(
-            items = listOf(
+        val menuItems = if (isOwner) {
+            // 방 주인일 때
+            listOf(
+                MenuBottomSheetItem(
+                    text = stringResource(R.string.delete_room),
+                    color = colors.Red,
+                    onClick = { isDeleteDialogVisible = true }
+                )
+            )
+        } else {
+            // 방 참여자일 때
+            listOf(
                 MenuBottomSheetItem(
                     text = stringResource(R.string.leave_room),
                     color = colors.White,
-                    onClick = { }
+                    onClick = { isLeaveDialogVisible = true }
                 ),
                 MenuBottomSheetItem(
                     text = stringResource(R.string.report_room),
                     color = colors.Red,
-                    onClick = { }
-                ),
-                MenuBottomSheetItem(
-                    text = stringResource(R.string.delete_room),
-                    color = colors.Red,
-                    onClick = { }
+                    onClick = { /* 신고 로직 */ }
                 )
-            ),
-            onDismiss = {
-                isBottomSheetVisible = false
-            }
+            )
+        }
+
+        MenuBottomSheet(
+            items = menuItems,
+            onDismiss = { isBottomSheetVisible = false }
         )
+    }
+
+    if (isLeaveDialogVisible) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            DialogPopup(
+                title = stringResource(R.string.leave_room_modal_title),
+                description = stringResource(R.string.leave_room_modal_content),
+                onConfirm = {
+                    // 방 나가기 로직
+                    isLeaveDialogVisible = false
+                },
+                onCancel = {
+                    isLeaveDialogVisible = false
+                }
+            )
+        }
+    }
+
+    if (isDeleteDialogVisible) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            DialogPopup(
+                title = stringResource(R.string.delete_room_modal_title),
+                description = stringResource(R.string.delete_room_modal_content),
+                onConfirm = {
+                    // 방 삭제하기 로직
+                    isDeleteDialogVisible = false
+                },
+                onCancel = {
+                    isDeleteDialogVisible = false
+                }
+            )
+        }
     }
 }
 
