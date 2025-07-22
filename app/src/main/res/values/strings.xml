@@ -197,6 +197,7 @@
     <string name="vote_title_placeholder">투표 내용을 20자 이내로 입력하세요.</string>
     <string name="vote_content_placeholder">항목을 20자 이내로 입력</string>
     <string name="add_content">항목 추가</string>
+    <string name="condition_of_view_general_review">독서 진행도 80% 이상부터 총평을 볼 수 있어요.</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>
