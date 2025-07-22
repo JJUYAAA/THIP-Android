@@ -77,7 +77,7 @@ fun FeedWriteScreen(
         3 to listOf("철학", "역사", "심리", "종교", "윤리"),
         4 to listOf("음악", "미술", "공예", "무용", "연극")
     )
-    var roomTitle by remember { mutableStateOf("") }
+    var feed_content by remember { mutableStateOf("") }
     var isPrivate by remember { mutableStateOf(false) }
     val showBookSearchSheet = remember { mutableStateOf(false) }
     val selectedBook = remember { mutableStateOf<BookData?>(null) }
@@ -96,10 +96,11 @@ fun FeedWriteScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val isRightButtonEnabled = selectedBook.value != null && feed_content.isNotBlank() && selectedGenreIndex != -1 && selectedSubGenres.isNotEmpty()
             InputTopAppBar(
                 title = stringResource(R.string.new_feed),
                 rightButtonName = stringResource(R.string.registration),
-                isRightButtonEnabled = false,
+                isRightButtonEnabled = isRightButtonEnabled,
                 onLeftClick = onNavigateBack,
                 onRightClick = {}
             )
@@ -123,9 +124,9 @@ fun FeedWriteScreen(
                 GroupInputField(
                     title = stringResource(R.string.write_feed),
                     hint = stringResource(R.string.write_feed_hint),
-                    value = roomTitle,
+                    value = feed_content,
                     maxLength = 2000,
-                    onValueChange = { roomTitle = it }
+                    onValueChange = { feed_content = it }
                 )
 
                 SectionDivider()
@@ -196,7 +197,6 @@ fun FeedWriteScreen(
                         color = colors.NeonGreen,
                     )
                 }
-                Spacer(modifier = Modifier.padding(top = 32.dp))
                 SectionDivider()
                 Text(
                     text = stringResource(R.string.group_private_option),
