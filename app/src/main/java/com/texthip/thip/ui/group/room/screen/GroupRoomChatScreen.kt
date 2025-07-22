@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,7 @@ import com.texthip.thip.ui.group.room.mock.GroupRoomChatData
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupRoomChatScreen() {
@@ -88,41 +90,61 @@ fun GroupRoomChatScreen() {
                 onLeftClick = {},
             )
 
-            LazyColumn(
-                reverseLayout = true,
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                itemsIndexed(messages) { index, message ->
-                    val isNewDate = when {
-                        index == 0 -> true
-                        messages[index - 1].date != message.date -> true
-                        else -> false
-                    }
-                    val isBottomItem = index == 0
-
+            if (messages.isEmpty()) {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(20.dp),
-                        modifier = if (isBottomItem) Modifier.padding(bottom = 20.dp) else Modifier
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        if (isNewDate) {
-                            HorizontalDivider(
-                                color = colors.DarkGrey02,
-                                thickness = 10.dp
-                            )
-                            CountingBar(
-                                modifier = Modifier.align(Alignment.CenterHorizontally),
-                                content = message.date
+                        Text(
+                            text = stringResource(R.string.group_room_no_chat_title),
+                            style = typography.smalltitle_sb600_s18_h24,
+                            color = colors.White
+                        )
+                        Text(
+                            text = stringResource(R.string.group_room_no_chat_content),
+                            style = typography.copy_r400_s14,
+                            color = colors.Grey
+                        )
+                    }
+            } else {
+                LazyColumn(
+                    reverseLayout = true,
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    itemsIndexed(messages) { index, message ->
+                        val isNewDate = when {
+                            index == 0 -> true
+                            messages[index - 1].date != message.date -> true
+                            else -> false
+                        }
+                        val isBottomItem = index == 0
+
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(20.dp),
+                            modifier = if (isBottomItem) Modifier.padding(bottom = 20.dp) else Modifier
+                        ) {
+                            if (isNewDate) {
+                                HorizontalDivider(
+                                    color = colors.DarkGrey02,
+                                    thickness = 10.dp
+                                )
+                                CountingBar(
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                                    content = message.date
+                                )
+                            }
+
+                            CardCommentGroup(
+                                data = message,
+                                onMenuClick = {
+                                    selectedMessage = message
+                                    isBottomSheetVisible = true
+                                }
                             )
                         }
-
-                        CardCommentGroup(
-                            data = message,
-                            onMenuClick = {
-                                selectedMessage = message
-                                isBottomSheetVisible = true
-                            }
-                        )
                     }
                 }
             }
