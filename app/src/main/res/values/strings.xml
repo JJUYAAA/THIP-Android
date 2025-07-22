@@ -155,6 +155,9 @@
     <string name="delete_room">방 삭제하기</string>
     <string name="delete_room_modal_title">모임방을 삭제하시겠어요?</string>
     <string name="delete_room_modal_content">방을 삭제하게 되면\n독서메이트들과의 추억이 사라집니다.</string>
+    <string name="delete">삭제하기</string>
+    <string name="modify">수정하기</string>
+    <string name="report">신고하기</string>
 
     <!--    group note    -->
     <string name="tilde">~</string>

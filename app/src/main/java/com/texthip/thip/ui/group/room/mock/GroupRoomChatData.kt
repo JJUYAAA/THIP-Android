@@ -6,5 +6,6 @@ data class GroupRoomChatData(
     val profileImage: Painter?,
     val nickname: String,
     val date: String,
-    val content: String
+    val content: String,
+    val isMine: Boolean
 )
