@@ -1,51 +1,65 @@
 package com.texthip.thip.ui.feed.screen
-import androidx.compose.foundation.layout.*
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.ui.common.buttons.GenreChipButton
 import com.texthip.thip.ui.common.buttons.GenreChipRow
+import com.texthip.thip.ui.common.buttons.SubGenreChipGrid
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
-import com.texthip.thip.ui.common.forms.WarningTextField
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.group.makeroom.component.GroupBookSearchBottomSheet
 import com.texthip.thip.ui.group.makeroom.component.GroupInputField
-import com.texthip.thip.ui.group.makeroom.component.GroupRoomDurationPicker
 import com.texthip.thip.ui.group.makeroom.component.GroupSelectBook
-import com.texthip.thip.ui.group.makeroom.component.MemberLimitPicker
 import com.texthip.thip.ui.group.makeroom.component.SectionDivider
 import com.texthip.thip.ui.group.makeroom.mock.BookData
-import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomRequest
 import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
 import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
-import com.texthip.thip.ui.group.makeroom.viewmodel.ApiResult
-import com.texthip.thip.ui.group.makeroom.viewmodel.GroupCreateResponse
-import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
-import com.texthip.thip.ui.group.makeroom.viewmodel.GroupRepository
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 fun FeedWriteScreen(
     onNavigateBack: () -> Unit,
-    onGroupCreated: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
-
-    var selectedGenreIndex by remember { mutableIntStateOf(-1) }
+    var selectedGenreIndex by rememberSaveable { mutableIntStateOf(-1) }
     val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
-
+    var selectedSubGenres by remember { mutableStateOf<List<String>>(emptyList()) }
+    val subGenreMap = mapOf(
+        0 to listOf("소설", "에세이", "시", "고전", "추리", "판타지", "로맨스", "SF", "공포", "역사"),
+        1 to listOf("AI", "프로그래밍", "로봇", "IT 일반", "수학", "물리", "화학"),
+        2 to listOf("정치", "경제", "법", "사회", "교육"),
+        3 to listOf("철학", "역사", "심리", "종교", "윤리"),
+        4 to listOf("음악", "미술", "공예", "무용", "연극")
+    )
     var roomTitle by remember { mutableStateOf("") }
     var isPrivate by remember { mutableStateOf(false) }
     val showBookSearchSheet = remember { mutableStateOf(false) }
@@ -132,14 +146,59 @@ fun FeedWriteScreen(
                     modifier = Modifier.width(18.dp),
                     genres = genres,
                     selectedIndex = selectedGenreIndex,
-                    onSelect = { selectedGenreIndex = it }
+                    onSelect = {
+                        selectedGenreIndex = it
+                        selectedSubGenres = emptyList()
+                    }
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
+                if (selectedGenreIndex != -1) {
+                    val subGenres = subGenreMap[selectedGenreIndex].orEmpty()
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    SubGenreChipGrid(
+                        subGenres = subGenres,
+                        selectedGenres = selectedSubGenres,
+                        onGenreToggle = { genre ->
+                            selectedSubGenres = if (selectedSubGenres.contains(genre)) {
+                                selectedSubGenres - genre
+                            } else {
+                                if (selectedSubGenres.size < 5) selectedSubGenres + genre else selectedSubGenres
+                            }
+                        }
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(
+                            text = "${selectedSubGenres.size}/5",
+                            style = typography.info_r400_s12,
+                            color = colors.NeonGreen,
+                            )
+                    }
+                }
+                if (selectedSubGenres.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(selectedSubGenres) { subGenre ->
+                            GenreChipButton(
+                                text = subGenre,
+                                onClick = {
+                                    // 칩을 클릭해도 제거되도록 할 수 있음
+                                    selectedSubGenres = selectedSubGenres - subGenre
+                                },
+                                onCloseClick = {
+                                    // X 버튼 클릭시 해당 서브장르 제거
+                                    selectedSubGenres = selectedSubGenres - subGenre
+                                }
+                            )
+                        }
+                    }
                 }
 
 
@@ -181,8 +240,7 @@ fun FeedWriteScreen(
 private fun GroupMakeRoomScreenPreview() {
     ThipTheme {
         FeedWriteScreen(
-            onNavigateBack = { },
-            onGroupCreated = { }
+            onNavigateBack = { }
         )
     }
 }
