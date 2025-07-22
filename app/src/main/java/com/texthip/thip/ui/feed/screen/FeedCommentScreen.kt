@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.feed.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,12 +18,20 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -30,13 +39,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.buttons.OptionChipButton
 import com.texthip.thip.ui.common.forms.CommentTextField
 import com.texthip.thip.ui.common.header.ProfileBar
+import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.note.component.CommentItem
 import com.texthip.thip.ui.group.note.component.ReplyItem
+import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -57,6 +69,9 @@ fun FeedCommentScreen(
     onCommentInputChange: (String) -> Unit = {},
     onSendClick: () -> Unit = {}
 ) {
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+
     val commentInput = remember { mutableStateOf("") }
     val replyTo = remember { mutableStateOf<String?>(null) }
     val feed = remember { mutableStateOf(feedItem) }
@@ -95,15 +110,18 @@ fun FeedCommentScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .blur(if (showDialog) 10.dp else 0.dp)
     ) {
         DefaultTopAppBar(
             isRightIconVisible = true,
             isTitleVisible = false,
             onLeftClick = {},
-            onRightClick = {},
+            onRightClick = { isBottomSheetVisible = true },
         )
         LazyColumn(
-            modifier = modifier.fillMaxWidth().padding(top = 56.dp),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(top = 56.dp),
             contentPadding = PaddingValues(bottom = 20.dp)
         ) {
             item {
@@ -244,7 +262,7 @@ fun FeedCommentScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter),
             input = commentInput.value,
-            hint =stringResource(R.string.feed_reply_to, feedItem.userName),
+            hint = stringResource(R.string.feed_reply_to, feedItem.userName),
             onInputChange = {
                 commentInput.value = it
                 onCommentInputChange(it)
@@ -269,9 +287,10 @@ fun FeedCommentScreen(
                                 replyList = emptyList()
                             )
                         )
-                    }else {
+                    } else {
                         // 대댓글
-                        val parentIndex = commentList.indexOfFirst { it.nickName == replyTargetNickname }
+                        val parentIndex =
+                            commentList.indexOfFirst { it.nickName == replyTargetNickname }
                         if (parentIndex != -1) {
                             val parentComment = commentList[parentIndex]
                             val newReply = FeedReplyItem(
@@ -288,7 +307,8 @@ fun FeedCommentScreen(
                                 likeCount = 0
                             )
                             val updatedReplies = parentComment.replyList + newReply
-                            commentList[parentIndex] = parentComment.copy(replyList = updatedReplies)
+                            commentList[parentIndex] =
+                                parentComment.copy(replyList = updatedReplies)
                         }
                     }
                     commentInput.value = ""
@@ -301,7 +321,52 @@ fun FeedCommentScreen(
         )
 
     }
-
+    if (isBottomSheetVisible) {
+        MenuBottomSheet(
+            items = listOf(
+                MenuBottomSheetItem(
+                    text = stringResource(R.string.edit_feed),
+                    color = colors.White,
+                    onClick = { }
+                ),
+                MenuBottomSheetItem(
+                    text = stringResource(R.string.delete_feed),
+                    color = colors.Red,
+                    onClick = {
+                        isBottomSheetVisible = false
+                        showDialog = true
+                    }
+                )
+            ),
+            onDismiss = {
+                isBottomSheetVisible = false
+            }
+        )
+    }
+    if (showDialog) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(enabled = true, onClick = { showDialog = false })
+        ) {
+            Box(
+                modifier = Modifier.align(Alignment.Center)
+            ) {
+                DialogPopup(
+                    title = stringResource(R.string.delete_feed_dialog_title),
+                    description = stringResource(R.string.delete_feed_dialog_description),
+                    onConfirm = {
+                        showDialog = false
+                        isBottomSheetVisible = false
+                    },
+                    onCancel = {
+                        showDialog = false
+                        isBottomSheetVisible = false
+                    }
+                )
+            }
+        }
+    }
 }
 
 @Preview

@@ -279,4 +279,8 @@
     <string name="photo_count">%1$d / %2$d</string>
     <string name="selected_tags">선택된 태그</string>
     <string name="tag_count">%1$d / %2$d</string>
+    <string name="edit_feed">수정하기</string>
+    <string name="delete_feed">삭제하기</string>
+    <string name="delete_feed_dialog_title">이 피드를 삭제하시겠어요?</string>
+    <string name="delete_feed_dialog_description">삭제 후에는 되돌릴 수 없어요.</string>
 </resources>

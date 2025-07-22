@@ -33,11 +33,6 @@ import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
-@Composable
-fun getDisplayNameFor(index: Int): String {
-    val nicknames = listOf("aaaaaaaa", "bbbbbbb", "aaaaaaaaaaaa", "bbbbbbb", "aaaaa", "bbb","aaaaa")
-    return nicknames.getOrNull(index) ?: ""
-}
 
 @Composable
 fun MySubscribeBarlist(
@@ -65,6 +60,7 @@ fun MySubscribeBarlist(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
+                    modifier = Modifier.size(20.dp),
                     painter = painterResource(id = R.drawable.ic_group),
                     contentDescription = null,
                     tint = Color.Unspecified
