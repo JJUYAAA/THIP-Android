@@ -11,7 +11,7 @@
     <string name="hours_ago">%d시간 전</string>
 
     <!--   modal 컴포넌트    -->
-    <string name="condition_of_general_review">독서진행도 %d%%부터 총평을 작성할 수 있습니다.</string>
+    <string name="condition_of_general_review">독서 진행도 80%를 달성해야 총평을 작성할 수 있어요.</string>
     <string name="complete_comment">댓글 작성이 완료되었습니다.</string>
     <string name="action_view_comment">보러가기</string>
     <string name="introduction">소개</string>
@@ -51,9 +51,6 @@
     <string name="card_author">%1$s 저</string>
     <string name="record_book">기록장</string>
     <string name="vote_title">🔥모임방의 뜨거운 감자</string>
-
-    <!--    TextField 컴포넌트    -->
-    <string name="error_page_over">해당 도서는 %1$dp까지만 있습니다.</string>
 
     <!--    top app bar 컴포넌트    -->
     <string name="subscriber">님의 구독자</string>
@@ -128,8 +125,8 @@
     <string name="group_participant_string">참여</string>
     <string name="group_progress">"%1$s님의 진행도 "</string>
     <string name="group_search_placeholder">모임방 참여할 사람!</string>
-    <string name="group_room_screen_participant_count">%1$s</string>
     <string name="group_room_screen_participant_count_max"> / %1$s명</string>
+    <string name="group_room_screen_participant_count">%1$s</string>
     <string name="group_room_screen_end_date">%1$s일 남음</string>
     <string name="group_room_screen_participant">참여하기</string>
     <string name="group_room_screen_cancel">참여 취소하기</string>
@@ -153,6 +150,8 @@
     <string name="leave_room">방 나가기</string>
     <string name="report_room">방 신고하기</string>
     <string name="delete_room">방 삭제하기</string>
+
+    <!--    group note    -->
     <string name="tilde">~</string>
     <string name="page">p</string>
     <string name="group_record">그룹 기록</string>
@@ -179,6 +178,15 @@
     <string name="group_participant_cancel_popup">참여를 취소하시겠어요?</string>
     <string name="group_participant_cancel_comment">참여 취소 후 다시 참여할 수 있어요.</string>
     <string name="group_participant_cancel_alarm">모임방 참여가 취소되었어요! 다른 방을 찾아보세요.</string>
+    <string name="page_to_record">기록할 페이지</string>
+    <string name="general_review">총평</string>
+    <string name="all_range">전체범위</string>
+    <string name="error_page_over">전체페이지를 초과할 수 없어요.</string>
+    <string name="my_opinion_title">지금 읽은 그 부분, 어땠나요?</string>
+    <string name="my_opinion_placeholder">...한 생각이 들었어요.🤔</string>
+    <string name="vote_title_placeholder">투표 내용을 20자 이내로 입력하세요.</string>
+    <string name="vote_content_placeholder">항목을 20자 이내로 입력</string>
+    <string name="add_content">항목 추가</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>
