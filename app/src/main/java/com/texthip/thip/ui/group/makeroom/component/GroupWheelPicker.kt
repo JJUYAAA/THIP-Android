@@ -90,11 +90,12 @@ fun <T> GroupWheelPicker(
         }
     }
 
-    // 오프셋이 바뀔 때 마다 선택 아이템을 갱신
-    LaunchedEffect(animatableOffset.value) {
+    // 드래그 상태가 변경될 때만 선택 아이템 업데이트
+    LaunchedEffect(isDragging) {
         if (!isDragging && isScrollEnabled) {
+            // 드래그가 끝났을 때만 최종 값 업데이트
             val newSelectedIndex = offsetToIndex(animatableOffset.value)
-            if (items[newSelectedIndex] != selectedItem) {
+            if (newSelectedIndex in items.indices && items[newSelectedIndex] != selectedItem) {
                 onItemSelected(items[newSelectedIndex])
             }
         }
