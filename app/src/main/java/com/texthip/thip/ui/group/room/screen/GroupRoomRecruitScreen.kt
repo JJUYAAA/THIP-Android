@@ -331,11 +331,6 @@ fun GroupRoomRecruitScreen(
             GroupBottomButtonType.CANCEL -> stringResource(R.string.group_room_screen_cancel)
             GroupBottomButtonType.CLOSE -> stringResource(R.string.group_room_screen_end)
         }
-        val buttonColor = when (currentButtonType) {
-            GroupBottomButtonType.JOIN -> colors.Purple
-            GroupBottomButtonType.CANCEL -> colors.Purple
-            GroupBottomButtonType.CLOSE -> colors.Purple
-        }
 
         Button(
             onClick = {
@@ -375,7 +370,7 @@ fun GroupRoomRecruitScreen(
                 }
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = buttonColor
+                containerColor = colors.Purple
             ),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -401,7 +396,6 @@ fun GroupRoomRecruitScreen(
             )
         }
 
-        // 다이얼로그 팝업
         if (showDialog) {
             Box(
                 modifier = Modifier

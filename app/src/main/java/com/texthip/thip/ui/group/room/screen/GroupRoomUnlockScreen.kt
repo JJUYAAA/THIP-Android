@@ -45,7 +45,6 @@ fun GroupRoomUnlockScreen(
     val focusRequesters = remember { List(4) { FocusRequester() } }
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    // 비밀번호가 4자리 완성되면 자동으로 검증
     LaunchedEffect(password.toList()) {
         val fullPassword = password.joinToString("")
         if (fullPassword.length == 4 && password.all { it.length == 1 }) {
@@ -64,7 +63,6 @@ fun GroupRoomUnlockScreen(
         }
     }
 
-    // 화면 진입 시 키보드 자동 포커스
     LaunchedEffect(Unit) {
         focusRequesters[0].requestFocus()
         keyboardController?.show()
@@ -77,7 +75,6 @@ fun GroupRoomUnlockScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // 상단 앱바
             DefaultTopAppBar(
                 isRightIconVisible = false,
                 isTitleVisible = false,
