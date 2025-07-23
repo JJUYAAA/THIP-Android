@@ -63,14 +63,15 @@ fun GroupNoteScreen() {
     val filters = listOf("최신순", "인기순", "댓글 많은 순")
 
     val filteredItems = when (selectedTabIndex) {
-        0 -> mockGroupNoteItems.filter { !it.isWriter } // 다른 사람 기록
-        1 -> mockGroupNoteItems.filter { it.isWriter } // 내 기록
+        0 -> mockGroupNoteItems // 전체 기록
+        1 -> mockGroupNoteItems.filter { it.isWriter } // 내 기록만
         else -> emptyList()
     }
 
     var isCommentBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
     var selectedNoteRecord by remember { mutableStateOf<GroupNoteRecord?>(null) }
     var selectedNoteVote by remember { mutableStateOf<GroupNoteVote?>(null) }
+    var selectedItemForMenu by remember { mutableStateOf<Any?>(null) }
 
     var isMenuBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
 
@@ -117,92 +118,128 @@ fun GroupNoteScreen() {
                     onTabSelected = { selectedTabIndex = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp, bottom = 56.dp)
+                        .padding(top = 20.dp)
+                        .padding(bottom = if (selectedTabIndex == 0) 0.dp else 20.dp),
                 )
 
-
-                // 피드 리스트 영역
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 82.dp),
-                ) {
-                    item {
-                        Row(
-                            modifier = Modifier.padding(
-                                start = 20.dp,
-                                end = 20.dp,
-                                bottom = 16.dp,
-                                top = 20.dp
-                            ),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.ic_information),
-                                contentDescription = null,
-                                tint = colors.White,
-                            )
-                            Text(
-                                text = stringResource(R.string.group_note_info),
-                                modifier = Modifier.padding(start = 8.dp),
-                                color = colors.Grey01,
-                                style = typography.info_r400_s12
-                            )
-                        }
+                if (filteredItems.isEmpty()) {
+                    // 기록이 없을 때 중앙에 메시지
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 102.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(
+                            8.dp,
+                            alignment = Alignment.CenterVertically
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.no_records_yet),
+                            style = typography.smalltitle_sb600_s18_h24,
+                            color = colors.White
+                        )
+                        Text(
+                            text = when (selectedTabIndex) {
+                                0 -> stringResource(R.string.no_group_record_subtext)
+                                1 -> stringResource(R.string.no_my_record_subtext)
+                                else -> ""
+                            },
+                            style = typography.copy_r400_s14,
+                            color = colors.Grey
+                        )
                     }
-                    items(filteredItems) { item ->
-                        when (item) {
-                            is GroupNoteRecord -> TextCommentCard(
-                                data = item,
-                                onCommentClick = {
-                                    selectedNoteRecord = item
-                                    isCommentBottomSheetVisible = true
-                                },
-                                onLongPress = {
-                                    isMenuBottomSheetVisible = true
+                } else {
+                    // 피드 리스트 영역
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 82.dp)
+                            .padding(top = if (selectedTabIndex == 0) 56.dp else 0.dp),
+                    ) {
+                        if (selectedTabIndex == 0) {
+                            item {
+                                Row(
+                                    modifier = Modifier.padding(
+                                        start = 20.dp,
+                                        end = 20.dp,
+                                        bottom = 16.dp,
+                                        top = 20.dp
+                                    ),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                ) {
+                                    Icon(
+                                        painterResource(R.drawable.ic_information),
+                                        contentDescription = null,
+                                        tint = colors.White,
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.group_note_info),
+                                        modifier = Modifier.padding(start = 8.dp),
+                                        color = colors.Grey01,
+                                        style = typography.info_r400_s12
+                                    )
                                 }
-                            )
+                            }
+                        }
+                        items(filteredItems) { item ->
+                            when (item) {
+                                is GroupNoteRecord -> TextCommentCard(
+                                    data = item,
+                                    onCommentClick = {
+                                        selectedNoteRecord = item
+                                        isCommentBottomSheetVisible = true
+                                    },
+                                    onLongPress = {
+                                        selectedItemForMenu = item
+                                        isMenuBottomSheetVisible = true
+                                    }
+                                )
 
-                            is GroupNoteVote -> VoteCommentCard(
-                                data = item,
-                                onCommentClick = {
-                                    selectedNoteVote = item
-                                    isCommentBottomSheetVisible = true
-                                },
-                                onLongPress = {
-                                    isMenuBottomSheetVisible = true
-                                }
-                            )
+                                is GroupNoteVote -> VoteCommentCard(
+                                    data = item,
+                                    onCommentClick = {
+                                        selectedNoteVote = item
+                                        isCommentBottomSheetVisible = true
+                                    },
+                                    onLongPress = {
+                                        selectedItemForMenu = item
+                                        isMenuBottomSheetVisible = true
+                                    }
+                                )
+                            }
                         }
                     }
                 }
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 136.dp),
-            ) {
-                FilterButton(
+            if (selectedTabIndex == 0) {
+                Box(
                     modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = 20.dp),
-                    selectedOption = selectedFilter,
-                    options = filters,
-                    onOptionSelected = { selectedFilter = it }
-                )
+                        .fillMaxWidth()
+                        .padding(top = 136.dp),
+                ) {
+                    FilterButton(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(end = 20.dp),
+                        selectedOption = selectedFilter,
+                        options = filters,
+                        onOptionSelected = { selectedFilter = it }
+                    )
 
-                FilterHeaderSection(
-                    firstPage = firstPage,
-                    lastPage = lastPage,
-                    isTotalSelected = isTotalSelected,
-                    totalEnabled = totalEnabled,
-                    onFirstPageChange = { firstPage = it },
-                    onLastPageChange = { lastPage = it },
-                    onTotalToggle = { isTotalSelected = !isTotalSelected },
-                    onDisabledClick = { showToast = true }
-                )
+                    FilterHeaderSection(
+                        firstPage = firstPage,
+                        lastPage = lastPage,
+                        isTotalSelected = isTotalSelected,
+                        totalEnabled = totalEnabled,
+                        onFirstPageChange = { firstPage = it },
+                        onLastPageChange = { lastPage = it },
+                        onTotalToggle = { isTotalSelected = !isTotalSelected },
+                        onDisabledClick = { showToast = true }
+                    )
+                }
             }
 
             ExpandableFloatingButton(
@@ -236,8 +273,12 @@ fun GroupNoteScreen() {
         }
     }
 
-    if (isMenuBottomSheetVisible) {
-        val isWriter = selectedTabIndex == 1
+    if (isMenuBottomSheetVisible && selectedItemForMenu != null) {
+        val isWriter = when (val item = selectedItemForMenu) {
+            is GroupNoteRecord -> item.isWriter
+            is GroupNoteVote -> item.isWriter
+            else -> false
+        }
 
         val menuItems = if (isWriter) {
             listOf(
@@ -247,6 +288,7 @@ fun GroupNoteScreen() {
                     onClick = {
                         // TODO: 삭제 처리
                         isMenuBottomSheetVisible = false
+                        selectedItemForMenu = null
                     }
                 )
             )
@@ -258,6 +300,7 @@ fun GroupNoteScreen() {
                     onClick = {
                         // TODO: 신고 처리
                         isMenuBottomSheetVisible = false
+                        selectedItemForMenu = null
                     }
                 )
             )
@@ -265,7 +308,10 @@ fun GroupNoteScreen() {
 
         MenuBottomSheet(
             items = menuItems,
-            onDismiss = { isMenuBottomSheetVisible = false }
+            onDismiss = {
+                isMenuBottomSheetVisible = false
+                selectedItemForMenu = null
+            }
         )
     }
 }
