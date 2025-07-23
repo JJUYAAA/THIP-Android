@@ -1,15 +1,9 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.myroom.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,17 +15,17 @@ import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun GroupFilteredSearchResultScreen(
+fun GroupFilteredSearchResult(
     genres: List<String>,
     selectedGenreIndex: Int,
     onGenreSelect: (Int) -> Unit,
     resultCount: Int,
     roomList: List<GroupCardItemRoomData>
 ) {
-    val colors = ThipTheme.colors
-    val typography = ThipTheme.typography
     GenreChipRow(
         modifier = Modifier.width(20.dp),
         genres = genres,
@@ -57,8 +51,9 @@ fun GroupFilteredSearchResultScreen(
             .height(1.dp)
             .background(colors.DarkGrey02)
     )
+
     if (roomList.isEmpty()) {
-        GroupEmptyResultScreen(
+        GroupEmptyResult(
             mainText = stringResource(R.string.group_no_search_result1),
             subText = stringResource(R.string.group_no_search_result2)
         )
@@ -66,7 +61,7 @@ fun GroupFilteredSearchResultScreen(
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(roomList) { room ->
+            itemsIndexed(roomList) { index, room ->
                 CardItemRoomSmall(
                     title = room.title,
                     participants = room.participants,
@@ -76,13 +71,16 @@ fun GroupFilteredSearchResultScreen(
                     isWide = true,
                     isSecret = room.isSecret
                 )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colors.DarkGrey02)
-                )
+                if (index < roomList.size - 1) {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(colors.DarkGrey02)
+                    )
+                }
             }
         }
     }
 }
+

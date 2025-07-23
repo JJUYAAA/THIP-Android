@@ -28,12 +28,17 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.group.myroom.component.GroupEmptyResult
+import com.texthip.thip.ui.group.myroom.component.GroupFilteredSearchResult
+import com.texthip.thip.ui.group.myroom.component.GroupLiveSearchResult
+import com.texthip.thip.ui.group.myroom.component.GroupRecentSearch
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
 fun GroupSearchScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    roomList: List<GroupCardItemRoomData>
 ) {
     var recentSearches by rememberSaveable {
         mutableStateOf(listOf("user.02", "ㅇㅇ", "훽후ㅣㅣ", "검색4", "검색5", "검색6"))
@@ -41,23 +46,20 @@ fun GroupSearchScreen(
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearched by rememberSaveable { mutableStateOf(false) }
     var selectedGenreIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var selectedSortOption by rememberSaveable { mutableStateOf("마감임박순") }
+    var selectedSortOptionIndex by rememberSaveable { mutableIntStateOf(0) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    // 샘플 장르, 정렬 옵션
-    val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
-    val sortOptions = listOf("마감임박순", "최신순", "참여많은순")
-
-    // 샘플 모임방 리스트
-    val roomList = listOf(
-        GroupCardItemRoomData("aaa", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
-        GroupCardItemRoomData("bbb", 15, 20, true, 7, R.drawable.bookcover_sample, 1, true),
-        GroupCardItemRoomData("ccc", 10, 15, true, 5, R.drawable.bookcover_sample, 2, true),
-        GroupCardItemRoomData("ddd", 8, 12, false, 2, R.drawable.bookcover_sample, 3, true),
-        GroupCardItemRoomData("eee", 18, 25, true, 4, R.drawable.bookcover_sample, 4),
-        GroupCardItemRoomData("fff", 12, 20, true, 1, R.drawable.bookcover_sample, 0),
-        GroupCardItemRoomData("ggg", 10, 14, true, 6, R.drawable.bookcover_sample, 1),
+    val genres = listOf(
+        stringResource(R.string.literature),
+        stringResource(R.string.science_it),
+        stringResource(R.string.social_science),
+        stringResource(R.string.humanities),
+        stringResource(R.string.art)
+    )
+    val sortOptions = listOf(
+        stringResource(R.string.group_filter_deadline),
+        stringResource(R.string.group_filter_popular)
     )
 
     val liveFilteredRoomList by remember(searchText) {
@@ -69,7 +71,12 @@ fun GroupSearchScreen(
         }
     }
 
-    val filteredRoomList by remember(searchText, selectedGenreIndex, selectedSortOption, isSearched) {
+    val filteredRoomList by remember(
+        searchText,
+        selectedGenreIndex,
+        selectedSortOptionIndex,
+        isSearched
+    ) {
         derivedStateOf {
             if (!isSearched) emptyList()
             else {
@@ -77,10 +84,9 @@ fun GroupSearchScreen(
                     (searchText.isBlank() || room.title.contains(searchText, ignoreCase = true)) &&
                             (selectedGenreIndex == -1 || room.genreIndex == selectedGenreIndex)
                 }
-                when (selectedSortOption) {
-                    "마감임박순" -> filtered.sortedBy { it.endDate }
-                    "최신순" -> filtered // TODO: 생성일 기준 정렬 필요
-                    "참여많은순" -> filtered.sortedByDescending { it.participants }
+                when (selectedSortOptionIndex) {
+                    0 -> filtered.sortedBy { it.endDate }             // 마감임박순
+                    1 -> filtered.sortedByDescending { it.participants } // 인기순
                     else -> filtered
                 }
             }
@@ -132,14 +138,15 @@ fun GroupSearchScreen(
 
                 when {
                     searchText.isBlank() && !isSearched && recentSearches.isEmpty() -> {
-                        GroupRecentSearchScreen(
+                        GroupRecentSearch(
                             recentSearches = emptyList(),
                             onSearchClick = {},
                             onRemove = {}
                         )
                     }
+
                     searchText.isBlank() && !isSearched && recentSearches.isNotEmpty() -> {
-                        GroupRecentSearchScreen(
+                        GroupRecentSearch(
                             recentSearches = recentSearches,
                             onSearchClick = { keyword ->
                                 searchText = keyword
@@ -150,20 +157,22 @@ fun GroupSearchScreen(
                             }
                         )
                     }
+
                     searchText.isNotBlank() && !isSearched -> {
                         if (liveFilteredRoomList.isEmpty()) {
-                            GroupEmptyResultScreen(
+                            GroupEmptyResult(
                                 mainText = stringResource(R.string.group_no_search_result1),
                                 subText = stringResource(R.string.group_no_search_result2)
                             )
                         } else {
-                            GroupLiveSearchResultScreen(
+                            GroupLiveSearchResult(
                                 roomList = liveFilteredRoomList
                             )
                         }
                     }
+
                     isSearched -> {
-                        GroupFilteredSearchResultScreen(
+                        GroupFilteredSearchResult(
                             genres = genres,
                             selectedGenreIndex = selectedGenreIndex,
                             onGenreSelect = { selectedGenreIndex = it },
@@ -180,18 +189,31 @@ fun GroupSearchScreen(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 176.dp, end = 20.dp),
-                selectedOption = selectedSortOption,
+                selectedOption = sortOptions[selectedSortOptionIndex],
                 options = sortOptions,
-                onOptionSelected = { selectedSortOption = it }
+                onOptionSelected = { selected ->
+                    selectedSortOptionIndex = sortOptions.indexOf(selected)
+                }
             )
         }
     }
 }
 
+
 @Preview
 @Composable
 fun PreviewGroupSearchScreen() {
     ThipTheme {
-        GroupSearchScreen()
+        GroupSearchScreen(
+            roomList = listOf(
+                GroupCardItemRoomData("aaa", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
+                GroupCardItemRoomData("abc", 15, 20, true, 7, R.drawable.bookcover_sample, 1, true),
+                GroupCardItemRoomData("abcd", 10, 15, true, 5, R.drawable.bookcover_sample, 2, true),
+                GroupCardItemRoomData("abcde", 8, 12, false, 2, R.drawable.bookcover_sample, 3, true),
+                GroupCardItemRoomData("abcdef", 18, 25, true, 4, R.drawable.bookcover_sample, 4),
+                GroupCardItemRoomData("abcdefg", 12, 20, true, 1, R.drawable.bookcover_sample, 0),
+                GroupCardItemRoomData("abcdefgh", 10, 14, true, 6, R.drawable.bookcover_sample, 1)
+            )
+        )
     }
 }

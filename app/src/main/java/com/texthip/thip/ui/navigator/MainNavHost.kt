@@ -14,7 +14,7 @@ fun MainNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Routes.Feed.route) {
         composable(Routes.Feed.route) { FeedScreen(navController) }
         composable(Routes.Group.route) { GroupScreen(navController) }
-        composable(Routes.BookSearch.route) { BookSearchScreen(navController) }
+        composable(Routes.BookSearch.route) { BookSearchScreen(navController = navController) }
         composable(Routes.MyPage.route) {
             MyPageScreen(
                 navController,
