@@ -1,12 +1,4 @@
-<<<<<<<< HEAD:app/src/main/java/com/texthip/thip/ui/group/search/component/GroupRecentSearch.kt
-<<<<<<<< HEAD:app/src/main/java/com/texthip/thip/ui/group/search/component/GroupRecentSearch.kt
 package com.texthip.thip.ui.group.search.component
-========
-package com.texthip.thip.ui.group.myroom.component
->>>>>>>> 1d57638dfea70853ea5744e306675cd321e496c4:app/src/main/java/com/texthip/thip/ui/group/myroom/component/GroupRecentSearch.kt
-========
-package com.texthip.thip.ui.group.myroom.component
->>>>>>>> 1d57638dfea70853ea5744e306675cd321e496c4:app/src/main/java/com/texthip/thip/ui/group/myroom/component/GroupRecentSearch.kt
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
@@ -19,18 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipButton
-import com.texthip.thip.ui.theme.ThipTheme
-<<<<<<<< HEAD:app/src/main/java/com/texthip/thip/ui/group/search/component/GroupRecentSearch.kt
-========
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-<<<<<<<< HEAD:app/src/main/java/com/texthip/thip/ui/group/search/component/GroupRecentSearch.kt
->>>>>>>> 1d57638dfea70853ea5744e306675cd321e496c4:app/src/main/java/com/texthip/thip/ui/group/myroom/component/GroupRecentSearch.kt
-========
->>>>>>>> 1d57638dfea70853ea5744e306675cd321e496c4:app/src/main/java/com/texthip/thip/ui/group/myroom/component/GroupRecentSearch.kt
 
 @Composable
 fun GroupRecentSearch(

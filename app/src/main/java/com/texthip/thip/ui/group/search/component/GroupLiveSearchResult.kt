@@ -1,12 +1,4 @@
-<<<<<<<< HEAD:app/src/main/java/com/texthip/thip/ui/group/search/component/GroupLiveSearchResult.kt
-<<<<<<<< HEAD:app/src/main/java/com/texthip/thip/ui/group/search/component/GroupLiveSearchResult.kt
 package com.texthip.thip.ui.group.search.component
-========
-package com.texthip.thip.ui.group.myroom.component
->>>>>>>> 1d57638dfea70853ea5744e306675cd321e496c4:app/src/main/java/com/texthip/thip/ui/group/myroom/component/GroupLiveSearchResult.kt
-========
-package com.texthip.thip.ui.group.myroom.component
->>>>>>>> 1d57638dfea70853ea5744e306675cd321e496c4:app/src/main/java/com/texthip/thip/ui/group/myroom/component/GroupLiveSearchResult.kt
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

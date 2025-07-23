@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:app/src/main/java/com/texthip/thip/ui/group/search/component/GroupEmptyResult.kt
 package com.texthip.thip.ui.group.search.component
-========
-package com.texthip.thip.ui.group.myroom.component
->>>>>>>> 1d57638dfea70853ea5744e306675cd321e496c4:app/src/main/java/com/texthip/thip/ui/group/myroom/component/GroupEmptyResult.kt
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,10 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-<<<<<<<< HEAD:app/src/main/java/com/texthip/thip/ui/group/search/component/GroupEmptyResult.kt
-========
-import com.texthip.thip.ui.theme.ThipTheme
->>>>>>>> 1d57638dfea70853ea5744e306675cd321e496c4:app/src/main/java/com/texthip/thip/ui/group/myroom/component/GroupEmptyResult.kt
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 

@@ -1,12 +1,4 @@
-<<<<<<<< HEAD:app/src/main/java/com/texthip/thip/ui/group/search/component/GroupFilteredSearchResult.kt
-<<<<<<<< HEAD:app/src/main/java/com/texthip/thip/ui/group/search/component/GroupFilteredSearchResult.kt
 package com.texthip.thip.ui.group.search.component
-========
-package com.texthip.thip.ui.group.myroom.component
->>>>>>>> 1d57638dfea70853ea5744e306675cd321e496c4:app/src/main/java/com/texthip/thip/ui/group/myroom/component/GroupFilteredSearchResult.kt
-========
-package com.texthip.thip.ui.group.myroom.component
->>>>>>>> 1d57638dfea70853ea5744e306675cd321e496c4:app/src/main/java/com/texthip/thip/ui/group/myroom/component/GroupFilteredSearchResult.kt
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,7 +14,6 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
-import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
