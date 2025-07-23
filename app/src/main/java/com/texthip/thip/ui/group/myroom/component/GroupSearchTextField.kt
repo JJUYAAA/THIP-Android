@@ -38,12 +38,11 @@ fun GroupSearchTextField(
     onClick: (() -> Unit)? = null
 ) {
     val textStyle = typography.menu_r400_s14_h24.copy(
-        fontSize = 14.sp,
         lineHeight = 16.sp,
         color = colors.White
     )
     val shape = RoundedCornerShape(12.dp)
-    val backgroundColor = colors.DarkGrey50
+    val backgroundColor = colors.DarkGrey
     val cursorColor = colors.NeonGreen
 
     Box(

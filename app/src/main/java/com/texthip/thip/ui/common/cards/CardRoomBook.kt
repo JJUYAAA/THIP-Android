@@ -134,9 +134,9 @@ fun CardRoomBook(
                         )
 
                     }
-                    Spacer(modifier = Modifier.height(21.dp))
 
                     Text(
+                        modifier = Modifier.padding(top = 21.dp),
                         text = stringResource(R.string.card_book_explain),
                         color = colors.White,
                         style = typography.info_m500_s12,

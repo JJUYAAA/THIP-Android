@@ -175,8 +175,8 @@
     <string name="group_secret_screen_comment">비밀번호를 입력해주세요.</string>
     <string name="group_secret_screen_error_comment">비밀번호가 일치하지 않습니다.</string>
     <string name="group_participant_complete_alarm">모임방 참여가 완료되었어요!</string>
-    <string name="group_participant_cancel_popup">참여를 취소하시겠어요?</string>
-    <string name="group_participant_cancel_comment">참여 취소 후 다시 참여할 수 있어요.</string>
+    <string name="group_participant_cancel_popup">모임방 참여를 취소하시겠어요?</string>
+    <string name="group_participant_cancel_comment">지금 취소해도, 활동 시작 전에 다시 참여 가능해요.</string>
     <string name="group_participant_cancel_alarm">모임방 참여가 취소되었어요! 다른 방을 찾아보세요.</string>
     <string name="page_to_record">기록할 페이지</string>
     <string name="general_review">총평</string>

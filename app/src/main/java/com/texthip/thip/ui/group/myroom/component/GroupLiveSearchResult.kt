@@ -23,9 +23,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 fun GroupLiveSearchResult(
     roomList: List<GroupCardItemRoomData>
 ) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
+    LazyColumn {
         itemsIndexed(roomList) { index, room ->
             CardItemRoomSmall(
                 title = room.title,
@@ -39,6 +37,7 @@ fun GroupLiveSearchResult(
             if (index < roomList.size - 1) {
                 Spacer(
                     modifier = Modifier
+                        .padding(top = 12.dp, bottom = 12.dp)
                         .fillMaxWidth()
                         .height(1.dp)
                         .background(colors.DarkGrey02)
@@ -54,7 +53,6 @@ fun GroupLiveSearchResultPreview() {
     ThipTheme {
         Box(
             modifier = Modifier
-                .background(colors.Black)
                 .padding(16.dp)
         ) {
             GroupLiveSearchResult(

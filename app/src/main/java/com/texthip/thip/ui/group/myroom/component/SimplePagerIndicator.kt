@@ -46,7 +46,6 @@ fun SimplePagerIndicatorPreview() {
     ThipTheme {
         Box(
             modifier = Modifier
-                .background(colors.Black)
                 .padding(16.dp)
         ) {
             SimplePagerIndicator(

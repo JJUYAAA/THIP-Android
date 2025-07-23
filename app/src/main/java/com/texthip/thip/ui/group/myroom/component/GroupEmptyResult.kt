@@ -47,7 +47,6 @@ fun GroupEmptyResultPreview() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(colors.Black)
         ) {
             GroupEmptyResult(
                 mainText = "검색 결과가 없습니다",

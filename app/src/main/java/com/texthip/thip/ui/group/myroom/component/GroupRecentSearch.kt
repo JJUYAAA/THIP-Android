@@ -34,7 +34,7 @@ fun GroupRecentSearch(
         Text(
             text = stringResource(R.string.group_recent_search),
             color = colors.White,
-            style = typography.menu_r400_s14_h24
+            style = typography.smalltitle_sb600_s18_h24
         )
         Spacer(modifier = Modifier.height(16.dp))
         if (recentSearches.isEmpty()) {
@@ -67,7 +67,6 @@ fun GroupRecentSearchPreview() {
     ThipTheme {
         Box(
             modifier = Modifier
-                .background(colors.Black)
                 .padding(16.dp)
         ) {
             var searches by remember { 

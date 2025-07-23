@@ -49,8 +49,7 @@ fun GroupFilteredSearchResult(
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = stringResource(R.string.group_searched_room_size, resultCount),
@@ -72,9 +71,7 @@ fun GroupFilteredSearchResult(
                 subText = stringResource(R.string.group_no_search_result2)
             )
         } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+            LazyColumn {
                 itemsIndexed(roomList) { index, room ->
                     CardItemRoomSmall(
                         title = room.title,
@@ -88,6 +85,7 @@ fun GroupFilteredSearchResult(
                     if (index < roomList.size - 1) {
                         Spacer(
                             modifier = Modifier
+                                .padding(top = 12.dp, bottom = 12.dp)
                                 .fillMaxWidth()
                                 .height(1.dp)
                                 .background(colors.DarkGrey02)
@@ -105,13 +103,12 @@ fun GroupFilteredSearchResultPreview() {
     ThipTheme {
         Box(
             modifier = Modifier
-                .background(colors.Black)
                 .padding(16.dp)
         ) {
             var selectedGenre by remember { mutableIntStateOf(0) }
-            
+
             GroupFilteredSearchResult(
-                genres = listOf("전체", "소설", "에세이", "자기계발", "경제/경영", "과학"),
+                genres = listOf("문학", "과학•IT", "사회과학", "인문학", "예술"),
                 selectedGenreIndex = selectedGenre,
                 onGenreSelect = { selectedGenre = it },
                 resultCount = 3,
@@ -125,8 +122,7 @@ fun GroupFilteredSearchResultPreview() {
                         imageRes = R.drawable.bookcover_sample,
                         genreIndex = 1,
                         isSecret = false
-                    ),
-                    GroupCardItemRoomData(
+                    ), GroupCardItemRoomData(
                         title = "소설 읽기 모임",
                         participants = 8,
                         maxParticipants = 12,
@@ -152,7 +148,7 @@ fun GroupFilteredSearchResultEmptyPreview() {
                 .padding(16.dp)
         ) {
             var selectedGenre by remember { mutableIntStateOf(0) }
-            
+
             GroupFilteredSearchResult(
                 genres = listOf("전체", "소설", "에세이", "자기계발", "경제/경영", "과학"),
                 selectedGenreIndex = selectedGenre,

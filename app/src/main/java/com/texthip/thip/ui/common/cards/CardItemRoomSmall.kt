@@ -52,7 +52,7 @@ fun CardItemRoomSmall(
         modifier
             .width(232.dp)
     }
-    val bgColor = if (isWide) colors.Black else colors.DarkGrey50
+    val bgColor = if (isWide) colors.Black else colors.DarkGrey
 
     Card(
         modifier = cardModifier
@@ -100,8 +100,9 @@ fun CardItemRoomSmall(
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Spacer(modifier = Modifier.height(4.dp))
+
                     Text(
+                        modifier = Modifier.padding(top = 4.dp),
                         text = title,
                         color = colors.White,
                         style = if (isWide) typography.smalltitle_sb600_s18_h24 else typography.menu_sb600_s14_h24,
@@ -142,7 +143,7 @@ fun CardItemRoomSmall(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(7.dp))
 
                     endDate?.let {
                         Text(
