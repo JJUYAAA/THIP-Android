@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.booksearch.mock
+package com.texthip.thip.ui.search.mock
 
 import com.texthip.thip.R
 

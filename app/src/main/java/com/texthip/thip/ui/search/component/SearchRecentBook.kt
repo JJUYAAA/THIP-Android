@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.booksearch.component
+package com.texthip.thip.ui.search.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
-import com.texthip.thip.ui.booksearch.mock.BookData
+import com.texthip.thip.ui.search.mock.BookData
 import com.texthip.thip.ui.common.buttons.GenreChipButton
 import com.texthip.thip.ui.common.cards.CardBookSearch
 import com.texthip.thip.ui.theme.ThipTheme
@@ -28,7 +28,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun BookRecentSearch(
+fun SearchRecentBook(
     recentSearches: List<String>,
     popularBooks: List<BookData>,
     popularBookDate: String,
@@ -142,7 +142,7 @@ fun BookRecentSearch(
 @Composable
 fun PreviewBookRecentSearch() {
     ThipTheme {
-        BookRecentSearch(
+        SearchRecentBook(
             recentSearches = listOf("소설", "심리학", "철학", "역사", "과학", "에세이"),
             popularBooks = listOf(
                 BookData(
@@ -176,7 +176,7 @@ fun PreviewBookRecentSearch() {
 @Composable
 fun PreviewBookRecentSearch_EmptyPopular() {
     ThipTheme {
-        BookRecentSearch(
+        SearchRecentBook(
             recentSearches = emptyList(),
             popularBooks = emptyList(),
             popularBookDate = "01.12",

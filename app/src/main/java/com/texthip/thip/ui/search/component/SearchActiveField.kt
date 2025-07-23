@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.booksearch.component
+package com.texthip.thip.ui.search.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,12 +11,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.texthip.thip.ui.booksearch.mock.BookData
+import com.texthip.thip.ui.search.mock.BookData
 import com.texthip.thip.ui.common.cards.CardBookList
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
-fun BookLiveSearchResult(
+fun SearchActiveField(
     bookList: List<BookData>
 ) {
     LazyColumn(

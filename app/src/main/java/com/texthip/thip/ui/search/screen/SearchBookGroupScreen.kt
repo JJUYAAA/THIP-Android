@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.booksearch.screen
+package com.texthip.thip.ui.search.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +18,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -34,7 +33,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun BookRecruitingScreen(
+fun SearchBookGroupScreen(
     recruitingList: List<GroupCardItemRoomData>,
     onCardClick: (GroupCardItemRoomData) -> Unit = {},
     onCreateRoomClick: () -> Unit = {}
@@ -211,7 +210,7 @@ fun GroupRecruitingScreenPreview() {
             )
         )
 
-        BookRecruitingScreen(
+        SearchBookGroupScreen(
             recruitingList = dataList
         )
     }
@@ -221,7 +220,7 @@ fun GroupRecruitingScreenPreview() {
 @Composable
 fun GroupRecruitingScreenEmptyPreview() {
     ThipTheme {
-        BookRecruitingScreen(
+        SearchBookGroupScreen(
             recruitingList = emptyList()
         )
     }

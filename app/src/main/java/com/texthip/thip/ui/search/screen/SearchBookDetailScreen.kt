@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.booksearch.screen
+package com.texthip.thip.ui.search.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -37,7 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
-import com.texthip.thip.ui.booksearch.mock.DetailBookData
+import com.texthip.thip.ui.search.mock.DetailBookData
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
 import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.modal.InfoPopup
@@ -49,7 +49,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 import kotlinx.coroutines.delay
 
 @Composable
-fun BookDetailScreen(
+fun SearchBookDetailScreen(
     modifier: Modifier = Modifier,
     book: DetailBookData,
     feedList: List<String> = emptyList(),
@@ -325,7 +325,7 @@ fun BookDetailScreen(
 @Composable
 fun PreviewBookDetailScreen() {
     ThipTheme {
-        BookDetailScreen(
+        SearchBookDetailScreen(
             book = DetailBookData(
                 title = "채식주의자",
                 author = "한강",
