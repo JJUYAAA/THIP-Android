@@ -194,7 +194,10 @@ fun GroupMakeRoomScreen(
                         warningMessage = stringResource(R.string.group_private_warning_message),
                         maxLength = 4,
                         isNumberOnly = true,
-                        keyboardType = KeyboardType.NumberPassword
+                        keyboardType = KeyboardType.NumberPassword,
+                        showIcon = true,
+                        showLimit = false,
+                        containerColor = colors.DarkGrey02
                     )
                 }
 

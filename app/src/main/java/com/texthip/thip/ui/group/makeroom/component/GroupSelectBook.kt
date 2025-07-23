@@ -118,7 +118,7 @@ fun GroupSelectBook(
                 OptionChipButton(
                     text = stringResource(R.string.change),
                     onClick = onChangeBookClick,
-                    isSelected = true
+                    isSelected = false
                 )
             }
         }

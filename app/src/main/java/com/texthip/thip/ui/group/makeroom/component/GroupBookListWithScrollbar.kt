@@ -39,21 +39,23 @@ fun GroupBookListWithScrollbar(
                 .verticalScroll(scrollState)
                 .drawVerticalScrollbar(scrollState)
         ) {
-            books.forEach { book ->
+            books.forEachIndexed { index, book ->
                 CardBookSearch(
                     title = book.title,
                     imageRes = book.imageRes,
                     onClick = { onBookClick(book) }
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 6.dp)
-                    .height(1.dp)
-                    .background(color = colors.Grey02)
-                )
-                Spacer(modifier = Modifier.height(12.dp))
+                if (index < books.size - 1) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 6.dp)
+                        .height(1.dp)
+                        .background(color = colors.Grey02)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
         }
     }

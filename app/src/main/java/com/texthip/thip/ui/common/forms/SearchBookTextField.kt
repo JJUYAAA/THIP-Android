@@ -53,7 +53,7 @@ fun SearchBookTextField(
             .fillMaxWidth()
             .height(40.dp)
             .clip(shape)
-            .background(colors.DarkGrey),
+            .background(colors.DarkGrey02),
         contentAlignment = Alignment.CenterStart
     ) {
         Row(
@@ -89,7 +89,7 @@ fun SearchBookTextField(
 
             if (text.isNotEmpty()) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_x_circle_grey),
+                    painter = painterResource(id = R.drawable.ic_x_circle_grey02),
                     contentDescription = "Clear text",
                     modifier = Modifier
                         .clickable { onValueChange("") },
