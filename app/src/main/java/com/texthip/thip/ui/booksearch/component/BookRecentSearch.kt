@@ -40,7 +40,7 @@ fun BookRecentSearch(
         Text(
             text = stringResource(R.string.group_recent_search),
             color = colors.White,
-            style = typography.menu_r400_s14_h24
+            style = typography.smalltitle_sb600_s18_h24
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -65,17 +65,18 @@ fun BookRecentSearch(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(32.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .padding(top = 32.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = stringResource(R.string.book_popular_search),
                 color = colors.White,
-                style = typography.menu_r400_s14_h24
+                style = typography.smalltitle_sb600_s18_h24
             )
             Text(
                 text = stringResource(R.string.book_search_date, popularBookDate),
@@ -87,7 +88,7 @@ fun BookRecentSearch(
 
         Box(modifier = Modifier
             .fillMaxWidth()
-            .weight(1f, fill = true)
+            .weight(1f)
         ) {
             if (popularBooks.isEmpty()) {
                 Column(
@@ -178,7 +179,7 @@ fun PreviewBookRecentSearch_EmptyPopular() {
         BookRecentSearch(
             recentSearches = emptyList(),
             popularBooks = emptyList(),
-            popularBookDate = "01.12.",
+            popularBookDate = "01.12",
             onSearchClick = {},
             onRemove = {},
             onBookClick = {}

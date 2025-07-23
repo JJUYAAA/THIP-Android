@@ -139,8 +139,6 @@ fun BookDetailScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
                 // 상세 정보 영역
                 Column(
                     modifier = Modifier
@@ -162,21 +160,21 @@ fun BookDetailScreen(
                             book.publisher
                         ),
                         color = colors.Grey,
-                        style = typography.copy_r400_s12_h20
+                        style = typography.menu_sb600_s12_h20
                     )
-                    Spacer(modifier = Modifier.height(32.dp))
 
                     Column(
                         modifier = Modifier
+                            .padding(top = 33.dp)
                             .fillMaxWidth()
                             .clickable { isIntroductionPopupVisible = true }
                     ) {
                         Text(
                             text = stringResource(R.string.search_book_comment),
                             color = colors.White,
-                            style = typography.menu_r400_s14_h24,
+                            style = typography.menu_sb600_s14_h24,
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(5.dp))
 
                         Text(
                             text = book.description,

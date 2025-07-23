@@ -55,6 +55,7 @@ fun BookRecruitingScreen(
                     .background(colors.Black)
                     .fillMaxSize()
                     .padding(horizontal = 20.dp)
+                    .padding(top = 16.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
