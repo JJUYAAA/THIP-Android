@@ -106,31 +106,33 @@ fun GroupRoomChatScreen() {
             )
 
             if (messages.isEmpty()) {
-                Column(
+                Box(
                     modifier = Modifier
+                        .weight(1f)
                         .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(
-                        8.dp,
-                        alignment = Alignment.CenterVertically
-                    )
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = stringResource(R.string.group_room_no_chat_title),
-                        style = typography.smalltitle_sb600_s18_h24,
-                        color = colors.White
-                    )
-                    Text(
-                        text = stringResource(R.string.group_room_no_chat_content),
-                        style = typography.copy_r400_s14,
-                        color = colors.Grey
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.group_room_no_chat_title),
+                            style = typography.smalltitle_sb600_s18_h24,
+                            color = colors.White
+                        )
+                        Text(
+                            text = stringResource(R.string.group_room_no_chat_content),
+                            style = typography.copy_r400_s14,
+                            color = colors.Grey
+                        )
+                    }
                 }
             } else {
                 LazyColumn(
                     reverseLayout = true,
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                    verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.Bottom)
                 ) {
                     itemsIndexed(messages) { index, message ->
                         val isNewDate = when {
