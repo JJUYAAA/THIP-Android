@@ -64,7 +64,22 @@ fun GroupRoomChatScreen() {
             "공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다.",
             isMine = false
         ),
+        GroupRoomChatData(
+            null,
+            "user.01",
+            "2024.04.27",
+            "공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다.",
+            isMine = true
+        ),
+        GroupRoomChatData(
+            null,
+            "user.01",
+            "2024.04.27",
+            "공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다.",
+            isMine = true
+        ),
     ).sortedByDescending { it.date }
+//    val messages = emptyList<GroupRoomChatData>()
 
     var input by remember { mutableStateOf("") }
     var replyTo by remember { mutableStateOf<String?>(null) }
@@ -91,23 +106,26 @@ fun GroupRoomChatScreen() {
             )
 
             if (messages.isEmpty()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.group_room_no_chat_title),
-                            style = typography.smalltitle_sb600_s18_h24,
-                            color = colors.White
-                        )
-                        Text(
-                            text = stringResource(R.string.group_room_no_chat_content),
-                            style = typography.copy_r400_s14,
-                            color = colors.Grey
-                        )
-                    }
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(
+                        8.dp,
+                        alignment = Alignment.CenterVertically
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.group_room_no_chat_title),
+                        style = typography.smalltitle_sb600_s18_h24,
+                        color = colors.White
+                    )
+                    Text(
+                        text = stringResource(R.string.group_room_no_chat_content),
+                        style = typography.copy_r400_s14,
+                        color = colors.Grey
+                    )
+                }
             } else {
                 LazyColumn(
                     reverseLayout = true,
@@ -116,8 +134,8 @@ fun GroupRoomChatScreen() {
                 ) {
                     itemsIndexed(messages) { index, message ->
                         val isNewDate = when {
-                            index == 0 -> true
-                            messages[index - 1].date != message.date -> true
+                            index == messages.lastIndex -> true
+                            messages[index + 1].date != message.date -> true
                             else -> false
                         }
                         val isBottomItem = index == 0
@@ -148,6 +166,7 @@ fun GroupRoomChatScreen() {
                     }
                 }
             }
+
             CommentTextField(
                 input = input,
                 hint = stringResource(R.string.group_room_chat_hint),
