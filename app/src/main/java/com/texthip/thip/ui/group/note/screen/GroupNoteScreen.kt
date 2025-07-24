@@ -46,7 +46,6 @@ import com.texthip.thip.ui.group.note.component.TextCommentCard
 import com.texthip.thip.ui.group.note.component.VoteCommentCard
 import com.texthip.thip.ui.group.note.mock.GroupNoteRecord
 import com.texthip.thip.ui.group.note.mock.GroupNoteVote
-import com.texthip.thip.ui.group.note.mock.mockComment
 import com.texthip.thip.ui.group.note.mock.mockGroupNoteItems
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.theme.ThipTheme
@@ -278,20 +277,21 @@ fun GroupNoteScreen() {
                 )
             )
         }
+    }
 
-        if (isCommentBottomSheetVisible && (selectedNoteRecord != null || selectedNoteVote != null)) {
-            CommentBottomSheet(
-                commentResponse = listOf(mockComment, mockComment, mockComment),
-                onDismiss = {
-                    isCommentBottomSheetVisible = false
-                    selectedNoteRecord = null
-                    selectedNoteVote = null
-                },
-                onSendReply = { replyText, commentId, replyTo ->
-                    // 댓글 전송 로직 구현
-                }
-            )
-        }
+    if (isCommentBottomSheetVisible && (selectedNoteRecord != null || selectedNoteVote != null)) {
+        CommentBottomSheet(
+//            commentResponse = listOf(mockComment, mockComment, mockComment),
+            commentResponse = emptyList(),
+            onDismiss = {
+                isCommentBottomSheetVisible = false
+                selectedNoteRecord = null
+                selectedNoteVote = null
+            },
+            onSendReply = { replyText, commentId, replyTo ->
+                // 댓글 전송 로직 구현
+            }
+        )
     }
 
     if (isMenuBottomSheetVisible && selectedItemForMenu != null) {
