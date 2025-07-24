@@ -22,6 +22,7 @@ import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
 fun CommentList(
+    modifier: Modifier = Modifier,
     commentList: List<CommentItem>,
     onSendReply: (String, Int?, String?) -> Unit,
     onReplyClick: (ReplyItem) -> Unit
@@ -29,7 +30,7 @@ fun CommentList(
     val scrollState = rememberScrollState()
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(482.dp)
     ) {

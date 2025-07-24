@@ -2,6 +2,7 @@ package com.texthip.thip.ui.group.note.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,63 +37,75 @@ fun CommentBottomSheet(
     var replyingTo by remember { mutableStateOf<ReplyItem?>(null) }
 
     CustomBottomSheet(onDismiss = onDismiss) {
-        Text(
-            text = stringResource(R.string.comments),
-            style = typography.title_b700_s20_h24,
-            color = colors.White,
-            modifier = Modifier.padding(start = 20.dp, top = 20.dp, end = 20.dp)
-        )
-
-        if (commentResponse.isEmpty()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(600.dp)
+        ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(502.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+                    .weight(1f)
+                    .fillMaxHeight(0.8f)
             ) {
                 Text(
-                    text = stringResource(R.string.no_comments_yet),
-                    style = typography.smalltitle_sb600_s18_h24,
-                    color = colors.White
+                    text = stringResource(R.string.comments),
+                    style = typography.title_b700_s20_h24,
+                    color = colors.White,
+                    modifier = Modifier.padding(start = 20.dp, top = 20.dp, end = 20.dp)
                 )
-                Text(
-                    text = stringResource(R.string.no_comment_subtext),
-                    style = typography.copy_r400_s14,
-                    color = colors.Grey,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
-        } else {
-            CommentList(
-                commentList = commentResponse,
-                onSendReply = { replyText, commentId, replyTo ->
-                    onSendReply(replyText, commentId, replyTo)
-                    inputText = ""
-                },
-                onReplyClick = { replyItem ->
-                    replyingTo = replyItem
+
+                if (commentResponse.isEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 210.dp), // TODO: 유동적으로 수정 가능할수도
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.no_comments_yet),
+                            style = typography.smalltitle_sb600_s18_h24,
+                            color = colors.White
+                        )
+                        Text(
+                            text = stringResource(R.string.no_comment_subtext),
+                            style = typography.copy_r400_s14,
+                            color = colors.Grey,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                } else {
+                    CommentList(
+                        commentList = commentResponse,
+                        onSendReply = { replyText, commentId, replyTo ->
+                            onSendReply(replyText, commentId, replyTo)
+                            inputText = ""
+                        },
+                        onReplyClick = { replyItem ->
+                            replyingTo = replyItem
+                        }
+                    )
                 }
+            }
+
+            CommentTextField(
+                modifier = Modifier.fillMaxWidth(),
+                hint = stringResource(R.string.reply_to),
+                input = inputText,
+                onInputChange = { inputText = it },
+                onSendClick = {
+                    onSendReply(
+                        inputText,
+                        replyingTo?.replyId,
+                        replyingTo?.nickName
+                    )
+                    inputText = ""
+                    replyingTo = null
+                },
+                replyTo = replyingTo?.nickName,
+                onCancelReply = { replyingTo = null }
             )
         }
-
-        // 입력창
-        CommentTextField(
-            hint = stringResource(R.string.reply_to),
-            input = inputText,
-            onInputChange = { inputText = it },
-            onSendClick = {
-                onSendReply(
-                    inputText,
-                    replyingTo?.replyId,
-                    replyingTo?.nickName
-                )
-                inputText = ""
-                replyingTo = null
-            },
-            replyTo = replyingTo?.nickName,
-            onCancelReply = { replyingTo = null }
-        )
     }
 }
 
