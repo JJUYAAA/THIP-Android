@@ -1,9 +1,10 @@
-package com.texthip.thip.ui.navigator.data
+package com.texthip.thip.ui.navigator.routes
 
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Routes {
+    // 메인 탭 Routes
     @Serializable
     data object Feed : Routes()
     
@@ -15,9 +16,4 @@ sealed class Routes {
     
     @Serializable
     data object MyPage : Routes()
-    
-    // Group 관련 하위 화면들
-    @Serializable
-    data object GroupMakeRoom : Routes()
-    
 }
