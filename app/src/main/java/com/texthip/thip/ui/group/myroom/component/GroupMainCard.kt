@@ -18,12 +18,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -31,8 +27,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.texthip.thip.R
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.theme.ThipTheme
@@ -113,7 +111,6 @@ fun GroupMainCard(
                                 color = colors.Grey02,
                                 style = typography.menu_sb600_s12,
                             )
-                            Spacer(Modifier.width(2.dp))
                             Text(
                                 text = stringResource(R.string.group_participant_string),
                                 color = colors.Grey02,
@@ -131,9 +128,14 @@ fun GroupMainCard(
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            text = "${data.progress}%",
+                            text = "${data.progress}",
                             color = colors.Purple,
-                            style = typography.view_m500_s14,
+                            style = typography.smalltitle_sb600_s16_h20
+                        )
+                        Text(
+                            text = "%",
+                            color = colors.Purple,
+                            style = typography.menu_sb600_s12,
                         )
                     }
                     Spacer(Modifier.height(10.dp))

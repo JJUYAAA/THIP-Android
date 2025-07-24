@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.booksearch.screen
+package com.texthip.thip.ui.search.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,17 +24,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.texthip.thip.R
-import com.texthip.thip.ui.booksearch.component.BookEmptyResult
-import com.texthip.thip.ui.booksearch.component.BookFilteredSearchResult
-import com.texthip.thip.ui.booksearch.component.BookLiveSearchResult
-import com.texthip.thip.ui.booksearch.component.BookRecentSearch
-import com.texthip.thip.ui.booksearch.mock.BookData
+import com.texthip.thip.ui.search.component.SearchEmptyResult
+import com.texthip.thip.ui.search.component.SearchBookFilteredResult
+import com.texthip.thip.ui.search.component.SearchActiveField
+import com.texthip.thip.ui.search.component.SearchRecentBook
+import com.texthip.thip.ui.search.mock.BookData
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.LeftNameTopAppBar
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
-fun BookSearchScreen(
+fun SearchBookScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController? = null,
     bookList: List<BookData> = emptyList(),
@@ -116,7 +116,7 @@ fun BookSearchScreen(
 
                 when {
                     searchText.isBlank() && !isSearched -> {
-                        BookRecentSearch(
+                        SearchRecentBook(
                             recentSearches = recentSearches,
                             popularBooks = popularBooks,
                             popularBookDate = "01.12", // TODO: 서버로 날짜를 받아 오게 수정
@@ -135,20 +135,20 @@ fun BookSearchScreen(
 
                     searchText.isNotBlank() && !isSearched -> {
                         if (liveFilteredBookList.isEmpty()) {
-                            BookEmptyResult(
+                            SearchEmptyResult(
                                 mainText = stringResource(R.string.book_no_search_result1),
                                 subText = stringResource(R.string.book_no_search_result2),
                                 onRequestBook = { /*책 요청 처리*/ }
                             )
                         } else {
-                            BookLiveSearchResult(
+                            SearchActiveField(
                                 bookList = liveFilteredBookList
                             )
                         }
                     }
 
                     isSearched -> {
-                        BookFilteredSearchResult(
+                        SearchBookFilteredResult(
                             resultCount = filteredBookList.size,
                             bookList = filteredBookList,
                         )
@@ -164,7 +164,7 @@ fun BookSearchScreen(
 @Composable
 fun PreviewBookSearchScreen_Default() {
     ThipTheme {
-        BookSearchScreen(
+        SearchBookScreen(
             bookList = listOf(
                 BookData("aaa", "리처드 도킨스", "을유문화사", R.drawable.bookcover_sample),
                 BookData("abc", "마틴 셀리그만", "물푸레", R.drawable.bookcover_sample),
@@ -189,7 +189,7 @@ fun PreviewBookSearchScreen_Default() {
 @Composable
 fun PreviewBookSearchScreen_EmptyPopular() {
     ThipTheme {
-        BookSearchScreen(
+        SearchBookScreen(
             bookList = listOf(
                 BookData("aaa", "리처드 도킨스", "을유문화사", R.drawable.bookcover_sample),
                 BookData("abc", "마틴 셀리그만", "물푸레", R.drawable.bookcover_sample),

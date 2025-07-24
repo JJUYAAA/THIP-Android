@@ -90,13 +90,12 @@ fun GroupRoomUnlockScreen(
                 Spacer(modifier = Modifier.height(160.dp))
 
                 Text(
+                    modifier = Modifier.padding(bottom = 32.dp),
                     text = stringResource(R.string.group_secret_screen_comment),
                     style = typography.smalltitle_sb600_s18_h24,
                     color = colors.White,
                     textAlign = TextAlign.Center
                 )
-
-                Spacer(modifier = Modifier.height(32.dp))
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),

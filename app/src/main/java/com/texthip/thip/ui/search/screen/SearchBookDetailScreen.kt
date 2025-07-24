@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.booksearch.screen
+package com.texthip.thip.ui.search.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -37,7 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
-import com.texthip.thip.ui.booksearch.mock.DetailBookData
+import com.texthip.thip.ui.search.mock.DetailBookData
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
 import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.modal.InfoPopup
@@ -49,7 +49,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 import kotlinx.coroutines.delay
 
 @Composable
-fun BookDetailScreen(
+fun SearchBookDetailScreen(
     modifier: Modifier = Modifier,
     book: DetailBookData,
     feedList: List<String> = emptyList(),
@@ -139,8 +139,6 @@ fun BookDetailScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
                 // 상세 정보 영역
                 Column(
                     modifier = Modifier
@@ -162,21 +160,21 @@ fun BookDetailScreen(
                             book.publisher
                         ),
                         color = colors.Grey,
-                        style = typography.copy_r400_s12_h20
+                        style = typography.menu_sb600_s12_h20
                     )
-                    Spacer(modifier = Modifier.height(32.dp))
 
                     Column(
                         modifier = Modifier
+                            .padding(top = 33.dp)
                             .fillMaxWidth()
                             .clickable { isIntroductionPopupVisible = true }
                     ) {
                         Text(
                             text = stringResource(R.string.search_book_comment),
                             color = colors.White,
-                            style = typography.menu_r400_s14_h24,
+                            style = typography.menu_sb600_s14_h24,
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(5.dp))
 
                         Text(
                             text = book.description,
@@ -327,7 +325,7 @@ fun BookDetailScreen(
 @Composable
 fun PreviewBookDetailScreen() {
     ThipTheme {
-        BookDetailScreen(
+        SearchBookDetailScreen(
             book = DetailBookData(
                 title = "채식주의자",
                 author = "한강",

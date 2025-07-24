@@ -1,7 +1,13 @@
-package com.texthip.thip.ui.booksearch.component
+package com.texthip.thip.ui.search.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
@@ -12,14 +18,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
-import com.texthip.thip.ui.booksearch.mock.BookData
+import com.texthip.thip.ui.search.mock.BookData
 import com.texthip.thip.ui.common.cards.CardBookList
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun BookFilteredSearchResult(
+fun SearchBookFilteredResult(
     resultCount: Int,
     bookList: List<BookData>
 ) {
@@ -43,7 +49,7 @@ fun BookFilteredSearchResult(
         )
 
         if (bookList.isEmpty()) {
-            BookEmptyResult(
+            SearchEmptyResult(
                 mainText = stringResource(R.string.book_no_search_result1),
                 subText = stringResource(R.string.book_no_search_result2),
                 onRequestBook = { /*책 요청 처리*/ }
@@ -78,7 +84,7 @@ fun BookFilteredSearchResult(
 @Composable
 fun PreviewBookFilteredSearchResult() {
     ThipTheme {
-        BookFilteredSearchResult(
+        SearchBookFilteredResult(
             resultCount = 3,
             bookList = listOf(
                 BookData(

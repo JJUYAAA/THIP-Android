@@ -19,6 +19,7 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun EmptyBookSheetContent(
@@ -30,16 +31,16 @@ fun EmptyBookSheetContent(
             .padding(bottom = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_notification),
-            contentDescription = null,
-            tint = colors.Grey02
-        )
-        Spacer(Modifier.height(12.dp))
         Text(
-            text = stringResource(R.string.group_register_book_comment),
-            color = ThipTheme.colors.Grey02,
-            style = ThipTheme.typography.copy_m500_s14_h20
+            text = stringResource(R.string.group_register_book_comment_1),
+            color = colors.Grey,
+            style = typography.copy_m500_s14_h20
+        )
+
+        Text(
+            text = stringResource(R.string.group_register_book_comment_2),
+            color = colors.Grey,
+            style = typography.copy_m500_s14_h20
         )
         Spacer(Modifier.height(24.dp))
 

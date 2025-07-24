@@ -4,7 +4,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import com.texthip.thip.ui.booksearch.screen.BookSearchScreen
+import com.texthip.thip.ui.search.screen.SearchBookScreen
 import com.texthip.thip.ui.feed.screen.FeedScreen
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.mypage.screen.MyPageScreen
@@ -14,7 +14,7 @@ fun MainNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Routes.Feed.route) {
         composable(Routes.Feed.route) { FeedScreen(navController) }
         composable(Routes.Group.route) { GroupScreen(navController) }
-        composable(Routes.BookSearch.route) { BookSearchScreen(navController = navController) }
+        composable(Routes.BookSearch.route) { SearchBookScreen(navController = navController) }
         composable(Routes.MyPage.route) {
             MyPageScreen(
                 navController,
