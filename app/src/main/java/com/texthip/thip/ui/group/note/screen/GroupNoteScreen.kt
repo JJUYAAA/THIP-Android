@@ -132,7 +132,6 @@ fun GroupNoteScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp)
-                        .padding(bottom = if (selectedTabIndex == 0) 0.dp else 20.dp),
                 )
 
                 if (filteredItems.isEmpty()) {
@@ -164,16 +163,11 @@ fun GroupNoteScreen() {
                     }
                 } else {
                     // 피드 리스트 영역
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 20.dp),
-                        verticalArrangement = Arrangement.spacedBy(32.dp)
-                    ) {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
                         if (selectedTabIndex == 0) {
                             item {
                                 Row(
-                                    modifier = Modifier.padding(top = 76.dp),
+                                    modifier = Modifier.padding(top = 76.dp, start = 20.dp, end = 20.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                                 ) {

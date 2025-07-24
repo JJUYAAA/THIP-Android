@@ -41,8 +41,8 @@ fun TextCommentCard(
                 if (!isLocked) {
                     detectTapGestures(onLongPress = { onLongPress() })
                 }
-            },
-//            .padding(vertical = 16.dp, horizontal = 20.dp),
+            }
+            .padding(start = 20.dp, end = 20.dp, top = 32.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ProfileBar(
