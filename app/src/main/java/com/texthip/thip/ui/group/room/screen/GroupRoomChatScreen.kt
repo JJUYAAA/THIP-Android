@@ -28,58 +28,14 @@ import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.common.view.CountingBar
 import com.texthip.thip.ui.group.room.mock.GroupRoomChatData
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
+import com.texthip.thip.ui.group.room.mock.mockMessages
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupRoomChatScreen() {
-    val messages = listOf(
-        GroupRoomChatData(
-            null,
-            "user.01",
-            "2024.04.29",
-            "공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다.",
-            isMine = true
-        ),
-        GroupRoomChatData(
-            null,
-            "user.01",
-            "2024.04.28",
-            "공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다.",
-            isMine = true
-        ),
-        GroupRoomChatData(null, "user.01", "2024.04.30", "공백 포함 글자 입력입니다.", isMine = false),
-        GroupRoomChatData(
-            null,
-            "user.01",
-            "2024.04.30",
-            "공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다.",
-            isMine = true
-        ),
-        GroupRoomChatData(
-            null,
-            "user.01",
-            "2024.04.30",
-            "공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다.",
-            isMine = false
-        ),
-        GroupRoomChatData(
-            null,
-            "user.01",
-            "2024.04.27",
-            "공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다.",
-            isMine = true
-        ),
-        GroupRoomChatData(
-            null,
-            "user.01",
-            "2024.04.27",
-            "공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다. 공백 포함 글자 입력입니다.",
-            isMine = true
-        ),
-    ).sortedByDescending { it.date }
-//    val messages = emptyList<GroupRoomChatData>()
+//    val mockMessages = emptyList<GroupRoomChatData>()
 
     var input by remember { mutableStateOf("") }
     var replyTo by remember { mutableStateOf<String?>(null) }
@@ -105,7 +61,7 @@ fun GroupRoomChatScreen() {
                 onLeftClick = {},
             )
 
-            if (messages.isEmpty()) {
+            if (mockMessages.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -134,10 +90,10 @@ fun GroupRoomChatScreen() {
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.Bottom)
                 ) {
-                    itemsIndexed(messages) { index, message ->
+                    itemsIndexed(mockMessages) { index, message ->
                         val isNewDate = when {
-                            index == messages.lastIndex -> true
-                            messages[index + 1].date != message.date -> true
+                            index == mockMessages.lastIndex -> true
+                            mockMessages[index + 1].date != message.date -> true
                             else -> false
                         }
                         val isBottomItem = index == 0
