@@ -38,6 +38,7 @@ import com.texthip.thip.ui.common.buttons.ExpandableFloatingButton
 import com.texthip.thip.ui.common.buttons.FabMenuItem
 import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.header.HeaderMenuBarTab
+import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.note.component.CommentBottomSheet
@@ -80,6 +81,8 @@ fun GroupNoteScreen() {
 
     var isMenuBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
 
+    var isPinDialogVisible by remember { mutableStateOf(false) }
+
     var showToast by remember { mutableStateOf(false) }
 
     // 토스트 3초
@@ -91,7 +94,7 @@ fun GroupNoteScreen() {
     }
 
     Box(
-        if (isCommentBottomSheetVisible || isMenuBottomSheetVisible) {
+        if (isCommentBottomSheetVisible || isMenuBottomSheetVisible || isPinDialogVisible) {
             Modifier
                 .fillMaxSize()
                 .blur(5.dp)
@@ -206,6 +209,9 @@ fun GroupNoteScreen() {
                                     onLongPress = {
                                         selectedItemForMenu = item
                                         isMenuBottomSheetVisible = true
+                                    },
+                                    onPinClick = {
+                                        isPinDialogVisible = true
                                     }
                                 )
 
@@ -219,6 +225,9 @@ fun GroupNoteScreen() {
                                     onLongPress = {
                                         selectedItemForMenu = item
                                         isMenuBottomSheetVisible = true
+                                    },
+                                    onPinClick = {
+                                        isPinDialogVisible = true
                                     }
                                 )
                             }
@@ -329,6 +338,26 @@ fun GroupNoteScreen() {
                 selectedItemForMenu = null
             }
         )
+    }
+
+    if (isPinDialogVisible) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            DialogPopup(
+                title = stringResource(R.string.pin_modal_title),
+                description = stringResource(R.string.pin_modal_content),
+                onConfirm = {
+                    // 핀하기 로직
+                    isPinDialogVisible = false
+                },
+                onCancel = {
+                    isPinDialogVisible = false
+                }
+            )
+        }
     }
 }
 

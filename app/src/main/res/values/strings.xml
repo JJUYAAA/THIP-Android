@@ -203,6 +203,8 @@
     <string name="no_my_record_subtext">나의 첫번째 기록을 남겨보세요</string>
     <string name="no_comments_yet">아직 댓글이 없어요.</string>
     <string name="no_comment_subtext">첫번째 댓글을 남겨보세요</string>
+    <string name="pin_modal_title">이 기록을 피드에 핀할까요?</string>
+    <string name="pin_modal_content">핀하면 내 피드에 글을 옮길 수 있어요.</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>

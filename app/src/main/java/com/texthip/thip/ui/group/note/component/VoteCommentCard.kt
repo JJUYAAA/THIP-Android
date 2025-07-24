@@ -31,7 +31,8 @@ fun VoteCommentCard(
     modifier: Modifier = Modifier,
     data: GroupNoteVote,
     onCommentClick: () -> Unit = {},
-    onLongPress: () -> Unit = {}
+    onLongPress: () -> Unit = {},
+    onPinClick: () -> Unit = {}
 ) {
     var isLiked by remember { mutableStateOf(data.isLiked) }
     var selected by remember { mutableStateOf<Int?>(null) }
@@ -39,6 +40,7 @@ fun VoteCommentCard(
     val hasVoted = voteItems.any { it.isVoted }
 
     val isLocked = data.isLocked
+    val isWriter = data.isWriter
 
     Column(
         modifier = modifier
@@ -91,12 +93,16 @@ fun VoteCommentCard(
             isLiked = isLiked,
             likeCount = data.likeCount,
             commentCount = data.commentCount,
+            isPinVisible = isWriter,
             onLikeClick = {
                 if (!isLocked) isLiked = !isLiked
             },
             onCommentClick = {
                 if (!isLocked) onCommentClick()
             },
+            onPinClick = {
+                if (!isLocked) onPinClick()
+            }
         )
     }
 }

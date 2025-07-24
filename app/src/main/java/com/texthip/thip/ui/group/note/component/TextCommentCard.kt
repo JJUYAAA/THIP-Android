@@ -29,10 +29,12 @@ fun TextCommentCard(
     modifier: Modifier = Modifier,
     data: GroupNoteRecord,
     onCommentClick: () -> Unit = {},
-    onLongPress: () -> Unit = {}
+    onLongPress: () -> Unit = {},
+    onPinClick: () -> Unit = {}
 ) {
     var isLiked by remember { mutableStateOf(data.isLiked) }
     val isLocked = data.isLocked
+    val isWriter = data.isWriter
 
     Column(
         modifier = modifier
@@ -65,12 +67,16 @@ fun TextCommentCard(
             isLiked = isLiked,
             likeCount = data.likeCount,
             commentCount = data.commentCount,
+            isPinVisible = isWriter,
             onLikeClick = {
                 if (!isLocked) isLiked = !isLiked
             },
             onCommentClick = {
                 if (!isLocked) onCommentClick()
             },
+            onPinClick = {
+                if (!isLocked) onPinClick()
+            }
         )
     }
 }
