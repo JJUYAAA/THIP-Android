@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.navigator
+package com.texthip.thip.ui.navigator.data
 
 import androidx.annotation.DrawableRes
 

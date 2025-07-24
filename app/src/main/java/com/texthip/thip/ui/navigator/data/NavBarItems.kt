@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.navigator
+package com.texthip.thip.ui.navigator.data
 
 import com.texthip.thip.R
 
@@ -18,7 +18,7 @@ object NavBarItems {
         ),
         BarItem(
             title = "검색",
-            route = Routes.BookSearch,
+            route = Routes.Search,
             iconRes = R.drawable.ic_booksearch,
             selectedIconRes = R.drawable.ic_booksearch_selected
         ),
