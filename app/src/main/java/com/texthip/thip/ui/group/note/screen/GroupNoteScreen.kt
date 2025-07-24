@@ -1,5 +1,9 @@
 package com.texthip.thip.ui.group.note.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -81,8 +85,8 @@ fun GroupNoteScreen() {
     // 토스트 3초
     LaunchedEffect(showToast) {
         if (showToast) {
-            delay(3000) // TODO: 수정 가능
-            showToast = false
+            delay(6000) // 2초 등장, 4초 노출
+            showToast = false // exit 에니메이션 2초
         }
     }
 
@@ -96,14 +100,23 @@ fun GroupNoteScreen() {
         }
     ) {
         Box {
-            // 토스트 팝업
-            if (showToast) {
+            AnimatedVisibility(
+                visible = showToast,
+                enter = slideInVertically(
+                    initialOffsetY = { -it }, // 위에서 아래로
+                    animationSpec = tween(durationMillis = 2000)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { -it }, // 위로 사라짐
+                    animationSpec = tween(durationMillis = 2000)
+                ),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 20.dp, vertical = 16.dp)
+                    .zIndex(3f)
+            ) {
                 ToastWithDate(
                     message = stringResource(R.string.condition_of_view_general_review),
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(horizontal = 20.dp, vertical = 16.dp)
-                        .zIndex(2f)
                 )
             }
 
