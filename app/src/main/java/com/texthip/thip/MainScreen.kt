@@ -11,7 +11,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.ui.navigator.BottomNavigationBar
 import com.texthip.thip.ui.navigator.MainNavHost
-import com.texthip.thip.ui.navigator.data.Routes
+import com.texthip.thip.ui.navigator.routes.Routes
+
+private val MAIN_TAB_ROUTES = setOf(
+    Routes.Feed,
+    Routes.Group,
+    Routes.Search,
+    Routes.MyPage
+)
 
 @Composable
 fun MainScreen() {
@@ -19,14 +26,8 @@ fun MainScreen() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val mainTabRoutes = setOf(
-        Routes.Feed::class.qualifiedName,
-        Routes.Group::class.qualifiedName,
-        Routes.Search::class.qualifiedName,
-        Routes.MyPage::class.qualifiedName
-    )
     val showBottomBar = currentDestination?.route?.let { route ->
-        mainTabRoutes.contains(route)
+        MAIN_TAB_ROUTES.any { it::class.qualifiedName == route }
     } ?: true
 
     Scaffold(

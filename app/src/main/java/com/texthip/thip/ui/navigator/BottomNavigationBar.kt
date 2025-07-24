@@ -97,7 +97,7 @@ fun BottomNavigationBar(navController: NavHostController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             NavBarItems.BarItems.forEach { item ->
-                val isSelected = currentDestination?.route?.contains(item.route::class.simpleName ?: "") == true
+                val isSelected = currentDestination?.route == item.route::class.qualifiedName
                 NavigationBarItem(
                     icon = {
                         Icon(
