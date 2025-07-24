@@ -17,7 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -27,7 +30,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
-    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
+    val greyColor = colors.Grey02
 
     Box(
         modifier = Modifier
@@ -41,9 +45,48 @@ fun BottomNavigationBar(navController: NavController) {
                     bottomEnd = 0.dp
                 )
             )
-            .background(colors.Black),
+            .background(colors.Black)
+            .drawBehind {
+                val cornerRadius = 12.dp.toPx()
+                val strokeWidth = 2.dp.toPx()
+
+                val path = Path().apply {
+                    // 좌상단 모서리부터 시작
+                    moveTo(0f, cornerRadius)
+                    arcTo(
+                        rect = androidx.compose.ui.geometry.Rect(
+                            left = 0f,
+                            top = 0f,
+                            right = cornerRadius * 2,
+                            bottom = cornerRadius * 2
+                        ),
+                        startAngleDegrees = 180f,
+                        sweepAngleDegrees = 90f,
+                        forceMoveTo = false
+                    )
+                    lineTo(size.width - cornerRadius, 0f)
+                    arcTo(
+                        rect = androidx.compose.ui.geometry.Rect(
+                            left = size.width - cornerRadius * 2,
+                            top = 0f,
+                            right = size.width,
+                            bottom = cornerRadius * 2
+                        ),
+                        startAngleDegrees = 270f,
+                        sweepAngleDegrees = 90f,
+                        forceMoveTo = false
+                    )
+                }
+
+                drawPath(
+                    path = path,
+                    color = greyColor,
+                    style = Stroke(width = strokeWidth)
+                )
+            },
         contentAlignment = Alignment.Center
     ) {
+
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -52,11 +95,12 @@ fun BottomNavigationBar(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             NavBarItems.BarItems.forEach { item ->
+                val currentRoute = Routes.fromRoute(currentDestination?.route)
                 val isSelected = currentRoute == item.route
                 NavigationBarItem(
                     icon = {
                         Icon(
-                            painter = painterResource(id = if (isSelected) item.SelectedIconRes else item.IconRes),
+                            painter = painterResource(id = if (isSelected) item.selectedIconRes else item.iconRes),
                             contentDescription = item.title,
                         )
                     },
@@ -78,13 +122,12 @@ fun BottomNavigationBar(navController: NavController) {
                             }
                         }
                     },
-
                     colors = NavigationBarItemDefaults.colors(
                         indicatorColor = Color.Transparent,
                         selectedIconColor = colors.Purple,
-                        unselectedIconColor = Color.Unspecified,
+                        unselectedIconColor = colors.Grey02,
                         selectedTextColor = colors.Purple,
-                        unselectedTextColor = Color.Unspecified
+                        unselectedTextColor = colors.Grey02
                     )
                 )
             }
