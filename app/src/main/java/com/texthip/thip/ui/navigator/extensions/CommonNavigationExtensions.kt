@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.navigator.extensions
 
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
@@ -20,4 +21,19 @@ fun NavHostController.navigateToTab(route: MainTabRoutes) {
         launchSingleTop = true
         restoreState = true
     }
+}
+
+// 라우트 매칭 헬퍼 함수들
+fun NavDestination.isMainTabRoute(): Boolean {
+    return when (route) {
+        MainTabRoutes.Feed::class.qualifiedName,
+        MainTabRoutes.Group::class.qualifiedName,
+        MainTabRoutes.Search::class.qualifiedName,
+        MainTabRoutes.MyPage::class.qualifiedName -> true
+        else -> false
+    }
+}
+
+fun NavDestination.isRoute(targetRoute: MainTabRoutes): Boolean {
+    return route == targetRoute::class.qualifiedName
 }

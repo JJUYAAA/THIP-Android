@@ -28,6 +28,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.texthip.thip.ui.navigator.data.NavBarItems
 import com.texthip.thip.ui.navigator.extensions.navigateToTab
+import com.texthip.thip.ui.navigator.extensions.isRoute
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -98,7 +99,7 @@ fun BottomNavigationBar(navController: NavHostController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             NavBarItems.BarItems.forEach { item ->
-                val isSelected = currentDestination?.route == item.route::class.qualifiedName
+                val isSelected = currentDestination?.isRoute(item.route) == true
                 NavigationBarItem(
                     icon = {
                         Icon(
