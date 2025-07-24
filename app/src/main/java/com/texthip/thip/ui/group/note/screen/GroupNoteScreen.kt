@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.group.note.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -154,18 +155,13 @@ fun GroupNoteScreen() {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(bottom = 82.dp)
-                            .padding(top = if (selectedTabIndex == 0) 56.dp else 0.dp),
+                            .padding(horizontal = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(32.dp)
                     ) {
                         if (selectedTabIndex == 0) {
                             item {
                                 Row(
-                                    modifier = Modifier.padding(
-                                        start = 20.dp,
-                                        end = 20.dp,
-                                        bottom = 16.dp,
-                                        top = 20.dp
-                                    ),
+                                    modifier = Modifier.padding(top = 76.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                                 ) {
@@ -183,10 +179,19 @@ fun GroupNoteScreen() {
                                 }
                             }
                         }
-                        items(filteredItems) { item ->
+                        itemsIndexed(filteredItems) { index, item ->
+                            val isLast = index == filteredItems.lastIndex
+
+                            val itemModifier = if (isLast) {
+                                Modifier.padding(bottom = 20.dp)
+                            } else {
+                                Modifier
+                            }
+
                             when (item) {
                                 is GroupNoteRecord -> TextCommentCard(
                                     data = item,
+                                    modifier = itemModifier,
                                     onCommentClick = {
                                         selectedNoteRecord = item
                                         isCommentBottomSheetVisible = true
@@ -199,6 +204,7 @@ fun GroupNoteScreen() {
 
                                 is GroupNoteVote -> VoteCommentCard(
                                     data = item,
+                                    modifier = itemModifier,
                                     onCommentClick = {
                                         selectedNoteVote = item
                                         isCommentBottomSheetVisible = true
@@ -218,7 +224,9 @@ fun GroupNoteScreen() {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 136.dp),
+                        .padding(top = 119.dp)
+                        .background(color = colors.Black)
+                        .padding(top = 20.dp)
                 ) {
                     FilterButton(
                         modifier = Modifier

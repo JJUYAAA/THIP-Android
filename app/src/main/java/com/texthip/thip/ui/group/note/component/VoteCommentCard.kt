@@ -3,7 +3,6 @@ package com.texthip.thip.ui.group.note.component
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,8 +46,8 @@ fun VoteCommentCard(
                 if (!isLocked) {
                     detectTapGestures(onLongPress = { onLongPress() })
                 }
-            }
-            .padding(vertical = 16.dp, horizontal = 20.dp),
+            },
+//            .padding(vertical = 16.dp, horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ProfileBar(
