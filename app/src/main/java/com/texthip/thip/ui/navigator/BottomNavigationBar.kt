@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -102,12 +103,12 @@ fun BottomNavigationBar(navController: NavHostController) {
                     icon = {
                         Icon(
                             painter = painterResource(id = if (isSelected) item.selectedIconRes else item.iconRes),
-                            contentDescription = item.title,
+                            contentDescription = stringResource(item.titleRes),
                         )
                     },
                     label = {
                         Text(
-                            text = item.title,
+                            text = stringResource(item.titleRes),
                             style = typography.navi_m500_s10
                         )
                     },
