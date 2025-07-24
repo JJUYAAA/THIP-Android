@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -57,15 +58,14 @@ fun GroupScreen(
                 onLeftClick = { },
                 onRightClick = { }
             )
-            Spacer(Modifier.height(16.dp))
 
             // 검색창
             GroupSearchTextField(
+                modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
                 value = searchText,
                 onValueChange = {},
                 onClick = {}
             )
-            Spacer(Modifier.height(32.dp))
 
             // 내 모임방 헤더 + 카드
             GroupMySectionHeader(
@@ -81,11 +81,11 @@ fun GroupScreen(
 
             Spacer(
                 Modifier
+                    .padding(bottom = 32.dp)
                     .height(10.dp)
                     .fillMaxWidth()
                     .background(color = colors.DarkGrey02)
             )
-            Spacer(Modifier.height(32.dp))
 
             // 마감 임박한 독서 모임방
             GroupRoomDeadlineSection(

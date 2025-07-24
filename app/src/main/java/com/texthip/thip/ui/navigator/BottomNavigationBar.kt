@@ -23,13 +23,13 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(navController: NavHostController) {
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     val greyColor = colors.Grey02
 
@@ -95,8 +95,7 @@ fun BottomNavigationBar(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             NavBarItems.BarItems.forEach { item ->
-                val currentRoute = Routes.fromRoute(currentDestination?.route)
-                val isSelected = currentRoute == item.route
+                val isSelected = currentDestination?.route?.contains(item.route::class.simpleName ?: "") == true
                 NavigationBarItem(
                     icon = {
                         Icon(
@@ -113,13 +112,7 @@ fun BottomNavigationBar(navController: NavController) {
                     selected = isSelected,
                     onClick = {
                         if (!isSelected) {
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+                            navController.navigateToTab(item.route)
                         }
                     },
                     colors = NavigationBarItemDefaults.colors(

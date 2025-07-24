@@ -89,7 +89,7 @@ fun SearchBookTextField(
 
             if (text.isNotEmpty()) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_x_circle_grey),
+                    painter = painterResource(id = R.drawable.ic_x_circle_grey02),
                     contentDescription = "Clear text",
                     modifier = Modifier
                         .clickable { onValueChange("") },

@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.booksearch.component
+package com.texthip.thip.ui.search.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun BookEmptyResult(
+fun SearchEmptyResult(
     mainText: String,
     subText: String,
     onRequestBook: () -> Unit

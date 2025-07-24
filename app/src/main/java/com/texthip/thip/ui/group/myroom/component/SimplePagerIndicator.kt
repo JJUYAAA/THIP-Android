@@ -10,7 +10,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
@@ -33,6 +35,22 @@ fun SimplePagerIndicator(
                         color = if (currentPage == index) colors.White else colors.Grey02,
                         shape = RoundedCornerShape(50)
                     )
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SimplePagerIndicatorPreview() {
+    ThipTheme {
+        Box(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            SimplePagerIndicator(
+                pageCount = 5,
+                currentPage = 2
             )
         }
     }

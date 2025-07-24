@@ -34,7 +34,7 @@ import com.texthip.thip.ui.group.makeroom.component.GroupBookSearchBottomSheet
 import com.texthip.thip.ui.group.makeroom.component.GroupInputField
 import com.texthip.thip.ui.group.makeroom.component.GroupRoomDurationPicker
 import com.texthip.thip.ui.group.makeroom.component.GroupSelectBook
-import com.texthip.thip.ui.group.makeroom.component.MemberLimitPicker
+import com.texthip.thip.ui.group.makeroom.component.GroupMemberLimitPicker
 import com.texthip.thip.ui.group.makeroom.component.SectionDivider
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
@@ -152,7 +152,7 @@ fun GroupMakeRoomScreen(
 
                 SectionDivider()
 
-                MemberLimitPicker(
+                GroupMemberLimitPicker(
                     selectedCount = uiState.memberLimit,
                     onCountSelected = viewModel::setMemberLimit
                 )
@@ -191,7 +191,10 @@ fun GroupMakeRoomScreen(
                         warningMessage = stringResource(R.string.group_private_warning_message),
                         maxLength = 4,
                         isNumberOnly = true,
-                        keyboardType = KeyboardType.NumberPassword
+                        keyboardType = KeyboardType.NumberPassword,
+                        showIcon = true,
+                        showLimit = false,
+                        containerColor = colors.DarkGrey02
                     )
                 }
 
