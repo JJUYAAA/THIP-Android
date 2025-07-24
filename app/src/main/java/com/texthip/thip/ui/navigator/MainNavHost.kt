@@ -3,7 +3,7 @@ package com.texthip.thip.ui.navigator
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.texthip.thip.ui.navigator.data.Routes
+import com.texthip.thip.ui.navigator.routes.Routes
 import com.texthip.thip.ui.navigator.navigations.feedNavigation
 import com.texthip.thip.ui.navigator.navigations.groupNavigation
 import com.texthip.thip.ui.navigator.navigations.myPageNavigation

@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.texthip.thip.ui.mypage.screen.MyPageScreen
-import com.texthip.thip.ui.navigator.data.Routes
+import com.texthip.thip.ui.navigator.routes.Routes
 
 // MyPage
 fun NavGraphBuilder.myPageNavigation(navController: NavHostController) {

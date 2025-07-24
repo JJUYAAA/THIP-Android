@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.navigator.data
 
 import com.texthip.thip.R
+import com.texthip.thip.ui.navigator.routes.Routes
 
 object NavBarItems {
     val BarItems = listOf(
