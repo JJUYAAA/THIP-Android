@@ -6,27 +6,27 @@ object NavBarItems {
     val BarItems = listOf(
         BarItem(
             title = "피드",
-            route = Routes.Feed.route,
-            IconRes = R.drawable.ic_feed,
-            SelectedIconRes = R.drawable.ic_feed_selected
+            route = Routes.Feed,
+            iconRes = R.drawable.ic_feed,
+            selectedIconRes = R.drawable.ic_feed_selected
         ),
         BarItem(
             title = "모임",
-            route = Routes.Group.route,
-            IconRes = R.drawable.ic_group,
-            SelectedIconRes = R.drawable.ic_group_selected
+            route = Routes.Group,
+            iconRes = R.drawable.ic_group,
+            selectedIconRes = R.drawable.ic_group_selected
         ),
         BarItem(
             title = "검색",
-            route = Routes.BookSearch.route,
-            IconRes = R.drawable.ic_booksearch,
-            SelectedIconRes = R.drawable.ic_booksearch_selected
+            route = Routes.BookSearch,
+            iconRes = R.drawable.ic_booksearch,
+            selectedIconRes = R.drawable.ic_booksearch_selected
         ),
         BarItem(
             title = "내 정보",
-            route = Routes.MyPage.route,
-            IconRes = R.drawable.ic_mypage,
-            SelectedIconRes = R.drawable.ic_mypage_selected
+            route = Routes.MyPage,
+            iconRes = R.drawable.ic_mypage,
+            selectedIconRes = R.drawable.ic_mypage_selected
         )
     )
 }
