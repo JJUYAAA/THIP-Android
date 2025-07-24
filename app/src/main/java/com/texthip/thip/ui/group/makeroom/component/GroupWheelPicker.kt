@@ -5,10 +5,25 @@ import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -42,28 +57,28 @@ fun <T> GroupWheelPicker(
     val isScrollEnabled = items.size > 1
     val circular = isCircular && items.size > 2
 
-    val selectedIndex = items.indexOf(selectedItem)
+    val selectedIndex = remember(items, selectedItem) { items.indexOf(selectedItem) }
     val animatableOffset = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
     var isDragging by remember { mutableStateOf(false) }
     var velocity by remember { mutableFloatStateOf(0f) }
 
     val density = LocalDensity.current
-    val itemHeightPx = with(density) { itemHeight.dp.toPx() }
-    val spacingPx = with(density) { 9.dp.toPx() }
-    val itemSpacing = itemHeightPx + spacingPx
+    val itemHeightPx = remember(density, itemHeight) { with(density) { itemHeight.dp.toPx() } }
+    val spacingPx = remember(density) { with(density) { 9.dp.toPx() } }
+    val itemSpacing = remember(itemHeightPx, spacingPx) { itemHeightPx + spacingPx }
 
-    fun getCircularIndex(index: Int): Int {
-        return WheelPickerUtils.getCircularIndex(index, items.size)
-    }
+    val getCircularIndex = remember(items.size) { { index: Int ->
+        WheelPickerUtils.getCircularIndex(index, items.size)
+    } }
 
-    fun normalizeOffset(offset: Float): Float {
-        return WheelPickerUtils.normalizeOffset(offset, itemSpacing, items.size, circular)
-    }
+    val normalizeOffset = remember(itemSpacing, items.size, circular) { { offset: Float ->
+        WheelPickerUtils.normalizeOffset(offset, itemSpacing, items.size, circular)
+    } }
 
-    fun offsetToIndex(offset: Float): Int {
-        return WheelPickerUtils.offsetToIndex(offset, itemSpacing, items.size, circular)
-    }
+    val offsetToIndex = remember(itemSpacing, items.size, circular) { { offset: Float ->
+        WheelPickerUtils.offsetToIndex(offset, itemSpacing, items.size, circular)
+    } }
 
     // 선택 아이템이 바뀌면 중앙에 오도록 offset 이동
     LaunchedEffect(selectedItem) {
@@ -76,19 +91,22 @@ fun <T> GroupWheelPicker(
         }
     }
 
-    // 오프셋이 바뀔 때 마다 선택 아이템을 갱신
-    LaunchedEffect(animatableOffset.value) {
+    // 드래그 상태가 변경될 때만 선택 아이템 업데이트
+    LaunchedEffect(isDragging) {
         if (!isDragging && isScrollEnabled) {
+            // 드래그가 끝났을 때만 최종 값 업데이트
             val newSelectedIndex = offsetToIndex(animatableOffset.value)
-            if (items[newSelectedIndex] != selectedItem) {
+            if (newSelectedIndex in items.indices && items[newSelectedIndex] != selectedItem) {
                 onItemSelected(items[newSelectedIndex])
             }
         }
     }
 
+    val containerHeight = remember(itemHeight) { (itemHeight * 3 + 36).dp }
+    val textStyle = typography.info_r400_s12
+    
     Box(
-        modifier = modifier
-            .height((itemHeight * 3 + 36).dp)
+        modifier = modifier.height(containerHeight)
     ) {
         // 중앙 고정 박스
         Box(
@@ -102,7 +120,7 @@ fun <T> GroupWheelPicker(
         ) {
             Text(
                 text = displayText(selectedItem),
-                style = typography.info_r400_s12,
+                style = textStyle,
                 color = Color.Transparent,
                 textAlign = TextAlign.Center
             )
@@ -174,12 +192,19 @@ fun <T> GroupWheelPicker(
                     }
                 )
         ) {
-            val currOffset =
-                if (circular && isScrollEnabled) normalizeOffset(animatableOffset.value) else animatableOffset.value
-            val centerIndex = if (isScrollEnabled) (-currOffset / itemSpacing).roundToInt() else 0
+            val currOffset by remember {
+                derivedStateOf {
+                    if (circular && isScrollEnabled) normalizeOffset(animatableOffset.value) else animatableOffset.value
+                }
+            }
+            val centerIndex by remember {
+                derivedStateOf {
+                    if (isScrollEnabled) (-currOffset / itemSpacing).roundToInt() else 0
+                }
+            }
 
             // 중앙 + 위 아래 한 개만 보이도록!
-            val visibleRange = if (isScrollEnabled) -1..1 else 0..0
+            val visibleRange = remember(isScrollEnabled) { if (isScrollEnabled) -1..1 else 0..0 }
 
             visibleRange.forEach { relIdx ->
                 val displayIndex = centerIndex + relIdx
@@ -201,7 +226,7 @@ fun <T> GroupWheelPicker(
                 ) {
                     Text(
                         text = displayText(item),
-                        style = typography.info_r400_s12,
+                        style = textStyle,
                         color = colors.White,
                         textAlign = TextAlign.Center
                     )

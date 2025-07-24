@@ -39,10 +39,14 @@ fun GroupDatePicker(
     val month = selectedDate.monthValue
     val day = selectedDate.dayOfMonth
 
-    // 유효한 범위 계산
-    val years = (minDate.year..maxDate.year).toList()
-    val months = (1..12).toList()
-    val days = (1..selectedDate.lengthOfMonth()).toList()
+    // 유효한 범위 계산 - 날짜 변경 시 안정성을 위해 remember 사용
+    val years = remember(minDate.year, maxDate.year) { 
+        (minDate.year..maxDate.year).toList() 
+    }
+    val months = remember { (1..12).toList() }
+    val days = remember(year, month) { 
+        (1..LocalDate.of(year, month, 1).lengthOfMonth()).toList() 
+    }
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -105,7 +109,7 @@ fun GroupDatePicker(
             GroupWheelPicker(
                 modifier = Modifier.width(32.dp),
                 items = days,
-                selectedItem = day,
+                selectedItem = day.coerceAtMost(days.max()),
                 onItemSelected = { newDay ->
                     val newDate = LocalDate.of(year, month, newDay)
                     onDateSelected(newDate)

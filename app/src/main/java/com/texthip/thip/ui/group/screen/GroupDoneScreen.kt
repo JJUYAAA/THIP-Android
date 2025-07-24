@@ -54,6 +54,7 @@ fun GroupDoneScreen(
                 contentPadding = PaddingValues(bottom = 20.dp),
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(top = 16.dp)
             ) {
 
                 item {

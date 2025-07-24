@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.booksearch.component
+package com.texthip.thip.ui.search.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
-import com.texthip.thip.ui.booksearch.mock.BookData
+import com.texthip.thip.ui.search.mock.BookData
 import com.texthip.thip.ui.common.buttons.GenreChipButton
 import com.texthip.thip.ui.common.cards.CardBookSearch
 import com.texthip.thip.ui.theme.ThipTheme
@@ -28,7 +28,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun BookRecentSearch(
+fun SearchRecentBook(
     recentSearches: List<String>,
     popularBooks: List<BookData>,
     popularBookDate: String,
@@ -40,7 +40,7 @@ fun BookRecentSearch(
         Text(
             text = stringResource(R.string.group_recent_search),
             color = colors.White,
-            style = typography.menu_r400_s14_h24
+            style = typography.smalltitle_sb600_s18_h24
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -65,17 +65,18 @@ fun BookRecentSearch(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(32.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .padding(top = 32.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = stringResource(R.string.book_popular_search),
                 color = colors.White,
-                style = typography.menu_r400_s14_h24
+                style = typography.smalltitle_sb600_s18_h24
             )
             Text(
                 text = stringResource(R.string.book_search_date, popularBookDate),
@@ -87,7 +88,7 @@ fun BookRecentSearch(
 
         Box(modifier = Modifier
             .fillMaxWidth()
-            .weight(1f, fill = true)
+            .weight(1f)
         ) {
             if (popularBooks.isEmpty()) {
                 Column(
@@ -141,7 +142,7 @@ fun BookRecentSearch(
 @Composable
 fun PreviewBookRecentSearch() {
     ThipTheme {
-        BookRecentSearch(
+        SearchRecentBook(
             recentSearches = listOf("소설", "심리학", "철학", "역사", "과학", "에세이"),
             popularBooks = listOf(
                 BookData(
@@ -175,10 +176,10 @@ fun PreviewBookRecentSearch() {
 @Composable
 fun PreviewBookRecentSearch_EmptyPopular() {
     ThipTheme {
-        BookRecentSearch(
+        SearchRecentBook(
             recentSearches = emptyList(),
             popularBooks = emptyList(),
-            popularBookDate = "01.12.",
+            popularBookDate = "01.12",
             onSearchClick = {},
             onRemove = {},
             onBookClick = {}
