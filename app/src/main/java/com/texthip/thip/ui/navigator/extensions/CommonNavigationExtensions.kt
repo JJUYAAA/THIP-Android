@@ -1,7 +1,7 @@
 package com.texthip.thip.ui.navigator.extensions
 
 import androidx.navigation.NavHostController
-import com.texthip.thip.ui.navigator.routes.Routes
+import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
 
 // 공통 네비게이션 확장 함수들
@@ -11,8 +11,8 @@ fun NavHostController.navigateBack() {
     popBackStack()
 }
 
-// Bottom Navigation용 Tab 이동
-fun NavHostController.navigateToTab(route: Routes) {
+// Bottom Navigation용 Tab 이동 (메인 탭에만 사용)
+fun NavHostController.navigateToTab(route: MainTabRoutes) {
     navigate(route) {
         popUpTo(graph.startDestinationId) {
             saveState = true

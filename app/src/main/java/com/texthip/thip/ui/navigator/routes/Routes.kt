@@ -3,17 +3,19 @@ package com.texthip.thip.ui.navigator.routes
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Routes {
-    // 메인 탭 Routes
+sealed class Routes
+
+@Serializable
+sealed class MainTabRoutes : Routes() {
     @Serializable
-    data object Feed : Routes()
+    data object Feed : MainTabRoutes()
     
     @Serializable
-    data object Group : Routes()
+    data object Group : MainTabRoutes()
     
     @Serializable
-    data object Search : Routes()
+    data object Search : MainTabRoutes()
     
     @Serializable
-    data object MyPage : Routes()
+    data object MyPage : MainTabRoutes()
 }

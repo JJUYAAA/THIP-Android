@@ -4,11 +4,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.texthip.thip.ui.mypage.screen.MyPageScreen
-import com.texthip.thip.ui.navigator.routes.Routes
+import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
 // MyPage
 fun NavGraphBuilder.myPageNavigation(navController: NavHostController) {
-    composable<Routes.MyPage> {
+    composable<MainTabRoutes.MyPage> {
         MyPageScreen(
             navController,
             nickname = "ThipUser01",

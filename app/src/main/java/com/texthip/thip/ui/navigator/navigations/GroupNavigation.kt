@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import com.texthip.thip.ui.group.makeroom.screen.GroupMakeRoomScreen
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
 import com.texthip.thip.ui.group.screen.GroupScreen
-import com.texthip.thip.ui.navigator.routes.Routes
+import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 import com.texthip.thip.ui.navigator.routes.GroupRoutes
 import com.texthip.thip.ui.navigator.extensions.navigateBack
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
@@ -15,7 +15,7 @@ import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
 // Group
 fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
     // 메인 Group 화면
-    composable<Routes.Group> {
+    composable<MainTabRoutes.Group> {
         GroupScreen(
             onNavigateToMakeRoom = {
                 navController.navigateToGroupMakeRoom()

@@ -4,11 +4,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.texthip.thip.ui.feed.screen.FeedScreen
-import com.texthip.thip.ui.navigator.routes.Routes
+import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
 // Feed
 fun NavGraphBuilder.feedNavigation(navController: NavHostController) {
-    composable<Routes.Feed> {
+    composable<MainTabRoutes.Feed> {
         FeedScreen(navController) 
     }
 }

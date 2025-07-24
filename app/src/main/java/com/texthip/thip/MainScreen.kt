@@ -11,13 +11,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.ui.navigator.BottomNavigationBar
 import com.texthip.thip.ui.navigator.MainNavHost
-import com.texthip.thip.ui.navigator.routes.Routes
+import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
 private val MAIN_TAB_ROUTES = setOf(
-    Routes.Feed,
-    Routes.Group,
-    Routes.Search,
-    Routes.MyPage
+    MainTabRoutes.Feed,
+    MainTabRoutes.Group,
+    MainTabRoutes.Search,
+    MainTabRoutes.MyPage
 )
 
 @Composable
