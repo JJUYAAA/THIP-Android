@@ -72,16 +72,10 @@ fun AlarmScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_notification),
-                        contentDescription = null,
-                        tint = colors.Grey02,
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = stringResource(R.string.alarm_notification_comment),
-                        style = typography.smalltitle_sb600_s16_h20,
-                        color = colors.Grey01
+                        style = typography.smalltitle_sb600_s18_h24,
+                        color = colors.White
                     )
                 }
             } else {
