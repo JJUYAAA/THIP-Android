@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
@@ -36,13 +37,9 @@ import com.texthip.thip.ui.group.makeroom.component.GroupSelectBook
 import com.texthip.thip.ui.group.makeroom.component.GroupMemberLimitPicker
 import com.texthip.thip.ui.group.makeroom.component.SectionDivider
 import com.texthip.thip.ui.group.makeroom.mock.BookData
-import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomRequest
 import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
 import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
-import com.texthip.thip.ui.group.makeroom.viewmodel.ApiResult
-import com.texthip.thip.ui.group.makeroom.viewmodel.GroupCreateResponse
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
-import com.texthip.thip.ui.group.makeroom.viewmodel.GroupRepository
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -238,34 +235,13 @@ fun GroupMakeRoomScreen(
 @Preview
 @Composable
 private fun GroupMakeRoomScreenPreview() {
-    // Preview용 MockViewModel 생성
-    val mockViewModel = object : GroupMakeRoomViewModel(MockGroupRepository()) {
-        // 필요한 경우 Preview용 초기 상태 설정
-        init {
-            // 예시: 미리 선택된 책이 있는 상태로 Preview
-            // selectBook(BookData(id = "1", title = "예시 책", author = "작가"))
-            // selectGenre(0)
-        }
-    }
+    val mockViewModel: GroupMakeRoomViewModel = viewModel()
 
     ThipTheme {
         GroupMakeRoomScreen(
             viewModel = mockViewModel,
             onNavigateBack = { },
             onGroupCreated = { }
-        )
-    }
-}
-
-// Preview용 Mock Repository
-class MockGroupRepository : GroupRepository {
-    override suspend fun createGroup(request: GroupMakeRoomRequest): ApiResult<GroupCreateResponse> {
-        return ApiResult(
-            isSuccess = true,
-            data = GroupCreateResponse(
-                groupId = "mock_group_id",
-                groupName = "Mock Group"
-            )
         )
     }
 }

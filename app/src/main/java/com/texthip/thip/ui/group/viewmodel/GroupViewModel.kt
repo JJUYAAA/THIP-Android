@@ -1,7 +1,10 @@
-package com.texthip.thip.ui.group.myroom.mock
+package com.texthip.thip.ui.group.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.texthip.thip.R
+import com.texthip.thip.ui.group.myroom.mock.GroupCardData
+import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
+import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -84,7 +87,4 @@ class GroupViewModel : ViewModel() {
         // 방 카드 클릭 (상세 진입)
     }
 
-    fun onFabClick() {
-        // FAB 클릭(모임방 생성 등)
-    }
 }

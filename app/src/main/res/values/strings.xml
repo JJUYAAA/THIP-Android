@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Thip</string>
 
+    <!--    navigation    -->
+    <string name="nav_feed">피드</string>
+    <string name="nav_group">모임</string>
+    <string name="nav_search">검색</string>
+    <string name="nav_mypage">내 정보</string>
+
     <!--   view 컴포넌트    -->
     <string name="reading_user_num">🔥 %d명이 읽기에 참여중이에요! 🔥</string>
 
