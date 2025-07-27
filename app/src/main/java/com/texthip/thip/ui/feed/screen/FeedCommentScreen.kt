@@ -34,6 +34,7 @@ import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.note.component.*
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.mypage.mock.FeedItem
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.ui.group.note.mock.CommentItem as FeedCommentItem
@@ -229,9 +230,10 @@ fun FeedCommentScreen(
                     ) {
                         CommentItem(
                             data = commentItem,
-                            onReplyClick = { replyTo.value = it }
+                            onReplyClick = { replyTo.value = it },
+
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
                         commentItem.replyList.forEach { reply ->
                             ReplyItem(
                                 data = reply,
@@ -240,6 +242,9 @@ fun FeedCommentScreen(
                         }
                     }
                 }
+            }
+            item {
+                Spacer(modifier = Modifier.height(40.dp))
             }
         }
         CommentTextField(
@@ -356,32 +361,34 @@ fun FeedCommentScreen(
 @Preview
 @Composable
 private fun FeedCommentScreenPrev() {
-    FeedCommentScreen(
-        feedItem = FeedItem(
-            id = 1,
-            userProfileImage = R.drawable.character_literature,
-            userName = "문학소녀",
-            userRole = "문학 칭호",
-            bookTitle = "채식주의자",
-            authName = "한강",
-            timeAgo = "1시간 전",
-            content = "이 책은 인간의 본성과 억압에 대한 깊은 성찰을 담고 있어요. 인상 깊은 문장이 많았어요.",
-            likeCount = 12,
-            commentCount = 3,
-            isLiked = true,
-            isSaved = false,
-            isLocked = true,
-            imageUrl = R.drawable.bookcover_sample,
-            tags = listOf("에세이", "문학", "힐링")
-        ),
-        bookImage = painterResource(R.drawable.bookcover_sample),
-        profileImage = painterResource(R.drawable.character_literature),
-        onLikeClick = {},
-        onCommentInputChange = {},
-        onSendClick = {},
-        currentUserId = 999,
-        currentUserName = "나",
-        currentUserGenre = "장르",
-        currentUserProfileImageUrl = ""
-    )
+    ThipTheme {
+        FeedCommentScreen(
+            feedItem = FeedItem(
+                id = 1,
+                userProfileImage = R.drawable.character_literature,
+                userName = "문학소녀",
+                userRole = "문학 칭호",
+                bookTitle = "채식주의자",
+                authName = "한강",
+                timeAgo = "1시간 전",
+                content = "이 책은 인간의 본성과 억압에 대한 깊은 성찰을 담고 있어요. 인상 깊은 문장이 많았어요.",
+                likeCount = 12,
+                commentCount = 3,
+                isLiked = true,
+                isSaved = false,
+                isLocked = true,
+                imageUrl = R.drawable.bookcover_sample,
+                tags = listOf("에세이", "문학", "힐링")
+            ),
+            bookImage = painterResource(R.drawable.bookcover_sample),
+            profileImage = painterResource(R.drawable.character_literature),
+            onLikeClick = {},
+            onCommentInputChange = {},
+            onSendClick = {},
+            currentUserId = 999,
+            currentUserName = "나",
+            currentUserGenre = "장르",
+            currentUserProfileImageUrl = ""
+        )
+    }
 }
