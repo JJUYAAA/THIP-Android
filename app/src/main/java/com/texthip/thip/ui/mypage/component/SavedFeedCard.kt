@@ -37,7 +37,7 @@ fun SavedFeedCard(
     onLikeClick: () -> Unit = {}
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(20.dp)
     ) {

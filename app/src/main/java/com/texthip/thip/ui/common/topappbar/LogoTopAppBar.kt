@@ -36,7 +36,7 @@ fun LogoTopAppBar(
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(color = colors.Black)
             .padding(horizontal = 20.dp, vertical = 16.dp),

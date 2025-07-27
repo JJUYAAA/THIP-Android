@@ -17,24 +17,6 @@ fun SubGenreChipGrid(
     selectedGenres: List<String>,
     onGenreToggle: (String) -> Unit
 ) {
-    /*LazyVerticalGrid(
-        columns = GridCells.Fixed(5),
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        userScrollEnabled = false
-    ) {
-        items(subGenres.size) { index ->
-            val genre = subGenres[index]
-            OptionChipButton(
-                text = genre,
-                isSelected = selectedGenres.contains(genre),
-                isFilled = false,
-                onClick = { onGenreToggle(genre) },
-                modifier = Modifier
-            )
-        }
-    }*/
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
