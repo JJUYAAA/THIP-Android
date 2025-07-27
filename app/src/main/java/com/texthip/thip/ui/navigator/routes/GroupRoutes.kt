@@ -7,9 +7,12 @@ sealed class GroupRoutes : Routes() {
     @Serializable
     data object MakeRoom : GroupRoutes()
     
-    // 향후 추가될 Group 관련 화면들
-    // @Serializable data object Room : GroupRoutes
-    // @Serializable data object RoomChat : GroupRoutes
-    // @Serializable data object Note : GroupRoutes
-    // @Serializable data object NoteCreate : GroupRoutes
+    @Serializable
+    data object Done : GroupRoutes()
+    
+    @Serializable
+    data object Search : GroupRoutes()
+    
+    @Serializable
+    data object My : GroupRoutes()
 }

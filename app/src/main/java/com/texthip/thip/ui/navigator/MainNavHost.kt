@@ -8,6 +8,7 @@ import com.texthip.thip.ui.navigator.navigations.feedNavigation
 import com.texthip.thip.ui.navigator.navigations.groupNavigation
 import com.texthip.thip.ui.navigator.navigations.myPageNavigation
 import com.texthip.thip.ui.navigator.navigations.searchNavigation
+import com.texthip.thip.ui.navigator.navigations.commonNavigation
 
 // 메인 네비게이션
 @Composable
@@ -17,5 +18,6 @@ fun MainNavHost(navController: NavHostController) {
         groupNavigation(navController)
         searchNavigation(navController)
         myPageNavigation(navController)
+        commonNavigation(navController)
     }
 }
