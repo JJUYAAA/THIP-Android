@@ -13,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -34,12 +33,15 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 @Composable
 fun GroupScreen(
     onNavigateToMakeRoom: () -> Unit = {},
+    onNavigateToGroupDone: () -> Unit = {},
+    onNavigateToAlarm: () -> Unit = {},
+    onNavigateToGroupSearch: () -> Unit = {},
+    onNavigateToGroupMy: () -> Unit = {},
     viewModel: GroupViewModel = viewModel()
 ) {
     val myGroups by viewModel.myGroups.collectAsState()
     val roomSections by viewModel.roomSections.collectAsState()
     val scrollState = rememberScrollState()
-    val searchText by remember { mutableStateOf("") }
 
     Box(
         Modifier
@@ -55,21 +57,19 @@ fun GroupScreen(
             LogoTopAppBar(
                 leftIcon = painterResource(R.drawable.ic_done),
                 hasNotification = false,
-                onLeftClick = { },
-                onRightClick = { }
+                onLeftClick = onNavigateToGroupDone,
+                onRightClick = onNavigateToAlarm
             )
 
             // 검색창
             GroupSearchTextField(
                 modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
-                value = searchText,
-                onValueChange = {},
-                onClick = {}
+                onClick = onNavigateToGroupSearch
             )
 
             // 내 모임방 헤더 + 카드
             GroupMySectionHeader(
-                onClick = { viewModel.onMyGroupHeaderClick() }
+                onClick = onNavigateToGroupMy
             )
             Spacer(Modifier.height(20.dp))
 
