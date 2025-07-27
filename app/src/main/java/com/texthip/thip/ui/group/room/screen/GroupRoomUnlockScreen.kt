@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.room.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,9 +32,10 @@ import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import kotlinx.coroutines.delay
 
 @Composable
-fun GroupRoomSecretScreen(
+fun GroupRoomUnlockScreen(
     onBackClick: () -> Unit = {},
     onPasswordComplete: (String) -> Unit = {},
     correctPassword: String = "1234" // 실제로는 외부에서 받아올 값
@@ -52,7 +53,7 @@ fun GroupRoomSecretScreen(
                 onPasswordComplete(fullPassword)
             } else {
                 showError = true
-                kotlinx.coroutines.delay(1000)
+                delay(1000)
                 password = arrayOf("", "", "", "")
                 showError = false
                 focusRequesters[0].requestFocus()
@@ -153,9 +154,9 @@ fun GroupRoomSecretScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun GroupRoomSecretScreenPreview() {
+fun GroupRoomUnlockScreenPreview() {
     ThipTheme {
-        GroupRoomSecretScreen(
+        GroupRoomUnlockScreen(
             onBackClick = {},
             onPasswordComplete = { password ->
             },

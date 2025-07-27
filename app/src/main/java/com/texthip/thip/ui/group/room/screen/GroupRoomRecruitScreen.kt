@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.room.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -51,7 +51,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 import kotlinx.coroutines.delay
 
 @Composable
-fun GroupRoomScreen(
+fun GroupRoomRecruitScreen(
     detail: GroupRoomData,
     buttonType: GroupBottomButtonType,
     onRecommendationClick: (GroupCardItemRoomData) -> Unit = {},
@@ -432,7 +432,7 @@ fun GroupRoomScreen(
 
 @Preview(name = "참여 버튼 상태")
 @Composable
-fun GroupRoomScreenPreview_Join() {
+fun GroupRoomRecruitScreenPreviewJoin() {
     ThipTheme {
         val recommendations = listOf(
             GroupCardItemRoomData(
@@ -499,7 +499,7 @@ fun GroupRoomScreenPreview_Join() {
             recommendations = recommendations
         )
 
-        GroupRoomScreen(
+        GroupRoomRecruitScreen(
             detail = detailJoin,
             buttonType = GroupBottomButtonType.JOIN,
             onRecommendationClick = {},
@@ -513,7 +513,7 @@ fun GroupRoomScreenPreview_Join() {
 
 @Preview(name = "참여 취소 버튼 상태")
 @Composable
-fun GroupRoomScreenPreview_Cancel() {
+fun GroupRoomRecruitScreenPreviewCancel() {
     ThipTheme {
         val recommendations = listOf(
             GroupCardItemRoomData(
@@ -564,7 +564,7 @@ fun GroupRoomScreenPreview_Cancel() {
             recommendations = recommendations
         )
 
-        GroupRoomScreen(
+        GroupRoomRecruitScreen(
             detail = detailCancel,
             buttonType = GroupBottomButtonType.CANCEL,
             onRecommendationClick = {},
@@ -578,7 +578,7 @@ fun GroupRoomScreenPreview_Cancel() {
 
 @Preview(name = "모집 마감 버튼 상태")
 @Composable
-fun GroupRoomScreenPreview_Close() {
+fun GroupRoomRecruitScreenClose() {
     ThipTheme {
         val recommendations = listOf(
             GroupCardItemRoomData(
@@ -629,7 +629,7 @@ fun GroupRoomScreenPreview_Close() {
             recommendations = recommendations
         )
 
-        GroupRoomScreen(
+        GroupRoomRecruitScreen(
             detail = detailClose,
             buttonType = GroupBottomButtonType.CLOSE,
             onRecommendationClick = {},

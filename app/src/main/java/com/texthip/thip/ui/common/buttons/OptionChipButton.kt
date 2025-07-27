@@ -32,10 +32,11 @@ fun OptionChipButton(
     modifier: Modifier = Modifier,
     text: String,
     isFilled: Boolean = false,
-    isSelected: Boolean? = null,  // 추가
+    isSelected: Boolean? = null,
     enabled: Boolean = true,
     textStyle: TextStyle = typography.info_r400_s12,
     onClick: () -> Unit,
+    onDisabledClick: () -> Unit = { }
 ) {
     var isClicked by remember { mutableStateOf(false) }
     val checked = isSelected ?: isClicked
@@ -69,9 +70,13 @@ fun OptionChipButton(
                 color = borderColor,
                 shape = RoundedCornerShape(20.dp)
             )
-            .clickable(enabled = enabled) {
-                if (isSelected == null) isClicked = !isClicked
-                onClick()
+            .clickable {
+                if (enabled) {
+                    if (isSelected == null) isClicked = !isClicked
+                    onClick()
+                } else {
+                    onDisabledClick.invoke()
+                }
             }
             .height(30.dp)
             .padding(horizontal = 12.dp),

@@ -2,6 +2,9 @@ package com.texthip.thip.ui.group.myroom.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -62,20 +65,20 @@ fun GroupRecentSearch(
 }
 
 @Preview(showBackground = true)
-@Composable  
+@Composable
 fun GroupRecentSearchPreview() {
     ThipTheme {
         Box(
             modifier = Modifier
                 .padding(16.dp)
         ) {
-            var searches by remember { 
+            var searches by remember {
                 mutableStateOf(listOf("해리포터", "소설", "추리소설", "로맨스", "SF", "판타지"))
             }
-            
+
             GroupRecentSearch(
                 recentSearches = searches,
-                onSearchClick = { keyword -> 
+                onSearchClick = { keyword ->
                     // 검색 동작 시뮬레이션
                 },
                 onRemove = { keyword ->

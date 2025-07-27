@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.search.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,11 +28,11 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.group.myroom.component.GroupEmptyResult
-import com.texthip.thip.ui.group.myroom.component.GroupFilteredSearchResult
-import com.texthip.thip.ui.group.myroom.component.GroupLiveSearchResult
 import com.texthip.thip.ui.group.myroom.component.GroupRecentSearch
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
+import com.texthip.thip.ui.group.search.component.GroupEmptyResult
+import com.texthip.thip.ui.group.search.component.GroupLiveSearchResult
+import com.texthip.thip.ui.group.search.component.GroupFilteredSearchResult
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable

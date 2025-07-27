@@ -56,7 +56,8 @@
     <string name="card_book_explain">도서 소개</string>
     <string name="card_author">%1$s 저</string>
     <string name="record_book">기록장</string>
-    <string name="vote_title">🔥모임방의 뜨거운 감자</string>
+    <string name="vote_title">모임방의 뜨거운 감자</string>
+    <string name="no_vote">모임방에 생성된 투표가 없어요</string>
 
     <!--    top app bar 컴포넌트    -->
     <string name="subscriber">님의 구독자</string>
@@ -154,8 +155,17 @@
     <string name="comment_to">님에게 답글 작성</string>
     <string name="group_room_chat_hint">메이트들과 간단한 인사를 나눠보세요!</string>
     <string name="leave_room">방 나가기</string>
+    <string name="leave_room_modal_title">모임방을 나가시겠어요?</string>
+    <string name="leave_room_modal_content">방을 나가시게 되면\n독서메이트들과의 추억이 사라집니다.</string>
     <string name="report_room">방 신고하기</string>
     <string name="delete_room">방 삭제하기</string>
+    <string name="delete_room_modal_title">모임방을 삭제하시겠어요?</string>
+    <string name="delete_room_modal_content">방을 삭제하게 되면\n독서메이트들과의 추억이 사라집니다.</string>
+    <string name="delete">삭제하기</string>
+    <string name="modify">수정하기</string>
+    <string name="report">신고하기</string>
+    <string name="group_room_no_chat_title">아직 대화가 없어요</string>
+    <string name="group_room_no_chat_content">첫번째 한마디를 남겨보세요!</string>
 
     <!--    group note    -->
     <string name="tilde">~</string>
@@ -193,6 +203,14 @@
     <string name="vote_title_placeholder">투표 내용을 20자 이내로 입력하세요.</string>
     <string name="vote_content_placeholder">항목을 20자 이내로 입력</string>
     <string name="add_content">항목 추가</string>
+    <string name="condition_of_view_general_review">독서 진행도 80% 이상부터 총평을 볼 수 있어요.</string>
+    <string name="no_records_yet">아직 기록이 없어요.</string>
+    <string name="no_group_record_subtext">우리 모임의 첫번째 기록을 남겨보세요</string>
+    <string name="no_my_record_subtext">나의 첫번째 기록을 남겨보세요</string>
+    <string name="no_comments_yet">아직 댓글이 없어요.</string>
+    <string name="no_comment_subtext">첫번째 댓글을 남겨보세요</string>
+    <string name="pin_modal_title">이 기록을 피드에 핀할까요?</string>
+    <string name="pin_modal_content">핀하면 내 피드에 글을 옮길 수 있어요.</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>
