@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.common.header
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,11 +19,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.texthip.thip.ui.common.buttons.OutlinedButton
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun AuthorHeader(
@@ -45,9 +44,9 @@ fun AuthorHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (profileImage != null) {
-            Image(
-                painter = rememberAsyncImagePainter(profileImage),
-                contentDescription = "작성자 장르이미지",
+            AsyncImage(
+                model = profileImage,
+                contentDescription = null,
                 modifier = Modifier
                     .size(profileImageSize)
                     .clip(CircleShape)

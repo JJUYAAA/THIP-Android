@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.feed.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -26,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.feed.mock.MySubscriptionData
 import com.texthip.thip.ui.theme.ThipTheme
@@ -87,8 +86,8 @@ fun MySubscribeBarlist(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.width(36.dp)
                     ) {
-                        Image(
-                            painter = rememberAsyncImagePainter(model = profile.profileImageUrl),
+                        AsyncImage(
+                            model = profile.profileImageUrl,
                             contentDescription = null,
                             modifier = Modifier
                                 .size(36.dp)
