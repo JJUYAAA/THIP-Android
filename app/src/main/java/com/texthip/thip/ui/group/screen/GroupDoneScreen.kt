@@ -27,7 +27,6 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun GroupDoneScreen(
     name: String,
     allDataList: List<GroupCardItemRoomData>,
-    onCardClick: (GroupCardItemRoomData) -> Unit = {},
     onNavigateBack: () -> Unit = {}
 ) {
     val doneList = remember(allDataList) {
@@ -72,7 +71,7 @@ fun GroupDoneScreen(
                         maxParticipants = item.maxParticipants,
                         isRecruiting = item.isRecruiting,
                         imageRes = item.imageRes,
-                        onClick = { onCardClick(item) }
+                        onClick = { /* 완료된 모임방은 클릭 불가 */ }
                     )
                 }
             }
