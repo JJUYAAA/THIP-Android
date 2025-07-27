@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.group.search.screen
 
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,7 +26,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import android.content.Context
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.forms.SearchBookTextField
@@ -33,9 +33,10 @@ import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.myroom.component.GroupRecentSearch
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.search.component.GroupEmptyResult
-import com.texthip.thip.ui.group.search.component.GroupLiveSearchResult
 import com.texthip.thip.ui.group.search.component.GroupFilteredSearchResult
+import com.texthip.thip.ui.group.search.component.GroupLiveSearchResult
 import com.texthip.thip.ui.theme.ThipTheme
+import kotlinx.serialization.json.Json
 
 @Composable
 fun GroupSearchScreen(
@@ -48,20 +49,28 @@ fun GroupSearchScreen(
     val sharedPrefs = remember { 
         context.getSharedPreferences("group_search_prefs", Context.MODE_PRIVATE) 
     }
-    
-    // SharedPreferences에서 최근 검색어 불러오기
+
     var recentSearches by remember {
         mutableStateOf(
-            sharedPrefs.getStringSet("recent_searches", emptySet())?.toList() ?: emptyList()
+            try {
+                val jsonString = sharedPrefs.getString("recent_searches", "[]") ?: "[]"
+                Json.decodeFromString<List<String>>(jsonString)
+            } catch (e: Exception) {
+                emptyList()
+            }
         )
     }
-    
-    // 최근 검색어를 SharedPreferences에 저장하는 함수
+
     fun saveRecentSearches(searches: List<String>) {
-        sharedPrefs.edit()
-            .putStringSet("recent_searches", searches.toSet())
-            .apply()
-        recentSearches = searches
+        try {
+            val jsonString = Json.encodeToString(searches)
+            sharedPrefs.edit()
+                .putString("recent_searches", jsonString)
+                .apply()
+            recentSearches = searches
+        } catch (e: Exception) {
+            recentSearches = emptyList()
+        }
     }
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearched by rememberSaveable { mutableStateOf(false) }

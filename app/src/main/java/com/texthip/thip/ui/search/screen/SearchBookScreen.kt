@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.search.screen
 
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,16 +25,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import android.content.Context
 import com.texthip.thip.R
-import com.texthip.thip.ui.search.component.SearchEmptyResult
-import com.texthip.thip.ui.search.component.SearchBookFilteredResult
-import com.texthip.thip.ui.search.component.SearchActiveField
-import com.texthip.thip.ui.search.component.SearchRecentBook
-import com.texthip.thip.ui.search.mock.BookData
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.LeftNameTopAppBar
+import com.texthip.thip.ui.search.component.SearchActiveField
+import com.texthip.thip.ui.search.component.SearchBookFilteredResult
+import com.texthip.thip.ui.search.component.SearchEmptyResult
+import com.texthip.thip.ui.search.component.SearchRecentBook
+import com.texthip.thip.ui.search.mock.BookData
 import com.texthip.thip.ui.theme.ThipTheme
+import kotlinx.serialization.json.Json
 
 @Composable
 fun SearchBookScreen(
@@ -46,20 +47,28 @@ fun SearchBookScreen(
     val sharedPrefs = remember { 
         context.getSharedPreferences("book_search_prefs", Context.MODE_PRIVATE) 
     }
-    
-    // SharedPreferences에서 최근 검색어 불러오기
+
     var recentSearches by remember {
         mutableStateOf(
-            sharedPrefs.getStringSet("recent_book_searches", emptySet())?.toList() ?: emptyList()
+            try {
+                val jsonString = sharedPrefs.getString("recent_book_searches", "[]") ?: "[]"
+                Json.decodeFromString<List<String>>(jsonString)
+            } catch (e: Exception) {
+                emptyList()
+            }
         )
     }
-    
-    // 최근 검색어를 SharedPreferences에 저장하는 함수
+
     fun saveRecentSearches(searches: List<String>) {
-        sharedPrefs.edit()
-            .putStringSet("recent_book_searches", searches.toSet())
-            .apply()
-        recentSearches = searches
+        try {
+            val jsonString = Json.encodeToString(searches)
+            sharedPrefs.edit()
+                .putString("recent_book_searches", jsonString)
+                .apply()
+            recentSearches = searches
+        } catch (e: Exception) {
+            recentSearches = emptyList()
+        }
     }
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearched by rememberSaveable { mutableStateOf(false) }
