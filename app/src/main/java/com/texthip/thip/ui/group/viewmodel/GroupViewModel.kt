@@ -39,9 +39,9 @@ class GroupViewModel : ViewModel() {
     // 초기 데이터 세팅 (실제에선 repository/remote에서 받아옴)
     init {
         _myGroups.value = listOf(
-            GroupCardData("호르몬 체인지 완독하는 방", 22, R.drawable.bookcover_sample, 40, "uibowl1"),
-            GroupCardData("명작 읽기방", 10, R.drawable.bookcover_sample, 70, "joyce"),
-            GroupCardData("또 다른 방", 13, R.drawable.bookcover_sample, 10, "other")
+            GroupCardData(23, "호르몬 체인지 완독하는 방", 22, R.drawable.bookcover_sample, 40, "uibowl1"),
+            GroupCardData(24, "명작 읽기방", 10, R.drawable.bookcover_sample, 70, "joyce"),
+            GroupCardData(25, "또 다른 방", 13, R.drawable.bookcover_sample, 10, "other")
         )
 
         // 마감 임박한 독서 모임방
@@ -117,8 +117,12 @@ class GroupViewModel : ViewModel() {
         initializeRoomDetails(allRooms)
     }
 
-    fun onMyGroupCardClick(data: GroupCardData) {
-        // 내 모임방 카드 클릭 (상세 진입)
+    fun onMyGroupCardClick(
+        data: GroupCardData,
+        onNavigateToRoom: (Int) -> Unit
+    ) {
+        // 내 모임방은 진행중인 방으로 이동
+        onNavigateToRoom(data.id)
     }
 
     fun onRoomCardClick(

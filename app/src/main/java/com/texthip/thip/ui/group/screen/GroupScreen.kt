@@ -77,7 +77,12 @@ fun GroupScreen(
 
             GroupPager(
                 groupCards = myGroups,
-                onCardClick = { viewModel.onMyGroupCardClick(it) }
+                onCardClick = { groupCard ->
+                    viewModel.onMyGroupCardClick(
+                        groupCard,
+                        onNavigateToRoom = onNavigateToGroupRoom
+                    )
+                }
             )
             Spacer(Modifier.height(32.dp))
 

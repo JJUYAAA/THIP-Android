@@ -80,17 +80,6 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
         GroupDoneScreen(
             name = userName,
             allDataList = doneGroups,
-            onCardClick = { room ->
-                groupViewModel.onRoomCardClick(
-                    room,
-                    onNavigateToRecruit = { roomId ->
-                        navController.navigateToGroupRecruit(roomId)
-                    },
-                    onNavigateToRoom = { roomId ->
-                        navController.navigateToGroupRoom(roomId)
-                    }
-                )
-            },
             onNavigateBack = {
                 navController.navigateBack()
             }
