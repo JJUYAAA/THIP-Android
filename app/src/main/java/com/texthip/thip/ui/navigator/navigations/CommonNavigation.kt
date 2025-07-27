@@ -1,9 +1,13 @@
 package com.texthip.thip.ui.navigator.navigations
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.texthip.thip.ui.common.alarmpage.screen.AlarmScreen
+import com.texthip.thip.ui.common.alarmpage.viewmodel.AlarmViewModel
 import com.texthip.thip.ui.navigator.routes.CommonRoutes
 import com.texthip.thip.ui.navigator.extensions.navigateBack
 
@@ -11,9 +15,12 @@ import com.texthip.thip.ui.navigator.extensions.navigateBack
 fun NavGraphBuilder.commonNavigation(navController: NavHostController) {
     // Alarm 화면
     composable<CommonRoutes.Alarm> {
+        val alarmViewModel: AlarmViewModel = viewModel()
+        val alarmItems by alarmViewModel.alarmItems.collectAsState()
+        
         AlarmScreen(
-            alarmItems = emptyList(), // TODO: ViewModel에서 가져오기
-            onCardClick = { /* TODO: 알림 카드 클릭 처리 */ },
+            alarmItems = alarmItems,
+            onCardClick = { alarmViewModel.onCardClick(it) },
             onNavigateBack = {
                 navController.navigateBack()
             }

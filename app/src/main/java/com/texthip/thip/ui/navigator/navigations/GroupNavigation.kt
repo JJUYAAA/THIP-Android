@@ -4,12 +4,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.texthip.thip.ui.group.makeroom.screen.GroupMakeRoomScreen
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.screen.GroupDoneScreen
 import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
+import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 import com.texthip.thip.ui.navigator.routes.GroupRoutes
 import com.texthip.thip.ui.navigator.extensions.navigateBack
@@ -58,10 +61,14 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
     
     // Group Done 화면
     composable<GroupRoutes.Done> {
+        val groupViewModel: GroupViewModel = viewModel()
+        val userName by groupViewModel.userName.collectAsState()
+        val doneGroups by groupViewModel.doneGroups.collectAsState()
+        
         GroupDoneScreen(
-            name = "규빈", // TODO: ViewModel에서 가져오기
-            allDataList = emptyList(), // TODO: ViewModel에서 가져오기
-            onCardClick = { /* TODO: 카드 클릭 처리 */ },
+            name = userName,
+            allDataList = doneGroups,
+            onCardClick = { groupViewModel.onRoomCardClick(it) },
             onNavigateBack = {
                 navController.navigateBack()
             }
@@ -70,9 +77,12 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
     
     // Group My 화면
     composable<GroupRoutes.My> {
+        val groupViewModel: GroupViewModel = viewModel()
+        val myRoomGroups by groupViewModel.myRoomGroups.collectAsState()
+        
         GroupMyScreen(
-            allDataList = emptyList(), // TODO: ViewModel에서 가져오기
-            onCardClick = { /* TODO: 카드 클릭 처리 */ },
+            allDataList = myRoomGroups,
+            onCardClick = { groupViewModel.onRoomCardClick(it) },
             onNavigateBack = {
                 navController.navigateBack()
             }
@@ -81,8 +91,11 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
     
     // Group Search 화면
     composable<GroupRoutes.Search> {
+        val groupViewModel: GroupViewModel = viewModel()
+        val searchGroups by groupViewModel.searchGroups.collectAsState()
+        
         GroupSearchScreen(
-            roomList = emptyList(), // TODO: ViewModel에서 가져오기
+            roomList = searchGroups,
             onNavigateBack = {
                 navController.navigateBack()
             }

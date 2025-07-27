@@ -16,6 +16,18 @@ class GroupViewModel : ViewModel() {
     private val _roomSections = MutableStateFlow<List<GroupRoomSectionData>>(emptyList())
     val roomSections: StateFlow<List<GroupRoomSectionData>> = _roomSections
 
+    private val _userName = MutableStateFlow("규빈")  // 임시 유저 이름
+    val userName: StateFlow<String> = _userName
+
+    private val _doneGroups = MutableStateFlow<List<GroupCardItemRoomData>>(emptyList())
+    val doneGroups: StateFlow<List<GroupCardItemRoomData>> = _doneGroups
+
+    private val _myRoomGroups = MutableStateFlow<List<GroupCardItemRoomData>>(emptyList())
+    val myRoomGroups: StateFlow<List<GroupCardItemRoomData>> = _myRoomGroups
+
+    private val _searchGroups = MutableStateFlow<List<GroupCardItemRoomData>>(emptyList())
+    val searchGroups: StateFlow<List<GroupCardItemRoomData>> = _searchGroups
+
     private val _genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
     val genres: List<String> get() = _genres
 
@@ -73,10 +85,27 @@ class GroupViewModel : ViewModel() {
                 genres = _genres
             )
         )
-    }
 
-    fun onMyGroupHeaderClick() {
-        // 내 모임방 리스트로 이동 (Nav 이벤트 트리거 등)
+        // 완료된 모임방 데이터
+        _doneGroups.value = listOf(
+            GroupCardItemRoomData("완료된 독서 모임방 1", 15, 20, false, null, R.drawable.bookcover_sample, 0),
+            GroupCardItemRoomData("완료된 독서 모임방 2", 25, 30, false, null, R.drawable.bookcover_sample, 1),
+            GroupCardItemRoomData("완료된 독서 모임방 3", 12, 15, false, null, R.drawable.bookcover_sample, 2),
+            GroupCardItemRoomData("호르몬 체인지 완독한 방", 22, 22, false, null, R.drawable.bookcover_sample, 0),
+            GroupCardItemRoomData("명작 읽기방 완료", 10, 10, false, null, R.drawable.bookcover_sample, 0)
+        )
+
+        // 내 모임방 데이터
+        _myRoomGroups.value = listOf(
+            GroupCardItemRoomData("호르몬 체인지 완독하는 방", 22, 30, true, 5, R.drawable.bookcover_sample, 0),
+            GroupCardItemRoomData("명작 읽기방", 10, 20, true, 3, R.drawable.bookcover_sample, 0),
+            GroupCardItemRoomData("또 다른 방", 13, 25, false, 10, R.drawable.bookcover_sample, 1),
+            GroupCardItemRoomData("내가 참여한 과학책방", 18, 25, true, 7, R.drawable.bookcover_sample, 1),
+            GroupCardItemRoomData("인문학 토론방", 12, 20, true, 2, R.drawable.bookcover_sample, 3)
+        )
+
+        // 검색용 모임방 데이터 (모든 모임방 합쳐서)
+        _searchGroups.value = deadlineRooms + popularRooms + influencerRooms
     }
 
     fun onMyGroupCardClick(data: GroupCardData) {
