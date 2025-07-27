@@ -35,6 +35,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -92,10 +93,12 @@ fun FeedWriteScreen(
     }
     val isImageLimitReached = imageUris.size >= 3
     val focusManager = LocalFocusManager.current
+
     Box {
         Column(
             modifier = modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .then(if (showBookSearchSheet.value) Modifier.blur(5.dp) else Modifier),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val isRightButtonEnabled = selectedBook.value != null && feed_content.isNotBlank() && selectedGenreIndex != -1 && selectedSubGenres.isNotEmpty()
