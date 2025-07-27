@@ -1,35 +1,33 @@
 package com.texthip.thip.ui.group.myroom.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.texthip.thip.ui.common.cards.CardItemRoom
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.Modifier
 import com.texthip.thip.R
-import com.texthip.thip.ui.theme.ThipTheme.colors
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.painterResource
+import com.texthip.thip.ui.common.cards.CardItemRoom
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.myroom.component.GroupMyRoomFilterRow
+import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
@@ -128,6 +126,7 @@ fun MyGroupListFilterScreenPreview() {
     ThipTheme {
         val dataList = listOf(
             GroupCardItemRoomData(
+                id = 1,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,
@@ -136,6 +135,7 @@ fun MyGroupListFilterScreenPreview() {
                 genreIndex = 0
             ),
             GroupCardItemRoomData(
+                id = 2,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,
@@ -144,6 +144,7 @@ fun MyGroupListFilterScreenPreview() {
                 genreIndex = 0
             ),
             GroupCardItemRoomData(
+                id = 3,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,
@@ -152,6 +153,7 @@ fun MyGroupListFilterScreenPreview() {
                 genreIndex = 0
             ),
             GroupCardItemRoomData(
+                id = 4,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,
@@ -160,6 +162,7 @@ fun MyGroupListFilterScreenPreview() {
                 genreIndex = 0
             ),
             GroupCardItemRoomData(
+                id = 5,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,
@@ -168,6 +171,7 @@ fun MyGroupListFilterScreenPreview() {
                 genreIndex = 0
             ),
             GroupCardItemRoomData(
+                id = 6,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,
@@ -176,6 +180,7 @@ fun MyGroupListFilterScreenPreview() {
                 genreIndex = 0
             ),
             GroupCardItemRoomData(
+                id = 7,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,
@@ -184,6 +189,7 @@ fun MyGroupListFilterScreenPreview() {
                 genreIndex = 0
             ),
             GroupCardItemRoomData(
+                id = 8,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,
@@ -192,6 +198,7 @@ fun MyGroupListFilterScreenPreview() {
                 genreIndex = 0
             ),
             GroupCardItemRoomData(
+                id = 9,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,
@@ -200,6 +207,7 @@ fun MyGroupListFilterScreenPreview() {
                 genreIndex = 0
             ),
             GroupCardItemRoomData(
+                id = 10,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,
@@ -208,6 +216,7 @@ fun MyGroupListFilterScreenPreview() {
                 genreIndex = 0
             ),
             GroupCardItemRoomData(
+                id = 11,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,
@@ -216,6 +225,7 @@ fun MyGroupListFilterScreenPreview() {
                 genreIndex = 0
             ),
             GroupCardItemRoomData(
+                id = 12,
                 title = "모임방 이름입니다. 모임방...",
                 participants = 22,
                 maxParticipants = 30,

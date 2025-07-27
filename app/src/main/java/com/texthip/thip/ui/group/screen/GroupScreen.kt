@@ -37,6 +37,8 @@ fun GroupScreen(
     onNavigateToAlarm: () -> Unit = {},
     onNavigateToGroupSearch: () -> Unit = {},
     onNavigateToGroupMy: () -> Unit = {},
+    onNavigateToGroupRecruit: (Int) -> Unit = {},
+    onNavigateToGroupRoom: (Int) -> Unit = {},
     viewModel: GroupViewModel = viewModel()
 ) {
     val myGroups by viewModel.myGroups.collectAsState()
@@ -90,7 +92,13 @@ fun GroupScreen(
             // 마감 임박한 독서 모임방
             GroupRoomDeadlineSection(
                 roomSections = roomSections,
-                onRoomClick = { viewModel.onRoomCardClick(it) }
+                onRoomClick = { room ->
+                    viewModel.onRoomCardClick(
+                        room,
+                        onNavigateToRecruit = onNavigateToGroupRecruit,
+                        onNavigateToRoom = onNavigateToGroupRoom
+                    )
+                }
             )
             Spacer(Modifier.height(102.dp))
         }
