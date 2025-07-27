@@ -3,10 +3,10 @@ package com.texthip.thip.ui.feed.screen
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,12 +35,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipButton
 import com.texthip.thip.ui.common.buttons.GenreChipRow
@@ -80,13 +82,16 @@ fun FeedWriteScreen(
     val selectedBook = remember { mutableStateOf<BookData?>(null) }
     val imageUris = remember { mutableStateListOf<Uri>() }
     val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            if (imageUris.size < 3) imageUris.add(it)
+        contract = ActivityResultContracts.GetMultipleContents()
+    ) { uris: List<Uri> ->
+        if (uris.isNotEmpty()) {
+            val availableSlots = 3 - imageUris.size
+            val imagesToAdd = uris.take(availableSlots) // 3장까지만 유지
+            imageUris.addAll(imagesToAdd)
         }
     }
     val isImageLimitReached = imageUris.size >= 3
+    val focusManager = LocalFocusManager.current
     Box {
         Column(
             modifier = modifier
@@ -105,7 +110,12 @@ fun FeedWriteScreen(
                 modifier = Modifier
                     .verticalScroll(scrollState)
                     .fillMaxSize()
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 20.dp)
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = {
+                            focusManager.clearFocus()
+                        })
+                    },
                 verticalArrangement = Arrangement.Top,
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
@@ -163,8 +173,8 @@ fun FeedWriteScreen(
                     }
                     items(imageUris.size) { index ->
                         Box(modifier = Modifier.size(80.dp)) {
-                            Image(
-                                painter = rememberAsyncImagePainter(imageUris[index]),
+                            AsyncImage(
+                                model = imageUris[index],
                                 contentDescription = null,
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
@@ -234,7 +244,6 @@ fun FeedWriteScreen(
                     }
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-
                 if (selectedGenreIndex != -1) {
                     val subGenres = subGenreMap[selectedGenreIndex].orEmpty()
                     Spacer(modifier = Modifier.height(8.dp))
@@ -269,7 +278,6 @@ fun FeedWriteScreen(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 if (selectedSubGenres.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(12.dp))
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -313,7 +321,7 @@ fun FeedWriteScreen(
 
 @Preview
 @Composable
-private fun GroupMakeRoomScreenPreview() {
+private fun FeedWriteScreenPreview() {
     ThipTheme {
         FeedWriteScreen(
             onNavigateBack = { }
