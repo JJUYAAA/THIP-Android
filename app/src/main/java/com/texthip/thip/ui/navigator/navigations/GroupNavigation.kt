@@ -4,6 +4,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.texthip.thip.ui.group.makeroom.screen.GroupMakeRoomScreen
@@ -12,7 +13,10 @@ import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.screen.GroupDoneScreen
 import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
+import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
+import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
+import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 import com.texthip.thip.ui.navigator.routes.GroupRoutes
 import com.texthip.thip.ui.navigator.extensions.navigateBack
@@ -21,6 +25,8 @@ import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
 
 // Group
 fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
@@ -41,6 +47,12 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
             },
             onNavigateToGroupMy = {
                 navController.navigateToGroupMy()
+            },
+            onNavigateToGroupRecruit = { roomId ->
+                navController.navigateToGroupRecruit(roomId)
+            },
+            onNavigateToGroupRoom = { roomId ->
+                navController.navigateToGroupRoom(roomId)
             }
         )
     }
@@ -68,7 +80,17 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
         GroupDoneScreen(
             name = userName,
             allDataList = doneGroups,
-            onCardClick = { groupViewModel.onRoomCardClick(it) },
+            onCardClick = { room ->
+                groupViewModel.onRoomCardClick(
+                    room,
+                    onNavigateToRecruit = { roomId ->
+                        navController.navigateToGroupRecruit(roomId)
+                    },
+                    onNavigateToRoom = { roomId ->
+                        navController.navigateToGroupRoom(roomId)
+                    }
+                )
+            },
             onNavigateBack = {
                 navController.navigateBack()
             }
@@ -82,7 +104,17 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
         
         GroupMyScreen(
             allDataList = myRoomGroups,
-            onCardClick = { groupViewModel.onRoomCardClick(it) },
+            onCardClick = { room ->
+                groupViewModel.onRoomCardClick(
+                    room,
+                    onNavigateToRecruit = { roomId ->
+                        navController.navigateToGroupRecruit(roomId)
+                    },
+                    onNavigateToRoom = { roomId ->
+                        navController.navigateToGroupRoom(roomId)
+                    }
+                )
+            },
             onNavigateBack = {
                 navController.navigateBack()
             }
@@ -98,7 +130,70 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
             roomList = searchGroups,
             onNavigateBack = {
                 navController.navigateBack()
+            },
+            onRoomClick = { room ->
+                groupViewModel.onRoomCardClick(
+                    room,
+                    onNavigateToRecruit = { roomId ->
+                        navController.navigateToGroupRecruit(roomId)
+                    },
+                    onNavigateToRoom = { roomId ->
+                        navController.navigateToGroupRoom(roomId)
+                    }
+                )
             }
         )
+    }
+    
+    // Group Recruit 화면
+    composable<GroupRoutes.Recruit> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.Recruit>()
+        val roomId = route.roomId
+        val groupViewModel: GroupViewModel = viewModel()
+        val roomDetail = groupViewModel.getRoomDetail(roomId)
+        
+        if (roomDetail != null) {
+            GroupRoomRecruitScreen(
+                detail = roomDetail,
+                buttonType = GroupBottomButtonType.JOIN, // 기본값, 실제로는 사용자 상태에 따라 결정
+                onRecommendationClick = { recommendation ->
+                    navController.navigateToGroupRecruit(recommendation.id)
+                },
+                onParticipation = {
+                    // 참여 로직
+                },
+                onCancelParticipation = {
+                    // 참여 취소 로직
+                },
+                onCloseRecruitment = {
+                    // 모집 마감 로직
+                },
+                onBackClick = {
+                    navController.navigateBack()
+                }
+            )
+        } else {
+            // 데이터를 찾을 수 없는 경우 바로 뒤로 이동
+            navController.navigateBack()
+        }
+    }
+    
+    // Group Room 화면
+    composable<GroupRoutes.Room> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.Room>()
+        val roomId = route.roomId
+        val groupViewModel: GroupViewModel = viewModel()
+        val roomDetail = groupViewModel.getRoomDetail(roomId)
+        
+        if (roomDetail != null) {
+            GroupRoomScreen(
+                onBackClick = {
+                    navController.navigateBack()
+                }
+            )
+        } else {
+            // 데이터를 찾을 수 없는 경우 바로 뒤로 이동
+            navController.navigateBack()
+        }
     }
 }

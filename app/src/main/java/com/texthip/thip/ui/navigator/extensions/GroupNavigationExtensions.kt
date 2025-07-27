@@ -30,3 +30,11 @@ fun NavHostController.navigateToGroupMy() {
 fun NavHostController.navigateToAlarm() {
     navigate(CommonRoutes.Alarm)
 }
+
+fun NavHostController.navigateToGroupRecruit(roomId: Int) {
+    navigate(GroupRoutes.Recruit(roomId))
+}
+
+fun NavHostController.navigateToGroupRoom(roomId: Int) {
+    navigate(GroupRoutes.Room(roomId))
+}
