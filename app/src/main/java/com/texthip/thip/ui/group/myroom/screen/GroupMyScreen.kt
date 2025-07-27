@@ -35,7 +35,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun GroupMyScreen(
     allDataList: List<GroupCardItemRoomData>,
-    onCardClick: (GroupCardItemRoomData) -> Unit = {}
+    onCardClick: (GroupCardItemRoomData) -> Unit = {},
+    onNavigateBack: () -> Unit = {}
 ) {
     var selectedStates by remember { mutableStateOf(booleanArrayOf(false, false)) }
 
@@ -58,7 +59,7 @@ fun GroupMyScreen(
     ) {
         DefaultTopAppBar(
             title = stringResource(R.string.my_group_room),
-            onLeftClick = {},
+            onLeftClick = onNavigateBack,
         )
         Column(
             Modifier

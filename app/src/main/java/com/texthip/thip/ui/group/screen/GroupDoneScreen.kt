@@ -27,7 +27,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun GroupDoneScreen(
     name: String,
     allDataList: List<GroupCardItemRoomData>,
-    onCardClick: (GroupCardItemRoomData) -> Unit = {}
+    onCardClick: (GroupCardItemRoomData) -> Unit = {},
+    onNavigateBack: () -> Unit = {}
 ) {
     // isRecruiting == false 인 방만 필터링 (혹시 몰라서 넣어둡니다)
     val doneList = remember(allDataList) {
@@ -40,7 +41,7 @@ fun GroupDoneScreen(
     ) {
         DefaultTopAppBar(
             title = stringResource(R.string.group_done_title),
-            onLeftClick = {},
+            onLeftClick = onNavigateBack,
         )
         Column(
             Modifier

@@ -38,7 +38,8 @@ import com.texthip.thip.ui.theme.ThipTheme
 @Composable
 fun GroupSearchScreen(
     modifier: Modifier = Modifier,
-    roomList: List<GroupCardItemRoomData>
+    roomList: List<GroupCardItemRoomData>,
+    onNavigateBack: () -> Unit = {}
 ) {
     var recentSearches by rememberSaveable {
         mutableStateOf(listOf("user.02", "ㅇㅇ", "훽후ㅣㅣ", "검색4", "검색5", "검색6"))
@@ -107,7 +108,7 @@ fun GroupSearchScreen(
         ) {
             DefaultTopAppBar(
                 title = stringResource(R.string.group_room_search_topappbar),
-                onLeftClick = {},
+                onLeftClick = onNavigateBack,
             )
             Column(
                 modifier = Modifier
