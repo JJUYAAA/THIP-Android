@@ -1,45 +1,46 @@
 package com.texthip.thip.ui.navigator.navigations
 
+import android.annotation.SuppressLint
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.LaunchedEffect
-import kotlinx.coroutines.delay
+import com.texthip.thip.ui.group.data.viewmodel.GroupViewModel
 import com.texthip.thip.ui.group.makeroom.screen.GroupMakeRoomScreen
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
-import com.texthip.thip.ui.group.screen.GroupScreen
-import com.texthip.thip.ui.group.screen.GroupDoneScreen
-import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
-import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
-import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
-import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
-import com.texthip.thip.ui.group.data.viewmodel.GroupViewModel
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
-import com.texthip.thip.ui.navigator.routes.MainTabRoutes
-import com.texthip.thip.ui.navigator.routes.GroupRoutes
+import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
+import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
+import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
+import com.texthip.thip.ui.group.screen.GroupDoneScreen
+import com.texthip.thip.ui.group.screen.GroupScreen
+import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.navigator.extensions.navigateBack
-import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
-import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
-import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
-import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
+import com.texthip.thip.ui.navigator.routes.GroupRoutes
+import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
 // Group
+@SuppressLint("UnrememberedGetBackStackEntry")
 fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
     // 메인 Group 화면
     composable<MainTabRoutes.Group> { backStackEntry ->
         val groupViewModel: GroupViewModel = viewModel(
-            viewModelStoreOwner = navController.getBackStackEntry(MainTabRoutes.Group)
+            viewModelStoreOwner = backStackEntry
         )
         
         GroupScreen(
@@ -84,9 +85,18 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
     
     // Group Done 화면
     composable<GroupRoutes.Done> {
-        val groupViewModel: GroupViewModel = viewModel(
-            viewModelStoreOwner = navController.getBackStackEntry(MainTabRoutes.Group)
-        )
+        val parentEntry = remember(navController) {
+            try {
+                navController.getBackStackEntry(MainTabRoutes.Group)
+            } catch (e: Exception) {
+                null
+            }
+        }
+        val groupViewModel: GroupViewModel = if (parentEntry != null) {
+            viewModel(viewModelStoreOwner = parentEntry)
+        } else {
+            viewModel()
+        }
         val userName by groupViewModel.userName.collectAsState()
         val doneGroups by groupViewModel.doneGroups.collectAsState()
         
@@ -101,9 +111,18 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
     
     // Group My 화면
     composable<GroupRoutes.My> {
-        val groupViewModel: GroupViewModel = viewModel(
-            viewModelStoreOwner = navController.getBackStackEntry(MainTabRoutes.Group)
-        )
+        val parentEntry = remember(navController) {
+            try {
+                navController.getBackStackEntry(MainTabRoutes.Group)
+            } catch (e: Exception) {
+                null
+            }
+        }
+        val groupViewModel: GroupViewModel = if (parentEntry != null) {
+            viewModel(viewModelStoreOwner = parentEntry)
+        } else {
+            viewModel()
+        }
         val myRoomGroups by groupViewModel.myRoomGroups.collectAsState()
         
         GroupMyScreen(
@@ -127,9 +146,18 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
     
     // Group Search 화면
     composable<GroupRoutes.Search> {
-        val groupViewModel: GroupViewModel = viewModel(
-            viewModelStoreOwner = navController.getBackStackEntry(MainTabRoutes.Group)
-        )
+        val parentEntry = remember(navController) {
+            try {
+                navController.getBackStackEntry(MainTabRoutes.Group)
+            } catch (e: Exception) {
+                null
+            }
+        }
+        val groupViewModel: GroupViewModel = if (parentEntry != null) {
+            viewModel(viewModelStoreOwner = parentEntry)
+        } else {
+            viewModel()
+        }
         val searchGroups by groupViewModel.searchGroups.collectAsState()
         
         GroupSearchScreen(
@@ -155,9 +183,18 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
     composable<GroupRoutes.Recruit> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Recruit>()
         val roomId = route.roomId
-        val groupViewModel: GroupViewModel = viewModel(
-            viewModelStoreOwner = navController.getBackStackEntry(MainTabRoutes.Group)
-        )
+        val parentEntry = remember(navController) {
+            try {
+                navController.getBackStackEntry(MainTabRoutes.Group)
+            } catch (e: Exception) {
+                null
+            }
+        }
+        val groupViewModel: GroupViewModel = if (parentEntry != null) {
+            viewModel(viewModelStoreOwner = parentEntry)
+        } else {
+            viewModel()
+        }
         
         // suspend 함수를 위한 LaunchedEffect 사용
         var roomDetail by remember { mutableStateOf<GroupRoomData?>(null) }
@@ -187,15 +224,6 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
             )
         } ?: run {
             // 로딩 중이거나 데이터를 찾을 수 없는 경우
-            LaunchedEffect(Unit) {
-                if (roomDetail == null) {
-                    // 잠시 기다린 후에도 데이터가 없으면 뒤로 이동
-                    delay(1000)
-                    if (roomDetail == null) {
-                        navController.navigateBack()
-                    }
-                }
-            }
         }
     }
     
@@ -203,9 +231,18 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
     composable<GroupRoutes.Room> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Room>()
         val roomId = route.roomId
-        val groupViewModel: GroupViewModel = viewModel(
-            viewModelStoreOwner = navController.getBackStackEntry(MainTabRoutes.Group)
-        )
+        val parentEntry = remember(navController) {
+            try {
+                navController.getBackStackEntry(MainTabRoutes.Group)
+            } catch (e: Exception) {
+                null
+            }
+        }
+        val groupViewModel: GroupViewModel = if (parentEntry != null) {
+            viewModel(viewModelStoreOwner = parentEntry)
+        } else {
+            viewModel()
+        }
         
         // suspend 함수를 위한 LaunchedEffect 사용
         var roomDetail by remember { mutableStateOf<GroupRoomData?>(null) }
@@ -221,15 +258,6 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
             )
         } ?: run {
             // 로딩 중이거나 데이터를 찾을 수 없는 경우
-            LaunchedEffect(Unit) {
-                if (roomDetail == null) {
-                    // 잠시 기다린 후에도 데이터가 없으면 뒤로 이동
-                    delay(1000)
-                    if (roomDetail == null) {
-                        navController.navigateBack()
-                    }
-                }
-            }
         }
     }
 }
