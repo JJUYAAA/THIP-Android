@@ -28,6 +28,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun CardBookSearch(
     modifier: Modifier = Modifier,
+    number: Int? = null,
     title: String,
     imageRes: Int? = R.drawable.bookcover_sample, // 기본 이미지 리소스
     onClick: () -> Unit = {}
@@ -38,6 +39,15 @@ fun CardBookSearch(
             .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
+        number?.let {
+            Text(
+                text = "$it. ",
+                style = typography.menu_m500_s16_h24,
+                color = colors.White,
+                modifier = Modifier.padding(end = 4.dp)
+            )
+        }
+
         // 이미지
         Box(
             modifier = Modifier
@@ -74,6 +84,7 @@ fun CardBookSearchPreview() {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         CardBookSearch(
+            number = 1,
             title = "단 한번의 삶"
         )
     }

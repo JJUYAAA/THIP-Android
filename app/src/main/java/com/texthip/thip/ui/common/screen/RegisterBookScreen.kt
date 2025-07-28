@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.makeroom.screen
+package com.texthip.thip.ui.common.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun GroupRegisterBookScreen(modifier: Modifier = Modifier) {
+fun RegisterBookScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize(),
@@ -61,6 +61,6 @@ fun GroupRegisterBookScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun GroupRegisterBookPreview() {
     ThipTheme {
-        GroupRegisterBookScreen()
+        RegisterBookScreen()
     }
 }

@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.group.note.component
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,21 +30,30 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun VoteCommentCard(
     modifier: Modifier = Modifier,
     data: GroupNoteVote,
-    onCommentClick: () -> Unit = {}
+    onCommentClick: () -> Unit = {},
+    onLongPress: () -> Unit = {},
+    onPinClick: () -> Unit = {}
 ) {
     var isLiked by remember { mutableStateOf(data.isLiked) }
     var selected by remember { mutableStateOf<Int?>(null) }
     var voteItems by remember { mutableStateOf(data.voteItems) }
     val hasVoted = voteItems.any { it.isVoted }
 
+    val isLocked = data.isLocked
+    val isWriter = data.isWriter
+
     Column(
         modifier = modifier
-            .blur(if (data.isLocked) 5.dp else 0.dp)
-            .padding(vertical = 16.dp, horizontal = 20.dp),
+            .blur(if (isLocked) 5.dp else 0.dp)
+            .pointerInput(Unit) {
+                if (!isLocked) {
+                    detectTapGestures(onLongPress = { onLongPress() })
+                }
+            }
+            .padding(start = 20.dp, end = 20.dp, top = 32.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ProfileBar(
-//            profileImage = data.profileImageUrl,
             profileImage = painterResource(R.drawable.character_literature),
             topText = data.nickName,
             bottomText = data.page.toString() + stringResource(R.string.page),
@@ -51,9 +62,7 @@ fun VoteCommentCard(
             hoursAgo = data.postDate
         )
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
                 text = data.content,
                 style = typography.feedcopy_r400_s14_h20,
@@ -65,13 +74,15 @@ fun VoteCommentCard(
                 selectedIndex = selected,
                 hasVoted = hasVoted,
                 onOptionSelected = {
-                    if (selected == it) {
-                        selected = null
-                        voteItems = voteItems.map { it.copy(isVoted = false) }
-                    } else {
-                        selected = it
-                        voteItems = voteItems.mapIndexed { index, item ->
-                            item.copy(isVoted = index == it)
+                    if (!isLocked) {
+                        if (selected == it) {
+                            selected = null
+                            voteItems = voteItems.map { it.copy(isVoted = false) }
+                        } else {
+                            selected = it
+                            voteItems = voteItems.mapIndexed { index, item ->
+                                item.copy(isVoted = index == it)
+                            }
                         }
                     }
                 }
@@ -82,10 +93,16 @@ fun VoteCommentCard(
             isLiked = isLiked,
             likeCount = data.likeCount,
             commentCount = data.commentCount,
+            isPinVisible = isWriter,
             onLikeClick = {
-                isLiked = !isLiked
+                if (!isLocked) isLiked = !isLiked
             },
-            onCommentClick = { onCommentClick() },
+            onCommentClick = {
+                if (!isLocked) onCommentClick()
+            },
+            onPinClick = {
+                if (!isLocked) onPinClick()
+            }
         )
     }
 }

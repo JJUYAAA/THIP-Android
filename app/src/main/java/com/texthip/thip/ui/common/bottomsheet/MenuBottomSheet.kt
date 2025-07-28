@@ -27,30 +27,32 @@ fun MenuBottomSheet(
     CustomBottomSheet(
         onDismiss = onDismiss,
     ) {
-        items.forEachIndexed { index, item ->
-            if (index > 0) {
-                Spacer(modifier = Modifier.height(8.dp))
-                HorizontalDivider(modifier = Modifier.height(1.dp), color = colors.Grey03)
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+        Column(modifier = Modifier.padding(20.dp)) {
+            items.forEachIndexed { index, item ->
+                if (index > 0) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    HorizontalDivider(modifier = Modifier.height(1.dp), color = colors.Grey03)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
-            Column(
-                modifier = Modifier
-                    .height(50.dp)
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = item.text,
-                    style = typography.menu_m500_s16_h24,
-                    color = item.color,
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            item.onClick()
-                            onDismiss()
-                        }
-                )
+                        .height(50.dp)
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = item.text,
+                        style = typography.menu_m500_s16_h24,
+                        color = item.color,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                item.onClick()
+                                onDismiss()
+                            }
+                    )
+                }
             }
         }
     }

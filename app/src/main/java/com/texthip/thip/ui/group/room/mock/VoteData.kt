@@ -13,9 +13,9 @@ val mockVoteData = listOf(
         voteItems = listOf(
             VoteItem(1, "김땡땡", 50, false),
             VoteItem(2, "이땡땡", 10, false),
-            VoteItem(3, "박땡땡", 20, false),
-            VoteItem(4, "최땡땡", 15, false),
-            VoteItem(5, "정땡땡", 5, false)
+//            VoteItem(3, "박땡땡", 20, false),
+//            VoteItem(4, "최땡땡", 15, false),
+//            VoteItem(5, "정땡땡", 5, false)
         )
     ),
     VoteData(

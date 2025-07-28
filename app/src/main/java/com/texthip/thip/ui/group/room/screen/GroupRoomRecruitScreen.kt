@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.room.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -51,7 +51,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 import kotlinx.coroutines.delay
 
 @Composable
-fun GroupRoomScreen(
+fun GroupRoomRecruitScreen(
     detail: GroupRoomData,
     buttonType: GroupBottomButtonType,
     onRecommendationClick: (GroupCardItemRoomData) -> Unit = {},
@@ -113,11 +113,8 @@ fun GroupRoomScreen(
                 Column(
                     Modifier
                         .fillMaxSize()
-                        .padding(start = 20.dp, end = 20.dp)
+                        .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
                 ) {
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    //타이틀
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -142,10 +139,9 @@ fun GroupRoomScreen(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(32.dp))
 
-                    //소개글
                     Text(
+                        modifier = Modifier.padding(top = 40.dp),
                         text = stringResource(R.string.group_room_desc),
                         style = typography.menu_sb600_s14_h24,
                         color = colors.White,
@@ -181,8 +177,9 @@ fun GroupRoomScreen(
                                     color = colors.White
                                 )
                             }
-                            Spacer(Modifier.height(12.dp))
+
                             Text(
+                                modifier = Modifier.padding(top = 12.dp),
                                 text = stringResource(
                                     R.string.group_room_period,
                                     detail.startDate,
@@ -213,8 +210,8 @@ fun GroupRoomScreen(
                                     color = colors.White
                                 )
                             }
-                            Spacer(Modifier.height(12.dp))
                             Row(
+                                modifier = Modifier.padding(top = 12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
@@ -238,11 +235,12 @@ fun GroupRoomScreen(
                         }
                     }
 
-                    Spacer(Modifier.height(16.dp))
                     Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 22.dp, bottom = 30.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // 모집 마감/장르
                         Box(
                             Modifier
                                 .background(colors.Grey03, shape = RoundedCornerShape(14.dp))
@@ -287,8 +285,6 @@ fun GroupRoomScreen(
                         }
                     }
 
-                    Spacer(Modifier.height(30.dp))
-
                     //읽을 책 정보
                     CardRoomBook(
                         title = detail.bookData.title,
@@ -298,27 +294,32 @@ fun GroupRoomScreen(
                         imageRes = detail.bookData.imageRes
                     )
 
-                    Spacer(Modifier.height(40.dp))
-                    Text(
-                        text = stringResource(R.string.group_recommend),
-                        style = typography.smalltitle_sb600_s18_h24,
-                        color = colors.White
-                    )
-                    Spacer(Modifier.height(24.dp))
+                    // 추천 모임방이 있을 때만 표시
+                    if (detail.recommendations.isNotEmpty()) {
+                        Text(
+                            modifier = Modifier.padding(top = 40.dp),
+                            text = stringResource(R.string.group_recommend),
+                            style = typography.smalltitle_sb600_s18_h24,
+                            color = colors.White
+                        )
 
-                    //추천 모임방
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(20.dp)
-                    ) {
-                        items(detail.recommendations) { rec ->
-                            CardItemRoomSmall(
-                                title = rec.title,
-                                participants = rec.participants,
-                                maxParticipants = rec.maxParticipants,
-                                endDate = rec.endDate,
-                                imageRes = rec.imageRes,
-                                onClick = { onRecommendationClick(rec) }
-                            )
+                        //추천 모임방
+                        LazyRow(
+                            modifier = Modifier
+                                .padding(top = 24.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(20.dp)
+                        ) {
+                            items(detail.recommendations) { rec ->
+                                CardItemRoomSmall(
+                                    title = rec.title,
+                                    participants = rec.participants,
+                                    maxParticipants = rec.maxParticipants,
+                                    endDate = rec.endDate,
+                                    imageRes = rec.imageRes,
+                                    onClick = { onRecommendationClick(rec) }
+                                )
+                            }
                         }
                     }
                 }
@@ -330,11 +331,6 @@ fun GroupRoomScreen(
             GroupBottomButtonType.JOIN -> stringResource(R.string.group_room_screen_participant)
             GroupBottomButtonType.CANCEL -> stringResource(R.string.group_room_screen_cancel)
             GroupBottomButtonType.CLOSE -> stringResource(R.string.group_room_screen_end)
-        }
-        val buttonColor = when (currentButtonType) {
-            GroupBottomButtonType.JOIN -> colors.Purple
-            GroupBottomButtonType.CANCEL -> colors.Purple
-            GroupBottomButtonType.CLOSE -> colors.Purple
         }
 
         Button(
@@ -375,7 +371,7 @@ fun GroupRoomScreen(
                 }
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = buttonColor
+                containerColor = colors.Purple
             ),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -401,7 +397,6 @@ fun GroupRoomScreen(
             )
         }
 
-        // 다이얼로그 팝업
         if (showDialog) {
             Box(
                 modifier = Modifier
@@ -437,7 +432,7 @@ fun GroupRoomScreen(
 
 @Preview(name = "참여 버튼 상태")
 @Composable
-fun GroupRoomScreenPreview_Join() {
+fun GroupRoomRecruitScreenPreviewJoin() {
     ThipTheme {
         val recommendations = listOf(
             GroupCardItemRoomData(
@@ -499,12 +494,12 @@ fun GroupRoomScreenPreview_Join() {
             members = 22,
             maxMembers = 30,
             daysLeft = 4,
-            genre = "고전 문학",
+            genre = "문학",
             bookData = bookData,
             recommendations = recommendations
         )
 
-        GroupRoomScreen(
+        GroupRoomRecruitScreen(
             detail = detailJoin,
             buttonType = GroupBottomButtonType.JOIN,
             onRecommendationClick = {},
@@ -518,7 +513,7 @@ fun GroupRoomScreenPreview_Join() {
 
 @Preview(name = "참여 취소 버튼 상태")
 @Composable
-fun GroupRoomScreenPreview_Cancel() {
+fun GroupRoomRecruitScreenPreviewCancel() {
     ThipTheme {
         val recommendations = listOf(
             GroupCardItemRoomData(
@@ -569,7 +564,7 @@ fun GroupRoomScreenPreview_Cancel() {
             recommendations = recommendations
         )
 
-        GroupRoomScreen(
+        GroupRoomRecruitScreen(
             detail = detailCancel,
             buttonType = GroupBottomButtonType.CANCEL,
             onRecommendationClick = {},
@@ -583,7 +578,7 @@ fun GroupRoomScreenPreview_Cancel() {
 
 @Preview(name = "모집 마감 버튼 상태")
 @Composable
-fun GroupRoomScreenPreview_Close() {
+fun GroupRoomRecruitScreenClose() {
     ThipTheme {
         val recommendations = listOf(
             GroupCardItemRoomData(
@@ -629,12 +624,12 @@ fun GroupRoomScreenPreview_Close() {
             members = 15, // 적절한 인원
             maxMembers = 30,
             daysLeft = 7, // 마감일이 조금 더 남음
-            genre = "고전 문학",
+            genre = "문학",
             bookData = bookData,
             recommendations = recommendations
         )
 
-        GroupRoomScreen(
+        GroupRoomRecruitScreen(
             detail = detailClose,
             buttonType = GroupBottomButtonType.CLOSE,
             onRecommendationClick = {},

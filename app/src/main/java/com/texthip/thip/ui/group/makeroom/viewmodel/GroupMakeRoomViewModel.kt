@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 // 나중에 서버와 연동할 때 사용할 뷰모델 예시
-open class GroupMakeRoomViewModel(
-    private val groupRepository: GroupRepository // 의존성 주입
+class GroupMakeRoomViewModel(
+    private val groupRepository: GroupRepository = MockGroupRepository() // 기본값으로 Mock Repository 사용
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GroupMakeRoomUiState())
@@ -123,3 +123,17 @@ data class GroupCreateResponse(
     val groupId: String,
     val groupName: String
 )
+
+// Mock Repository 구현
+class MockGroupRepository : GroupRepository {
+    override suspend fun createGroup(request: GroupMakeRoomRequest): ApiResult<GroupCreateResponse> {
+        // 임시로 성공 응답 반환
+        return ApiResult(
+            isSuccess = true,
+            data = GroupCreateResponse(
+                groupId = "mock_group_${System.currentTimeMillis()}",
+                groupName = request.roomTitle
+            )
+        )
+    }
+}

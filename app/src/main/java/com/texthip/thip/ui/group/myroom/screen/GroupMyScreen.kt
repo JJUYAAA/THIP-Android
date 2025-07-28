@@ -75,12 +75,12 @@ fun GroupMyScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             if (filteredList.isNotEmpty()) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(20.dp),
-                    contentPadding = PaddingValues(top = 10.dp, bottom = 20.dp),
+                    contentPadding = PaddingValues(bottom = 20.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(filteredList) { item ->
@@ -102,12 +102,6 @@ fun GroupMyScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_notification),
-                        contentDescription = null,
-                        tint = colors.Grey02,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
                     Text(
                         text = stringResource(R.string.group_myroom_error_comment1),
                         color = colors.White,

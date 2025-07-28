@@ -61,7 +61,7 @@ fun CardItemRoom(
             )
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = colors.DarkGrey50
+            containerColor = colors.DarkGrey
         ),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -88,7 +88,7 @@ fun CardItemRoom(
                     }
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
                 Column(
                     modifier = Modifier
@@ -148,8 +148,6 @@ fun CardItemRoom(
                                     style = typography.menu_sb600_s12,
                                     color = colors.White
                                 )
-                                Spacer(modifier = Modifier.width(2.dp))
-
                                 Text(
                                     text = stringResource(R.string.card_item_participant_string),
                                     style = typography.info_m500_s12,

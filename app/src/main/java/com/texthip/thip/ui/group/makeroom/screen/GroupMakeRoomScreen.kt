@@ -1,10 +1,22 @@
 package com.texthip.thip.ui.group.makeroom.screen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -12,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
@@ -21,16 +34,12 @@ import com.texthip.thip.ui.group.makeroom.component.GroupBookSearchBottomSheet
 import com.texthip.thip.ui.group.makeroom.component.GroupInputField
 import com.texthip.thip.ui.group.makeroom.component.GroupRoomDurationPicker
 import com.texthip.thip.ui.group.makeroom.component.GroupSelectBook
-import com.texthip.thip.ui.group.makeroom.component.MemberLimitPicker
+import com.texthip.thip.ui.group.makeroom.component.GroupMemberLimitPicker
 import com.texthip.thip.ui.group.makeroom.component.SectionDivider
 import com.texthip.thip.ui.group.makeroom.mock.BookData
-import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomRequest
 import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
 import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
-import com.texthip.thip.ui.group.makeroom.viewmodel.ApiResult
-import com.texthip.thip.ui.group.makeroom.viewmodel.GroupCreateResponse
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
-import com.texthip.thip.ui.group.makeroom.viewmodel.GroupRepository
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -143,7 +152,7 @@ fun GroupMakeRoomScreen(
 
                 SectionDivider()
 
-                MemberLimitPicker(
+                GroupMemberLimitPicker(
                     selectedCount = uiState.memberLimit,
                     onCountSelected = viewModel::setMemberLimit
                 )
@@ -182,7 +191,10 @@ fun GroupMakeRoomScreen(
                         warningMessage = stringResource(R.string.group_private_warning_message),
                         maxLength = 4,
                         isNumberOnly = true,
-                        keyboardType = KeyboardType.NumberPassword
+                        keyboardType = KeyboardType.NumberPassword,
+                        showIcon = true,
+                        showLimit = false,
+                        containerColor = colors.DarkGrey02
                     )
                 }
 
@@ -223,34 +235,13 @@ fun GroupMakeRoomScreen(
 @Preview
 @Composable
 private fun GroupMakeRoomScreenPreview() {
-    // Preview용 MockViewModel 생성
-    val mockViewModel = object : GroupMakeRoomViewModel(MockGroupRepository()) {
-        // 필요한 경우 Preview용 초기 상태 설정
-        init {
-            // 예시: 미리 선택된 책이 있는 상태로 Preview
-            // selectBook(BookData(id = "1", title = "예시 책", author = "작가"))
-            // selectGenre(0)
-        }
-    }
+    val mockViewModel: GroupMakeRoomViewModel = viewModel()
 
     ThipTheme {
         GroupMakeRoomScreen(
             viewModel = mockViewModel,
             onNavigateBack = { },
             onGroupCreated = { }
-        )
-    }
-}
-
-// Preview용 Mock Repository
-class MockGroupRepository : GroupRepository {
-    override suspend fun createGroup(request: GroupMakeRoomRequest): ApiResult<GroupCreateResponse> {
-        return ApiResult(
-            isSuccess = true,
-            data = GroupCreateResponse(
-                groupId = "mock_group_id",
-                groupName = "Mock Group"
-            )
         )
     }
 }

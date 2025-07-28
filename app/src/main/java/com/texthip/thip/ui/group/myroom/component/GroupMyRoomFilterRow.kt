@@ -3,10 +3,16 @@ package com.texthip.thip.ui.group.myroom.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.OptionChipButton
+import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
 fun GroupMyRoomFilterRow(
@@ -25,6 +31,23 @@ fun GroupMyRoomFilterRow(
             text = stringResource(R.string.recruiting),
             isFilled = true,
             onClick = { onToggle(1) }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GroupMyRoomFilterRowPreview() {
+    ThipTheme {
+        var selectedStates by remember { mutableStateOf(booleanArrayOf(true, false)) }
+        
+        GroupMyRoomFilterRow(
+            selectedStates = selectedStates,
+            onToggle = { index ->
+                selectedStates = selectedStates.copyOf().apply {
+                    this[index] = !this[index]
+                }
+            }
         )
     }
 }
