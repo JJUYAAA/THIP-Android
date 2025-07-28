@@ -38,6 +38,8 @@ import com.texthip.thip.ui.group.search.component.GroupLiveSearchResult
 import com.texthip.thip.ui.theme.ThipTheme
 import kotlinx.serialization.json.Json
 import androidx.core.content.edit
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
 
 @Composable
 fun GroupSearchScreen(
@@ -64,7 +66,7 @@ fun GroupSearchScreen(
 
     fun saveRecentSearches(searches: List<String>) {
         try {
-            val jsonString = Json.encodeToString(searches)
+            val jsonString = Json.encodeToString(ListSerializer(String.serializer()), searches)
             sharedPrefs.edit {
                 putString("recent_searches", jsonString)
             }
