@@ -65,7 +65,7 @@ fun ExpandableFloatingButton(
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(bottom = 94.dp, end = 20.dp)
+                        .padding(bottom = 62.dp)
                         .width(184.dp)
                         .background(
                             color = colors.Black,
@@ -100,8 +100,7 @@ fun ExpandableFloatingButton(
             contentColor = colors.NeonGreen,
             shape = CircleShape,
             modifier = Modifier
-                .padding(16.dp)
-                .size(56.dp)
+                .size(50.dp)
                 .border(width = 2.dp, color = colors.NeonGreen50, shape = CircleShape)
         ) {
             Icon(

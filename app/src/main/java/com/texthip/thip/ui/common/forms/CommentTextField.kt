@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
@@ -93,28 +95,31 @@ fun CommentTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 10.dp)
-                .height(36.dp)
                 .background(colors.DarkGrey, shape = RoundedCornerShape(20.dp)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             BasicTextField(
                 value = input,
                 onValueChange = onInputChange,
-                singleLine = true,
+                maxLines = 5,
                 textStyle = typography.menu_r400_s14_h24.copy(color = colors.White),
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 12.dp),
+                    .padding(start = 12.dp, top = 4.dp, bottom = 4.dp, end = 12.dp)
+                    .defaultMinSize(minHeight = 36.dp)
+                    .wrapContentHeight(),  // 높이 자동 확장
                 cursorBrush = SolidColor(colors.NeonGreen),
                 decorationBox = { innerTextField ->
-                    if (input.isEmpty()) {
-                        Text(
-                            text = hint,
-                            color = colors.Grey02,
-                            style = typography.menu_r400_s14_h24
-                        )
+                    Box {
+                        if (input.isEmpty()) {
+                            Text(
+                                text = hint,
+                                color = colors.Grey02,
+                                style = typography.menu_r400_s14_h24
+                            )
+                        }
+                        innerTextField()
                     }
-                    innerTextField()
                 }
             )
 
@@ -122,8 +127,9 @@ fun CommentTextField(
             val isEnabled = input.isNotBlank()
             Box(
                 modifier = Modifier
-                    .padding(end = 4.dp)
+                    .padding(end = 8.dp, bottom = 8.dp)
                     .size(width = 42.dp, height = 28.dp)
+                    .align(Alignment.Bottom)
                     .background(
                         color = if (isEnabled) colors.Purple else colors.Grey02,
                         shape = RoundedCornerShape(20.dp)

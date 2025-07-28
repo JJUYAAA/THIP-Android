@@ -37,6 +37,7 @@ fun ActionMediumButton(
     contentColor: Color,
     backgroundColor: Color,
     hasRightIcon: Boolean = false,
+    hasRightPlusIcon: Boolean = false,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
@@ -70,7 +71,7 @@ fun ActionMediumButton(
 
         if (hasRightIcon) {
             Icon(
-                painter = painterResource(R.drawable.ic_chevron),
+                painter = if (hasRightPlusIcon) painterResource(R.drawable.ic_plus) else painterResource(R.drawable.ic_chevron),
                 contentDescription = null,
                 tint = contentColor,
             )

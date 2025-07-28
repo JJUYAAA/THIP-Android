@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import androidx.compose.ui.platform.LocalDensity
 
 enum class ArrowPosition {
     LEFT, CENTER, RIGHT
@@ -57,6 +56,7 @@ fun PopupModal(
     text: String,
     modifier: Modifier = Modifier,
     arrowPosition: ArrowPosition = ArrowPosition.RIGHT,
+    isEligible: Boolean = true,
     onClose: () -> Unit = {}
 ) {
     Column(
@@ -70,14 +70,14 @@ fun PopupModal(
             val arrowModifier = when (arrowPosition) {
                 ArrowPosition.LEFT -> Modifier
                     .align(Alignment.TopStart)
-                    .padding(start = 24.dp)
+                    .padding(start = 64.dp)
 
                 ArrowPosition.CENTER -> Modifier
                     .align(Alignment.TopCenter)
 
                 ArrowPosition.RIGHT -> Modifier
                     .align(Alignment.TopEnd)
-                    .padding(end = 24.dp)
+                    .padding(end = 64.dp)
             }
             TriangleArrow(
                 color = colors.DarkGrey,
@@ -95,7 +95,7 @@ fun PopupModal(
             ) {
                 Text(
                     text = text,
-                    color = colors.NeonGreen,
+                    color = if (isEligible) colors.NeonGreen else colors.Red,
                     style = typography.info_m500_s12,
                     modifier = Modifier.weight(1f)
                 )
@@ -117,25 +117,26 @@ fun PopupModal(
 private fun PopupPrev() {
     Column {
         PopupModal(
-            text = stringResource(R.string.condition_of_general_review,80),
+            text = stringResource(R.string.condition_of_general_review),
             modifier = Modifier
                 .width(400.dp)
                 .padding(16.dp),
             arrowPosition = ArrowPosition.LEFT
         )
         PopupModal(
-            text = stringResource(R.string.condition_of_general_review,80),
+            text = stringResource(R.string.condition_of_general_review),
             modifier = Modifier
                 .width(400.dp)
                 .padding(16.dp),
             arrowPosition = ArrowPosition.CENTER
         )
         PopupModal(
-            text = stringResource(R.string.condition_of_general_review,80),
+            text = stringResource(R.string.condition_of_general_review),
             modifier = Modifier
                 .width(400.dp)
                 .padding(16.dp),
-            arrowPosition = ArrowPosition.RIGHT
+            arrowPosition = ArrowPosition.RIGHT,
+            isEligible = false
         )
     }
 }

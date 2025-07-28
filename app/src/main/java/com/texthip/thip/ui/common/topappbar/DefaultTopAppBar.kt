@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.common.topappbar
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +21,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun DefaultTopAppBar(
+    modifier: Modifier = Modifier,
     title: String = stringResource(R.string.page_name),
     isTitleVisible: Boolean = true,
     isRightIconVisible: Boolean = false,
@@ -29,7 +29,7 @@ fun DefaultTopAppBar(
     onRightClick: () -> Unit = {},
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {

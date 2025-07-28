@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.myroom.screen
+package com.texthip.thip.ui.group.room.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,9 +32,10 @@ import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import kotlinx.coroutines.delay
 
 @Composable
-fun GroupRoomSecretScreen(
+fun GroupRoomUnlockScreen(
     onBackClick: () -> Unit = {},
     onPasswordComplete: (String) -> Unit = {},
     correctPassword: String = "1234" // 실제로는 외부에서 받아올 값
@@ -44,7 +45,6 @@ fun GroupRoomSecretScreen(
     val focusRequesters = remember { List(4) { FocusRequester() } }
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    // 비밀번호가 4자리 완성되면 자동으로 검증
     LaunchedEffect(password.toList()) {
         val fullPassword = password.joinToString("")
         if (fullPassword.length == 4 && password.all { it.length == 1 }) {
@@ -53,7 +53,7 @@ fun GroupRoomSecretScreen(
                 onPasswordComplete(fullPassword)
             } else {
                 showError = true
-                kotlinx.coroutines.delay(1000)
+                delay(1000)
                 password = arrayOf("", "", "", "")
                 showError = false
                 focusRequesters[0].requestFocus()
@@ -63,7 +63,6 @@ fun GroupRoomSecretScreen(
         }
     }
 
-    // 화면 진입 시 키보드 자동 포커스
     LaunchedEffect(Unit) {
         focusRequesters[0].requestFocus()
         keyboardController?.show()
@@ -76,7 +75,6 @@ fun GroupRoomSecretScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // 상단 앱바
             DefaultTopAppBar(
                 isRightIconVisible = false,
                 isTitleVisible = false,
@@ -92,13 +90,12 @@ fun GroupRoomSecretScreen(
                 Spacer(modifier = Modifier.height(160.dp))
 
                 Text(
+                    modifier = Modifier.padding(bottom = 32.dp),
                     text = stringResource(R.string.group_secret_screen_comment),
                     style = typography.smalltitle_sb600_s18_h24,
                     color = colors.White,
                     textAlign = TextAlign.Center
                 )
-
-                Spacer(modifier = Modifier.height(32.dp))
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -157,9 +154,9 @@ fun GroupRoomSecretScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun GroupRoomSecretScreenPreview() {
+fun GroupRoomUnlockScreenPreview() {
     ThipTheme {
-        GroupRoomSecretScreen(
+        GroupRoomUnlockScreen(
             onBackClick = {},
             onPasswordComplete = { password ->
             },

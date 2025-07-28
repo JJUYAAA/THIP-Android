@@ -82,19 +82,12 @@ fun WarningTextField(
                 ),
                 trailingIcon = {
                     if (showIcon) {
-                        if (value.isNotEmpty()) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_x_circle_white),
-                                contentDescription = "Clear text",
-                                modifier = Modifier.clickable { onValueChange("")},
-                                tint = Color.Unspecified
-                            )
-                        } else {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_x_circle),
-                                contentDescription = "Clear text"
-                            )
-                        }
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_x_circle_grey),
+                            contentDescription = "Clear text",
+                            modifier = Modifier.clickable { onValueChange("") },
+                            tint = Color.Unspecified
+                        )
                     }
                 },
                 singleLine = true,
@@ -159,9 +152,8 @@ fun WarningTextFieldPreviewNormal() {
         contentAlignment = Alignment.Center
     ) {
         WarningTextField(
-
             value = text,
-            onValueChange  = { text = it },
+            onValueChange = { text = it },
             hint = "인풋 텍스트",
             showWarning = false,
             showIcon = true,

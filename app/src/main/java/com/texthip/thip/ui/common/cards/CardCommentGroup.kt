@@ -17,7 +17,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun CardCommentGroup(
-    data: GroupRoomChatData
+    data: GroupRoomChatData,
+    onMenuClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -27,7 +28,8 @@ fun CardCommentGroup(
         ProfileBarWithDate(
             profileImage = data.profileImage,
             nickname = data.nickname,
-            dateText = data.date
+            dateText = data.date,
+            onMenuClick = onMenuClick
         )
         Spacer(Modifier.height(8.dp))
         Text(
@@ -47,7 +49,9 @@ private fun CardCommentGroupPreview() {
             profileImage = null,
             nickname = "user.01",
             date = "11시간 전",
-            content = "이것은 그룹 채팅의 댓글입니다. 이곳에 댓글 내용을 작성할 수 있습니다. 여러 줄로 작성해도 됩니다."
-        )
+            content = "이것은 그룹 채팅의 댓글입니다. 이곳에 댓글 내용을 작성할 수 있습니다. 여러 줄로 작성해도 됩니다.",
+            isMine = false
+        ),
+        onMenuClick = {}
     )
 }
