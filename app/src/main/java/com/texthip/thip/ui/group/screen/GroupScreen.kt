@@ -33,12 +33,12 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 @Composable
 fun GroupScreen(
     onNavigateToMakeRoom: () -> Unit = {},
-    onNavigateToGroupDone: () -> Unit = {},
-    onNavigateToAlarm: () -> Unit = {},
-    onNavigateToGroupSearch: () -> Unit = {},
-    onNavigateToGroupMy: () -> Unit = {},
-    onNavigateToGroupRecruit: (Int) -> Unit = {},
-    onNavigateToGroupRoom: (Int) -> Unit = {},
+    onNavigateToGroupDone: () -> Unit = {}, // 완료된 화면으로 이동
+    onNavigateToAlarm: () -> Unit = {}, // 알림 화면으로 이동
+    onNavigateToGroupSearch: () -> Unit = {},   // 검색 화면으로 이동
+    onNavigateToGroupMy: () -> Unit = {},   // 내 모임방 화면으로 이동
+    onNavigateToGroupRecruit: (Int) -> Unit = {},   // 모집 중인 모임방 화면으로 이동
+    onNavigateToGroupRoom: (Int) -> Unit = {},  // 기록장 화면으로 이동
     viewModel: GroupViewModel = viewModel()
 ) {
     val myGroups by viewModel.myGroups.collectAsState()
@@ -46,9 +46,7 @@ fun GroupScreen(
     val scrollState = rememberScrollState()
 
     Box(
-        Modifier
-            .background(colors.Black)
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
             Modifier

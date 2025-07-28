@@ -32,7 +32,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun AlarmScreen(
     alarmItems: List<AlarmItem>, 
-    onCardClick: (AlarmItem) -> Unit = {},
+    onCardClick: (AlarmItem) -> Unit = {},  // 나중에 서버랑 연동할 때 사용
     onNavigateBack: () -> Unit = {}
 ) {
     var selectedStates by remember { mutableStateOf(booleanArrayOf(false, false)) }

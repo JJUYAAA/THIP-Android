@@ -10,6 +10,7 @@ class AlarmViewModel : ViewModel() {
     private val _alarmItems = MutableStateFlow<List<AlarmItem>>(emptyList())
     val alarmItems: StateFlow<List<AlarmItem>> = _alarmItems.asStateFlow()
 
+    // 알림 더미 데이터
     init {
         _alarmItems.value = listOf(
             AlarmItem(1, "피드", "내 글을 좋아합니다.", "user123님이 내 글에 좋아요를 눌렀어요.", "2시간 전", false),

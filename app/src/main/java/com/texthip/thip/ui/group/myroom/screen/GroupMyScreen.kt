@@ -119,8 +119,7 @@ fun GroupMyScreen(
     }
 }
 
-
-@Preview()
+@Preview
 @Composable
 fun MyGroupListFilterScreenPreview() {
     ThipTheme {

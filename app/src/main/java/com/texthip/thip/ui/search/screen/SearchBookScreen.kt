@@ -35,6 +35,7 @@ import com.texthip.thip.ui.search.component.SearchRecentBook
 import com.texthip.thip.ui.search.mock.BookData
 import com.texthip.thip.ui.theme.ThipTheme
 import kotlinx.serialization.json.Json
+import androidx.core.content.edit
 
 @Composable
 fun SearchBookScreen(
@@ -62,9 +63,9 @@ fun SearchBookScreen(
     fun saveRecentSearches(searches: List<String>) {
         try {
             val jsonString = Json.encodeToString(searches)
-            sharedPrefs.edit()
-                .putString("recent_book_searches", jsonString)
-                .apply()
+            sharedPrefs.edit {
+                putString("recent_book_searches", jsonString)
+            }
             recentSearches = searches
         } catch (e: Exception) {
             recentSearches = emptyList()
