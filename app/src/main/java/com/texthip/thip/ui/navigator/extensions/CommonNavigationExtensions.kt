@@ -34,6 +34,4 @@ fun NavDestination.isMainTabRoute(): Boolean {
     }
 }
 
-fun NavDestination.isRoute(targetRoute: MainTabRoutes): Boolean {
-    return route == targetRoute::class.qualifiedName
-}
+
