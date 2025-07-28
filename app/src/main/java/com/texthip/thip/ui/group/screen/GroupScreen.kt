@@ -26,7 +26,7 @@ import com.texthip.thip.ui.group.myroom.component.GroupMySectionHeader
 import com.texthip.thip.ui.group.myroom.component.GroupPager
 import com.texthip.thip.ui.group.myroom.component.GroupRoomDeadlineSection
 import com.texthip.thip.ui.group.myroom.component.GroupSearchTextField
-import com.texthip.thip.ui.group.viewmodel.GroupViewModel
+import com.texthip.thip.ui.group.data.viewmodel.GroupViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
