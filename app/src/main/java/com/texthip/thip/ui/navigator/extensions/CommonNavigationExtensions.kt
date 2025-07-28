@@ -23,7 +23,7 @@ fun NavHostController.navigateToTab(route: MainTabRoutes) {
     }
 }
 
-// 라우트 매칭 헬퍼 함수들
+// 메인 루트 헬퍼 함수들
 fun NavDestination.isMainTabRoute(): Boolean {
     return when (route) {
         MainTabRoutes.Feed::class.qualifiedName,
@@ -32,6 +32,11 @@ fun NavDestination.isMainTabRoute(): Boolean {
         MainTabRoutes.MyPage::class.qualifiedName -> true
         else -> false
     }
+}
+
+// 매인 루트인지 확인
+fun NavDestination.isRoute(targetRoute: MainTabRoutes): Boolean {
+    return route == targetRoute::class.qualifiedName
 }
 
 
