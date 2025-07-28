@@ -13,6 +13,8 @@ data class FeedItem(
     val commentCount: Int,
     val isLiked: Boolean,
     val isSaved: Boolean,
+    val isLocked: Boolean = false,
+    val tags: List<String> = emptyList(),
     val imageUrl: Int? = null
 )
 

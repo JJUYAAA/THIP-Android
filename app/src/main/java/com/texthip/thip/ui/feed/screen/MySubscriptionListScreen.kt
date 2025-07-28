@@ -160,7 +160,7 @@ fun MySubscriptionScreen(
         ) {
             DefaultTopAppBar(
                 onLeftClick = {},
-                title = stringResource(R.string.my_subscription_list)
+                title = stringResource(R.string.my_thip_list)
             )
             Column(
                 modifier = Modifier
@@ -195,9 +195,9 @@ fun MySubscriptionScreen(
                                 }
                                 toastMessage =
                                     if (members.find { it.nickname == nickname }?.isSubscribed == true) {
-                                        context.getString(R.string.toast_subscribe, nickname)
+                                        context.getString(R.string.toast_thip, nickname)
                                     } else {
-                                        context.getString(R.string.toast_unsubscribe, nickname)
+                                        context.getString(R.string.toast_thip_cancel, nickname)
                                     }
                             }
                         )
