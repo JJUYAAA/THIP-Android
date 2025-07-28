@@ -29,6 +29,7 @@ import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
+import com.texthip.thip.ui.navigator.extensions.navigateToRecommendedGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
 import com.texthip.thip.ui.navigator.routes.GroupRoutes
@@ -207,7 +208,7 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
                 detail = detail,
                 buttonType = GroupBottomButtonType.JOIN, // 기본값, 실제로는 사용자 상태에 따라 결정
                 onRecommendationClick = { recommendation ->
-                    navController.navigateToGroupRecruit(recommendation.id)
+                    navController.navigateToRecommendedGroupRecruit(recommendation.id)
                 },
                 onParticipation = {
                     // 참여 로직

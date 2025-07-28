@@ -41,6 +41,15 @@ fun NavHostController.navigateToGroupRecruit(roomId: Int) {
     navigate(GroupRoutes.Recruit(roomId))
 }
 
+// 추천 모임방으로 이동 (현재 화면을 대체)
+fun NavHostController.navigateToRecommendedGroupRecruit(roomId: Int) {
+    navigate(GroupRoutes.Recruit(roomId)) {
+        popUpTo(currentDestination?.route ?: return@navigate) {
+            inclusive = true
+        }
+    }
+}
+
 // 진행중인 모임방 화면으로 이동
 fun NavHostController.navigateToGroupRoom(roomId: Int) {
     navigate(GroupRoutes.Room(roomId))

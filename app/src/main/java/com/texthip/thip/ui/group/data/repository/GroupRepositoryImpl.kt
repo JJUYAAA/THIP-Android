@@ -269,7 +269,7 @@ class GroupRepositoryImpl : GroupRepository {
             daysLeft = room.endDate ?: 0,
             genre = genres.getOrElse(room.genreIndex) { genres[0] },
             bookData = bookData,
-            recommendations = emptyList() // 추천의 추천은 제공하지 않음
+            recommendations = getRecommendations(room.id) // 추천 모임방에도 추천 제공
         )
         
         roomDetailsCache[room.id] = roomDetail
