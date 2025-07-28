@@ -27,11 +27,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,11 +47,11 @@ import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.buttons.SubGenreChipGrid
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
+import com.texthip.thip.ui.feed.mock.FeedData
 import com.texthip.thip.ui.group.makeroom.component.GroupBookSearchBottomSheet
 import com.texthip.thip.ui.group.makeroom.component.GroupInputField
 import com.texthip.thip.ui.group.makeroom.component.GroupSelectBook
 import com.texthip.thip.ui.group.makeroom.component.SectionDivider
-import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
 import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
 import com.texthip.thip.ui.theme.ThipTheme
@@ -66,10 +63,9 @@ fun FeedWriteScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var feedData by remember { mutableStateOf(FeedData()) }
     val scrollState = rememberScrollState()
-    var selectedGenreIndex by rememberSaveable { mutableIntStateOf(-1) }
     val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
-    var selectedSubGenres by remember { mutableStateOf<List<String>>(emptyList()) }
     val subGenreMap = mapOf(
         0 to listOf("소설", "에세이", "시", "고전", "추리", "판타지", "로맨스", "SF", "공포", "역사"),
         1 to listOf("AI", "프로그래밍", "로봇", "IT 일반", "수학", "물리", "화학"),
@@ -77,21 +73,17 @@ fun FeedWriteScreen(
         3 to listOf("철학", "역사", "심리", "종교", "윤리"),
         4 to listOf("음악", "미술", "공예", "무용", "연극")
     )
-    var feed_content by remember { mutableStateOf("") }
-    var isPrivate by remember { mutableStateOf(false) }
     val showBookSearchSheet = remember { mutableStateOf(false) }
-    val selectedBook = remember { mutableStateOf<BookData?>(null) }
-    val imageUris = remember { mutableStateListOf<Uri>() }
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
     ) { uris: List<Uri> ->
         if (uris.isNotEmpty()) {
-            val availableSlots = 3 - imageUris.size
+            val availableSlots = 3 - feedData.imageUris.size
             val imagesToAdd = uris.take(availableSlots) // 3장까지만 유지
-            imageUris.addAll(imagesToAdd)
+            feedData.imageUris.addAll(imagesToAdd)
         }
     }
-    val isImageLimitReached = imageUris.size >= 3
+    val isImageLimitReached = feedData.imageUris.size >= 3
     val focusManager = LocalFocusManager.current
 
     Box {
@@ -101,7 +93,7 @@ fun FeedWriteScreen(
                 .then(if (showBookSearchSheet.value) Modifier.blur(5.dp) else Modifier),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val isRightButtonEnabled = selectedBook.value != null && feed_content.isNotBlank() && selectedGenreIndex != -1 && selectedSubGenres.isNotEmpty()
+            val isRightButtonEnabled = feedData.selectedBook != null && feedData.feedContent.isNotBlank() && feedData.selectedGenreIndex != -1 && feedData.selectedSubGenres.isNotEmpty()
             InputTopAppBar(
                 title = stringResource(R.string.new_feed),
                 rightButtonName = stringResource(R.string.registration),
@@ -124,7 +116,7 @@ fun FeedWriteScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 GroupSelectBook(
-                    selectedBook = selectedBook.value,
+                    selectedBook = feedData.selectedBook,
                     onChangeBookClick = { showBookSearchSheet.value = true },
                     onSelectBookClick = { showBookSearchSheet.value = true }
                 )
@@ -134,9 +126,11 @@ fun FeedWriteScreen(
                 GroupInputField(
                     title = stringResource(R.string.write_feed),
                     hint = stringResource(R.string.write_feed_hint),
-                    value = feed_content,
+                    value = feedData.feedContent,
                     maxLength = 2000,
-                    onValueChange = { feed_content = it }
+                    onValueChange = { newText ->
+                        feedData = feedData.copy(feedContent = newText)
+                        }
                 )
 
                 SectionDivider()
@@ -174,16 +168,16 @@ fun FeedWriteScreen(
                             )
                         }
                     }
-                    items(imageUris.size) { index ->
+                    items(feedData.imageUris.size) { index ->
                         Box(modifier = Modifier.size(80.dp)) {
                             AsyncImage(
-                                model = imageUris[index],
+                                model = feedData.imageUris[index],
                                 contentDescription = null,
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
                             IconButton(
-                                onClick = { imageUris.removeAt(index) },
+                                onClick = { feedData.imageUris.removeAt(index) },
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                     .size(24.dp)
@@ -202,7 +196,7 @@ fun FeedWriteScreen(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
-                        text = stringResource(id = R.string.photo_count, imageUris.size, 3),
+                        text = stringResource(id = R.string.photo_count, feedData.imageUris.size, 3),
                         style = typography.info_r400_s12,
                         color = colors.NeonGreen,
                     )
@@ -225,8 +219,10 @@ fun FeedWriteScreen(
                         color = colors.White
                     )
                     ToggleSwitchButton(
-                        isChecked = isPrivate,
-                        onToggleChange = { isPrivate = it }
+                        isChecked = feedData.isPrivate,
+                        onToggleChange = { isChecked ->
+                            feedData = feedData.copy(isPrivate = isChecked)
+                        }
                     )
                 }
                 SectionDivider()
@@ -240,26 +236,31 @@ fun FeedWriteScreen(
                 GenreChipRow(
                     modifier = Modifier.width(18.dp),
                     genres = genres,
-                    selectedIndex = selectedGenreIndex,
+                    selectedIndex = feedData.selectedGenreIndex,
                     onSelect = {
-                        selectedGenreIndex = it
-                        selectedSubGenres = emptyList()
+                        feedData = feedData.copy(selectedGenreIndex = it, selectedSubGenres = emptyList())
                     }
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                if (selectedGenreIndex != -1) {
-                    val subGenres = subGenreMap[selectedGenreIndex].orEmpty()
+                if (feedData.selectedGenreIndex != -1) {
+                    val subGenres = subGenreMap[feedData.selectedGenreIndex].orEmpty()
                     Spacer(modifier = Modifier.height(8.dp))
 
                     SubGenreChipGrid(
                         subGenres = subGenres,
-                        selectedGenres = selectedSubGenres,
+                        selectedGenres = feedData.selectedSubGenres,
                         onGenreToggle = { genre ->
-                            selectedSubGenres = if (selectedSubGenres.contains(genre)) {
-                                selectedSubGenres - genre
+                            val newSelected = if (feedData.selectedSubGenres.contains(genre)) {
+                                feedData.selectedSubGenres - genre
                             } else {
-                                if (selectedSubGenres.size < 5) selectedSubGenres + genre else selectedSubGenres
+                                if (feedData.selectedSubGenres.size < 5) {
+                                    feedData.selectedSubGenres + genre
+                                } else {
+                                    feedData.selectedSubGenres
+                                }
                             }
+
+                            feedData = feedData.copy(selectedSubGenres = newSelected)
                         }
                     )
                     Row(
@@ -267,7 +268,7 @@ fun FeedWriteScreen(
                         horizontalArrangement = Arrangement.End
                     ) {
                         Text(
-                            text = stringResource(id = R.string.tag_count, selectedSubGenres.size, 5),
+                            text = stringResource(id = R.string.tag_count, feedData.selectedSubGenres.size, 5),
                             style = typography.info_r400_s12,
                             color = colors.NeonGreen,
                             )
@@ -280,21 +281,25 @@ fun FeedWriteScreen(
                     color = colors.White
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                if (selectedSubGenres.isNotEmpty()) {
+                if (feedData.selectedSubGenres.isNotEmpty()) {
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(selectedSubGenres) { subGenre ->
+                        items(feedData.selectedSubGenres) { subGenre ->
                             GenreChipButton(
                                 text = subGenre,
                                 onClick = {
                                     //해당 칩 눌렀을 때도 서브장르 삭제
-                                    selectedSubGenres = selectedSubGenres - subGenre
+                                    feedData = feedData.copy(
+                                        selectedSubGenres =feedData.selectedSubGenres - subGenre
+                                    )
                                 },
                                 onCloseClick = {
                                     //x버튼 누르면 서브장르 삭제
-                                    selectedSubGenres = selectedSubGenres - subGenre
+                                    feedData = feedData.copy(
+                                        selectedSubGenres = feedData.selectedSubGenres - subGenre
+                                    )
                                 }
                             )
                         }
@@ -308,7 +313,7 @@ fun FeedWriteScreen(
             GroupBookSearchBottomSheet(
                 onDismiss = { showBookSearchSheet.value = false },
                 onBookSelect = { book ->
-                    selectedBook.value = book
+                    feedData = feedData.copy(selectedBook= book)
                     showBookSearchSheet.value = false
                 },
                 onRequestBook = {
