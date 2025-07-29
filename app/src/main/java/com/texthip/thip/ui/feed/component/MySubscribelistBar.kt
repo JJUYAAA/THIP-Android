@@ -62,7 +62,7 @@ fun MySubscribeBarlist(
                     modifier = Modifier.size(20.dp),
                     painter = painterResource(id = R.drawable.ic_group),
                     contentDescription = null,
-                    tint = Color.Unspecified
+                    tint = colors.White
                 )
                 Text(
                     text = stringResource(R.string.my_subscription),

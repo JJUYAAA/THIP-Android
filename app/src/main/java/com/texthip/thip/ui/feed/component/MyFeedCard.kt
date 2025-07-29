@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +34,8 @@ fun MyFeedCard(
     bookImage: Painter? = null,
     onLikeClick: () -> Unit = {}
 ) {
+    val images = feedItem.imageUrls.orEmpty().map { painterResource(id = it) }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -41,7 +44,7 @@ fun MyFeedCard(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp)
+                .padding(bottom = 16.dp)
         ) {
             ActionBookButton(
                 bookTitle = feedItem.bookTitle,
@@ -50,15 +53,24 @@ fun MyFeedCard(
                 onClick = {}
             )
         }
-        if (bookImage  != null) {
-            Image(
-                painter = bookImage ,
-                contentDescription = null,
+        if (images.isNotEmpty()) {
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(480.dp),
-                contentScale = ContentScale.Crop
-            )
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                images.take(3).forEach { image ->
+                    Image(
+                        painter = image,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .size(100.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
         }
 
         Text(
@@ -125,9 +137,8 @@ private fun MyFeedCardPrev() {
         isLiked = false,
         isSaved = true,
         isLocked = true,
-        imageUrl = null
+        imageUrls = null
     )
-
     val feed2 = FeedItem(
         id = 2,
         userProfileImage = R.drawable.character_art,
@@ -142,17 +153,15 @@ private fun MyFeedCardPrev() {
         isLiked = false,
         isSaved = true,
         isLocked = false,
-        imageUrl = R.drawable.bookcover_sample
+        imageUrls = listOf(R.drawable.bookcover_sample)
     )
 
     Column {
         MyFeedCard(
-            feedItem = feed1,
-            bookImage = null
+            feedItem = feed1
         )
         MyFeedCard(
-            feedItem = feed2,
-            bookImage = painterResource(feed2.imageUrl!!)
+            feedItem = feed2
         )
     }
 

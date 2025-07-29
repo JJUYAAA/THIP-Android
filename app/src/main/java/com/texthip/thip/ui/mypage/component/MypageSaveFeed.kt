@@ -15,12 +15,10 @@ fun FeedContent(viewModel: SavedFeedViewModel = viewModel()) {
 
     LazyColumn {
         items(feedList, key = { it.id }) { feed ->
-            val bookImagePainter = feed.imageUrl?.let { painterResource(it) }
             val profileImagePainter = feed.userProfileImage?.let { painterResource(it) }
 
             SavedFeedCard(
                 feedItem = feed,
-                bookImage = bookImagePainter,
                 profileImage = profileImagePainter,
                 onBookmarkClick = { viewModel.toggleBookmark(feed.id) },
                 onLikeClick = { viewModel.toggleLike(feed.id) }

@@ -182,11 +182,9 @@ fun FeedScreen(
                     }
                 } else {
                     itemsIndexed(feedStateList, key = { _, item -> item.id }) { index, feed ->
-                        val bookImage = feed.imageUrl?.let { painterResource(it) }
                         Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
                         MyFeedCard(
                             feedItem = feed,
-                            bookImage = bookImage,
                             onLikeClick = {
                                 val updated = feed.copy(
                                     isLiked = !feed.isLiked,
@@ -217,12 +215,10 @@ fun FeedScreen(
                 }
                 itemsIndexed(feedStateList, key = { _, item -> item.id }) { index, feed ->
                     val profileImage = feed.userProfileImage?.let { painterResource(it) }
-                    val bookImage = feed.imageUrl?.let { painterResource(it) }
 
                     SavedFeedCard(
                         feedItem = feed,
                         profileImage = profileImage,
-                        bookImage = bookImage,
                         onBookmarkClick = {
                             val updated = feed.copy(isSaved = !feed.isSaved)
                             feedStateList[index] = updated
@@ -254,40 +250,42 @@ fun FeedScreen(
 @Preview(showBackground = true)
 @Composable
 private fun FeedScreenPreview() {
-    val mockFeeds = List(5) {
-        FeedItem(
-            id = it + 1,
-            userProfileImage = R.drawable.character_literature,
-            userName = "user.$it",
-            userRole = "문학 칭호",
-            bookTitle = "책 제목 ",
-            authName = "한강",
-            timeAgo = "1시간 전",
-            content = "내용내용내용 입니다.",
-            likeCount = it,
-            commentCount = it,
-            isLiked = false,
-            isSaved = false,
-            isLocked = it % 2 == 0,
-            imageUrl = R.drawable.bookcover_sample
-        )
-    }
-    val mockFollowerImages = listOf(
-        "https://example.com/image1.jpg",
-        "https://example.com/image2.jpg",
-        "https://example.com/image3.jpg",
-        "https://example.com/image4.jpg",
-        "https://example.com/image5.jpg"
-    )
-
     ThipTheme {
-        FeedScreen(
-            nickname = "ThipUser01",
-            userRole = "문학 칭호",
-            selectedTabIndex = 0,
-            feeds = mockFeeds,
-            totalFeedCount = mockFeeds.size,
-            followerProfileImageUrls = mockFollowerImages
+        val mockFeeds = List(5) {
+            FeedItem(
+                id = it + 1,
+                userProfileImage = R.drawable.character_literature,
+                userName = "user.$it",
+                userRole = "문학 칭호",
+                bookTitle = "책 제목 ",
+                authName = "한강",
+                timeAgo = "1시간 전",
+                content = "내용내용내용 입니다.",
+                likeCount = it,
+                commentCount = it,
+                isLiked = false,
+                isSaved = false,
+                isLocked = it % 2 == 0,
+                imageUrls = listOf(R.drawable.bookcover_sample)
+            )
+        }
+        val mockFollowerImages = listOf(
+            "https://example.com/image1.jpg",
+            "https://example.com/image2.jpg",
+            "https://example.com/image3.jpg",
+            "https://example.com/image4.jpg",
+            "https://example.com/image5.jpg"
         )
+
+        ThipTheme {
+            FeedScreen(
+                nickname = "ThipUser01",
+                userRole = "문학 칭호",
+                selectedTabIndex = 0,
+                feeds = mockFeeds,
+                totalFeedCount = mockFeeds.size,
+                followerProfileImageUrls = mockFollowerImages
+            )
+        }
     }
 }

@@ -47,7 +47,7 @@ fun FeedSubscribeBarlist(
         Icon(
             painter = painterResource(id = R.drawable.ic_group),
             contentDescription = null,
-            tint = Color.Unspecified
+            tint = colors.White
         )
         Text(
             text = buildAnnotatedString {

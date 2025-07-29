@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +26,7 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.mypage.mock.FeedItem
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -31,11 +34,15 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun SavedFeedCard(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
-    bookImage: Painter? = null,
     profileImage: Painter? = null,
     onBookmarkClick: () -> Unit = {},
     onLikeClick: () -> Unit = {}
 ) {
+    val images = feedItem.imageUrls.orEmpty().map { painterResource(id = it) }
+    val imagePainters = feedItem.imageUrls.orEmpty().map { painterResource(it) }
+    val hasImages = imagePainters.isNotEmpty()
+    val maxLines = if (hasImages) 3 else 8
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -51,7 +58,7 @@ fun SavedFeedCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp)
+                .padding(top = 16.dp)
         ) {
             ActionBookButton(
                 bookTitle = feedItem.bookTitle,
@@ -59,25 +66,32 @@ fun SavedFeedCard(
                 onClick = {}
             )
         }
-        if (bookImage  != null) {
-            Image(
-                painter = bookImage ,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(480.dp),
-                contentScale = ContentScale.Crop
-            )
-        }
-
-        Text(
+        ExpandableTextWithMore(
             text = feedItem.content,
-            style = typography.feedcopy_r400_s14_h20,
-            color = colors.White,
+            maxLinesWhenCollapsed = maxLines,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(vertical = 16.dp)
         )
+        if (images.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                images.take(3).forEach { image ->
+                    Image(
+                        painter = image,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .size(100.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        }
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -112,7 +126,6 @@ fun SavedFeedCard(
                 tint = Color.Unspecified
             )
         }
-
     }
 }
 
@@ -132,7 +145,7 @@ private fun SavedFeedCardPrev() {
         commentCount = 5,
         isLiked = false,
         isSaved = true,
-        imageUrl = null
+        imageUrls = null
     )
 
     val feed2 = FeedItem(
@@ -143,26 +156,30 @@ private fun SavedFeedCardPrev() {
         bookTitle = "책 제목",
         authName = "한강",
         timeAgo = "3시간 전",
-        content = "한줄만 입력 가능",
+        content = "한줄만 입력 가능한줄만 입력 가능한줄만 입력 가능한줄만 입력 가능한줄만 입력 가능한줄만 " +
+                "한줄만 입력 가능한줄만 입력 가능한줄만 입력 가능한줄만 입력 가능한줄만 입력 가능한줄만한줄만 입력 가능한줄만 입력 가능한줄만 입력 가능한줄만 입력 가능한줄만 입력 가능한줄만입력 가능한줄만 입력 가능한줄만 입력 가능한줄만 입력 가능한줄만 입력 가능",
         likeCount = 10,
         commentCount = 5,
         isLiked = false,
         isSaved = true,
-        imageUrl = R.drawable.bookcover_sample
+        imageUrls = listOf(R.drawable.bookcover_sample,R.drawable.bookcover_sample,R.drawable.bookcover_sample)
     )
+    val scrollState = rememberScrollState()
 
-    Column {
-        SavedFeedCard(
-            feedItem = feed1,
-            profileImage = painterResource(feed1.userProfileImage!!),
-            bookImage = null
-        )
-        SavedFeedCard(
-            feedItem = feed2,
-            profileImage = painterResource(feed2.userProfileImage!!),
-            bookImage = painterResource(feed2.imageUrl!!)
-        )
+    ThipTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(scrollState)
+        ) {
+            SavedFeedCard(
+                feedItem = feed1,
+                profileImage = painterResource(feed1.userProfileImage!!)
+            )
+            SavedFeedCard(
+                feedItem = feed2,
+                profileImage = painterResource(feed2.userProfileImage!!)
+            )
+        }
     }
-
-
 }
