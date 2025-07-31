@@ -36,7 +36,10 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
 // Group
 @SuppressLint("UnrememberedGetBackStackEntry")
-fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
+fun NavGraphBuilder.groupNavigation(
+    navController: NavHostController,
+    navigateBack: () -> Unit
+) {
     // 메인 Group 화면
     composable<MainTabRoutes.Group> { backStackEntry ->
         val groupViewModel: GroupViewModel = viewModel(
@@ -75,10 +78,10 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
         GroupMakeRoomScreen(
             viewModel = viewModel,
             onNavigateBack = {
-                navController.popBackStack()
+                navigateBack()
             },
             onGroupCreated = {
-                navController.popBackStack()
+                navigateBack()
             }
         )
     }
@@ -104,7 +107,7 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
             name = userName,
             allDataList = doneGroups,
             onNavigateBack = {
-                navController.popBackStack()
+                navigateBack()
             }
         )
     }
@@ -135,7 +138,7 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
                 }
             },
             onNavigateBack = {
-                navController.popBackStack()
+                navigateBack()
             }
         )
     }
@@ -159,7 +162,7 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
         GroupSearchScreen(
             roomList = searchGroups,
             onNavigateBack = {
-                navController.popBackStack()
+                navigateBack()
             },
             onRoomClick = { room ->
                 if (room.isRecruiting) {
@@ -211,7 +214,7 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
                     // 모집 마감 로직
                 },
                 onBackClick = {
-                    navController.popBackStack()
+                    navigateBack()
                 }
             )
         } ?: run {
@@ -245,7 +248,7 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
         roomDetail?.let {
             GroupRoomScreen(
                 onBackClick = {
-                    navController.popBackStack()
+                    navigateBack()
                 }
             )
         } ?: run {

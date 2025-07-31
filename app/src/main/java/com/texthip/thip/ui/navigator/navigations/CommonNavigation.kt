@@ -11,7 +11,10 @@ import com.texthip.thip.ui.common.alarmpage.viewmodel.AlarmViewModel
 import com.texthip.thip.ui.navigator.routes.CommonRoutes
 
 // Common 관련 네비게이션
-fun NavGraphBuilder.commonNavigation(navController: NavHostController) {
+fun NavGraphBuilder.commonNavigation(
+    navController: NavHostController,
+    navigateBack: () -> Unit
+) {
     // Alarm 화면
     composable<CommonRoutes.Alarm> {
         val alarmViewModel: AlarmViewModel = viewModel()
@@ -20,9 +23,7 @@ fun NavGraphBuilder.commonNavigation(navController: NavHostController) {
         AlarmScreen(
             alarmItems = alarmItems,
             onCardClick = { alarmViewModel.onCardClick(it) },
-            onNavigateBack = {
-                navController.popBackStack()
-            }
+            onNavigateBack = navigateBack
         )
     }
 }

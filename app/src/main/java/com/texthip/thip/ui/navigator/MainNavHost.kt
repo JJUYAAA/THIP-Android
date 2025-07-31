@@ -15,9 +15,15 @@ import com.texthip.thip.ui.navigator.navigations.commonNavigation
 fun MainNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = MainTabRoutes.Feed) {
         feedNavigation(navController)
-        groupNavigation(navController)
+        groupNavigation(
+            navController = navController,
+            navigateBack = navController::popBackStack
+        )
         searchNavigation(navController)
         myPageNavigation(navController)
-        commonNavigation(navController)
+        commonNavigation(
+            navController = navController,
+            navigateBack = navController::popBackStack
+        )
     }
 }
