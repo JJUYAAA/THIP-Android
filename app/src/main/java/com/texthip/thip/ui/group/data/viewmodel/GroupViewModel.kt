@@ -105,40 +105,13 @@ class GroupViewModel(
         }
     }
     
-    fun refresh() {
+    fun refreshGroupData() {
         loadInitialData()
     }
     
-    fun onMyGroupCardClick(
-        data: GroupCardData,
-        onNavigateToRoom: (Int) -> Unit
-    ) {
-        onNavigateToRoom(data.id)
-    }
-
-    fun onRoomCardClick(
-        data: GroupCardItemRoomData, 
-        onNavigateToRecruit: (Int) -> Unit,
-        onNavigateToRoom: (Int) -> Unit
-    ) {
-        if (data.isRecruiting) {
-            onNavigateToRecruit(data.id)
-        } else {
-            onNavigateToRoom(data.id)
-        }
-    }
     
     suspend fun getRoomDetail(roomId: Int): GroupRoomData? {
         return repository.getRoomDetail(roomId).getOrNull()
-    }
-    
-    fun searchRooms(query: String, onResult: (List<GroupCardItemRoomData>) -> Unit) {
-        viewModelScope.launch {
-            repository.searchRooms(query)
-                .onSuccess { results ->
-                    onResult(results)
-                }
-        }
     }
 
 }
