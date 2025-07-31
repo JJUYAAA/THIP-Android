@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import com.texthip.thip.ui.common.alarmpage.screen.AlarmScreen
 import com.texthip.thip.ui.common.alarmpage.viewmodel.AlarmViewModel
 import com.texthip.thip.ui.navigator.routes.CommonRoutes
-import com.texthip.thip.ui.navigator.extensions.navigateBack
 
 // Common 관련 네비게이션
 fun NavGraphBuilder.commonNavigation(navController: NavHostController) {
@@ -22,7 +21,7 @@ fun NavGraphBuilder.commonNavigation(navController: NavHostController) {
             alarmItems = alarmItems,
             onCardClick = { alarmViewModel.onCardClick(it) },
             onNavigateBack = {
-                navController.navigateBack()
+                navController.popBackStack()
             }
         )
     }

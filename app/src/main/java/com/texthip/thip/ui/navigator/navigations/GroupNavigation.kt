@@ -23,7 +23,6 @@ import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
 import com.texthip.thip.ui.group.screen.GroupDoneScreen
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
-import com.texthip.thip.ui.navigator.extensions.navigateBack
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
@@ -76,10 +75,10 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
         GroupMakeRoomScreen(
             viewModel = viewModel,
             onNavigateBack = {
-                navController.navigateBack()
+                navController.popBackStack()
             },
             onGroupCreated = {
-                navController.navigateBack()
+                navController.popBackStack()
             }
         )
     }
@@ -105,7 +104,7 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
             name = userName,
             allDataList = doneGroups,
             onNavigateBack = {
-                navController.navigateBack()
+                navController.popBackStack()
             }
         )
     }
@@ -129,18 +128,14 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
         GroupMyScreen(
             allDataList = myRoomGroups,
             onCardClick = { room ->
-                groupViewModel.onRoomCardClick(
-                    room,
-                    onNavigateToRecruit = { roomId ->
-                        navController.navigateToGroupRecruit(roomId)
-                    },
-                    onNavigateToRoom = { roomId ->
-                        navController.navigateToGroupRoom(roomId)
-                    }
-                )
+                if (room.isRecruiting) {
+                    navController.navigateToGroupRecruit(room.id)
+                } else {
+                    navController.navigateToGroupRoom(room.id)
+                }
             },
             onNavigateBack = {
-                navController.navigateBack()
+                navController.popBackStack()
             }
         )
     }
@@ -164,18 +159,14 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
         GroupSearchScreen(
             roomList = searchGroups,
             onNavigateBack = {
-                navController.navigateBack()
+                navController.popBackStack()
             },
             onRoomClick = { room ->
-                groupViewModel.onRoomCardClick(
-                    room,
-                    onNavigateToRecruit = { roomId ->
-                        navController.navigateToGroupRecruit(roomId)
-                    },
-                    onNavigateToRoom = { roomId ->
-                        navController.navigateToGroupRoom(roomId)
-                    }
-                )
+                if (room.isRecruiting) {
+                    navController.navigateToGroupRecruit(room.id)
+                } else {
+                    navController.navigateToGroupRoom(room.id)
+                }
             }
         )
     }
@@ -220,7 +211,7 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
                     // 모집 마감 로직
                 },
                 onBackClick = {
-                    navController.navigateBack()
+                    navController.popBackStack()
                 }
             )
         } ?: run {
@@ -254,7 +245,7 @@ fun NavGraphBuilder.groupNavigation(navController: NavHostController) {
         roomDetail?.let {
             GroupRoomScreen(
                 onBackClick = {
-                    navController.navigateBack()
+                    navController.popBackStack()
                 }
             )
         } ?: run {
