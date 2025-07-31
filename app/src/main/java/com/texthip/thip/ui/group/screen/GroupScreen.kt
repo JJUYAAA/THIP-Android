@@ -76,10 +76,7 @@ fun GroupScreen(
             GroupPager(
                 groupCards = myGroups,
                 onCardClick = { groupCard ->
-                    viewModel.onMyGroupCardClick(
-                        groupCard,
-                        onNavigateToRoom = onNavigateToGroupRoom
-                    )
+                    onNavigateToGroupRoom(groupCard.id)
                 }
             )
             Spacer(Modifier.height(32.dp))
@@ -96,11 +93,11 @@ fun GroupScreen(
             GroupRoomDeadlineSection(
                 roomSections = roomSections,
                 onRoomClick = { room ->
-                    viewModel.onRoomCardClick(
-                        room,
-                        onNavigateToRecruit = onNavigateToGroupRecruit,
-                        onNavigateToRoom = onNavigateToGroupRoom
-                    )
+                    if (room.isRecruiting) {
+                        onNavigateToGroupRecruit(room.id)
+                    } else {
+                        onNavigateToGroupRoom(room.id)
+                    }
                 }
             )
             Spacer(Modifier.height(102.dp))
