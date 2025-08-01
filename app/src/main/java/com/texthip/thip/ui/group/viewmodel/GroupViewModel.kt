@@ -1,9 +1,8 @@
-package com.texthip.thip.ui.group.data.viewmodel
+package com.texthip.thip.ui.group.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.texthip.thip.ui.group.data.repository.GroupRepository
-import com.texthip.thip.ui.group.data.repository.GroupRepositoryImpl
+import com.texthip.thip.data.group.repository.GroupRepository
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData
@@ -14,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class GroupViewModel(
-    private val repository: GroupRepository = GroupRepositoryImpl()
+    private val repository: GroupRepository = GroupRepository()
 ) : ViewModel() {
 
     private val _myGroups = MutableStateFlow<List<GroupCardData>>(emptyList())
