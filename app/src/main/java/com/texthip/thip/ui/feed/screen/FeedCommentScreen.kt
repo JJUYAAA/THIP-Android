@@ -35,7 +35,8 @@ import com.texthip.thip.ui.common.forms.CommentTextField
 import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.feed.FeedItemType
+import com.texthip.thip.ui.feed.component.ImageViewerModal
+import com.texthip.thip.ui.feed.mock.FeedItemType
 import com.texthip.thip.ui.group.note.component.*
 import com.texthip.thip.ui.group.note.mock.mockCommentList
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
@@ -71,6 +72,8 @@ fun FeedCommentScreen(
     val justNow = stringResource(R.string.just_a_moment_ago)
 
     val images = feedItem.imageUrls.orEmpty().map { painterResource(id = it) }
+    var showImageViewer by remember { mutableStateOf(false) }
+    var selectedImageIndex by remember { mutableStateOf(0) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -134,7 +137,11 @@ fun FeedCommentScreen(
                                     contentDescription = null,
                                     modifier = Modifier
                                         .padding(end = 16.dp)
-                                        .size(200.dp),
+                                        .size(200.dp)
+                                        .clickable {
+                                            selectedImageIndex = index
+                                            showImageViewer = true
+                                        },
                                     contentScale = ContentScale.Crop
                                 )
                             }
@@ -387,6 +394,14 @@ fun FeedCommentScreen(
             }
         }
     }
+    // 이미지 뷰어 모달
+    if (showImageViewer && images.isNotEmpty()) {
+        ImageViewerModal(
+            images = images.take(3),
+            initialIndex = selectedImageIndex,
+            onDismiss = { showImageViewer = false }
+        )
+    }
 }
 
 @Preview
@@ -407,7 +422,7 @@ private fun FeedCommentScreenPrev() {
             isLiked = true,
             isSaved = false,
             isLocked = false,
-            imageUrls = listOf(R.drawable.bookcover_sample, R.drawable.bookcover_sample),
+            imageUrls = listOf(R.drawable.character_sociology, R.drawable.character_art),
             tags = listOf("에세이", "문학", "힐링")
         )
         val commentList = remember { mutableStateListOf<FeedCommentItem>() }
