@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -33,6 +35,7 @@ import com.texthip.thip.ui.common.forms.CommentTextField
 import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.feed.FeedItemType
 import com.texthip.thip.ui.group.note.component.*
 import com.texthip.thip.ui.group.note.mock.mockCommentList
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
@@ -47,7 +50,7 @@ import com.texthip.thip.ui.group.note.mock.ReplyItem as FeedReplyItem
 fun FeedCommentScreen(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
-    bookImage: Painter? = null,
+    feedType: FeedItemType,
     profileImage: Painter? = null,
     currentUserId: Int,
     currentUserName: String,
@@ -56,8 +59,9 @@ fun FeedCommentScreen(
     onLikeClick: () -> Unit = {},
     onCommentInputChange: (String) -> Unit = {},
     onSendClick: () -> Unit = {},
-    commentList: SnapshotStateList<FeedCommentItem> = remember { mutableStateListOf() }
-) {
+    commentList: SnapshotStateList<FeedCommentItem> = remember { mutableStateListOf() },
+
+    ) {
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -66,6 +70,7 @@ fun FeedCommentScreen(
     val feed = remember { mutableStateOf(feedItem) }
     val justNow = stringResource(R.string.just_a_moment_ago)
 
+    val images = feedItem.imageUrls.orEmpty().map { painterResource(id = it) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -87,9 +92,10 @@ fun FeedCommentScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
                 ) {
                     ProfileBar(
+                        modifier = Modifier
+                            .padding(20.dp),
                         profileImage = profileImage,
                         topText = feedItem.userName,
                         bottomText = feedItem.userRole,
@@ -99,7 +105,7 @@ fun FeedCommentScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 16.dp, bottom = 16.dp)
+                            .padding(vertical = 16.dp, horizontal = 20.dp)
                     ) {
                         ActionBookButton(
                             bookTitle = feedItem.bookTitle,
@@ -113,23 +119,32 @@ fun FeedCommentScreen(
                         color = colors.White,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp)
+                            .padding(bottom = 16.dp, start = 20.dp,end = 20.dp)
                     )
-                    if (bookImage != null) {
-                        Image(
-                            painter = bookImage,
-                            contentDescription = null,
+                    if (images.isNotEmpty()) {
+                        LazyRow(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(480.dp),
-                            contentScale = ContentScale.Crop
-                        )
+                                .padding(start = 20.dp, bottom = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            itemsIndexed(images.take(3)) { index, image ->
+                                Image(
+                                    painter = image,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .padding(end = 16.dp)
+                                        .size(200.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
                     }
                     if (feedItem.tags.isNotEmpty()) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 16.dp),
+                                .padding(bottom = 16.dp, start = 20.dp, end = 20.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             feedItem.tags.forEach { tag ->
@@ -143,11 +158,12 @@ fun FeedCommentScreen(
                         }
                     }
                     HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 20.dp),
                         color = colors.DarkGrey02,
                         thickness = 1.dp,
                     )
                     Row(
-                        modifier = Modifier.padding(top = 16.dp, bottom = 30.dp),
+                        modifier = Modifier.padding(top = 16.dp, bottom = 30.dp, start = 20.dp, end = 20.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -180,12 +196,28 @@ fun FeedCommentScreen(
                             modifier = Modifier.padding(start = 5.dp, end = 12.dp)
                         )
                         Spacer(modifier = Modifier.weight(1f))
-                        if (feedItem.isLocked) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_lock),
-                                contentDescription = null,
-                                tint = Color.Unspecified
-                            )
+
+                        when (feedType) {
+                            FeedItemType.LOCKED -> {
+                                if (feedItem.isLocked) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_lock),
+                                        contentDescription = null,
+                                        tint = Color.Unspecified
+                                    )
+                                }
+                                // else: 아무것도 안 띄움
+                            }
+
+                            FeedItemType.SAVABLE -> {
+                                Icon(
+                                    painter = painterResource(
+                                        if (feedItem.isSaved) R.drawable.ic_save_filled else R.drawable.ic_save
+                                    ),
+                                    contentDescription = null,
+                                    tint = Color.Unspecified
+                                )
+                            }
                         }
                     }
                 }
@@ -193,21 +225,22 @@ fun FeedCommentScreen(
                     color = colors.DarkGrey02,
                     thickness = 10.dp
                 )
-                Spacer(modifier = Modifier.height(40.dp))
             }
             if (commentList.isEmpty()) {
                 item {
-                     Column (
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                         verticalArrangement = Arrangement.Center
+                            .fillMaxWidth()
+                            .height(400.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             text = stringResource(R.string.no_comments_yet),
                             style = typography.smalltitle_sb600_s18_h24,
                             color = colors.White
                         )
-                         Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = stringResource(R.string.no_comment_subtext),
                             style = typography.copy_r400_s14,
@@ -215,9 +248,10 @@ fun FeedCommentScreen(
                         )
                     }
                 }
-            }else{
-                commentList.forEachIndexed{ index, commentItem ->
+            } else {
+                commentList.forEachIndexed { index, commentItem ->
                     item {
+                        Spacer(modifier = Modifier.height(40.dp))
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -359,7 +393,7 @@ fun FeedCommentScreen(
 @Composable
 private fun FeedCommentScreenPrev() {
     ThipTheme {
-        val mockFeedItem =  FeedItem(
+        val mockFeedItem = FeedItem(
             id = 1,
             userProfileImage = R.drawable.character_literature,
             userName = "문학소녀",
@@ -372,15 +406,15 @@ private fun FeedCommentScreenPrev() {
             commentCount = 3,
             isLiked = true,
             isSaved = false,
-            isLocked = true,
-            imageUrls = listOf(R.drawable.bookcover_sample),
+            isLocked = false,
+            imageUrls = listOf(R.drawable.bookcover_sample, R.drawable.bookcover_sample),
             tags = listOf("에세이", "문학", "힐링")
         )
         val commentList = remember { mutableStateListOf<FeedCommentItem>() }
 
         FeedCommentScreen(
             feedItem = mockFeedItem,
-            bookImage = painterResource(R.drawable.bookcover_sample),
+            feedType = FeedItemType.LOCKED,
             profileImage = painterResource(R.drawable.character_literature),
             currentUserId = 999,
             currentUserName = "나",
@@ -390,11 +424,12 @@ private fun FeedCommentScreenPrev() {
         )
     }
 }
+
 @Preview
 @Composable
 private fun FeedCommentScreenWithMockComments() {
     ThipTheme {
-        val mockFeedItem =  FeedItem(
+        val mockFeedItem = FeedItem(
             id = 1,
             userProfileImage = R.drawable.character_literature,
             userName = "문학소녀",
@@ -406,8 +441,8 @@ private fun FeedCommentScreenWithMockComments() {
             likeCount = 12,
             commentCount = 3,
             isLiked = true,
-            isSaved = false,
-            isLocked = true,
+            isSaved = true,
+            isLocked = false,
             imageUrls = listOf(R.drawable.bookcover_sample),
             tags = listOf("에세이", "문학", "힐링")
         )
@@ -419,7 +454,7 @@ private fun FeedCommentScreenWithMockComments() {
 
         FeedCommentScreen(
             feedItem = mockFeedItem,
-            bookImage = painterResource(R.drawable.bookcover_sample),
+            feedType = FeedItemType.SAVABLE,
             profileImage = painterResource(R.drawable.character_literature),
             currentUserId = 999,
             currentUserName = "나",
