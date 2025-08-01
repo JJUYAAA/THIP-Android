@@ -61,6 +61,7 @@ fun RoleCard(
     } else {
         SolidColor(colors.Black.copy(alpha = 0.3f))
     }
+    val actualGenreColor = if (selected) genreColor else colors.Grey01
     Box(
         modifier = modifier
             .width(162.dp)
@@ -92,7 +93,7 @@ fun RoleCard(
             Text(
                 text = genre,
                 style = typography.smalltitle_m500_s18_h24,
-                color = genreColor
+                color = actualGenreColor
             )
             Text(
                 text = role,
