@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -15,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ActionBookButton
+import com.texthip.thip.ui.mypage.component.ExpandableTextWithMore
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -31,11 +30,13 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun MyFeedCard(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
-    bookImage: Painter? = null,
-    onLikeClick: () -> Unit = {}
+    onLikeClick: () -> Unit = {},
+    onContentClick: () -> Unit = {}
 ) {
     val images = feedItem.imageUrls.orEmpty().map { painterResource(id = it) }
-
+    val imagePainters = feedItem.imageUrls.orEmpty().map { painterResource(it) }
+    val hasImages = imagePainters.isNotEmpty()
+    val maxLines = if (hasImages) 3 else 8
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -44,7 +45,6 @@ fun MyFeedCard(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
         ) {
             ActionBookButton(
                 bookTitle = feedItem.bookTitle,
@@ -53,6 +53,14 @@ fun MyFeedCard(
                 onClick = {}
             )
         }
+        ExpandableTextWithMore(
+            text = feedItem.content,
+            maxLinesWhenCollapsed = maxLines,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
+                .clickable{onContentClick()}
+        )
         if (images.isNotEmpty()) {
             Row(
                 modifier = Modifier
@@ -73,14 +81,6 @@ fun MyFeedCard(
             }
         }
 
-        Text(
-            text = feedItem.content,
-            style = typography.feedcopy_r400_s14_h20,
-            color = colors.White,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -131,7 +131,7 @@ private fun MyFeedCardPrev() {
         bookTitle = "책 제목",
         authName = "한강",
         timeAgo = "3시간 전",
-        content = "무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷",
+        content = "무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷",
         likeCount = 10,
         commentCount = 5,
         isLiked = false,
@@ -153,7 +153,7 @@ private fun MyFeedCardPrev() {
         isLiked = false,
         isSaved = true,
         isLocked = false,
-        imageUrls = listOf(R.drawable.bookcover_sample)
+        imageUrls = listOf(R.drawable.bookcover_sample,R.drawable.bookcover_sample)
     )
 
     Column {

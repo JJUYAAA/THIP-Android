@@ -36,7 +36,8 @@ fun SavedFeedCard(
     feedItem: FeedItem,
     profileImage: Painter? = null,
     onBookmarkClick: () -> Unit = {},
-    onLikeClick: () -> Unit = {}
+    onLikeClick: () -> Unit = {},
+    onContentClick: () -> Unit = {}
 ) {
     val images = feedItem.imageUrls.orEmpty().map { painterResource(id = it) }
     val imagePainters = feedItem.imageUrls.orEmpty().map { painterResource(it) }
@@ -72,6 +73,7 @@ fun SavedFeedCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp)
+                .clickable { onContentClick() }
         )
         if (images.isNotEmpty()) {
             Row(

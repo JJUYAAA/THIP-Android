@@ -192,6 +192,7 @@ fun FeedScreen(
                                 )
                                 feedStateList[index] = updated
                             },
+                            onContentClick = {} //FeedCommentScreen으로
                         )
                         Spacer(modifier = Modifier.height(40.dp))
                         if (index != feeds.lastIndex) {
@@ -229,7 +230,9 @@ fun FeedScreen(
                                 likeCount = if (feed.isLiked) feed.likeCount - 1 else feed.likeCount + 1
                             )
                             feedStateList[index] = updated
-                        }
+                        },
+                        onContentClick = {} //FeedCommentScreen으로
+
                     )
                     if (index != feeds.lastIndex) {
                         HorizontalDivider(
@@ -260,7 +263,7 @@ private fun FeedScreenPreview() {
                 bookTitle = "책 제목 ",
                 authName = "한강",
                 timeAgo = "1시간 전",
-                content = "내용내용내용 입니다.",
+                content = "내용내용내용 입니다. 내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.",
                 likeCount = it,
                 commentCount = it,
                 isLiked = false,
