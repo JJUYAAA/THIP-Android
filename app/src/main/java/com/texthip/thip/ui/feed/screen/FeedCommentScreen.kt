@@ -3,6 +3,7 @@ package com.texthip.thip.ui.feed.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -32,6 +34,7 @@ import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.note.component.*
+import com.texthip.thip.ui.group.note.mock.mockCommentList
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme
@@ -52,7 +55,8 @@ fun FeedCommentScreen(
     currentUserProfileImageUrl: String,
     onLikeClick: () -> Unit = {},
     onCommentInputChange: (String) -> Unit = {},
-    onSendClick: () -> Unit = {}
+    onSendClick: () -> Unit = {},
+    commentList: SnapshotStateList<FeedCommentItem> = remember { mutableStateListOf() }
 ) {
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
@@ -61,37 +65,7 @@ fun FeedCommentScreen(
     val replyTo = remember { mutableStateOf<String?>(null) }
     val feed = remember { mutableStateOf(feedItem) }
     val justNow = stringResource(R.string.just_a_moment_ago)
-    val commentList = remember {
-        mutableStateListOf(
-            FeedCommentItem(
-                commentId = 1,
-                userId = 1,
-                nickName = "사용자1",
-                genreName = "문학",
-                profileImageUrl = "",
-                content = "너무 공감돼요!",
-                postDate = "1시간 전",
-                isWriter = false,
-                isLiked = false,
-                likeCount = 3,
-                replyList = listOf(
-                    FeedReplyItem(
-                        replyId = 2,
-                        userId = 2,
-                        nickName = "사용자2",
-                        parentNickname = "사용자1",
-                        genreName = "문학",
-                        profileImageUrl = "",
-                        content = "저도 그렇게 느꼈어요.",
-                        postDate = "30분 전",
-                        isWriter = false,
-                        isLiked = false,
-                        likeCount = 1
-                    )
-                )
-            )
-        )
-    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -221,30 +195,53 @@ fun FeedCommentScreen(
                 )
                 Spacer(modifier = Modifier.height(40.dp))
             }
-            commentList.forEach { commentItem ->
+            if (commentList.isEmpty()) {
                 item {
-                    Column(
+                     Column (
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 24.dp)
+                            .fillMaxWidth(),
+                         verticalArrangement = Arrangement.Center
                     ) {
-                        CommentItem(
-                            data = commentItem,
-                            onReplyClick = { replyTo.value = it },
-
+                        Text(
+                            text = stringResource(R.string.no_comments_yet),
+                            style = typography.smalltitle_sb600_s18_h24,
+                            color = colors.White
                         )
-                        Spacer(modifier = Modifier.height(24.dp))
-                        commentItem.replyList.forEach { reply ->
-                            ReplyItem(
-                                data = reply,
-                                onReplyClick = { replyTo.value = it }
-                            )
+                         Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = stringResource(R.string.no_comment_subtext),
+                            style = typography.copy_r400_s14,
+                            color = colors.Grey
+                        )
+                    }
+                }
+            }else{
+                commentList.forEachIndexed{ index, commentItem ->
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp, vertical = 24.dp)
+                        ) {
+                            CommentItem(
+                                data = commentItem,
+                                onReplyClick = { replyTo.value = it },
+
+                                )
+                            Spacer(modifier = Modifier.height(24.dp))
+                            commentItem.replyList.forEach { reply ->
+                                ReplyItem(
+                                    data = reply,
+                                    onReplyClick = { replyTo.value = it }
+                                )
+                                Spacer(modifier = Modifier.height(24.dp))
+                            }
+                            if (index == commentList.lastIndex) {
+                                Spacer(modifier = Modifier.height(40.dp))
+                            }
                         }
                     }
                 }
-            }
-            item {
-                Spacer(modifier = Modifier.height(40.dp))
             }
         }
         CommentTextField(
@@ -362,33 +359,73 @@ fun FeedCommentScreen(
 @Composable
 private fun FeedCommentScreenPrev() {
     ThipTheme {
+        val mockFeedItem =  FeedItem(
+            id = 1,
+            userProfileImage = R.drawable.character_literature,
+            userName = "문학소녀",
+            userRole = "문학 칭호",
+            bookTitle = "채식주의자",
+            authName = "한강",
+            timeAgo = "1시간 전",
+            content = "이 책은 인간의 본성과 억압에 대한 깊은 성찰을 담고 있어요. 인상 깊은 문장이 많았어요.",
+            likeCount = 12,
+            commentCount = 3,
+            isLiked = true,
+            isSaved = false,
+            isLocked = true,
+            imageUrls = listOf(R.drawable.bookcover_sample),
+            tags = listOf("에세이", "문학", "힐링")
+        )
+        val commentList = remember { mutableStateListOf<FeedCommentItem>() }
+
         FeedCommentScreen(
-            feedItem = FeedItem(
-                id = 1,
-                userProfileImage = R.drawable.character_literature,
-                userName = "문학소녀",
-                userRole = "문학 칭호",
-                bookTitle = "채식주의자",
-                authName = "한강",
-                timeAgo = "1시간 전",
-                content = "이 책은 인간의 본성과 억압에 대한 깊은 성찰을 담고 있어요. 인상 깊은 문장이 많았어요.",
-                likeCount = 12,
-                commentCount = 3,
-                isLiked = true,
-                isSaved = false,
-                isLocked = true,
-                imageUrls = listOf(R.drawable.bookcover_sample),
-                tags = listOf("에세이", "문학", "힐링")
-            ),
+            feedItem = mockFeedItem,
             bookImage = painterResource(R.drawable.bookcover_sample),
             profileImage = painterResource(R.drawable.character_literature),
-            onLikeClick = {},
-            onCommentInputChange = {},
-            onSendClick = {},
             currentUserId = 999,
             currentUserName = "나",
-            currentUserGenre = "장르",
-            currentUserProfileImageUrl = ""
+            currentUserGenre = "문학",
+            currentUserProfileImageUrl = "",
+            commentList = commentList
+        )
+    }
+}
+@Preview
+@Composable
+private fun FeedCommentScreenWithMockComments() {
+    ThipTheme {
+        val mockFeedItem =  FeedItem(
+            id = 1,
+            userProfileImage = R.drawable.character_literature,
+            userName = "문학소녀",
+            userRole = "문학 칭호",
+            bookTitle = "채식주의자",
+            authName = "한강",
+            timeAgo = "1시간 전",
+            content = "이 책은 인간의 본성과 억압에 대한 깊은 성찰을 담고 있어요. 인상 깊은 문장이 많았어요.",
+            likeCount = 12,
+            commentCount = 3,
+            isLiked = true,
+            isSaved = false,
+            isLocked = true,
+            imageUrls = listOf(R.drawable.bookcover_sample),
+            tags = listOf("에세이", "문학", "힐링")
+        )
+        val commentList = remember {
+            mutableStateListOf<FeedCommentItem>().apply {
+                addAll(mockCommentList.commentData)
+            }
+        }
+
+        FeedCommentScreen(
+            feedItem = mockFeedItem,
+            bookImage = painterResource(R.drawable.bookcover_sample),
+            profileImage = painterResource(R.drawable.character_literature),
+            currentUserId = 999,
+            currentUserName = "나",
+            currentUserGenre = "문학",
+            currentUserProfileImageUrl = "",
+            commentList = commentList
         )
     }
 }
