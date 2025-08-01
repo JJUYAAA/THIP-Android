@@ -43,6 +43,10 @@ val Black = Color(0xFF121212)
 val Black50 = Color(0x80121212)
 val Black10 = Color(0x1A121212)
 val Black00 = Color(0x00121212)
+val Black700 = Color(0xFF090909)
+val Black800 = Color(0xFF040404)
+
+
 
 @Immutable
 data class ThipColors(
@@ -80,6 +84,8 @@ data class ThipColors(
     val Black50: Color,
     val Black10: Color,
     val Black00: Color,
+    val Black800: Color,
+    val Black700: Color
 )
 
 val defaultThipColors = ThipColors(
@@ -116,7 +122,9 @@ val defaultThipColors = ThipColors(
     Black = Black,
     Black50 = Black50,
     Black10 = Black10,
-    Black00 = Black00
+    Black00 = Black00,
+    Black700 = Black700,
+    Black800 = Black800
 )
 
 val LocalThipColorsProvider = staticCompositionLocalOf { defaultThipColors }
