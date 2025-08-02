@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ActionBookButton
-import com.texthip.thip.ui.mypage.component.ExpandableTextWithMore
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -34,34 +33,32 @@ fun MyFeedCard(
     onContentClick: () -> Unit = {}
 ) {
     val images = feedItem.imageUrls.orEmpty().map { painterResource(id = it) }
-    val imagePainters = feedItem.imageUrls.orEmpty().map { painterResource(it) }
-    val hasImages = imagePainters.isNotEmpty()
+    val hasImages = images.isNotEmpty()
     val maxLines = if (hasImages) 3 else 8
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-        ) {
-            ActionBookButton(
-                bookTitle = feedItem.bookTitle,
-                bookAuthor = feedItem.authName,
+        ActionBookButton(
+            bookTitle = feedItem.bookTitle,
+            bookAuthor = feedItem.authName,
+            onClick = {}
+        )
 
-                onClick = {}
-            )
-        }
-        ExpandableTextWithMore(
+        Text(
             text = feedItem.content,
-            maxLinesWhenCollapsed = maxLines,
+            style = typography.feedcopy_r400_s14_h20,
+            color = colors.White,
+            maxLines = maxLines,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp)
-                .clickable{onContentClick()}
+                .clickable { onContentClick() }
         )
-        if (images.isNotEmpty()) {
+
+        if (hasImages) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -116,7 +113,6 @@ fun MyFeedCard(
                 )
             }
         }
-
     }
 }
 
@@ -147,7 +143,7 @@ private fun MyFeedCardPrev() {
         bookTitle = "책 제목",
         authName = "한강",
         timeAgo = "3시간 전",
-        content = "한줄만 입력 가능",
+        content = "세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!",
         likeCount = 10,
         commentCount = 5,
         isLiked = false,

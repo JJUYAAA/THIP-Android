@@ -67,9 +67,11 @@ fun SavedFeedCard(
                 onClick = {}
             )
         }
-        ExpandableTextWithMore(
+        Text(
             text = feedItem.content,
-            maxLinesWhenCollapsed = maxLines,
+            style = typography.feedcopy_r400_s14_h20,
+            color = colors.White,
+            maxLines = maxLines,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp)
@@ -142,7 +144,7 @@ private fun SavedFeedCardPrev() {
         bookTitle = "책 제목",
         authName = "한강",
         timeAgo = "3시간 전",
-        content = "무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷",
+        content = "무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷",
         likeCount = 10,
         commentCount = 5,
         isLiked = false,
