@@ -2,7 +2,9 @@ package com.texthip.thip.ui.feed.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -48,6 +50,8 @@ fun MySubscriptionList(
                     color = colors.DarkGrey02,
                     thickness = 1.dp
                 )
+            }else{
+                Spacer(modifier = Modifier.height(76.dp))
             }
         }
     }

@@ -286,6 +286,7 @@
 
     <!--    feed   -->
     <string name="my_thip_list">내 띱 목록</string>
+    <string name="thip_list">띱 목록</string>
     <string name="whole_num">전체 %d</string>
     <string name="toast_thip">%1$s 님을 띱 했어요</string>
     <string name="toast_thip_cancel">%1$s 님을 띱 취소했어요</string>
