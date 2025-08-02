@@ -38,7 +38,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MySubscriptionScreen(
-    navController: NavController? = null
+    navController: NavController? = null,
+    titleText: String = stringResource(R.string.my_thip_list)
 ) {
     val initialmembers = listOf(
         MySubscriptionData(
@@ -160,7 +161,7 @@ fun MySubscriptionScreen(
         ) {
             DefaultTopAppBar(
                 onLeftClick = {},
-                title = stringResource(R.string.my_thip_list)
+                title = titleText
             )
             Column(
                 modifier = Modifier

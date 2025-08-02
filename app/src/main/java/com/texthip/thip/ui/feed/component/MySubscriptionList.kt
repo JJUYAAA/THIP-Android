@@ -18,6 +18,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 @Composable
 fun MySubscriptionList(
     members: List<MySubscriptionData>,
+    isMine: Boolean=true,
     onUnsubscribe: (String) -> Unit
 ) {
     Column(
@@ -34,6 +35,9 @@ fun MySubscriptionList(
                 buttonText = stringResource(if(member.isSubscribed) R.string.thip_cancel else R.string.thip),
                 buttonWidth = 64.dp,
                 profileImageSize = 36.dp,
+                showButton = isMine,
+                showThipNum = !isMine,
+                thipNum = member.subscriberCount,
                 onButtonClick = {
                     onUnsubscribe(member.nickname)
                 }
@@ -83,6 +87,45 @@ private fun MySubscriptionListPrev() {
                 subscriberCount = 100
             ),
         ),
+        onUnsubscribe = {}
+    )
+}
+
+@Preview
+@Composable
+private fun MySubscriptionListPrev2() {
+    MySubscriptionList(
+        members = listOf(
+            MySubscriptionData(
+                profileImageUrl = null,
+                nickname = "Thiper",
+                role = "칭호칭호",
+                roleColor = colors.Yellow,
+                subscriberCount = 100,
+            ),
+            MySubscriptionData(
+                profileImageUrl = null,
+                nickname = "thipthip",
+                role = "공식 인플루언서",
+                roleColor = colors.NeonGreen,
+                subscriberCount = 50
+            ),
+            MySubscriptionData(
+                profileImageUrl = null,
+                nickname = "Thiper",
+                role = "칭호칭호",
+                roleColor = colors.Yellow,
+                subscriberCount = 100
+            ),
+            MySubscriptionData(
+                profileImageUrl = null,
+                nickname = "thip01",
+                role = "작가",
+                roleColor = colors.NeonGreen,
+                subscriberCount = 100
+            ),
+        ),
+        isMine = false,
         onUnsubscribe = {}
     )
 }

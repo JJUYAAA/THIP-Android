@@ -285,12 +285,13 @@
     <string name="genre_can_be_changed">이후 내 정보에서 변경이 가능해요.</string>
 
     <!--    feed   -->
-    <string name="my_thip_list">내 띱 리스트</string>
+    <string name="my_thip_list">내 띱 목록</string>
     <string name="whole_num">전체 %d</string>
     <string name="toast_thip">%1$s 님을 띱 했어요</string>
     <string name="toast_thip_cancel">%1$s 님을 띱 취소했어요</string>
     <string name="thip">띱 하기</string>
     <string name="thip_cancel">띱 취소</string>
+    <string name="thip_num">%d명이 띱 하는 중</string>
     <string name="create_feed">피드에 글을 작성해 보세요</string>
 
     <string name="group_participant_close_popup">모집을 마감하시겠습니까?</string>
@@ -304,7 +305,7 @@
     <string name="group_myroom_error_comment2">첫번째 모임방에 참여해보세요</string>
     <string name="feed_reply_to">%1$s 님에게 댓글을 남겨보세요.</string>
     <string name="just_a_moment_ago">방금 전</string>
-    <string name="my_subscription">내 구독</string>
+    <string name="my_subscription">내 띱</string>
     <string name="new_feed">새 글</string>
     <string name="registration">등록</string>
     <string name="write_feed">글 작성</string>
