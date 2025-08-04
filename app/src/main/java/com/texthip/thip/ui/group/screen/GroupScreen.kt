@@ -46,6 +46,7 @@ fun GroupScreen(
 
     val myGroups by viewModel.myGroups.collectAsState()
     val roomSections by viewModel.roomSections.collectAsState()
+    val selectedGenreIndex by viewModel.selectedGenreIndex.collectAsState()
     val scrollState = rememberScrollState()
 
     Box(
@@ -95,6 +96,10 @@ fun GroupScreen(
             // 마감 임박한 독서 모임방
             GroupRoomDeadlineSection(
                 roomSections = roomSections,
+                selectedGenreIndex = selectedGenreIndex,
+                onGenreSelect = { genreIndex ->
+                    viewModel.selectGenre(genreIndex)
+                },
                 onRoomClick = { room ->
                     if (room.isRecruiting) {
                         onNavigateToGroupRecruit(room.id)

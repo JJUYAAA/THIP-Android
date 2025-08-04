@@ -40,6 +40,9 @@ class GroupViewModel @Inject constructor(
     private val _genres = MutableStateFlow<List<String>>(emptyList())
     val genres: StateFlow<List<String>> = _genres.asStateFlow()
     
+    private val _selectedGenreIndex = MutableStateFlow(0)
+    val selectedGenreIndex: StateFlow<Int> = _selectedGenreIndex.asStateFlow()
+    
     init {
         loadInitialData()
     }
@@ -47,10 +50,20 @@ class GroupViewModel @Inject constructor(
     private fun loadInitialData() {
         loadUserName()
         loadMyGroups()
+        loadGenres()
         loadRoomSections()
         loadDoneGroups()
         loadMyRoomGroups()
         loadSearchGroups()
+    }
+    
+    private fun loadGenres() {
+        viewModelScope.launch {
+            repository.getGenres()
+                .onSuccess { genreList ->
+                    _genres.value = genreList
+                }
+        }
     }
     
     private fun loadUserName() {
@@ -70,7 +83,31 @@ class GroupViewModel @Inject constructor(
 
     private fun loadRoomSections() {
         viewModelScope.launch {
-            repository.getRoomSections()
+            val currentGenres = _genres.value
+            val selectedIndex = _selectedGenreIndex.value
+            val selectedGenre = if (currentGenres.isNotEmpty() && selectedIndex >= 0 && selectedIndex < currentGenres.size) {
+                currentGenres[selectedIndex]
+            } else {
+                "문학" // 기본값
+            }
+            
+            repository.getRoomSections(selectedGenre)
+                .onSuccess { sections ->
+                    _roomSections.value = sections
+                }
+        }
+    }
+    
+    fun selectGenre(genreIndex: Int) {
+        if (genreIndex >= 0 && genreIndex != _selectedGenreIndex.value) {
+            _selectedGenreIndex.value = genreIndex
+            loadRoomSections() // 장르 변경 시 새로운 데이터 로드
+        }
+    }
+    
+    fun loadRoomSectionsByGenre(genre: String) {
+        viewModelScope.launch {
+            repository.getRoomSections(genre)
                 .onSuccess { sections ->
                     _roomSections.value = sections
                 }

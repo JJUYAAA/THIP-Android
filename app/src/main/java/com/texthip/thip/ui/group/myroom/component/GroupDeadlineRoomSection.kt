@@ -44,6 +44,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun GroupRoomDeadlineSection(
     roomSections: List<GroupRoomSectionData>,
+    selectedGenreIndex: Int,
+    onGenreSelect: (Int) -> Unit,
     onRoomClick: (GroupCardItemRoomData) -> Unit
 ) {
     val sideMargin = 30.dp
@@ -77,7 +79,6 @@ fun GroupRoomDeadlineSection(
                 modifier = Modifier.fillMaxWidth()
             ) { page ->
                 val section = roomSections[page]
-                var selectedGenre by remember { mutableIntStateOf(0) }
 
                 val isCurrent = pagerState.currentPage == page
                 val scale = if (isCurrent) 1f else 0.94f
@@ -113,12 +114,13 @@ fun GroupRoomDeadlineSection(
 
                         GenreChipRow(
                             genres = section.genres,
-                            selectedIndex = selectedGenre,
-                            onSelect = { idx -> selectedGenre = idx }
+                            selectedIndex = selectedGenreIndex,
+                            onSelect = onGenreSelect
                         )
                         Spacer(Modifier.height(20.dp))
 
-                        val cards = section.rooms.filter { it.genreIndex == selectedGenre }
+                        // 서버에서 장르별로 필터링된 데이터가 오므로 모든 rooms 표시
+                        val cards = section.rooms
                         Column(
                             verticalArrangement = Arrangement.spacedBy(20.dp),
                             modifier = Modifier
@@ -317,6 +319,8 @@ fun PreviewGroupRoomPagerSection() {
 
         GroupRoomDeadlineSection(
             roomSections = roomSections,
+            selectedGenreIndex = 0,
+            onGenreSelect = {},
             onRoomClick = {}
         )
     }
@@ -351,6 +355,8 @@ fun PreviewGroupRoomPagerSectionEmptyGenre() {
 
         GroupRoomDeadlineSection(
             roomSections = roomSections,
+            selectedGenreIndex = 0,
+            onGenreSelect = {},
             onRoomClick = {}
         )
     }

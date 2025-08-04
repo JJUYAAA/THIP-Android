@@ -3,8 +3,8 @@ package com.texthip.thip.data.model.group.response
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// JoinedRoomsDto.kt
-@kotlinx.serialization.Serializable
+
+@Serializable
 data class JoinedRoomsDto(
     @SerialName("roomList") val roomList: List<JoinedRoomDto>,
     @SerialName("nickname") val nickname: String,

@@ -2,6 +2,7 @@ package com.texthip.thip.data.model.repository
 
 import com.texthip.thip.R
 import com.texthip.thip.data.model.base.handleBaseResponse
+import com.texthip.thip.data.model.group.response.RoomListDto
 import com.texthip.thip.data.model.service.GroupService
 import com.texthip.thip.ui.group.myroom.mock.GroupBookData
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
@@ -18,6 +19,14 @@ class GroupRepository @Inject constructor(
 ) {
     private val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
     private val roomDetailsCache = mutableMapOf<Int, GroupRoomData>()
+    
+    // UI 장르명 → API 카테고리명 매핑
+    private fun mapGenreToApiCategory(genre: String): String {
+        return when (genre) {
+            "과학·IT" -> "과학/IT"
+            else -> genre
+        }
+    }
     
     suspend fun getUserName(): Result<String> {
         return try {
@@ -49,64 +58,71 @@ class GroupRepository @Inject constructor(
     }
 
 
-    suspend fun getRoomSections(): Result<List<GroupRoomSectionData>> {
+    suspend fun getRoomSections(category: String = "문학"): Result<List<GroupRoomSectionData>> {
         return try {
-
-            // 마감 임박한 독서 모임방
-            val deadlineRooms = listOf(
-                GroupCardItemRoomData(1, "시집만 읽는 사람들 3월", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(2, "일본 소설 좋아하는 사람들", 15, 20, true, 2, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(3, "명작 같이 읽기방", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(4, "물리책 읽는 방", 13, 20, true, 1, R.drawable.bookcover_sample, 1),
-                GroupCardItemRoomData(5, "코딩 과학 동아리", 12, 15, true, 5, R.drawable.bookcover_sample, 1),
-                GroupCardItemRoomData(6, "사회과학 인문 탐구", 8, 12, true, 4, R.drawable.bookcover_sample, 2)
-            )
-            
-            // 인기 있는 독서 모임방
-            val popularRooms = listOf(
-                GroupCardItemRoomData(7, "베스트셀러 토론방", 28, 30, true, 7, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(8, "인기 소설 완독방", 25, 25, false, 5, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(9, "트렌드 과학서 읽기", 20, 25, true, 10, R.drawable.bookcover_sample, 1),
-                GroupCardItemRoomData(10, "화제의 경영서", 18, 20, true, 8, R.drawable.bookcover_sample, 2),
-                GroupCardItemRoomData(11, "인기 철학서 모임", 15, 18, true, 12, R.drawable.bookcover_sample, 3),
-                GroupCardItemRoomData(12, "예술서 베스트", 12, 15, true, 6, R.drawable.bookcover_sample, 4)
-            )
-            
-            // 인플루언서, 작가 독서 모임방
-            val influencerRooms = listOf(
-                GroupCardItemRoomData(13, "작가와 함께하는 독서방", 30, 30, false, 14, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(14, "유명 북튜버와 읽기", 18, 20, true, 8, R.drawable.bookcover_sample, 2),
-                GroupCardItemRoomData(15, "작가 초청 인문학방", 15, 20, true, 12, R.drawable.bookcover_sample, 3),
-                GroupCardItemRoomData(16, "인플루언서 과학책", 22, 25, true, 9, R.drawable.bookcover_sample, 1),
-                GroupCardItemRoomData(17, "유명작가 예술론", 16, 18, true, 11, R.drawable.bookcover_sample, 4)
-            )
-            
-            val sections = listOf(
-                GroupRoomSectionData(
-                    title = "마감 임박한 독서 모임방",
-                    rooms = deadlineRooms,
-                    genres = genres
-                ),
-                GroupRoomSectionData(
-                    title = "인기 있는 독서 모임방",
-                    rooms = popularRooms,
-                    genres = genres
-                ),
-                GroupRoomSectionData(
-                    title = "인플루언서·작가 독서 모임방",
-                    rooms = influencerRooms,
-                    genres = genres
-                )
-            )
-
-            // 상세 데이터 캐시에 저장
-            (deadlineRooms + popularRooms + influencerRooms).forEach { room ->
-                initializeRoomDetail(room)
-            }
-            
-            Result.success(sections)
+            val apiCategory = mapGenreToApiCategory(category)
+            groupService.getRooms(apiCategory)
+                .handleBaseResponse()
+                .mapCatching { data ->
+                    data?.let { roomsData ->
+                        val sections = listOf(
+                            GroupRoomSectionData(
+                                title = "마감 임박한 독서 모임방",
+                                rooms = roomsData.deadline.map { dto -> 
+                                    convertToGroupCardItemRoomData(dto, extractDaysFromDeadline(dto.deadlineDate))
+                                },
+                                genres = genres
+                            ),
+                            GroupRoomSectionData(
+                                title = "인기 있는 독서 모임방", 
+                                rooms = roomsData.popularity.map { dto ->
+                                    convertToGroupCardItemRoomData(dto, extractDaysFromDeadline(dto.deadlineDate))
+                                },
+                                genres = genres
+                            ),
+                            GroupRoomSectionData(
+                                title = "인플루언서·작가 독서 모임방",
+                                rooms = roomsData.influencer.map { dto ->
+                                    convertToGroupCardItemRoomData(dto, extractDaysFromDeadline(dto.deadlineDate))
+                                },
+                                genres = genres
+                            )
+                        )
+                        
+                        // 상세 데이터 캐시에 저장
+                        val allRooms = sections.flatMap { it.rooms }
+                        allRooms.forEach { room ->
+                            initializeRoomDetail(room)
+                        }
+                        
+                        sections
+                    }.orEmpty()
+                }
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+    
+    private fun convertToGroupCardItemRoomData(dto: RoomListDto, daysLeft: Int): GroupCardItemRoomData {
+        return GroupCardItemRoomData(
+            id = dto.roomId,
+            title = dto.bookTitle,
+            participants = dto.memberCount,
+            maxParticipants = dto.memberCount + 10, // API에서 maxParticipants를 제공하지 않으므로 임시로 +10
+            isRecruiting = true,
+            endDate = daysLeft,
+            imageRes = null,
+            genreIndex = 0,
+            isSecret = false
+        )
+    }
+    
+    private fun extractDaysFromDeadline(deadlineDate: String): Int {
+        return when {
+            deadlineDate.contains("일 뒤") -> {
+                deadlineDate.replace("일 뒤", "").trim().toIntOrNull() ?: 0
+            }
+            else -> 0 // 파싱할 수 없는 경우 0 반환
         }
     }
     
