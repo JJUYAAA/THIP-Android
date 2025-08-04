@@ -68,7 +68,7 @@ class GroupRepository @Inject constructor(
 
     suspend fun getRoomSections(category: String = ""): Result<List<GroupRoomSectionData>> {
         return try {
-            val finalCategory = if (category.isEmpty()) context.getString(R.string.literature) else category
+            val finalCategory = category.ifEmpty { context.getString(R.string.literature) }
             val apiCategory = mapGenreToApiCategory(finalCategory)
             groupService.getRooms(apiCategory)
                 .handleBaseResponse()
