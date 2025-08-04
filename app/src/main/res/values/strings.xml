@@ -85,8 +85,10 @@
     <string name="edit_role">칭호 편집</string>
     <string name="role_description">장르는 칭호와 연결돼요.</string>
     <string name="choice_one">아래에서 하나를 선택해주세요.</string>
+
     <string name="ask_account_deletion">정말로 탈퇴하시겠어요?</string>
     <string name="delete_account_description">\'예\'를 누르면 모든 기록이 사라져요.</string>
+
     <string name="literature">문학</string>
     <string name="literary_person">문학가</string>
     <string name="science_it">과학·IT</string>
@@ -97,7 +99,9 @@
     <string name="artist">예술가</string>
     <string name="humanities">인문학</string>
     <string name="philosopher">철학자</string>
+
     <string name="logout_description">또 THIP 해주실거죠?</string>
+
     <string name="leave_thip">THIP 떠나기</string>
     <string name="leave_thip_notice_title">탈퇴 주의사항</string>
     <string name="leave_thip_notice_1">회원탈퇴 시 계정정보는 </string>
@@ -108,10 +112,13 @@
     <string name="leave_thip_agree">주의사항을 확인하였으며 이에 동의합니다.</string>
     <string name="delete_account_complete">탈퇴 완료</string>
     <string name="see_you_again">다음에 또 만나요!</string>
+
+
     <string name="push_notification">푸시 알림</string>
     <string name="notification_description">알림센터의 모든 알림을 포함해요</string>
     <string name="push_off">푸시 알림이 해제되었어요.</string>
     <string name="push_on">푸시 알림이 설정되었어요.</string>
+
     <string name="customer_center_email">texthip2025@gmail.com</string>
     <string name="customer_center_description">이메일로 닉네임과 문의사항을 보내주시면\n빠른 시일 내로 해결해 드릴게요!</string>
 
@@ -257,7 +264,7 @@
     <string name="group_input_count">%1$d / %2$d</string>
 
     <!--    splash screen   -->
-    <string name="thip">띱!</string>
+    <string name="splash_thip">띱!</string>
     <string name="splash_ment">하고 떠오른 그 문장을 나눠요</string>
 
     <!--    signin   -->
@@ -271,13 +278,18 @@
     <string name="hello_user">안녕하세요, %1$s님</string>
     <string name="signin_done">이제 Thip에서 활동할 준비를 모두 마쳤어요!</string>
     <string name="start_thip">지금 바로 Thip 시작하기</string>
+    <string name="select_genre">관심있는 장르를 하나 선택해주세요.</string>
+    <string name="genre_can_be_changed">이후 내 정보에서 변경이 가능해요.</string>
 
     <!--    feed   -->
-    <string name="my_subscription_list">내 구독 리스트</string>
+    <string name="my_thip_list">내 띱 리스트</string>
     <string name="whole_num">전체 %d</string>
-    <string name="toast_subscribe">%1$s 님을 구독했어요</string>
-    <string name="toast_unsubscribe">%1$s 님을 구독취소했어요</string>
-    <string name="subscribe_cancel">구독취소</string>
+    <string name="toast_thip">%1$s 님을 띱 했어요</string>
+    <string name="toast_thip_cancel">%1$s 님을 띱 취소했어요</string>
+    <string name="thip">띱 하기</string>
+    <string name="thip_cancel">띱 취소</string>
+    <string name="create_feed">피드에 글을 작성해 보세요</string>
+
     <string name="group_participant_close_popup">모집을 마감하시겠습니까?</string>
     <string name="group_participant_close_comment">독서메이트 모집을 마감하면\n지금 바로 모임방 활동을 바로 시작할 수 있어요.</string>
     <string name="group_participant_close_alarm">독서메이트 모집을 성공적으로 마감했어요.</string>
@@ -287,6 +299,23 @@
     <string name="group_empty_card_description">모임방을 찾아 참여해보세요!</string>
     <string name="group_myroom_error_comment1">참여 중인 모임방이 없어요</string>
     <string name="group_myroom_error_comment2">첫번째 모임방에 참여해보세요</string>
+    <string name="feed_reply_to">%1$s 님에게 댓글을 남겨보세요.</string>
+    <string name="just_a_moment_ago">방금 전</string>
+    <string name="my_subscription">내 구독</string>
+    <string name="new_feed">새 글</string>
+    <string name="registration">등록</string>
+    <string name="write_feed">글 작성</string>
+    <string name="write_feed_hint">...한 생각이 들었어요.🤔</string>
+    <string name="feed_private_comment">비공개로 설정</string>
+    <string name="tag">태그</string>
+    <string name="add_photo">사진 추가</string>
+    <string name="photo_count">%1$d / %2$d</string>
+    <string name="selected_tags">선택된 태그</string>
+    <string name="tag_count">%1$d / %2$d</string>
+    <string name="edit_feed">수정하기</string>
+    <string name="delete_feed">삭제하기</string>
+    <string name="delete_feed_dialog_title">이 피드를 삭제하시겠어요?</string>
+    <string name="delete_feed_dialog_description">삭제 후에는 되돌릴 수 없어요.</string>
 
     <!--    book search   -->
     <string name="book_popular_search">가장 많이 검색된 책</string>

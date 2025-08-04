@@ -31,8 +31,9 @@ fun MySubscriptionList(
                 profileImage = member.profileImageUrl,
                 nickname = member.nickname,
                 badgeText = member.role,
-                buttonText = stringResource(if(member.isSubscribed) R.string.subscribe_cancel else R.string.subscribe),
-                buttonWidth = 73.dp,
+                buttonText = stringResource(if(member.isSubscribed) R.string.thip_cancel else R.string.thip),
+                buttonWidth = 64.dp,
+                profileImageSize = 36.dp,
                 onButtonClick = {
                     onUnsubscribe(member.nickname)
                 }

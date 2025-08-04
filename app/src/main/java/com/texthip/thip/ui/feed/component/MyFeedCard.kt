@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.mypage.component
+package com.texthip.thip.ui.feed.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -22,40 +22,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ActionBookButton
-import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun SavedFeedCard(
+fun MyFeedCard(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
     bookImage: Painter? = null,
-    profileImage: Painter? = null,
-    onBookmarkClick: () -> Unit = {},
     onLikeClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(horizontal = 20.dp)
     ) {
-        ProfileBar(
-            profileImage = profileImage,
-            topText = feedItem.userName,
-            bottomText = feedItem.userRole,
-            showSubscriberInfo = false,
-            hoursAgo = feedItem.timeAgo
-        )
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 16.dp)
         ) {
             ActionBookButton(
                 bookTitle = feedItem.bookTitle,
                 bookAuthor = feedItem.authName,
+
                 onClick = {}
             )
         }
@@ -105,12 +96,13 @@ fun SavedFeedCard(
                 modifier = Modifier.padding(start = 5.dp, end = 12.dp)
             )
             Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                modifier = Modifier.clickable { onBookmarkClick() },
-                painter = painterResource(if (feedItem.isSaved) R.drawable.ic_save_filled else R.drawable.ic_save),
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
+            if (feedItem.isLocked) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_lock),
+                    contentDescription = null,
+                    tint = Color.Unspecified
+                )
+            }
         }
 
     }
@@ -118,7 +110,7 @@ fun SavedFeedCard(
 
 @Preview
 @Composable
-private fun SavedFeedCardPrev() {
+private fun MyFeedCardPrev() {
     val feed1 = FeedItem(
         id = 1,
         userProfileImage = R.drawable.character_literature,
@@ -132,6 +124,7 @@ private fun SavedFeedCardPrev() {
         commentCount = 5,
         isLiked = false,
         isSaved = true,
+        isLocked = true,
         imageUrl = null
     )
 
@@ -148,18 +141,17 @@ private fun SavedFeedCardPrev() {
         commentCount = 5,
         isLiked = false,
         isSaved = true,
+        isLocked = false,
         imageUrl = R.drawable.bookcover_sample
     )
 
     Column {
-        SavedFeedCard(
+        MyFeedCard(
             feedItem = feed1,
-            profileImage = painterResource(feed1.userProfileImage!!),
             bookImage = null
         )
-        SavedFeedCard(
+        MyFeedCard(
             feedItem = feed2,
-            profileImage = painterResource(feed2.userProfileImage!!),
             bookImage = painterResource(feed2.imageUrl!!)
         )
     }

@@ -23,6 +23,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
 fun LogoTopAppBar(
+    modifier: Modifier = Modifier,
     leftIcon: Painter,
     hasNotification: Boolean,
     onLeftClick: () -> Unit = {},
@@ -35,7 +36,7 @@ fun LogoTopAppBar(
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(color = colors.Black)
             .padding(horizontal = 20.dp, vertical = 16.dp),
