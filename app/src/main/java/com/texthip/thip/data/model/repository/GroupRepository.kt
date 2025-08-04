@@ -1,5 +1,6 @@
 package com.texthip.thip.data.model.repository
 
+import android.content.Context
 import com.texthip.thip.R
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.group.response.RoomListDto
@@ -9,15 +10,23 @@ import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GroupRepository @Inject constructor(
-    private val groupService: GroupService
+    private val groupService: GroupService,
+    @ApplicationContext private val context: Context
 ) {
-    private val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
+    private val genres = listOf(
+        context.getString(R.string.literature),
+        context.getString(R.string.science_it),
+        context.getString(R.string.social_science),
+        context.getString(R.string.humanities),
+        context.getString(R.string.art)
+    )
     private val roomDetailsCache = mutableMapOf<Int, GroupRoomData>()
     
     // UI 장르명 → API 카테고리명 매핑
@@ -57,31 +66,31 @@ class GroupRepository @Inject constructor(
         }
     }
 
-
-    suspend fun getRoomSections(category: String = "문학"): Result<List<GroupRoomSectionData>> {
+    suspend fun getRoomSections(category: String = ""): Result<List<GroupRoomSectionData>> {
         return try {
-            val apiCategory = mapGenreToApiCategory(category)
+            val finalCategory = if (category.isEmpty()) context.getString(R.string.literature) else category
+            val apiCategory = mapGenreToApiCategory(finalCategory)
             groupService.getRooms(apiCategory)
                 .handleBaseResponse()
                 .mapCatching { data ->
                     data?.let { roomsData ->
                         val sections = listOf(
                             GroupRoomSectionData(
-                                title = "마감 임박한 독서 모임방",
+                                title = context.getString(R.string.room_section_deadline),
                                 rooms = roomsData.deadline.map { dto -> 
                                     convertToGroupCardItemRoomData(dto, extractDaysFromDeadline(dto.deadlineDate))
                                 },
                                 genres = genres
                             ),
                             GroupRoomSectionData(
-                                title = "인기 있는 독서 모임방", 
+                                title = context.getString(R.string.room_section_popular), 
                                 rooms = roomsData.popularity.map { dto ->
                                     convertToGroupCardItemRoomData(dto, extractDaysFromDeadline(dto.deadlineDate))
                                 },
                                 genres = genres
                             ),
                             GroupRoomSectionData(
-                                title = "인플루언서·작가 독서 모임방",
+                                title = context.getString(R.string.room_section_influencer),
                                 rooms = roomsData.influencer.map { dto ->
                                     convertToGroupCardItemRoomData(dto, extractDaysFromDeadline(dto.deadlineDate))
                                 },

@@ -104,16 +104,7 @@ class GroupViewModel @Inject constructor(
             loadRoomSections() // 장르 변경 시 새로운 데이터 로드
         }
     }
-    
-    fun loadRoomSectionsByGenre(genre: String) {
-        viewModelScope.launch {
-            repository.getRoomSections(genre)
-                .onSuccess { sections ->
-                    _roomSections.value = sections
-                }
-        }
-    }
-    
+
     private fun loadDoneGroups() {
         viewModelScope.launch {
             repository.getDoneGroups()
