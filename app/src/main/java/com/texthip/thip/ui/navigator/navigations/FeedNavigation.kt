@@ -9,6 +9,10 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 // Feed
 fun NavGraphBuilder.feedNavigation(navController: NavHostController) {
     composable<MainTabRoutes.Feed> {
-        FeedScreen(navController) 
+        FeedScreen(
+            navController = navController,
+            nickname = "User",
+            userRole = "독서가"
+        )
     }
 }
