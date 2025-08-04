@@ -1,6 +1,7 @@
 package com.texthip.thip.data.model.repository
 
 import com.texthip.thip.R
+import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.service.GroupService
 import com.texthip.thip.ui.group.myroom.mock.GroupBookData
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
@@ -25,21 +26,29 @@ class GroupRepository @Inject constructor(
             Result.failure(e)
         }
     }
-    
-    suspend fun getMyGroups(): Result<List<GroupCardData>> {
+
+    suspend fun getMyGroups(page: Int = 1): Result<List<GroupCardData>> {
         return try {
-            delay(200)
-            val myGroups = listOf(
-                GroupCardData(23, "호르몬 체인지 완독하는 방", 22, R.drawable.bookcover_sample, 40, "uibowl1"),
-                GroupCardData(24, "명작 읽기방", 10, R.drawable.bookcover_sample, 70, "joyce"),
-                GroupCardData(25, "또 다른 방", 13, R.drawable.bookcover_sample, 10, "other")
-            )
-            Result.success(myGroups)
+            groupService.getJoinedRooms(page)
+                .handleBaseResponse()          // Result<JoinedRoomsDto?>
+                .mapCatching { data ->
+                    data?.roomList?.map { dto ->
+                        GroupCardData(
+                            id = dto.roomId,
+                            title = dto.bookTitle,
+                            members = dto.memberCount,
+                            imageUrl = dto.bookImageUrl,
+                            progress = dto.userPercentage,
+                            nickname = data.nickname
+                        )
+                    }.orEmpty()
+                }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
-    
+
+
     suspend fun getRoomSections(): Result<List<GroupRoomSectionData>> {
         return try {
 

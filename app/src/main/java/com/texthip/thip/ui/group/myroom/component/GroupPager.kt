@@ -125,29 +125,32 @@ fun GroupPager(
 }
 
 
-@Preview()
+@Preview
 @Composable
 fun PreviewMyGroupPager() {
     ThipTheme {
         val list = listOf(
             GroupCardData(
+                id = 1,
                 title = "호르몬 체인지 완독하는 방",
                 members = 22,
-                imageRes = R.drawable.bookcover_sample,
+                imageUrl = "https://picsum.photos/300/200?1",
                 progress = 40,
                 nickname = "uibowl1님"
             ),
             GroupCardData(
+                id = 2,
                 title = "명작 읽기방",
                 members = 10,
-                imageRes = R.drawable.bookcover_sample,
+                imageUrl = "https://picsum.photos/300/200?2",
                 progress = 70,
                 nickname = "joyce님"
             ),
             GroupCardData(
+                id = 3,
                 title = "또 다른 방",
                 members = 13,
-                imageRes = R.drawable.bookcover_sample,
+                imageUrl = "https://picsum.photos/300/200?3",
                 progress = 10,
                 nickname = "other님"
             )
@@ -156,24 +159,25 @@ fun PreviewMyGroupPager() {
     }
 }
 
-@Preview()
+@Preview
 @Composable
 fun PreviewSingleGroupPager() {
     ThipTheme {
-        val singleList = listOf(
+        val single = listOf(
             GroupCardData(
+                id = 4,
                 title = "단일 그룹",
                 members = 15,
-                imageRes = R.drawable.bookcover_sample,
+                imageUrl = "https://picsum.photos/300/200?4",
                 progress = 60,
                 nickname = "single님"
             )
         )
-        GroupPager(groupCards = singleList, onCardClick = {})
+        GroupPager(groupCards = single, onCardClick = {})
     }
 }
 
-@Preview()
+@Preview
 @Composable
 fun PreviewEmptyGroupPager() {
     ThipTheme {

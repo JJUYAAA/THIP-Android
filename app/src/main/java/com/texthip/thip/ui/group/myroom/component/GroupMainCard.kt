@@ -25,12 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.theme.ThipTheme
@@ -74,11 +74,12 @@ fun GroupMainCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // 책 이미지
-                Image(
-                    painter = painterResource(id = data.imageRes),
+                AsyncImage(
+                    model = data.imageUrl ?: R.drawable.bookcover_sample,
                     contentDescription = "책 이미지",
                     modifier = Modifier
-                        .size(width = 80.dp, height = 107.dp)
+                        .size(width = 80.dp, height = 107.dp),
+                    contentScale = ContentScale.Crop
                 )
                 Spacer(Modifier.width(12.dp))
 
@@ -168,11 +169,12 @@ fun PreviewMyGroupMainCard() {
     ThipTheme {
         GroupMainCard(
             data = GroupCardData(
+                id = 1,
                 title = "호르몬 체인지 완독하는 방",
                 members = 22,
-                imageRes = R.drawable.bookcover_sample,
-                progress = 42,
-                nickname = "uibowl"
+                imageUrl = "https://picsum.photos/300/200?1",
+                progress = 40,
+                nickname = "uibowl1"
             ),
             onClick = {}
         )

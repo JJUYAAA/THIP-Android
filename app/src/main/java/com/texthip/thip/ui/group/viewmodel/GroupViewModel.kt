@@ -20,7 +20,7 @@ class GroupViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _myGroups = MutableStateFlow<List<GroupCardData>>(emptyList())
-    val myGroups: StateFlow<List<GroupCardData>> = _myGroups.asStateFlow()
+    val myGroups: StateFlow<List<GroupCardData>> = _myGroups
 
     private val _roomSections = MutableStateFlow<List<GroupRoomSectionData>>(emptyList())
     val roomSections: StateFlow<List<GroupRoomSectionData>> = _roomSections.asStateFlow()
@@ -61,16 +61,13 @@ class GroupViewModel @Inject constructor(
                 }
         }
     }
-    
-    private fun loadMyGroups() {
-        viewModelScope.launch {
-            repository.getMyGroups()
-                .onSuccess { groups ->
-                    _myGroups.value = groups
-                }
-        }
+
+    fun loadMyGroups(page: Int = 1) = viewModelScope.launch {
+        repository.getMyGroups(page)
+            .onSuccess { _myGroups.value = it }
+            .onFailure { }
     }
-    
+
     private fun loadRoomSections() {
         viewModelScope.launch {
             repository.getRoomSections()
