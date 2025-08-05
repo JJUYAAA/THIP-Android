@@ -12,14 +12,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.texthip.thip.ui.group.done.Screen.GroupDoneScreen
 import com.texthip.thip.ui.group.makeroom.screen.GroupMakeRoomScreen
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
-import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
 import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
-import com.texthip.thip.ui.group.done.Screen.GroupDoneScreen
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
@@ -138,37 +137,25 @@ fun NavGraphBuilder.groupNavigation(
     composable<GroupRoutes.Recruit> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Recruit>()
         val roomId = route.roomId
-        val groupViewModel: GroupViewModel = hiltViewModel()
         
-        // suspend 함수를 위한 LaunchedEffect 사용
-        var roomDetail by remember { mutableStateOf<GroupRoomData?>(null) }
-        LaunchedEffect(roomId) {
-            roomDetail = groupViewModel.getRoomDetail(roomId)
-        }
-        
-        roomDetail?.let { detail ->
-            GroupRoomRecruitScreen(
-                detail = detail,
-                buttonType = GroupBottomButtonType.JOIN, // 기본값, 실제로는 사용자 상태에 따라 결정
-                onRecommendationClick = { recommendation ->
-                    navController.navigateToRecommendedGroupRecruit(recommendation.id)
-                },
-                onParticipation = {
-                    // 참여 로직
-                },
-                onCancelParticipation = {
-                    // 참여 취소 로직
-                },
-                onCloseRecruitment = {
-                    // 모집 마감 로직
-                },
-                onBackClick = {
-                    navigateBack()
-                }
-            )
-        } ?: run {
-            // 로딩 중이거나 데이터를 찾을 수 없는 경우
-        }
+        GroupRoomRecruitScreen(
+            roomId = roomId,
+            onRecommendationClick = { recommendation ->
+                navController.navigateToRecommendedGroupRecruit(recommendation.id)
+            },
+            onParticipation = {
+                // TODO: 참여 API 호출
+            },
+            onCancelParticipation = {
+                // TODO: 참여 취소 API 호출
+            },
+            onCloseRecruitment = {
+                // TODO: 모집 마감 API 호출
+            },
+            onBackClick = {
+                navigateBack()
+            }
+        )
     }
     
     // Group Room 화면
