@@ -48,6 +48,7 @@ fun GroupScreen(
     val selectedGenreIndex by viewModel.selectedGenreIndex.collectAsState()
     val scrollState = rememberScrollState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val roomSectionsError by viewModel.roomSectionsError.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -107,6 +108,7 @@ fun GroupScreen(
             GroupRoomDeadlineSection(
                 roomSections = roomSections,
                 selectedGenreIndex = selectedGenreIndex,
+                errorMessage = roomSectionsError,
                 onGenreSelect = { genreIndex ->
                     viewModel.selectGenre(genreIndex)
                 },

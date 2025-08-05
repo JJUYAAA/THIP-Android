@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.common.cards.CardRoomBook
@@ -45,6 +48,7 @@ import com.texthip.thip.ui.group.myroom.mock.GroupBookData
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
+import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -52,8 +56,9 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun GroupRoomRecruitScreen(
-    detail: GroupRoomData,
-    buttonType: GroupBottomButtonType,
+    roomId: Int,
+    viewModel: GroupViewModel? = hiltViewModel(),
+    mockRoomDetail: GroupRoomData? = null, // Preview용 mock 데이터
     onRecommendationClick: (GroupCardItemRoomData) -> Unit = {},
     onParticipation: () -> Unit = {},   // 참여
     onCancelParticipation: () -> Unit = {}, // 참여 취소
@@ -61,15 +66,49 @@ fun GroupRoomRecruitScreen(
     onBackClick: () -> Unit = {} // 뒤로가기 추가
 ) {
     val context = LocalContext.current
-    var currentButtonType by remember { mutableStateOf(buttonType) }
+    
+    var roomDetail by remember { mutableStateOf<GroupRoomData?>(mockRoomDetail) }
+    var isLoading by remember { mutableStateOf(mockRoomDetail == null && viewModel != null) }
+    
+    var currentButtonType by remember { mutableStateOf<GroupBottomButtonType?>(mockRoomDetail?.buttonType) }
     var showToast by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
     var dialogTitle by remember { mutableStateOf("") }
     var dialogDescription by remember { mutableStateOf("") }
     var pendingAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+    
+    // 데이터 로딩 - ViewModel이 있고 mockRoomDetail이 없을 때만 실행
+    LaunchedEffect(roomId, viewModel) {
+        if (viewModel != null && mockRoomDetail == null) {
+            isLoading = true
+            
+            viewModel.getRoomRecruiting(roomId)
+                .onSuccess { data ->
+                    roomDetail = data
+                    currentButtonType = data.buttonType
+                    isLoading = false
+                }
+                .onFailure { error ->
+                    isLoading = false
+                }
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
+        // 로딩 상태
+        if (isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = colors.White)
+            }
+            return@Box
+        }
+        
+        // 데이터가 없는 경우
+        val detail = roomDetail ?: return@Box
         Image(
             painter = painterResource(id = R.drawable.group_room_recruiting),
             contentDescription = "배경 이미지",
@@ -327,63 +366,67 @@ fun GroupRoomRecruitScreen(
         }
 
         // 하단 버튼
-        val buttonText = when (currentButtonType) {
-            GroupBottomButtonType.JOIN -> stringResource(R.string.group_room_screen_participant)
-            GroupBottomButtonType.CANCEL -> stringResource(R.string.group_room_screen_cancel)
-            GroupBottomButtonType.CLOSE -> stringResource(R.string.group_room_screen_end)
-        }
+        if (currentButtonType != null) {
+            val buttonText = when (currentButtonType) {
+                GroupBottomButtonType.JOIN -> stringResource(R.string.group_room_screen_participant)
+                GroupBottomButtonType.CANCEL -> stringResource(R.string.group_room_screen_cancel)
+                GroupBottomButtonType.CLOSE -> stringResource(R.string.group_room_screen_end)
+                null -> TODO()
+            }
 
-        Button(
-            onClick = {
-                when (currentButtonType) {
-                    GroupBottomButtonType.JOIN -> {
-                        onParticipation() // 외부 콜백 호출
-                        showToast = true
-                        toastMessage = context.getString(R.string.group_participant_complete_alarm)
-                        currentButtonType = GroupBottomButtonType.CANCEL
-                    }
-
-                    GroupBottomButtonType.CANCEL -> {
-                        dialogTitle = context.getString(R.string.group_participant_cancel_popup)
-                        dialogDescription =
-                            context.getString(R.string.group_participant_cancel_comment)
-                        pendingAction = {
-                            onCancelParticipation()
+            Button(
+                onClick = {
+                    when (currentButtonType) {
+                        GroupBottomButtonType.JOIN -> {
+                            onParticipation() // 외부 콜백 호출
                             showToast = true
-                            toastMessage =
-                                context.getString(R.string.group_participant_cancel_alarm)
-                            currentButtonType = GroupBottomButtonType.JOIN
+                            toastMessage = context.getString(R.string.group_participant_complete_alarm)
+                            currentButtonType = GroupBottomButtonType.CANCEL
                         }
-                        showDialog = true
-                    }
 
-                    GroupBottomButtonType.CLOSE -> {
-                        dialogTitle = context.getString(R.string.group_participant_close_popup)
-                        dialogDescription =
-                            context.getString(R.string.group_participant_close_comment)
-                        pendingAction = {
-                            onCloseRecruitment()
-                            showToast = true
-                            toastMessage = context.getString(R.string.group_participant_close_alarm)
+                        GroupBottomButtonType.CANCEL -> {
+                            dialogTitle = context.getString(R.string.group_participant_cancel_popup)
+                            dialogDescription =
+                                context.getString(R.string.group_participant_cancel_comment)
+                            pendingAction = {
+                                onCancelParticipation()
+                                showToast = true
+                                toastMessage =
+                                    context.getString(R.string.group_participant_cancel_alarm)
+                                currentButtonType = GroupBottomButtonType.JOIN
+                            }
+                            showDialog = true
                         }
-                        showDialog = true
+
+                        GroupBottomButtonType.CLOSE -> {
+                            dialogTitle = context.getString(R.string.group_participant_close_popup)
+                            dialogDescription =
+                                context.getString(R.string.group_participant_close_comment)
+                            pendingAction = {
+                                onCloseRecruitment()
+                                showToast = true
+                                toastMessage = context.getString(R.string.group_participant_close_alarm)
+                            }
+                            showDialog = true
+                        }
+                        null -> {} // currentButtonType이 null인 경우 아무것도 하지 않음
                     }
-                }
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colors.Purple
-            ),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .height(50.dp),
-            shape = RoundedCornerShape(0.dp)
-        ) {
-            Text(
-                text = buttonText,
-                style = typography.smalltitle_sb600_s18_h24,
-                color = colors.White
-            )
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.Purple
+                ),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(50.dp),
+                shape = RoundedCornerShape(0.dp)
+            ) {
+                Text(
+                    text = buttonText,
+                    style = typography.smalltitle_sb600_s18_h24,
+                    color = colors.White
+                )
+            }
         }
 
         // 토스트 팝업
@@ -506,8 +549,9 @@ fun GroupRoomRecruitScreenPreviewJoin() {
         )
 
         GroupRoomRecruitScreen(
-            detail = detailJoin,
-            buttonType = GroupBottomButtonType.JOIN,
+            roomId = 1,
+            viewModel = null,
+            mockRoomDetail = detailJoin.copy(buttonType = GroupBottomButtonType.JOIN),
             onRecommendationClick = {},
             onParticipation = {},
             onCancelParticipation = {},
@@ -575,8 +619,9 @@ fun GroupRoomRecruitScreenPreviewCancel() {
         )
 
         GroupRoomRecruitScreen(
-            detail = detailCancel,
-            buttonType = GroupBottomButtonType.CANCEL,
+            roomId = 2,
+            viewModel = null,
+            mockRoomDetail = detailCancel.copy(buttonType = GroupBottomButtonType.CANCEL),
             onRecommendationClick = {},
             onParticipation = {},
             onCancelParticipation = {},
@@ -644,8 +689,9 @@ fun GroupRoomRecruitScreenClose() {
         )
 
         GroupRoomRecruitScreen(
-            detail = detailClose,
-            buttonType = GroupBottomButtonType.CLOSE,
+            roomId = 3,
+            viewModel = null,
+            mockRoomDetail = detailClose.copy(buttonType = GroupBottomButtonType.CLOSE),
             onRecommendationClick = {},
             onParticipation = {},
             onCancelParticipation = {},

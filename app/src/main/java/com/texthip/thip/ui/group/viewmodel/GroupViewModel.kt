@@ -38,6 +38,9 @@ class GroupViewModel @Inject constructor(
     private val _roomSections = MutableStateFlow<List<GroupRoomSectionData>>(emptyList())
     val roomSections: StateFlow<List<GroupRoomSectionData>> = _roomSections.asStateFlow()
     
+    private val _roomSectionsError = MutableStateFlow<String?>(null)
+    val roomSectionsError: StateFlow<String?> = _roomSectionsError.asStateFlow()
+    
 
     private val _userName = MutableStateFlow("")
     val userName: StateFlow<String> = _userName.asStateFlow()
@@ -131,6 +134,7 @@ class GroupViewModel @Inject constructor(
 
     private fun loadRoomSections() {
         viewModelScope.launch {
+            _roomSectionsError.value = null
             
             val currentGenres = _genres.value
             val selectedIndex = _selectedGenreIndex.value
@@ -144,8 +148,8 @@ class GroupViewModel @Inject constructor(
                 .onSuccess { sections ->
                     _roomSections.value = sections
                 }
-                .onFailure {
-                    // 에러 처리 (필요시 에러 상태 추가)
+                .onFailure { error ->
+                    _roomSectionsError.value = error.message
                 }
         }
     }
@@ -214,6 +218,8 @@ class GroupViewModel @Inject constructor(
                         }
                     },
                     async {
+                        _roomSectionsError.value = null
+                        
                         val currentGenres = _genres.value
                         val selectedIndex = _selectedGenreIndex.value
                         val selectedGenre = if (currentGenres.isNotEmpty() && selectedIndex >= 0 && selectedIndex < currentGenres.size) {
@@ -225,6 +231,9 @@ class GroupViewModel @Inject constructor(
                         repository.getRoomSections(selectedGenre)
                             .onSuccess { sections ->
                                 _roomSections.value = sections
+                            }
+                            .onFailure { error ->
+                                _roomSectionsError.value = error.message
                             }
                     },
                     async {
@@ -245,6 +254,10 @@ class GroupViewModel @Inject constructor(
     
     suspend fun getRoomDetail(roomId: Int): GroupRoomData? {
         return repository.getRoomDetail(roomId).getOrNull()
+    }
+    
+    suspend fun getRoomRecruiting(roomId: Int): Result<GroupRoomData> {
+        return repository.getRoomRecruiting(roomId)
     }
 
 }

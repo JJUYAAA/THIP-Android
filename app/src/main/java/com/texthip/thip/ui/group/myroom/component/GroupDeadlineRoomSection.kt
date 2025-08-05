@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,10 +18,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -45,15 +40,11 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun GroupRoomDeadlineSection(
     roomSections: List<GroupRoomSectionData>,
     selectedGenreIndex: Int,
+    errorMessage: String? = null,
     onGenreSelect: (Int) -> Unit,
     onRoomClick: (GroupCardItemRoomData) -> Unit
 ) {
     val sideMargin = 30.dp
-
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        pageCount = { roomSections.size }
-    )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,19 +59,42 @@ fun GroupRoomDeadlineSection(
             val horizontalPadding = sideMargin
             val cardWidth = maxWidth - (horizontalPadding * 2)
             val scale = 0.94f
-            val desiredGap = 12.dp // TODO: 이 부분을 10dp로 하면 양 옆의 카드에 살짝 다음 내용이 보여서 12정도가 어떤지
+            val desiredGap = 12.dp
 
             val pageSpacing = (-(cardWidth - (cardWidth * scale)) / 2) + desiredGap
 
+            // 데이터가 없어도 기본 구조 표시
+            val effectiveRoomSections = roomSections.ifEmpty {
+                // 기본 구조를 위한 더미 섹션 생성
+                listOf(
+                    GroupRoomSectionData(
+                        title = stringResource(R.string.room_section_deadline),
+                        rooms = emptyList(),
+                        genres = listOf(
+                            stringResource(R.string.literature), 
+                            stringResource(R.string.science_it), 
+                            stringResource(R.string.social_science), 
+                            stringResource(R.string.humanities), 
+                            stringResource(R.string.art)
+                        )
+                    )
+                )
+            }
+
+            val effectivePagerState = rememberPagerState(
+                initialPage = 0,
+                pageCount = { effectiveRoomSections.size }
+            )
+
             HorizontalPager(
-                state = pagerState,
+                state = effectivePagerState,
                 contentPadding = PaddingValues(horizontal = 30.dp),
                 pageSpacing = pageSpacing,
                 modifier = Modifier.fillMaxWidth()
             ) { page ->
-                val section = roomSections[page]
+                val section = effectiveRoomSections[page]
 
-                val isCurrent = pagerState.currentPage == page
+                val isCurrent = effectivePagerState.currentPage == page
                 val scale = if (isCurrent) 1f else 0.94f
 
                 Box(
@@ -119,60 +133,87 @@ fun GroupRoomDeadlineSection(
                         )
                         Spacer(Modifier.height(20.dp))
 
-                        // 서버에서 장르별로 필터링된 데이터가 오므로 모든 rooms 표시
-                        val cards = section.rooms
                         Column(
                             verticalArrangement = Arrangement.spacedBy(20.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(584.dp)
                         ) {
-                            if (cards.isEmpty()) {
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    Spacer(Modifier.height(40.dp))
-                                    Text(
-                                        text = stringResource(R.string.group_no_room_exist),
-                                        style = typography.smalltitle_sb600_s16_h20,
-                                        color = colors.White,
-                                        textAlign = TextAlign.Center
-                                    )
-                                    Spacer(Modifier.height(8.dp))
-                                    Text(
-                                        text = stringResource(R.string.group_no_room_error_comment),
-                                        style = typography.copy_r400_s14,
-                                        color = colors.Grey,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                            } else {
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    cards.forEach { room ->
-                                        CardItemRoom(
-                                            title = room.title,
-                                            participants = room.participants,
-                                            maxParticipants = room.maxParticipants,
-                                            isRecruiting = room.isRecruiting,
-                                            endDate = room.endDate,
-                                            imageRes = room.imageRes,
-                                            onClick = { onRoomClick(room) },
-                                            hasBorder = true,
+                            when {
+                                // 에러 상태
+                                errorMessage != null -> {
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(top = 30.dp)
+                                            .fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.error_data_load_failed),
+                                            style = typography.smalltitle_sb600_s16_h20,
+                                            color = colors.White,
+                                            textAlign = TextAlign.Center
+                                        )
+                                        Spacer(Modifier.height(8.dp))
+                                        Text(
+                                            text = errorMessage,
+                                            style = typography.copy_r400_s14,
+                                            color = colors.Grey,
+                                            textAlign = TextAlign.Center
                                         )
                                     }
                                 }
-                            }
-
-                            if (cards.size < 4) {
-                                Spacer(
-                                    modifier = Modifier
-                                        .weight(1f, fill = true)
-                                        .fillMaxWidth()
-                                )
+                                // 데이터 없음 상태
+                                section.rooms.isEmpty() -> {
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(top = 30.dp)
+                                            .fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.group_no_room_exist),
+                                            style = typography.smalltitle_sb600_s16_h20,
+                                            color = colors.White,
+                                            textAlign = TextAlign.Center
+                                        )
+                                        Spacer(Modifier.height(8.dp))
+                                        Text(
+                                            text = stringResource(R.string.group_no_room_error_comment),
+                                            style = typography.copy_r400_s14,
+                                            color = colors.Grey,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
+                                // 정상 데이터 표시
+                                else -> {
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        section.rooms.forEach { room ->
+                                            CardItemRoom(
+                                                title = room.title,
+                                                participants = room.participants,
+                                                maxParticipants = room.maxParticipants,
+                                                isRecruiting = room.isRecruiting,
+                                                endDate = room.endDate,
+                                                imageRes = room.imageRes,
+                                                onClick = { onRoomClick(room) },
+                                                hasBorder = true,
+                                            )
+                                        }
+                                    }
+                                    
+                                    if (section.rooms.size < 4) {
+                                        Spacer(
+                                            modifier = Modifier
+                                                .weight(1f, fill = true)
+                                                .fillMaxWidth()
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -320,6 +361,7 @@ fun PreviewGroupRoomPagerSection() {
         GroupRoomDeadlineSection(
             roomSections = roomSections,
             selectedGenreIndex = 0,
+            errorMessage = null,
             onGenreSelect = {},
             onRoomClick = {}
         )
@@ -356,6 +398,7 @@ fun PreviewGroupRoomPagerSectionEmptyGenre() {
         GroupRoomDeadlineSection(
             roomSections = roomSections,
             selectedGenreIndex = 0,
+            errorMessage = null,
             onGenreSelect = {},
             onRoomClick = {}
         )
