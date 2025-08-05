@@ -1,12 +1,8 @@
 package com.texthip.thip.ui.navigator.navigations
 
 import android.annotation.SuppressLint
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -15,7 +11,6 @@ import androidx.navigation.toRoute
 import com.texthip.thip.ui.group.done.Screen.GroupDoneScreen
 import com.texthip.thip.ui.group.makeroom.screen.GroupMakeRoomScreen
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
-import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
 import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
@@ -85,7 +80,6 @@ fun NavGraphBuilder.groupNavigation(
     
     // Group Done 화면
     composable<GroupRoutes.Done> {
-        val groupViewModel: GroupViewModel = hiltViewModel()
         GroupDoneScreen(
             onNavigateBack = {
                 navigateBack()
@@ -163,21 +157,11 @@ fun NavGraphBuilder.groupNavigation(
         val route = backStackEntry.toRoute<GroupRoutes.Room>()
         val roomId = route.roomId
         val groupViewModel: GroupViewModel = hiltViewModel()
-        
-        // suspend 함수를 위한 LaunchedEffect 사용
-        var roomDetail by remember { mutableStateOf<GroupRoomData?>(null) }
-        LaunchedEffect(roomId) {
-            roomDetail = groupViewModel.getRoomDetail(roomId)
-        }
-        
-        roomDetail?.let {
-            GroupRoomScreen(
-                onBackClick = {
-                    navigateBack()
-                }
-            )
-        } ?: run {
-            // 로딩 중이거나 데이터를 찾을 수 없는 경우
-        }
+
+        GroupRoomScreen(
+            onBackClick = {
+                navigateBack()
+            }
+        )
     }
 }
