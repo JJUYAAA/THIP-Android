@@ -25,7 +25,8 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 @Composable
 fun GroupPager(
     groupCards: List<GroupCardData>,
-    onCardClick: (GroupCardData) -> Unit
+    onCardClick: (GroupCardData) -> Unit,
+    onCardVisible: ((Int) -> Unit)? = null
 ) {
     val scale = 0.86f
     val desiredGap = 10.dp
@@ -73,6 +74,12 @@ fun GroupPager(
             // 시작 페이지로 이동
             LaunchedEffect(groupCards.size) {
                 pagerState.scrollToPage(startPage)
+            }
+            
+            // 현재 보이는 카드 인덱스를 ViewModel에 알림
+            LaunchedEffect(pagerState.currentPage) {
+                val currentPageIndex = ((pagerState.currentPage - startPage) % groupCards.size + groupCards.size) % groupCards.size
+                onCardVisible?.invoke(currentPageIndex)
             }
 
             HorizontalPager(

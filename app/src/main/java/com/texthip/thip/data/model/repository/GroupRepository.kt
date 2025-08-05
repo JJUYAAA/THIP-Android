@@ -3,6 +3,7 @@ package com.texthip.thip.data.model.repository
 import android.content.Context
 import com.texthip.thip.R
 import com.texthip.thip.data.model.base.handleBaseResponse
+import com.texthip.thip.data.model.group.response.PaginationResult
 import com.texthip.thip.data.model.group.response.RoomListDto
 import com.texthip.thip.data.model.service.GroupService
 import com.texthip.thip.ui.group.myroom.mock.GroupBookData
@@ -44,22 +45,35 @@ class GroupRepository @Inject constructor(
             Result.failure(e)
         }
     }
-
-    suspend fun getMyGroups(page: Int = 1): Result<List<GroupCardData>> {
+    suspend fun getMyRooms(page: Int): Result<PaginationResult<GroupCardData>> {
         return try {
             groupService.getJoinedRooms(page)
-                .handleBaseResponse()          // Result<JoinedRoomsDto?>
+                .handleBaseResponse()
                 .mapCatching { data ->
-                    data?.roomList?.map { dto ->
-                        GroupCardData(
-                            id = dto.roomId,
-                            title = dto.bookTitle,
-                            members = dto.memberCount,
-                            imageUrl = dto.bookImageUrl,
-                            progress = dto.userPercentage,
-                            nickname = data.nickname
+                    data?.let { joinedRoomsDto ->
+                        val groups = joinedRoomsDto.roomList.map { dto ->
+                            GroupCardData(
+                                id = dto.roomId,
+                                title = dto.bookTitle,
+                                members = dto.memberCount,
+                                imageUrl = dto.bookImageUrl,
+                                progress = dto.userPercentage,
+                                nickname = joinedRoomsDto.nickname
+                            )
+                        }
+
+                        PaginationResult(
+                            data = groups,
+                            hasMore = !joinedRoomsDto.last,
+                            currentPage = joinedRoomsDto.page,
+                            nickname = joinedRoomsDto.nickname
                         )
-                    }.orEmpty()
+                    } ?: PaginationResult(
+                        data = emptyList(),
+                        hasMore = false,
+                        currentPage = page,
+                        nickname = ""
+                    )
                 }
         } catch (e: Exception) {
             Result.failure(e)

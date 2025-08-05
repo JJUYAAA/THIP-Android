@@ -22,3 +22,10 @@ data class JoinedRoomDto(
     @SerialName("memberCount") val memberCount: Int,
     @SerialName("userPercentage") val userPercentage: Int
 )
+
+data class PaginationResult<T>(
+    val data: List<T>,
+    val hasMore: Boolean,
+    val currentPage: Int,
+    val nickname: String = ""
+)

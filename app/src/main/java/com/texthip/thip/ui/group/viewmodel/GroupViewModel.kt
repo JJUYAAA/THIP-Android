@@ -21,9 +21,23 @@ class GroupViewModel @Inject constructor(
 
     private val _myGroups = MutableStateFlow<List<GroupCardData>>(emptyList())
     val myGroups: StateFlow<List<GroupCardData>> = _myGroups
+    
+    private val _hasMoreMyGroups = MutableStateFlow(true)
+    val hasMoreMyGroups: StateFlow<Boolean> = _hasMoreMyGroups.asStateFlow()
+    
+    private val _isLoadingMyGroups = MutableStateFlow(false)
+    val isLoadingMyGroups: StateFlow<Boolean> = _isLoadingMyGroups.asStateFlow()
+    
+    private var currentMyGroupsPage = 1
+    private var loadedPagesCount = 0
+    private val PAGES_PER_BATCH = 5  // 5페이지씩 미리 로드
+    private val PRELOAD_THRESHOLD = 3  // 3페이지에 도달하면 다음 배치 로드
 
     private val _roomSections = MutableStateFlow<List<GroupRoomSectionData>>(emptyList())
     val roomSections: StateFlow<List<GroupRoomSectionData>> = _roomSections.asStateFlow()
+    
+    private val _isLoadingRoomSections = MutableStateFlow(false)
+    val isLoadingRoomSections: StateFlow<Boolean> = _isLoadingRoomSections.asStateFlow()
 
     private val _userName = MutableStateFlow("")
     val userName: StateFlow<String> = _userName.asStateFlow()
@@ -75,14 +89,66 @@ class GroupViewModel @Inject constructor(
         }
     }
 
-    fun loadMyGroups(page: Int = 1) = viewModelScope.launch {
-        repository.getMyGroups(page)
-            .onSuccess { _myGroups.value = it }
-            .onFailure { }
+    fun loadMyGroups(reset: Boolean = false) = viewModelScope.launch {
+        if (reset) {
+            currentMyGroupsPage = 1
+            loadedPagesCount = 0
+            _myGroups.value = emptyList()
+            _hasMoreMyGroups.value = true
+        }
+        // 초기 로드 시 첫 번째 배치(5페이지) 미리 로드
+        loadPageBatch()
+    }
+    
+    private fun loadPageBatch() = viewModelScope.launch {
+        if (_isLoadingMyGroups.value || !_hasMoreMyGroups.value) return@launch
+        
+        _isLoadingMyGroups.value = true
+        
+        // 5페이지씩 배치로 로드
+        val currentBatchStart = currentMyGroupsPage
+        val batchEndPage = currentBatchStart + PAGES_PER_BATCH - 1
+        
+        for (page in currentBatchStart..batchEndPage) {
+            if (!_hasMoreMyGroups.value) break
+            
+            repository.getMyRooms(page)
+                .onSuccess { paginationResult ->
+                    _myGroups.value = _myGroups.value + paginationResult.data
+                    _hasMoreMyGroups.value = paginationResult.hasMore
+                    loadedPagesCount++
+                    currentMyGroupsPage = page + 1
+                }
+                .onFailure {
+                    // 에러 처리 - 배치 로딩 중단
+                    break
+                }
+        }
+        
+        _isLoadingMyGroups.value = false
+    }
+    
+    // GroupPager에서 현재 카드 인덱스를 알려주면 미리 로드 판단
+    fun onCardVisible(cardIndex: Int) {
+        val totalCards = _myGroups.value.size
+        val currentPageEquivalent = (cardIndex / 3) + 1  // 3개씩 한 페이지라고 가정
+        
+        // 현재 로드된 페이지의 3페이지 지점에 도달하면 다음 배치 로드
+        if (currentPageEquivalent >= loadedPagesCount - PRELOAD_THRESHOLD && 
+            _hasMoreMyGroups.value && 
+            !_isLoadingMyGroups.value) {
+            loadPageBatch()
+        }
+    }
+    
+    fun loadMoreMyGroups() {
+        loadPageBatch()
     }
 
     private fun loadRoomSections() {
         viewModelScope.launch {
+            _isLoadingRoomSections.value = true
+            
             val currentGenres = _genres.value
             val selectedIndex = _selectedGenreIndex.value
             val selectedGenre = if (currentGenres.isNotEmpty() && selectedIndex >= 0 && selectedIndex < currentGenres.size) {
@@ -95,6 +161,11 @@ class GroupViewModel @Inject constructor(
                 .onSuccess { sections ->
                     _roomSections.value = sections
                 }
+                .onFailure {
+                    // 에러 처리 (필요시 에러 상태 추가)
+                }
+            
+            _isLoadingRoomSections.value = false
         }
     }
     
