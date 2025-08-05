@@ -2,11 +2,15 @@ package com.texthip.thip.data.model.service
 
 import com.texthip.thip.data.model.base.BaseResponse
 import com.texthip.thip.data.model.book.response.BookListResponse
+import com.texthip.thip.data.model.group.request.CreateRoomRequest
+import com.texthip.thip.data.model.group.response.CreateRoomResponse
 import com.texthip.thip.data.model.group.response.JoinedRoomsDto
 import com.texthip.thip.data.model.group.response.MyRoomsDto
 import com.texthip.thip.data.model.group.response.RoomRecruitingDto
 import com.texthip.thip.data.model.group.response.RoomsHomeDto
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -35,5 +39,10 @@ interface GroupService {
     suspend fun getBooks(
         @Query("type") type: String  // "saved" 또는 "joining"
     ): BaseResponse<BookListResponse>
+
+    @POST("rooms")
+    suspend fun createRoom(
+        @Body request: CreateRoomRequest
+    ): BaseResponse<CreateRoomResponse>
 
 }

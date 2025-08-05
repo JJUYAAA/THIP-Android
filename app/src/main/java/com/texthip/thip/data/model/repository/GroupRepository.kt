@@ -3,6 +3,7 @@ package com.texthip.thip.data.model.repository
 import android.content.Context
 import com.texthip.thip.R
 import com.texthip.thip.data.model.base.handleBaseResponse
+import com.texthip.thip.data.model.group.request.CreateRoomRequest
 import com.texthip.thip.data.model.group.response.PaginationResult
 import com.texthip.thip.data.model.group.response.RoomListDto
 import com.texthip.thip.data.model.service.GroupService
@@ -262,6 +263,19 @@ class GroupRepository @Inject constructor(
                 .handleBaseResponse()
                 .mapCatching { bookListResponse ->
                     bookListResponse?.bookList ?: emptyList()
+                }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // 모임방 생성 API 연동
+    suspend fun createRoom(request: CreateRoomRequest): Result<Int> {
+        return try {
+            groupService.createRoom(request)
+                .handleBaseResponse()
+                .mapCatching { createRoomResponse ->
+                    createRoomResponse?.roomId ?: throw Exception("방 생성 실패: roomId가 없습니다")
                 }
         } catch (e: Exception) {
             Result.failure(e)
