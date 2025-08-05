@@ -163,10 +163,9 @@ class GroupViewModel @Inject constructor(
     
     private fun loadMyRoomGroups() {
         viewModelScope.launch {
-            repository.getMyRoomGroups()
-                .onSuccess { groups ->
-                    _myRoomGroups.value = groups
-                }
+            // getMyRoomGroups() 제거됨 - API 연결 완료 후 실제 API 사용 예정
+            // 현재는 빈 리스트로 설정
+            _myRoomGroups.value = emptyList()
         }
     }
     
@@ -237,10 +236,8 @@ class GroupViewModel @Inject constructor(
                             }
                     },
                     async {
-                        repository.getMyRoomGroups()
-                            .onSuccess { groups ->
-                                _myRoomGroups.value = groups
-                            }
+                        // getMyRoomGroups() 제거됨 - API 연결 완료 후 실제 API 사용 예정
+                        _myRoomGroups.value = emptyList()
                     }
                 )
                 
@@ -250,11 +247,7 @@ class GroupViewModel @Inject constructor(
             }
         }
     }
-    
-    
-    suspend fun getRoomDetail(roomId: Int): GroupRoomData? {
-        return repository.getRoomDetail(roomId).getOrNull()
-    }
+
     
     suspend fun getRoomRecruiting(roomId: Int): Result<GroupRoomData> {
         return repository.getRoomRecruiting(roomId)
