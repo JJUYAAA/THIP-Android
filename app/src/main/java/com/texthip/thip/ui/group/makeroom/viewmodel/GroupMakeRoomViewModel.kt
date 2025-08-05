@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.repository.GroupRepository
 import com.texthip.thip.data.model.book.response.BookDto
+import com.texthip.thip.data.model.group.request.CreateRoomRequest
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -81,7 +83,8 @@ class GroupMakeRoomViewModel @Inject constructor(
         return BookData(
             title = this.bookTitle,
             imageUrl = this.imageUrl,
-            author = this.authorName
+            author = this.authorName,
+            isbn = this.isbn
         )
     }
 
@@ -127,11 +130,17 @@ class GroupMakeRoomViewModel @Inject constructor(
     }
 
     // 그룹 생성 요청
-    fun createGroup(onSuccess: () -> Unit, onError: (String) -> Unit) {
+    fun createGroup(onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
         val currentState = _uiState.value
 
         if (!currentState.isFormValid) {
-            //onError("입력 정보를 확인해주세요")
+            onError("입력 정보를 확인해주세요")
+            return
+        }
+
+        val selectedBook = currentState.selectedBook
+        if (selectedBook?.isbn == null) {
+            onError("책 정보가 올바르지 않습니다")
             return
         }
 
@@ -139,17 +148,43 @@ class GroupMakeRoomViewModel @Inject constructor(
             try {
                 _uiState.value = currentState.copy(isLoading = true, errorMessage = null)
 
-                // TODO: 실제 API 호출로 대체
-                // val request = currentState.toRequest()
-                // val result = groupRepository.createGroup(request)
-                
-                // 임시로 성공 처리
-                onSuccess()
+                // API 요청 데이터 생성
+                val request = CreateRoomRequest(
+                    isbn = selectedBook.isbn,
+                    category = getApiCategoryName(currentState.selectedGenreIndex),
+                    roomName = currentState.roomTitle.trim(),
+                    description = currentState.roomDescription.trim(),
+                    progressStartDate = currentState.meetingStartDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
+                    progressEndDate = currentState.meetingEndDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
+                    recruitCount = currentState.memberLimit,
+                    password = if (currentState.isPrivate) currentState.password else null,
+                    isPublic = !currentState.isPrivate
+                )
+
+                // API 호출
+                val result = groupRepository.createRoom(request)
+                result.onSuccess { roomId ->
+                    onSuccess(roomId)
+                }.onFailure { exception ->
+                    onError("모임방 생성에 실패했습니다: ${exception.message}")
+                }
             } catch (e: Exception) {
-                //onError("네트워크 오류가 발생했습니다: ${e.message}")
+                onError("네트워크 오류가 발생했습니다: ${e.message}")
             } finally {
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }
+        }
+    }
+    
+    // 장르 인덱스를 API 카테고리명으로 변환
+    private fun getApiCategoryName(genreIndex: Int): String {
+        return when (genreIndex) {
+            0 -> "문학"
+            1 -> "과학/IT"
+            2 -> "사회과학"
+            3 -> "인문학"
+            4 -> "예술"
+            else -> "문학" // 기본값
         }
     }
 

@@ -5,7 +5,8 @@ import com.texthip.thip.R
 data class BookData(
     val title: String,
     val imageUrl: String? = null, // 이미지 URL
-    val author: String? = null
+    val author: String? = null,
+    val isbn: String? = null // 방 생성 시 필요한 ISBN
 )
 
 val dummySavedBooks = listOf(

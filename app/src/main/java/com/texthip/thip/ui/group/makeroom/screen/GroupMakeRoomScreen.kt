@@ -78,8 +78,14 @@ fun GroupMakeRoomScreen(
                 onLeftClick = onNavigateBack,
                 onRightClick = {
                     viewModel.createGroup(
-                        onSuccess = onGroupCreated,
-                        onError = { /* 에러는 uiState.errorMessage로 처리 */ }
+                        onSuccess = { roomId ->
+                            // TODO: 생성된 roomId를 사용하여 해당 방으로 이동할 수 있음
+                            onGroupCreated()
+                        },
+                        onError = { errorMessage ->
+                            // TODO: 에러 메시지 표시 (토스트 메시지 등)
+                            // 현재는 uiState.errorMessage를 통해 처리
+                        }
                     )
                 }
             )
