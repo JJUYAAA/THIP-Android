@@ -41,7 +41,8 @@ fun CardRoomBook(
     author: String,
     publisher: String,
     description: String,
-    imageRes: Int? = R.drawable.bookcover_sample,
+    imageRes: Int? = R.drawable.bookcover_sample, // 스켈레톤 이미지 (fallback)
+    imageUrl: String? = null, // API에서 받은 이미지 URL
     onClick: () -> Unit = {}
 ) {
     Card(

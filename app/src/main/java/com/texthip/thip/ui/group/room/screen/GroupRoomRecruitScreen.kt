@@ -37,7 +37,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.common.cards.CardRoomBook
@@ -67,10 +66,10 @@ fun GroupRoomRecruitScreen(
 ) {
     val context = LocalContext.current
     
-    var roomDetail by remember { mutableStateOf<GroupRoomData?>(mockRoomDetail) }
+    var roomDetail by remember { mutableStateOf(mockRoomDetail) }
     var isLoading by remember { mutableStateOf(mockRoomDetail == null && viewModel != null) }
     
-    var currentButtonType by remember { mutableStateOf<GroupBottomButtonType?>(mockRoomDetail?.buttonType) }
+    var currentButtonType by remember { mutableStateOf(mockRoomDetail?.buttonType) }
     var showToast by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
@@ -330,7 +329,8 @@ fun GroupRoomRecruitScreen(
                         author = detail.bookData.author,
                         publisher = detail.bookData.publisher,
                         description = detail.bookData.description,
-                        imageRes = detail.bookData.imageRes
+                        imageRes = detail.bookData.imageRes,
+                        imageUrl = detail.bookData.imageUrl
                     )
 
                     // 추천 모임방이 있을 때만 표시
@@ -356,6 +356,7 @@ fun GroupRoomRecruitScreen(
                                     maxParticipants = rec.maxParticipants,
                                     endDate = rec.endDate,
                                     imageRes = rec.imageRes,
+                                    imageUrl = rec.imageUrl,
                                     onClick = { onRecommendationClick(rec) }
                                 )
                             }

@@ -40,7 +40,8 @@ fun CardItemRoomSmall(
     participants: Int,
     maxParticipants: Int,
     endDate: Int?,
-    imageRes: Int? = R.drawable.bookcover_sample_small,
+    imageRes: Int? = R.drawable.bookcover_sample_small, // 스켈레톤 이미지 (fallback)
+    imageUrl: String? = null, // API에서 받은 이미지 URL
     isWide: Boolean = false,
     isSecret: Boolean = false,
     onClick: () -> Unit = {}

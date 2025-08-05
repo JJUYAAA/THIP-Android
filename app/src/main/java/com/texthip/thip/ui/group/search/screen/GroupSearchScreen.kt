@@ -242,13 +242,13 @@ fun PreviewGroupSearchScreen() {
     ThipTheme {
         GroupSearchScreen(
             roomList = listOf(
-                GroupCardItemRoomData(1, "aaa", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(2, "abc", 15, 20, true, 7, R.drawable.bookcover_sample, 1, true),
-                GroupCardItemRoomData(3, "abcd", 10, 15, true, 5, R.drawable.bookcover_sample, 2, true),
-                GroupCardItemRoomData(4, "abcde", 8, 12, false, 2, R.drawable.bookcover_sample, 3, true),
-                GroupCardItemRoomData(5, "abcdef", 18, 25, true, 4, R.drawable.bookcover_sample, 4),
-                GroupCardItemRoomData(6, "abcdefg", 12, 20, true, 1, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(7, "abcdefgh", 10, 14, true, 6, R.drawable.bookcover_sample, 1)
+                GroupCardItemRoomData(1, "aaa", 22, 30, true, 3, R.drawable.bookcover_sample, "",0),
+                GroupCardItemRoomData(2, "abc", 15, 20, true, 7, R.drawable.bookcover_sample, "",1, true),
+                GroupCardItemRoomData(3, "abcd", 10, 15, true, 5, R.drawable.bookcover_sample, "",2, true),
+                GroupCardItemRoomData(4, "abcde", 8, 12, false, 2, R.drawable.bookcover_sample, "",3, true),
+                GroupCardItemRoomData(5, "abcdef", 18, 25, true, 4, R.drawable.bookcover_sample, "",4),
+                GroupCardItemRoomData(6, "abcdefg", 12, 20, true, 1, R.drawable.bookcover_sample, "",0),
+                GroupCardItemRoomData(7, "abcdefgh", 10, 14, true, 6, R.drawable.bookcover_sample, "",1)
             )
         )
     }
