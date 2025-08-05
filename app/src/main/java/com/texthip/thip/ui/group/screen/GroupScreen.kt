@@ -10,8 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupScreen(
     onNavigateToMakeRoom: () -> Unit = {},
@@ -41,22 +43,30 @@ fun GroupScreen(
     onNavigateToGroupRoom: (Int) -> Unit = {},  // 기록장 화면으로 이동
     viewModel: GroupViewModel = hiltViewModel()
 ) {
-
-    LaunchedEffect(Unit) { viewModel.loadMyGroups() }
-
     val myGroups by viewModel.myGroups.collectAsState()
     val roomSections by viewModel.roomSections.collectAsState()
     val selectedGenreIndex by viewModel.selectedGenreIndex.collectAsState()
+    val isLoadingMyGroups by viewModel.isLoadingMyGroups.collectAsState()
+    val isLoadingRoomSections by viewModel.isLoadingRoomSections.collectAsState()
     val scrollState = rememberScrollState()
+    
+    val isRefreshing = isLoadingMyGroups || isLoadingRoomSections
 
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                viewModel.refreshGroupData()
+            },
+            modifier = Modifier.fillMaxSize()
         ) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+            ) {
             // 상단바
             LogoTopAppBar(
                 leftIcon = painterResource(R.drawable.ic_done),
@@ -81,6 +91,9 @@ fun GroupScreen(
                 groupCards = myGroups,
                 onCardClick = { groupCard ->
                     onNavigateToGroupRoom(groupCard.id)
+                },
+                onCardVisible = { cardIndex ->
+                    viewModel.onCardVisible(cardIndex)
                 }
             )
             Spacer(Modifier.height(32.dp))
@@ -109,6 +122,7 @@ fun GroupScreen(
                 }
             )
             Spacer(Modifier.height(102.dp))
+            }
         }
         // 오른쪽 하단 FAB
         FloatingButton(
