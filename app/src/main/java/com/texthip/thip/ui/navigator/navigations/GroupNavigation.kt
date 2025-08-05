@@ -19,7 +19,7 @@ import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
 import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
-import com.texthip.thip.ui.group.screen.GroupDoneScreen
+import com.texthip.thip.ui.group.done.Screen.GroupDoneScreen
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
@@ -87,12 +87,7 @@ fun NavGraphBuilder.groupNavigation(
     // Group Done 화면
     composable<GroupRoutes.Done> {
         val groupViewModel: GroupViewModel = hiltViewModel()
-        val userName by groupViewModel.userName.collectAsState()
-        val doneGroups by groupViewModel.doneGroups.collectAsState()
-        
         GroupDoneScreen(
-            name = userName,
-            allDataList = doneGroups,
             onNavigateBack = {
                 navigateBack()
             }

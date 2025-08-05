@@ -46,11 +46,8 @@ fun GroupScreen(
     val myGroups by viewModel.myGroups.collectAsState()
     val roomSections by viewModel.roomSections.collectAsState()
     val selectedGenreIndex by viewModel.selectedGenreIndex.collectAsState()
-    val isLoadingMyGroups by viewModel.isLoadingMyGroups.collectAsState()
-    val isLoadingRoomSections by viewModel.isLoadingRoomSections.collectAsState()
     val scrollState = rememberScrollState()
-    
-    val isRefreshing = isLoadingMyGroups || isLoadingRoomSections
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
