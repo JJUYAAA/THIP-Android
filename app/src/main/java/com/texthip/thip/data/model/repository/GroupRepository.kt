@@ -9,6 +9,7 @@ import com.texthip.thip.data.model.service.GroupService
 import com.texthip.thip.ui.group.done.mock.MyRoomCardData
 import com.texthip.thip.ui.group.done.mock.MyRoomsPaginationResult
 import com.texthip.thip.ui.group.myroom.mock.GroupBookData
+import com.texthip.thip.data.model.book.response.BookDto
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
@@ -251,6 +252,19 @@ class GroupRepository @Inject constructor(
             isHost -> GroupBottomButtonType.CLOSE // 호스트는 모집 마감 가능
             isJoining -> GroupBottomButtonType.CANCEL // 참여 중이면 취소 가능
             else -> GroupBottomButtonType.JOIN // 참여하지 않았으면 참여 가능
+        }
+    }
+
+    // 책 검색 API 연동
+    suspend fun getBooks(type: String): Result<List<BookDto>> {
+        return try {
+            groupService.getBooks(type)
+                .handleBaseResponse()
+                .mapCatching { bookListResponse ->
+                    bookListResponse?.bookList ?: emptyList()
+                }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 

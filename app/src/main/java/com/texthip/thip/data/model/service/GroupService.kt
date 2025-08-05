@@ -1,6 +1,7 @@
 package com.texthip.thip.data.model.service
 
 import com.texthip.thip.data.model.base.BaseResponse
+import com.texthip.thip.data.model.book.response.BookListResponse
 import com.texthip.thip.data.model.group.response.JoinedRoomsDto
 import com.texthip.thip.data.model.group.response.MyRoomsDto
 import com.texthip.thip.data.model.group.response.RoomRecruitingDto
@@ -29,5 +30,10 @@ interface GroupService {
 
     @GET("rooms/{roomId}/recruiting")
     suspend fun getRoomRecruiting(@Path("roomId") roomId: Int): BaseResponse<RoomRecruitingDto>
+
+    @GET("books")
+    suspend fun getBooks(
+        @Query("type") type: String  // "saved" 또는 "joining"
+    ): BaseResponse<BookListResponse>
 
 }
