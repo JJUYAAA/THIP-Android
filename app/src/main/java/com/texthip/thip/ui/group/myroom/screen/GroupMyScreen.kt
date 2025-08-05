@@ -89,7 +89,7 @@ fun GroupMyScreen(
                             maxParticipants = item.maxParticipants,
                             isRecruiting = item.isRecruiting,
                             endDate = item.endDate,
-                            imageRes = item.imageRes,
+                            imageUrl = item.imageUrl,
                             onClick = { onCardClick(item) }
                         )
                     }

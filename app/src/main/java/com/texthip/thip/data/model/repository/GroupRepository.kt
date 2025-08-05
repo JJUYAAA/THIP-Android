@@ -129,7 +129,6 @@ class GroupRepository @Inject constructor(
                             MyRoomCardData(
                                 roomId = room.roomId,
                                 bookImageUrl = room.bookImageUrl,
-                                imageRes = R.drawable.bookcover_sample, // 스켈레톤 이미지 (fallback)
                                 bookTitle = room.bookTitle,
                                 memberCount = room.memberCount,
                                 endDate = room.endDate
@@ -160,7 +159,6 @@ class GroupRepository @Inject constructor(
             maxParticipants = dto.recruitCount,
             isRecruiting = true,
             endDate = daysLeft,
-            imageRes = R.drawable.bookcover_sample, // 스켈레톤 이미지 (fallback)
             imageUrl = dto.bookImageUrl, // API에서 받은 실제 이미지 URL
             genreIndex = 0,
             isSecret = false
@@ -204,7 +202,6 @@ class GroupRepository @Inject constructor(
                             author = data.authorName,
                             publisher = "출판사 정보 없음", // API에서 제공하지 않음
                             description = data.bookDescription,
-                            imageRes = R.drawable.bookcover_sample, // 스켈레톤 이미지 (fallback)
                             imageUrl = data.bookImageUrl // API에서 받은 실제 이미지 URL
                         )
                         
@@ -217,7 +214,6 @@ class GroupRepository @Inject constructor(
                                 maxParticipants = recommendDto.recruitCount,
                                 isRecruiting = true,
                                 endDate = extractDaysFromDeadline(recommendDto.recruitEndDate),
-                                imageRes = R.drawable.bookcover_sample, // 스켈레톤 이미지 (fallback)
                                 imageUrl = recommendDto.roomImageUrl, // API에서 받은 실제 이미지 URL
                                 genreIndex = 0, // 기본값
                                 isSecret = true // 기본값

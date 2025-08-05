@@ -31,7 +31,7 @@ fun GroupLiveSearchResult(
                 participants = room.participants,
                 maxParticipants = room.maxParticipants,
                 endDate = room.endDate,
-                imageRes = room.imageRes,
+                imageUrl = room.imageUrl,
                 isWide = true,
                 isSecret = room.isSecret,
                 onClick = { onRoomClick(room) }
@@ -66,7 +66,7 @@ fun GroupLiveSearchResultPreview() {
                         maxParticipants = 10,
                         isRecruiting = true,
                         endDate = 7,
-                        imageRes = R.drawable.bookcover_sample,
+                        imageUrl = null,
                         genreIndex = 0,
                         isSecret = false
                     ),
@@ -77,7 +77,7 @@ fun GroupLiveSearchResultPreview() {
                         maxParticipants = 12,
                         isRecruiting = false,  
                         endDate = 3,
-                        imageRes = R.drawable.bookcover_sample,
+                        imageUrl = null,
                         genreIndex = 1,
                         isSecret = true
                     ),
@@ -88,7 +88,7 @@ fun GroupLiveSearchResultPreview() {
                         maxParticipants = 8,
                         isRecruiting = true,
                         endDate = null,
-                        imageRes = R.drawable.bookcover_sample,
+                        imageUrl = null,
                         genreIndex = 2,
                         isSecret = false
                     )

@@ -329,7 +329,6 @@ fun GroupRoomRecruitScreen(
                         author = detail.bookData.author,
                         publisher = detail.bookData.publisher,
                         description = detail.bookData.description,
-                        imageRes = detail.bookData.imageRes,
                         imageUrl = detail.bookData.imageUrl
                     )
 
@@ -355,7 +354,6 @@ fun GroupRoomRecruitScreen(
                                     participants = rec.participants,
                                     maxParticipants = rec.maxParticipants,
                                     endDate = rec.endDate,
-                                    imageRes = rec.imageRes,
                                     imageUrl = rec.imageUrl,
                                     onClick = { onRecommendationClick(rec) }
                                 )
@@ -531,7 +529,7 @@ fun GroupRoomRecruitScreenPreviewJoin() {
             author = "고선지",
             publisher = "푸른출판사",
             description = "'시집만 읽는 사람들' 3월 모임에서 읽는 시집. 상처받고 단단해진 마음을 담은 감동적인 시와 해설이 어우러진 책으로, 읽는 이로 하여금 자신의 이야기를 투영하게 하는 힘이 있다.",
-            imageRes = R.drawable.bookcover_sample
+            imageUrl = null
         )
 
         val detailJoin = GroupRoomData(
@@ -601,7 +599,7 @@ fun GroupRoomRecruitScreenPreviewCancel() {
             author = "고선지",
             publisher = "푸른출판사",
             description = "'시집만 읽는 사람들' 3월 모임에서 읽는 시집. 상처받고 단단해진 마음을 담은 감동적인 시와 해설이 어우러진 책으로, 읽는 이로 하여금 자신의 이야기를 투영하게 하는 힘이 있다.",
-            imageRes = R.drawable.bookcover_sample
+            imageUrl = null
         )
 
         val detailCancel = GroupRoomData(
@@ -671,7 +669,7 @@ fun GroupRoomRecruitScreenClose() {
             author = "고선지",
             publisher = "푸른출판사",
             description = "'시집만 읽는 사람들' 3월 모임에서 읽는 시집. 상처받고 단단해진 마음을 담은 감동적인 시와 해설이 어우러진 책으로, 읽는 이로 하여금 자신의 이야기를 투영하게 하는 힘이 있다.",
-            imageRes = R.drawable.bookcover_sample
+            imageUrl = null
         )
 
         val detailClose = GroupRoomData(

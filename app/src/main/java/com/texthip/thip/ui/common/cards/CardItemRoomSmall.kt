@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -40,7 +41,6 @@ fun CardItemRoomSmall(
     participants: Int,
     maxParticipants: Int,
     endDate: Int?,
-    imageRes: Int? = R.drawable.bookcover_sample_small, // 스켈레톤 이미지 (fallback)
     imageUrl: String? = null, // API에서 받은 이미지 URL
     isWide: Boolean = false,
     isSecret: Boolean = false,
@@ -78,14 +78,12 @@ fun CardItemRoomSmall(
                     modifier = Modifier
                         .size(width = 60.dp, height = 80.dp)
                 ) {
-                    imageRes?.let {
-                        Image(
-                            painter = painterResource(id = it),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                    AsyncImage(
+                        model = imageUrl ?: R.drawable.bookcover_sample_small,
+                        contentDescription = "책 이미지",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
                     if (isSecret) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_secret_cover),
@@ -169,8 +167,7 @@ fun CardItemRoomSmallPreview() {
                 title = "방 제목입니다 방 제목입니다",
                 participants = 22,
                 maxParticipants = 30,
-                endDate = 3,
-                imageRes = R.drawable.bookcover_sample
+                endDate = 3
             )
 
             CardItemRoomSmall(
@@ -178,7 +175,6 @@ fun CardItemRoomSmallPreview() {
                 participants = 18,
                 maxParticipants = 25,
                 endDate = 5,
-                imageRes = R.drawable.bookcover_sample,
                 isWide = true
             )
         }

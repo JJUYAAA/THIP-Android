@@ -1,7 +1,6 @@
 package com.texthip.thip.ui.group.makeroom.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,10 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.OptionChipButton
 import com.texthip.thip.ui.group.makeroom.mock.BookData
@@ -83,12 +84,13 @@ fun GroupSelectBook(
                     .height(80.dp),
                 verticalAlignment = Alignment.Bottom
             ) {
-                Image(
-                    painter = painterResource(selectedBook.imageRes),
+                AsyncImage(
+                    model = selectedBook.imageUrl ?: R.drawable.bookcover_sample,
                     contentDescription = selectedBook.title,
                     modifier = Modifier
                         .height(80.dp)
-                        .width(60.dp)
+                        .width(60.dp),
+                    contentScale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(
@@ -128,7 +130,7 @@ fun GroupSelectBook(
 
 private val dummyBook = BookData(
     title = "호르몬 체인지",
-    imageRes = R.drawable.bookcover_sample,
+    imageUrl = null,
     author = "최정화"
 )
 

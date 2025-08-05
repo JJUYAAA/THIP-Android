@@ -199,7 +199,7 @@ fun GroupRoomDeadlineSection(
                                                 maxParticipants = room.maxParticipants,
                                                 isRecruiting = room.isRecruiting,
                                                 endDate = room.endDate,
-                                                imageRes = room.imageRes,
+                                                imageUrl = room.imageUrl,
                                                 onClick = { onRoomClick(room) },
                                                 hasBorder = true,
                                             )

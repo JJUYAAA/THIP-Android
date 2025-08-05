@@ -18,7 +18,7 @@ fun BookContent(viewModel: SavedBookViewModel = viewModel()) {
             CardBookList(
                 title = book.title,
                 author = book.author,
-                imageRes = null,
+                imageUrl = null,
                 publisher = book.publisher,
                 isBookmarked = book.isSaved,
                 onBookmarkClick = { viewModel.toggleBookmark(book.id) }
