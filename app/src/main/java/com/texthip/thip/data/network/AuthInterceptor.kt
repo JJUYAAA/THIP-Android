@@ -12,7 +12,7 @@ class AuthInterceptor @Inject constructor() : Interceptor {
     // - SharedPreferences나 DataStore에서 토큰 읽기
     // - 토큰 만료 시 자동 갱신
     // - 로그인/로그아웃 상태 관리
-    private val hardcodedToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc1NDI4MjMzNiwiZXhwIjoxNzU2ODc0MzM2fQ.NG_xDSdh8A6egIX2EAFtsqDO4lmFphTzqgzHC-r8eXY"
+    private val hardcodedToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjYsImlhdCI6MTc1NDM4MjY1MiwiZXhwIjoxNzU2OTc0NjUyfQ.yu0NG_lUYbALflzRfVgpxxddNSvTf9H4YehbV3yUeec"
     
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
