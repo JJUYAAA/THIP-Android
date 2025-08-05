@@ -9,6 +9,7 @@ import com.texthip.thip.data.model.service.GroupService
 import com.texthip.thip.ui.group.done.mock.MyRoomCardData
 import com.texthip.thip.ui.group.done.mock.MyRoomsPaginationResult
 import com.texthip.thip.ui.group.myroom.mock.GroupBookData
+import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
@@ -236,6 +237,70 @@ class GroupRepository @Inject constructor(
             }
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+    
+    // 모집중인 모임방 상세 정보 API 연동
+    suspend fun getRoomRecruiting(roomId: Int): Result<GroupRoomData> {
+        return try {
+            groupService.getRoomRecruiting(roomId)
+                .handleBaseResponse()
+                .mapCatching { recruitingDto ->
+                    recruitingDto?.let { data ->
+                        // 책 정보 변환
+                        val bookData = GroupBookData(
+                            title = data.bookTitle,
+                            author = data.authorName,
+                            publisher = "출판사 정보 없음", // API에서 제공하지 않음
+                            description = data.bookDescription
+                        )
+                        
+                        // 추천 모임방 변환
+                        val recommendations = data.recommendRooms.map { recommendDto ->
+                            GroupCardItemRoomData(
+                                id = recommendDto.hashCode(), // 임시 ID (실제로는 roomId가 필요)
+                                title = recommendDto.roomName,
+                                participants = recommendDto.memberCount,
+                                maxParticipants = recommendDto.recruitCount,
+                                isRecruiting = true,
+                                endDate = extractDaysFromDeadline(recommendDto.recruitEndDate),
+                                imageRes = null, // 이미지는 URL로 처리
+                                genreIndex = 0, // 기본값
+                                isSecret = true // 기본값
+                            )
+                        }
+                        
+                        // GroupRoomData로 변환
+                        GroupRoomData(
+                            id = data.roomId,
+                            title = data.roomName,
+                            isSecret = !data.isPublic,
+                            description = data.roomDescription,
+                            startDate = data.progressStartDate,
+                            endDate = data.progressEndDate,
+                            members = data.memberCount,
+                            maxMembers = data.recruitCount,
+                            daysLeft = extractDaysFromDeadline(data.recruitEndDate),
+                            genre = data.category,
+                            bookData = bookData,
+                            recommendations = recommendations,
+                            buttonType = determineButtonType(data.isHost, data.isJoining),
+                            roomImageUrl = data.roomImageUrl,
+                            bookImageUrl = data.bookImageUrl
+                        )
+                    } ?: throw Exception("No recruiting data found for room $roomId")
+                }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    // 버튼 타입 결정 로직
+    private fun determineButtonType(isHost: Boolean, isJoining: Boolean): GroupBottomButtonType {
+        return when {
+            isHost -> GroupBottomButtonType.CLOSE // 호스트는 모집 마감 가능
+            isJoining -> GroupBottomButtonType.CANCEL // 참여 중이면 취소 가능
+            else -> GroupBottomButtonType.JOIN // 참여하지 않았으면 참여 가능
         }
     }
     
