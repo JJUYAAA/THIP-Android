@@ -37,8 +37,6 @@ import com.texthip.thip.ui.group.makeroom.component.GroupSelectBook
 import com.texthip.thip.ui.group.makeroom.component.GroupMemberLimitPicker
 import com.texthip.thip.ui.group.makeroom.component.SectionDivider
 import com.texthip.thip.ui.group.makeroom.mock.BookData
-import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
-import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -53,6 +51,9 @@ fun GroupMakeRoomScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val savedBooks by viewModel.savedBooks.collectAsState()
+    val groupBooks by viewModel.groupBooks.collectAsState()
+    val isLoadingBooks by viewModel.isLoadingBooks.collectAsState()
     val scrollState = rememberScrollState()
     val genres = viewModel.genres
 
@@ -212,8 +213,9 @@ fun GroupMakeRoomScreen(
                 onRequestBook = {
                     viewModel.toggleBookSearchSheet(false)
                 },
-                savedBooks = dummySavedBooks,
-                groupBooks = dummyGroupBooks
+                savedBooks = savedBooks,
+                groupBooks = groupBooks,
+                isLoading = isLoadingBooks
             )
         }
 

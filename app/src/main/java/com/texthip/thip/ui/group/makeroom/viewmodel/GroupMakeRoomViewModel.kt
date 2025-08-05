@@ -3,6 +3,7 @@ package com.texthip.thip.ui.group.makeroom.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.repository.GroupRepository
+import com.texthip.thip.data.model.book.response.BookDto
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,16 @@ class GroupMakeRoomViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(GroupMakeRoomUiState())
     val uiState: StateFlow<GroupMakeRoomUiState> = _uiState.asStateFlow()
 
+    // 책 목록 상태
+    private val _savedBooks = MutableStateFlow<List<BookData>>(emptyList())
+    val savedBooks: StateFlow<List<BookData>> = _savedBooks.asStateFlow()
+    
+    private val _groupBooks = MutableStateFlow<List<BookData>>(emptyList())
+    val groupBooks: StateFlow<List<BookData>> = _groupBooks.asStateFlow()
+    
+    private val _isLoadingBooks = MutableStateFlow(false)
+    val isLoadingBooks: StateFlow<Boolean> = _isLoadingBooks.asStateFlow()
+
     val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
 
     // 책 선택
@@ -31,6 +42,47 @@ class GroupMakeRoomViewModel @Inject constructor(
     // 책 검색 시트 표시 상태 변경
     fun toggleBookSearchSheet(show: Boolean) {
         _uiState.value = _uiState.value.copy(showBookSearchSheet = show)
+        if (show) {
+            loadBooks()
+        }
+    }
+    
+    // 책 목록 로드
+    private fun loadBooks() {
+        viewModelScope.launch {
+            _isLoadingBooks.value = true
+            try {
+                // 저장한 책 로드
+                val savedBooksResult = groupRepository.getBooks("saved")
+                savedBooksResult.onSuccess { bookDtos ->
+                    _savedBooks.value = bookDtos.map { it.toBookData() }
+                }.onFailure {
+                    _savedBooks.value = emptyList()
+                }
+                
+                // 모임 책 로드
+                val groupBooksResult = groupRepository.getBooks("joining")
+                groupBooksResult.onSuccess { bookDtos ->
+                    _groupBooks.value = bookDtos.map { it.toBookData() }
+                }.onFailure {
+                    _groupBooks.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _savedBooks.value = emptyList()
+                _groupBooks.value = emptyList()
+            } finally {
+                _isLoadingBooks.value = false
+            }
+        }
+    }
+    
+    // BookDto를 BookData로 변환
+    private fun BookDto.toBookData(): BookData {
+        return BookData(
+            title = this.bookTitle,
+            imageUrl = this.imageUrl,
+            author = this.authorName
+        )
     }
 
     // 장르 선택
