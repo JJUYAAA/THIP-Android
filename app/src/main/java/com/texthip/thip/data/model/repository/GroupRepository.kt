@@ -99,21 +99,14 @@ class GroupRepository @Inject constructor(
                         val sections = listOf(
                             GroupRoomSectionData(
                                 title = context.getString(R.string.room_section_deadline),
-                                rooms = roomsData.deadline.map { dto -> 
+                                rooms = roomsData.deadlineRoomList.map { dto -> 
                                     convertToGroupCardItemRoomData(dto, extractDaysFromDeadline(dto.deadlineDate))
                                 },
                                 genres = genres
                             ),
                             GroupRoomSectionData(
                                 title = context.getString(R.string.room_section_popular), 
-                                rooms = roomsData.popularity.map { dto ->
-                                    convertToGroupCardItemRoomData(dto, extractDaysFromDeadline(dto.deadlineDate))
-                                },
-                                genres = genres
-                            ),
-                            GroupRoomSectionData(
-                                title = context.getString(R.string.room_section_influencer),
-                                rooms = roomsData.influencer.map { dto ->
+                                rooms = roomsData.popularRoomList.map { dto ->
                                     convertToGroupCardItemRoomData(dto, extractDaysFromDeadline(dto.deadlineDate))
                                 },
                                 genres = genres
@@ -170,9 +163,9 @@ class GroupRepository @Inject constructor(
     private fun convertToGroupCardItemRoomData(dto: RoomListDto, daysLeft: Int): GroupCardItemRoomData {
         return GroupCardItemRoomData(
             id = dto.roomId,
-            title = dto.bookTitle,
+            title = dto.roomName,
             participants = dto.memberCount,
-            maxParticipants = dto.memberCount + 10, // API에서 maxParticipants를 제공하지 않으므로 임시로 +10
+            maxParticipants = dto.recruitCount,
             isRecruiting = true,
             endDate = daysLeft,
             imageRes = null,
@@ -303,22 +296,7 @@ class GroupRepository @Inject constructor(
             else -> GroupBottomButtonType.JOIN // 참여하지 않았으면 참여 가능
         }
     }
-    
-    suspend fun searchRooms(query: String): Result<List<GroupCardItemRoomData>> {
-        return try {
-            val searchResult = getSearchGroups()
-            if (searchResult.isSuccess) {
-                val filteredRooms = searchResult.getOrThrow().filter { room ->
-                    room.title.contains(query, ignoreCase = true)
-                }
-                Result.success(filteredRooms)
-            } else {
-                searchResult
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
+
 
     private fun initializeRoomDetail(room: GroupCardItemRoomData) {
         val bookData = GroupBookData(

@@ -7,16 +7,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RoomListDto(
     @SerialName("roomId") val roomId: Int,
-    @SerialName("imageUrl") val imageUrl: String?,
-    @SerialName("bookTitle") val bookTitle: String,
+    @SerialName("bookImageUrl") val bookImageUrl: String?,
+    @SerialName("roomName") val roomName: String,
+    @SerialName("recruitCount") val recruitCount: Int,
     @SerialName("memberCount") val memberCount: Int,
-    @SerialName("userPercentage") val userPercentage: Float,
     @SerialName("deadlineDate") val deadlineDate: String
 )
 
 @Serializable
 data class RoomsHomeDto(
-    @SerialName("deadlineRoomList") val deadline: List<RoomListDto> = emptyList(),
-    @SerialName("popularityRoomList") val popularity: List<RoomListDto> = emptyList(),
-    @SerialName("influencerRoomList") val influencer: List<RoomListDto> = emptyList()
+    @SerialName("deadlineRoomList") val deadlineRoomList: List<RoomListDto> = emptyList(),
+    @SerialName("popularRoomList") val popularRoomList: List<RoomListDto> = emptyList()
 )
