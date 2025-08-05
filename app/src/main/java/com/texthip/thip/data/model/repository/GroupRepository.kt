@@ -6,6 +6,8 @@ import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.group.response.PaginationResult
 import com.texthip.thip.data.model.group.response.RoomListDto
 import com.texthip.thip.data.model.service.GroupService
+import com.texthip.thip.ui.group.done.mock.MyRoomCardData
+import com.texthip.thip.ui.group.done.mock.MyRoomsPaginationResult
 import com.texthip.thip.ui.group.myroom.mock.GroupBookData
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
@@ -29,6 +31,7 @@ class GroupRepository @Inject constructor(
         context.getString(R.string.art)
     )
     private val roomDetailsCache = mutableMapOf<Int, GroupRoomData>()
+    private var cachedUserName: String? = null
     
     // UI 장르명 → API 카테고리명 매핑
     private fun mapGenreToApiCategory(genre: String): String {
@@ -38,19 +41,23 @@ class GroupRepository @Inject constructor(
         }
     }
     
-    suspend fun getUserName(): Result<String> {
+    fun getUserName(): Result<String> {
         return try {
-            Result.success("규빈")    // 임시 이름
+            val name = cachedUserName ?: "사용자" // 캐시된 이름이 없으면 기본값
+            Result.success(name)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
-    suspend fun getMyRooms(page: Int): Result<PaginationResult<GroupCardData>> {
+    suspend fun getMyJoinedRooms(page: Int): Result<PaginationResult<GroupCardData>> {
         return try {
             groupService.getJoinedRooms(page)
                 .handleBaseResponse()
                 .mapCatching { data ->
                     data?.let { joinedRoomsDto ->
+                        // API 응답에서 받은 닉네임을 캐시에 저장
+                        cachedUserName = joinedRoomsDto.nickname
+                        
                         val groups = joinedRoomsDto.roomList.map { dto ->
                             GroupCardData(
                                 id = dto.roomId,
@@ -125,6 +132,39 @@ class GroupRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    // 완료된 모임방 API 연동
+    suspend fun getMyRoomsByType(type: String?, cursor: String? = null): Result<MyRoomsPaginationResult> {
+        return try {
+            groupService.getMyRooms(type, cursor)
+                .handleBaseResponse()
+                .mapCatching { myRoomsDto ->
+                    myRoomsDto?.let { data ->
+                        val myRoomCards = data.roomList.map { room ->
+                            MyRoomCardData(
+                                roomId = room.roomId,
+                                bookImageUrl = room.bookImageUrl,
+                                bookTitle = room.bookTitle,
+                                memberCount = room.memberCount,
+                                endDate = room.endDate
+                            )
+                        }
+
+                        MyRoomsPaginationResult(
+                            data = myRoomCards,
+                            nextCursor = data.nextCursor,
+                            isLast = data.isLast
+                        )
+                    } ?: MyRoomsPaginationResult(
+                        data = emptyList(),
+                        nextCursor = null,
+                        isLast = true
+                    )
+                }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
     
     private fun convertToGroupCardItemRoomData(dto: RoomListDto, daysLeft: Int): GroupCardItemRoomData {
         return GroupCardItemRoomData(
@@ -146,27 +186,6 @@ class GroupRepository @Inject constructor(
                 deadlineDate.replace("일 뒤", "").trim().toIntOrNull() ?: 0
             }
             else -> 0 // 파싱할 수 없는 경우 0 반환
-        }
-    }
-    
-    suspend fun getDoneGroups(): Result<List<GroupCardItemRoomData>> {
-        return try {
-            val doneGroups = listOf(
-                GroupCardItemRoomData(18, "완료된 독서 모임방 1", 15, 20, false, null, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(19, "완료된 독서 모임방 2", 25, 30, false, null, R.drawable.bookcover_sample, 1),
-                GroupCardItemRoomData(20, "완료된 독서 모임방 3", 12, 15, false, null, R.drawable.bookcover_sample, 2),
-                GroupCardItemRoomData(21, "호르몬 체인지 완독한 방", 22, 22, false, null, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(22, "명작 읽기방 완료", 10, 10, false, null, R.drawable.bookcover_sample, 0)
-            )
-
-            // 상세 데이터 캐시에 저장
-            doneGroups.forEach { room ->
-                initializeRoomDetail(room)
-            }
-            
-            Result.success(doneGroups)
-        } catch (e: Exception) {
-            Result.failure(e)
         }
     }
     
@@ -235,16 +254,6 @@ class GroupRepository @Inject constructor(
             Result.failure(e)
         }
     }
-    
-    suspend fun getGenres(): Result<List<String>> {
-        return try {
-            delay(50)
-            Result.success(genres)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-    
 
     private fun initializeRoomDetail(room: GroupCardItemRoomData) {
         val bookData = GroupBookData(
