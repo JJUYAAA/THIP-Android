@@ -5,12 +5,11 @@ import com.texthip.thip.R
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.group.request.CreateRoomRequest
 import com.texthip.thip.data.model.group.response.PaginationResult
-import com.texthip.thip.data.model.group.response.RoomListDto
+import com.texthip.thip.data.model.group.response.RoomMainResponse
 import com.texthip.thip.data.model.service.GroupService
 import com.texthip.thip.ui.group.done.mock.MyRoomCardData
 import com.texthip.thip.ui.group.done.mock.MyRoomsPaginationResult
 import com.texthip.thip.ui.group.myroom.mock.GroupBookData
-import com.texthip.thip.data.model.book.response.BookDto
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
@@ -23,7 +22,7 @@ import javax.inject.Singleton
 @Singleton
 class GroupRepository @Inject constructor(
     private val groupService: GroupService,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     private val genres = listOf(
         context.getString(R.string.literature),
@@ -153,7 +152,7 @@ class GroupRepository @Inject constructor(
         }
     }
     
-    private fun convertToGroupCardItemRoomData(dto: RoomListDto, daysLeft: Int): GroupCardItemRoomData {
+    private fun convertToGroupCardItemRoomData(dto: RoomMainResponse, daysLeft: Int): GroupCardItemRoomData {
         return GroupCardItemRoomData(
             id = dto.roomId,
             title = dto.roomName,
@@ -253,19 +252,6 @@ class GroupRepository @Inject constructor(
             isHost -> GroupBottomButtonType.CLOSE // 호스트는 모집 마감 가능
             isJoining -> GroupBottomButtonType.CANCEL // 참여 중이면 취소 가능
             else -> GroupBottomButtonType.JOIN // 참여하지 않았으면 참여 가능
-        }
-    }
-
-    // 책 검색 API 연동
-    suspend fun getBooks(type: String): Result<List<BookDto>> {
-        return try {
-            groupService.getBooks(type)
-                .handleBaseResponse()
-                .mapCatching { bookListResponse ->
-                    bookListResponse?.bookList ?: emptyList()
-                }
-        } catch (e: Exception) {
-            Result.failure(e)
         }
     }
 
