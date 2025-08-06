@@ -29,6 +29,8 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardItemRoom
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.done.mock.MyRoomCardData
+import com.texthip.thip.ui.group.done.mock.isRecruitingByType
+import com.texthip.thip.ui.group.done.mock.getEndDateInDays
 import com.texthip.thip.ui.group.myroom.component.GroupMyRoomFilterRow
 import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -137,7 +139,8 @@ fun GroupMyScreen(
                                 title = room.roomName,
                                 participants = room.memberCount,
                                 maxParticipants = room.recruitCount,
-                                isRecruiting = room.type == "recruiting" || room.type == "playingAndRecruiting",
+                                isRecruiting = room.isRecruitingByType(),
+                                endDate = room.getEndDateInDays(),
                                 imageUrl = room.bookImageUrl,
                                 onClick = { onCardClick(room) }
                             )

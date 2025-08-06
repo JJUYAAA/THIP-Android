@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardItemRoom
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.group.done.mock.isRecruitingByType
 import com.texthip.thip.ui.group.done.viewmodel.GroupDoneViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -98,7 +99,7 @@ fun GroupDoneScreen(
                             imageUrl = room.bookImageUrl,
                             participants = room.memberCount,
                             maxParticipants = room.recruitCount, // 모집 인원 수 사용
-                            isRecruiting = room.type == "recruiting",
+                            isRecruiting = room.isRecruitingByType(),
                             onClick = { /* 완료된 모임방은 클릭 불가 */ }
                         )
                     }
