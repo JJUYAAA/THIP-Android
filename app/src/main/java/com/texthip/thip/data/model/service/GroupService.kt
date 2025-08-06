@@ -28,7 +28,7 @@ interface GroupService {
 
     @GET("rooms/my")
     suspend fun getMyRooms(
-        @Query("type") type: String? = null,  // "playing", "recruiting", "expired", null
+        @Query("type") type: String? = null,  // "playingAndRecruiting", "recruiting", "playing", "expired"
         @Query("cursor") cursor: String? = null
     ): BaseResponse<MyRoomListResponse>
 

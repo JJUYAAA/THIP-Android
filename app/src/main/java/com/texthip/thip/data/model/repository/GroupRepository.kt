@@ -130,9 +130,11 @@ class GroupRepository @Inject constructor(
                             MyRoomCardData(
                                 roomId = room.roomId,
                                 bookImageUrl = room.bookImageUrl,
-                                bookTitle = room.bookTitle,
+                                roomName = room.roomName,
+                                recruitCount = room.recruitCount,
                                 memberCount = room.memberCount,
-                                endDate = room.endDate
+                                endDate = room.endDate,
+                                type = room.type
                             )
                         }
 

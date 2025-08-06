@@ -14,7 +14,9 @@ data class MyRoomListResponse(
 data class MyRoomResponse(
     @SerialName("roomId") val roomId: Int,
     @SerialName("bookImageUrl") val bookImageUrl: String,
-    @SerialName("bookTitle") val bookTitle: String,
+    @SerialName("roomName") val roomName: String,
+    @SerialName("recruitCount") val recruitCount: Int,
     @SerialName("memberCount") val memberCount: Int,
-    @SerialName("endDate") val endDate: String? // "완료된" 모임방의 경우 null
+    @SerialName("endDate") val endDate: String,
+    @SerialName("type") val type: String // "playingAndRecruiting", "recruiting", "playing", "expired"
 )

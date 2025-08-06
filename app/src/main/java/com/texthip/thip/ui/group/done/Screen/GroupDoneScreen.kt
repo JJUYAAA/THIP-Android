@@ -94,10 +94,11 @@ fun GroupDoneScreen(
 
                     items(expiredRooms) { room ->
                         CardItemRoom(
-                            title = room.bookTitle,
+                            title = room.roomName,
+                            imageUrl = room.bookImageUrl,
                             participants = room.memberCount,
-                            maxParticipants = room.memberCount, // 완료된 모임방은 maxParticipants = memberCount
-                            isRecruiting = false, // 완료된 모임방은 항상 false
+                            maxParticipants = room.recruitCount, // 모집 인원 수 사용
+                            isRecruiting = room.type == "recruiting",
                             onClick = { /* 완료된 모임방은 클릭 불가 */ }
                         )
                     }
