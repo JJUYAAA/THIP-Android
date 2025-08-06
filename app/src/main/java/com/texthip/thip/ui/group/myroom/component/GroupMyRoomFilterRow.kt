@@ -25,11 +25,13 @@ fun GroupMyRoomFilterRow(
         OptionChipButton(
             text = stringResource(R.string.on_going),
             isFilled = true,
+            isSelected = selectedStates[0],
             onClick = { onToggle(0) }
         )
         OptionChipButton(
             text = stringResource(R.string.recruiting),
             isFilled = true,
+            isSelected = selectedStates[1],
             onClick = { onToggle(1) }
         )
     }
