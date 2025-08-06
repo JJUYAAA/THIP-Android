@@ -30,10 +30,14 @@ class GroupViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
     
+    private val _isLoadingMoreMyGroups = MutableStateFlow(false)
+    val isLoadingMoreMyGroups: StateFlow<Boolean> = _isLoadingMoreMyGroups.asStateFlow()
+    
     private var currentMyGroupsPage = 1
     private var loadedPagesCount = 0
-    private val PAGES_PER_BATCH = 5  // 5페이지씩 미리 로드
-    private val PRELOAD_THRESHOLD = 3  // 3페이지에 도달하면 다음 배치 로드
+    private val PAGES_PER_BATCH = 3  // 5페이지에서 3페이지로 줄임
+    private val PRELOAD_THRESHOLD = 2  // 임계점도 2로 줄임
+    private var isBatchLoading = false
 
     private val _roomSections = MutableStateFlow<List<GroupRoomSectionData>>(emptyList())
     val roomSections: StateFlow<List<GroupRoomSectionData>> = _roomSections.asStateFlow()
@@ -87,32 +91,45 @@ class GroupViewModel @Inject constructor(
             loadedPagesCount = 0
             _myGroups.value = emptyList()
             _hasMoreMyGroups.value = true
+            _isRefreshing.value = true
         }
-        // 초기 로드 시 첫 번째 배치(5페이지) 미리 로드
-        loadPageBatch()
+        try {
+            // Pager를 위한 초기 배치 로드
+            loadPageBatch()
+        } finally {
+            _isRefreshing.value = false
+        }
     }
     
     private fun loadPageBatch() = viewModelScope.launch {
-        if (!_hasMoreMyGroups.value) return@launch
+        if (!_hasMoreMyGroups.value || isBatchLoading) return@launch
         
-        // 5페이지씩 배치로 로드
-        val currentBatchStart = currentMyGroupsPage
-        val batchEndPage = currentBatchStart + PAGES_PER_BATCH - 1
-        
-        for (page in currentBatchStart..batchEndPage) {
-            if (!_hasMoreMyGroups.value) break
+        try {
+            isBatchLoading = true
+            _isLoadingMoreMyGroups.value = true
             
-            repository.getMyJoinedRooms(page)
-                .onSuccess { paginationResult ->
-                    _myGroups.value = _myGroups.value + paginationResult.data
-                    _hasMoreMyGroups.value = paginationResult.hasMore
-                    loadedPagesCount++
-                    currentMyGroupsPage = page + 1
-                }
-                .onFailure {
-                    // 에러 처리 - 배치 로딩 중단
-                    break
-                }
+            // 3페이지씩 배치로 로드 (Pager 미리보기용)
+            val currentBatchStart = currentMyGroupsPage
+            val batchEndPage = currentBatchStart + PAGES_PER_BATCH - 1
+            
+            for (page in currentBatchStart..batchEndPage) {
+                if (!_hasMoreMyGroups.value) break
+                
+                repository.getMyJoinedRooms(page)
+                    .onSuccess { paginationResult ->
+                        _myGroups.value = _myGroups.value + paginationResult.data
+                        _hasMoreMyGroups.value = paginationResult.hasMore
+                        loadedPagesCount++
+                        currentMyGroupsPage = page + 1
+                    }
+                    .onFailure {
+                        // 에러 발생 시 배치 로딩 중단
+                        break
+                    }
+            }
+        } finally {
+            isBatchLoading = false
+            _isLoadingMoreMyGroups.value = false
         }
     }
     
@@ -121,15 +138,11 @@ class GroupViewModel @Inject constructor(
         val totalCards = _myGroups.value.size
         val currentPageEquivalent = (cardIndex / 3) + 1  // 3개씩 한 페이지라고 가정
         
-        // 현재 로드된 페이지의 3페이지 지점에 도달하면 다음 배치 로드
+        // 현재 로드된 페이지의 임계점에 도달하면 다음 배치 로드
         if (currentPageEquivalent >= loadedPagesCount - PRELOAD_THRESHOLD && 
-            _hasMoreMyGroups.value) {
+            _hasMoreMyGroups.value && !isBatchLoading) {
             loadPageBatch()
         }
-    }
-    
-    fun loadMoreMyGroups() {
-        loadPageBatch()
     }
 
     private fun loadRoomSections() {
@@ -197,23 +210,30 @@ class GroupViewModel @Inject constructor(
                         _myGroups.value = emptyList()
                         _hasMoreMyGroups.value = true
                         
-                        // 첫 번째 배치 로드
-                        val currentBatchStart = currentMyGroupsPage
-                        val batchEndPage = currentBatchStart + PAGES_PER_BATCH - 1
+                        // 첫 번째 배치 로드 (3페이지)
+                        if (!_hasMoreMyGroups.value || isBatchLoading) return@async
                         
-                        for (page in currentBatchStart..batchEndPage) {
-                            if (!_hasMoreMyGroups.value) break
+                        try {
+                            isBatchLoading = true
+                            val currentBatchStart = currentMyGroupsPage
+                            val batchEndPage = currentBatchStart + PAGES_PER_BATCH - 1
                             
-                            repository.getMyJoinedRooms(page)
-                                .onSuccess { paginationResult ->
-                                    _myGroups.value = _myGroups.value + paginationResult.data
-                                    _hasMoreMyGroups.value = paginationResult.hasMore
-                                    loadedPagesCount++
-                                    currentMyGroupsPage = page + 1
-                                }
-                                .onFailure {
-                                    break
-                                }
+                            for (page in currentBatchStart..batchEndPage) {
+                                if (!_hasMoreMyGroups.value) break
+                                
+                                repository.getMyJoinedRooms(page)
+                                    .onSuccess { paginationResult ->
+                                        _myGroups.value = _myGroups.value + paginationResult.data
+                                        _hasMoreMyGroups.value = paginationResult.hasMore
+                                        loadedPagesCount++
+                                        currentMyGroupsPage = page + 1
+                                    }
+                                    .onFailure {
+                                        break
+                                    }
+                            }
+                        } finally {
+                            isBatchLoading = false
                         }
                     },
                     async {

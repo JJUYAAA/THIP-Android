@@ -52,28 +52,31 @@ class GroupDoneViewModel @Inject constructor(
         if (isLastPage && !reset) return
         
         viewModelScope.launch {
-            if (reset) {
-                _isLoading.value = true
-                nextCursor = null
-                isLastPage = false
-                _expiredRooms.value = emptyList()
-            } else {
-                isLoadingMore = true
+            try {
+                if (reset) {
+                    _isLoading.value = true
+                    nextCursor = null
+                    isLastPage = false
+                    _expiredRooms.value = emptyList()
+                } else {
+                    isLoadingMore = true
+                }
+
+                repository.getMyRoomsByType("expired", nextCursor)
+                    .onSuccess { paginationResult ->
+                        val currentList = if (reset) emptyList() else _expiredRooms.value
+                        _expiredRooms.value = currentList + paginationResult.data
+                        nextCursor = paginationResult.nextCursor
+                        isLastPage = paginationResult.isLast
+                    }
+                    .onFailure {
+                        // 에러 발생 처리
+                    }
+            } finally {
+                // 성공/실패 관계없이 로딩 상태는 항상 해제
+                _isLoading.value = false
+                isLoadingMore = false
             }
-
-            repository.getMyRoomsByType("expired", nextCursor)
-                .onSuccess { paginationResult ->
-                    val currentList = if (reset) emptyList() else _expiredRooms.value
-                    _expiredRooms.value = currentList + paginationResult.data
-                    nextCursor = paginationResult.nextCursor
-                    isLastPage = paginationResult.isLast
-                }
-                .onFailure {
-                    // 에러 처리 (필요시 에러 상태 추가)
-                }
-
-            _isLoading.value = false
-            isLoadingMore = false
         }
     }
     

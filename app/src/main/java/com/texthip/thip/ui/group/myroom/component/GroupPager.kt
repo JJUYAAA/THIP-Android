@@ -71,9 +71,11 @@ fun GroupPager(
                 pageCount = { infinitePageCount }
             )
 
-            // 시작 페이지로 이동
-            LaunchedEffect(groupCards.size) {
-                pagerState.scrollToPage(startPage)
+            // 초기 로딩 시에만 시작 페이지로 이동
+            LaunchedEffect(Unit) {
+                if (pagerState.currentPage == 0) {
+                    pagerState.scrollToPage(startPage)
+                }
             }
             
             // 현재 보이는 카드 인덱스를 ViewModel에 알림
