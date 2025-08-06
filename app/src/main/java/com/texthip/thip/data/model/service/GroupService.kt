@@ -35,11 +35,6 @@ interface GroupService {
     @GET("rooms/{roomId}/recruiting")
     suspend fun getRoomRecruiting(@Path("roomId") roomId: Int): BaseResponse<RoomRecruitingResponse>
 
-    @GET("books")
-    suspend fun getBooks(
-        @Query("type") type: String  // "saved" 또는 "joining"
-    ): BaseResponse<BookListResponse>
-
     @POST("rooms")
     suspend fun createRoom(
         @Body request: CreateRoomRequest

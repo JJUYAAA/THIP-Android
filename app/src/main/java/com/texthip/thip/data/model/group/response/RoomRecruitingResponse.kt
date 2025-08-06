@@ -23,11 +23,13 @@ data class RoomRecruitingResponse(
     @SerialName("bookTitle") val bookTitle: String,
     @SerialName("authorName") val authorName: String,
     @SerialName("bookDescription") val bookDescription: String,
+    @SerialName("publisher") val publisher: String,
     @SerialName("recommendRooms") val recommendRooms: List<RecommendRoomResponse>
 )
 
 @Serializable
 data class RecommendRoomResponse(
+    @SerialName("roomId") val roomId: Int,
     @SerialName("roomImageUrl") val roomImageUrl: String?,
     @SerialName("roomName") val roomName: String,
     @SerialName("memberCount") val memberCount: Int,

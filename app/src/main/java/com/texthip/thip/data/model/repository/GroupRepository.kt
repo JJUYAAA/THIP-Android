@@ -162,7 +162,7 @@ class GroupRepository @Inject constructor(
             maxParticipants = dto.recruitCount,
             isRecruiting = true,
             endDate = daysLeft,
-            imageUrl = dto.bookImageUrl, // API에서 받은 실제 이미지 URL
+            imageUrl = dto.bookImageUrl,
             genreIndex = 0,
             isSecret = false
         )
@@ -203,23 +203,22 @@ class GroupRepository @Inject constructor(
                         val bookData = GroupBookData(
                             title = data.bookTitle,
                             author = data.authorName,
-                            publisher = "출판사 정보 없음", // API에서 제공하지 않음
+                            publisher = data.publisher,
                             description = data.bookDescription,
-                            imageUrl = data.bookImageUrl // API에서 받은 실제 이미지 URL
+                            imageUrl = data.bookImageUrl
                         )
                         
                         // 추천 모임방 변환
                         val recommendations = data.recommendRooms.map { recommendDto ->
                             GroupCardItemRoomData(
-                                id = recommendDto.hashCode(), // 임시 ID (실제로는 roomId가 필요)
+                                id = recommendDto.roomId, // API에서 제공하는 실제 roomId
                                 title = recommendDto.roomName,
                                 participants = recommendDto.memberCount,
                                 maxParticipants = recommendDto.recruitCount,
                                 isRecruiting = true,
                                 endDate = extractDaysFromDeadline(recommendDto.recruitEndDate),
-                                imageUrl = recommendDto.roomImageUrl, // API에서 받은 실제 이미지 URL
+                                imageUrl = recommendDto.roomImageUrl,
                                 genreIndex = 0, // 기본값
-                                isSecret = true // 기본값
                             )
                         }
                         
