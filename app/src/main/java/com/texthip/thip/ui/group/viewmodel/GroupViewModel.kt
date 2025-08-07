@@ -3,8 +3,7 @@ package com.texthip.thip.ui.group.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.repository.GroupRepository
-import com.texthip.thip.ui.group.myroom.mock.GroupCardData
-import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData
+import com.texthip.thip.ui.group.mock.GroupUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -19,42 +18,18 @@ class GroupViewModel @Inject constructor(
     private val repository: GroupRepository
 ) : ViewModel() {
 
-    private val _myGroups = MutableStateFlow<List<GroupCardData>>(emptyList())
-    val myGroups: StateFlow<List<GroupCardData>> = _myGroups
-
-    private val _hasMoreMyGroups = MutableStateFlow(true)
-    val hasMoreMyGroups: StateFlow<Boolean> = _hasMoreMyGroups.asStateFlow()
-
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
-
-    private val _isLoadingMoreMyGroups = MutableStateFlow(false)
-    val isLoadingMoreMyGroups: StateFlow<Boolean> = _isLoadingMoreMyGroups.asStateFlow()
+    private val _uiState = MutableStateFlow(GroupUiState())
+    val uiState: StateFlow<GroupUiState> = _uiState.asStateFlow()
     
     private var currentMyGroupsPage = 1
     private var loadedPagesCount = 0
     private val pagesPerBatch = 3
     private val preloadThreshold = 2
     private var isBatchLoading = false
-
-    private val _roomSections = MutableStateFlow<List<GroupRoomSectionData>>(emptyList())
-    val roomSections: StateFlow<List<GroupRoomSectionData>> = _roomSections.asStateFlow()
     
-    private val _roomSectionsError = MutableStateFlow<String?>(null)
-    val roomSectionsError: StateFlow<String?> = _roomSectionsError.asStateFlow()
-
-    private val _userName = MutableStateFlow("")
-    val userName: StateFlow<String> = _userName.asStateFlow()
-
-    
-    private val _selectedGenreIndex = MutableStateFlow(0)
-    val selectedGenreIndex: StateFlow<Int> = _selectedGenreIndex.asStateFlow()
-    
-    private val _showToast = MutableStateFlow(false)
-    val showToast: StateFlow<Boolean> = _showToast.asStateFlow()
-    
-    private val _toastMessage = MutableStateFlow("")
-    val toastMessage: StateFlow<String> = _toastMessage.asStateFlow()
+    private fun updateState(update: (GroupUiState) -> GroupUiState) {
+        _uiState.value = update(_uiState.value)
+    }
     
     init {
         loadInitialData()
@@ -70,7 +45,7 @@ class GroupViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getUserName()
                 .onSuccess { userName ->
-                    _userName.value = userName
+                    updateState { it.copy(userName = userName) }
                 }
         }
     }
@@ -78,32 +53,36 @@ class GroupViewModel @Inject constructor(
     fun loadMyGroups(reset: Boolean = false) = viewModelScope.launch {
         if (reset) {
             resetMyGroupsData()
-            _isRefreshing.value = true
+            updateState { it.copy(isRefreshing = true) }
         }
         try {
             loadPageBatchSuspend()
         } finally {
-            _isRefreshing.value = false
+            updateState { it.copy(isRefreshing = false) }
         }
     }
 
     private suspend fun loadPageBatchSuspend() {
-        if (!_hasMoreMyGroups.value || isBatchLoading) return
+        if (!uiState.value.hasMoreMyGroups || isBatchLoading) return
 
         try {
             isBatchLoading = true
-            _isLoadingMoreMyGroups.value = true
+            updateState { it.copy(isLoadingMoreMyGroups = true) }
 
             val currentBatchStart = currentMyGroupsPage
             val batchEndPage = currentBatchStart + pagesPerBatch - 1
 
             for (page in currentBatchStart..batchEndPage) {
-                if (!_hasMoreMyGroups.value) break
+                if (!uiState.value.hasMoreMyGroups) break
 
                 repository.getMyJoinedRooms(page)
                     .onSuccess { paginationResult ->
-                        _myGroups.value = _myGroups.value + paginationResult.data
-                        _hasMoreMyGroups.value = paginationResult.hasMore
+                        updateState { 
+                            it.copy(
+                                myGroups = it.myGroups + paginationResult.data,
+                                hasMoreMyGroups = paginationResult.hasMore
+                            )
+                        }
                         loadedPagesCount++
                         currentMyGroupsPage = page + 1
                     }
@@ -113,7 +92,7 @@ class GroupViewModel @Inject constructor(
             }
         } finally {
             isBatchLoading = false
-            _isLoadingMoreMyGroups.value = false
+            updateState { it.copy(isLoadingMoreMyGroups = false) }
         }
     }
 
@@ -125,7 +104,7 @@ class GroupViewModel @Inject constructor(
         val currentPageEquivalent = (cardIndex / 3) + 1
 
         if (currentPageEquivalent >= loadedPagesCount - preloadThreshold &&
-            _hasMoreMyGroups.value && !isBatchLoading
+            uiState.value.hasMoreMyGroups && !isBatchLoading
         ) {
             loadPageBatch()
         }
@@ -133,10 +112,10 @@ class GroupViewModel @Inject constructor(
 
     private fun loadRoomSections() {
         viewModelScope.launch {
-            _roomSectionsError.value = null
+            updateState { it.copy(roomSectionsError = null) }
 
             val genresResult = repository.getGenres()
-            val selectedIndex = _selectedGenreIndex.value
+            val selectedIndex = uiState.value.selectedGenreIndex
             val selectedGenre = if (genresResult.isSuccess) {
                 val genres = genresResult.getOrThrow()
                 if (selectedIndex >= 0 && selectedIndex < genres.size) {
@@ -150,10 +129,10 @@ class GroupViewModel @Inject constructor(
 
             repository.getRoomSections(selectedGenre)
                 .onSuccess { sections ->
-                    _roomSections.value = sections
+                    updateState { it.copy(roomSections = sections) }
                 }
                 .onFailure { error ->
-                    _roomSectionsError.value = error.message
+                    updateState { it.copy(roomSectionsError = error.message) }
                 }
         }
     }
@@ -162,8 +141,8 @@ class GroupViewModel @Inject constructor(
         val genresResult = repository.getGenres()
         if (genresResult.isSuccess) {
             val genres = genresResult.getOrThrow()
-            if (genreIndex >= 0 && genreIndex < genres.size && genreIndex != _selectedGenreIndex.value) {
-                _selectedGenreIndex.value = genreIndex
+            if (genreIndex >= 0 && genreIndex < genres.size && genreIndex != uiState.value.selectedGenreIndex) {
+                updateState { it.copy(selectedGenreIndex = genreIndex) }
                 loadRoomSections()
             }
         }
@@ -173,7 +152,7 @@ class GroupViewModel @Inject constructor(
 
     fun refreshGroupData() {
         viewModelScope.launch {
-            _isRefreshing.value = true
+            updateState { it.copy(isRefreshing = true) }
             try {
                 val jobs = listOf(
                     async { loadUserName() },
@@ -186,7 +165,7 @@ class GroupViewModel @Inject constructor(
 
                 jobs.awaitAll()
             } finally {
-                _isRefreshing.value = false
+                updateState { it.copy(isRefreshing = false) }
             }
         }
     }
@@ -194,17 +173,25 @@ class GroupViewModel @Inject constructor(
     private fun resetMyGroupsData() {
         currentMyGroupsPage = 1
         loadedPagesCount = 0
-        _myGroups.value = emptyList()
-        _hasMoreMyGroups.value = true
+        updateState { 
+            it.copy(
+                myGroups = emptyList(),
+                hasMoreMyGroups = true
+            )
+        }
     }
 
     fun showToastMessage(message: String) {
-        _toastMessage.value = message
-        _showToast.value = true
+        updateState { 
+            it.copy(
+                toastMessage = message,
+                showToast = true
+            )
+        }
     }
 
     fun hideToast() {
-        _showToast.value = false
+        updateState { it.copy(showToast = false) }
     }
 
     fun refreshDataOnScreenEnter() {

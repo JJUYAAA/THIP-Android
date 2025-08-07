@@ -3,7 +3,7 @@ package com.texthip.thip.ui.group.myroom.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.repository.GroupRepository
-import com.texthip.thip.ui.group.done.mock.MyRoomCardData
+import com.texthip.thip.ui.group.myroom.mock.GroupMyUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,21 +16,16 @@ class GroupMyViewModel @Inject constructor(
     private val repository: GroupRepository
 ) : ViewModel() {
 
-    private val _myRooms = MutableStateFlow<List<MyRoomCardData>>(emptyList())
-    val myRooms: StateFlow<List<MyRoomCardData>> = _myRooms.asStateFlow()
-    
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-    
-    private val _isLoadingMore = MutableStateFlow(false)
-    val isLoadingMore: StateFlow<Boolean> = _isLoadingMore.asStateFlow()
-    
-    private val _currentRoomType = MutableStateFlow("playingAndRecruiting")
-    val currentRoomType: StateFlow<String> = _currentRoomType.asStateFlow()
+    private val _uiState = MutableStateFlow(GroupMyUiState())
+    val uiState: StateFlow<GroupMyUiState> = _uiState.asStateFlow()
     
     private var nextCursor: String? = null
     private var isLastPage = false
     private var isLoadingData = false
+    
+    private fun updateState(update: (GroupMyUiState) -> GroupMyUiState) {
+        _uiState.value = update(_uiState.value)
+    }
 
     init {
         loadMyRooms(reset = true)
@@ -45,27 +40,31 @@ class GroupMyViewModel @Inject constructor(
                 isLoadingData = true
                 
                 if (reset) {
-                    _isLoading.value = true
+                    updateState { it.copy(isLoading = true, myRooms = emptyList()) }
                     nextCursor = null
                     isLastPage = false
-                    _myRooms.value = emptyList()
                 } else {
-                    _isLoadingMore.value = true
+                    updateState { it.copy(isLoadingMore = true) }
                 }
 
-                repository.getMyRoomsByType(_currentRoomType.value, nextCursor)
+                repository.getMyRoomsByType(uiState.value.currentRoomType, nextCursor)
                     .onSuccess { paginationResult ->
-                        val currentList = if (reset) emptyList() else _myRooms.value
-                        _myRooms.value = currentList + paginationResult.data
+                        val currentList = if (reset) emptyList() else uiState.value.myRooms
+                        updateState { 
+                            it.copy(
+                                myRooms = currentList + paginationResult.data,
+                                error = null
+                            ) 
+                        }
                         nextCursor = paginationResult.nextCursor
                         isLastPage = paginationResult.isLast
                     }
-                    .onFailure {
+                    .onFailure { exception ->
+                        updateState { it.copy(error = exception.message) }
                     }
             } finally {
                 isLoadingData = false
-                _isLoading.value = false
-                _isLoadingMore.value = false
+                updateState { it.copy(isLoading = false, isLoadingMore = false) }
             }
         }
     }
@@ -79,16 +78,9 @@ class GroupMyViewModel @Inject constructor(
     }
     
     fun changeRoomType(roomType: String) {
-        if (roomType != _currentRoomType.value) {
-            _currentRoomType.value = roomType
+        if (roomType != uiState.value.currentRoomType) {
+            updateState { it.copy(currentRoomType = roomType) }
             loadMyRooms(reset = true)
         }
-    }
-    
-    // Room type
-    companion object {
-        const val PLAYING_AND_RECRUITING = "playingAndRecruiting"
-        const val RECRUITING = "recruiting" 
-        const val PLAYING = "playing"
     }
 }

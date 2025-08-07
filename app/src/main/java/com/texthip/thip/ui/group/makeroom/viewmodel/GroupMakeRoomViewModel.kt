@@ -25,18 +25,10 @@ class GroupMakeRoomViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(GroupMakeRoomUiState())
     val uiState: StateFlow<GroupMakeRoomUiState> = _uiState.asStateFlow()
-
-    private val _savedBooks = MutableStateFlow<List<BookData>>(emptyList())
-    val savedBooks: StateFlow<List<BookData>> = _savedBooks.asStateFlow()
     
-    private val _groupBooks = MutableStateFlow<List<BookData>>(emptyList())
-    val groupBooks: StateFlow<List<BookData>> = _groupBooks.asStateFlow()
-    
-    private val _isLoadingBooks = MutableStateFlow(false)
-    val isLoadingBooks: StateFlow<Boolean> = _isLoadingBooks.asStateFlow()
-
-    private val _genres = MutableStateFlow<List<String>>(emptyList())
-    val genres: StateFlow<List<String>> = _genres.asStateFlow()
+    private fun updateState(update: (GroupMakeRoomUiState) -> GroupMakeRoomUiState) {
+        _uiState.value = update(_uiState.value)
+    }
     
     init {
         loadGenres()
@@ -46,17 +38,17 @@ class GroupMakeRoomViewModel @Inject constructor(
         viewModelScope.launch {
             groupRepository.getGenres()
                 .onSuccess { genresList ->
-                    _genres.value = genresList
+                    updateState { it.copy(genres = genresList) }
                 }
         }
     }
 
     fun selectBook(book: BookData) {
-        _uiState.value = _uiState.value.copy(selectedBook = book)
+        updateState { it.copy(selectedBook = book) }
     }
 
     fun toggleBookSearchSheet(show: Boolean) {
-        _uiState.value = _uiState.value.copy(showBookSearchSheet = show)
+        updateState { it.copy(showBookSearchSheet = show) }
         if (show) {
             loadBooks()
         }
@@ -64,26 +56,25 @@ class GroupMakeRoomViewModel @Inject constructor(
     
     private fun loadBooks() {
         viewModelScope.launch {
-            _isLoadingBooks.value = true
+            updateState { it.copy(isLoadingBooks = true) }
             try {
                 val savedBooksResult = bookRepository.getBooks("saved")
                 savedBooksResult.onSuccess { bookDtos ->
-                    _savedBooks.value = bookDtos.map { it.toBookData() }
+                    updateState { it.copy(savedBooks = bookDtos.map { dto -> dto.toBookData() }) }
                 }.onFailure {
-                    _savedBooks.value = emptyList()
+                    updateState { it.copy(savedBooks = emptyList()) }
                 }
                 
                 val groupBooksResult = bookRepository.getBooks("joining")
                 groupBooksResult.onSuccess { bookDtos ->
-                    _groupBooks.value = bookDtos.map { it.toBookData() }
+                    updateState { it.copy(groupBooks = bookDtos.map { dto -> dto.toBookData() }) }
                 }.onFailure {
-                    _groupBooks.value = emptyList()
+                    updateState { it.copy(groupBooks = emptyList()) }
                 }
             } catch (e: Exception) {
-                _savedBooks.value = emptyList()
-                _groupBooks.value = emptyList()
+                updateState { it.copy(savedBooks = emptyList(), groupBooks = emptyList()) }
             } finally {
-                _isLoadingBooks.value = false
+                updateState { it.copy(isLoadingBooks = false) }
             }
         }
     }
@@ -98,37 +89,41 @@ class GroupMakeRoomViewModel @Inject constructor(
     }
 
     fun selectGenre(index: Int) {
-        _uiState.value = _uiState.value.copy(selectedGenreIndex = index)
+        updateState { it.copy(selectedGenreIndex = index) }
     }
 
     fun updateRoomTitle(title: String) {
-        _uiState.value = _uiState.value.copy(roomTitle = title)
+        updateState { it.copy(roomTitle = title) }
     }
 
     fun updateRoomDescription(description: String) {
-        _uiState.value = _uiState.value.copy(roomDescription = description)
+        updateState { it.copy(roomDescription = description) }
     }
 
     fun setDateRange(startDate: LocalDate, endDate: LocalDate) {
-        _uiState.value = _uiState.value.copy(
-            meetingStartDate = startDate,
-            meetingEndDate = endDate
-        )
+        updateState { 
+            it.copy(
+                meetingStartDate = startDate,
+                meetingEndDate = endDate
+            )
+        }
     }
 
     fun setMemberLimit(count: Int) {
-        _uiState.value = _uiState.value.copy(memberLimit = count)
+        updateState { it.copy(memberLimit = count) }
     }
 
     fun togglePrivate(isPrivate: Boolean) {
-        _uiState.value = _uiState.value.copy(
-            isPrivate = isPrivate,
-            password = if (!isPrivate) "" else _uiState.value.password
-        )
+        updateState { 
+            it.copy(
+                isPrivate = isPrivate,
+                password = if (!isPrivate) "" else it.password
+            )
+        }
     }
 
     fun updatePassword(password: String) {
-        _uiState.value = _uiState.value.copy(password = password)
+        updateState { it.copy(password = password) }
     }
 
     fun createGroup(onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
@@ -147,7 +142,7 @@ class GroupMakeRoomViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                _uiState.value = currentState.copy(isLoading = true, errorMessage = null)
+                updateState { it.copy(isLoading = true, errorMessage = null) }
 
                 val request = CreateRoomRequest(
                     isbn = selectedBook.isbn,
@@ -170,13 +165,13 @@ class GroupMakeRoomViewModel @Inject constructor(
             } catch (e: Exception) {
                 onError("네트워크 오류가 발생했습니다: ${e.message}")
             } finally {
-                _uiState.value = _uiState.value.copy(isLoading = false)
+                updateState { it.copy(isLoading = false) }
             }
         }
     }
     
     private fun getApiCategoryName(genreIndex: Int): String {
-        val currentGenres = _genres.value
+        val currentGenres = uiState.value.genres
         if (genreIndex >= 0 && genreIndex < currentGenres.size) {
             val genre = currentGenres[genreIndex]
             return when (genre) {
@@ -188,6 +183,6 @@ class GroupMakeRoomViewModel @Inject constructor(
     }
 
     fun clearError() {
-        _uiState.value = _uiState.value.copy(errorMessage = null)
+        updateState { it.copy(errorMessage = null) }
     }
 }
