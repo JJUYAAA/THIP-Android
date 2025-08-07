@@ -70,10 +70,8 @@ class GroupDoneViewModel @Inject constructor(
                         isLastPage = paginationResult.isLast
                     }
                     .onFailure {
-                        // 에러 발생 처리
                     }
             } finally {
-                // 성공/실패 관계없이 로딩 상태는 항상 해제
                 _isLoading.value = false
                 isLoadingMore = false
             }

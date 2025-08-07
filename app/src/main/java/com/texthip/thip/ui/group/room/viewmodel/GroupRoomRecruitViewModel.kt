@@ -56,7 +56,6 @@ class GroupRoomRecruitViewModel @Inject constructor(
                     _currentButtonType.value = data.buttonType
                 }
                 .onFailure { error ->
-                    // 에러 처리 (필요시 에러 상태 추가)
                 }
             
             _isLoading.value = false
@@ -79,7 +78,6 @@ class GroupRoomRecruitViewModel @Inject constructor(
     }
     
     fun onCancelParticipationClick(dialogTitle: String, dialogDescription: String) {
-        // 참여 취소 확인 다이얼로그 표시
         _dialogTitle.value = dialogTitle
         _dialogDescription.value = dialogDescription
         pendingAction = {
@@ -101,13 +99,11 @@ class GroupRoomRecruitViewModel @Inject constructor(
     }
     
     fun onCloseRecruitmentClick(dialogTitle: String, dialogDescription: String) {
-        // 모집 마감 확인 다이얼로그 표시
         _dialogTitle.value = dialogTitle
         _dialogDescription.value = dialogDescription
         pendingAction = {
             viewModelScope.launch {
                 // TODO: 실제 모집 마감 API 호출
-                // 현재는 mock 로직으로 처리
                 showToastMessage("모집이 마감되었습니다")
             }
         }

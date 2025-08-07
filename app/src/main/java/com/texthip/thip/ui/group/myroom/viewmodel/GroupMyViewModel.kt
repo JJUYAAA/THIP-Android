@@ -61,7 +61,6 @@ class GroupMyViewModel @Inject constructor(
                         isLastPage = paginationResult.isLast
                     }
                     .onFailure {
-                        // 에러 처리 (필요시 에러 상태 추가)
                     }
             } finally {
                 isLoadingData = false
