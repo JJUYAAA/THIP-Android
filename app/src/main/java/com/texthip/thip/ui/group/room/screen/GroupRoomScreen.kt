@@ -43,7 +43,7 @@ import com.texthip.thip.ui.group.room.viewmodel.GroupRoomUiState
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
-import com.texthip.thip.utils.type.Genre
+import com.texthip.thip.utils.type.GenreBackgroundImage
 
 @Composable
 fun GroupRoomScreen(
@@ -97,7 +97,7 @@ fun GroupRoomContent(
     val imageModel = remember(roomDetails.roomImageUrl) {
         // 서버에서 받은 문자열이 "_image"로 끝나면 Enum에서 로컬 리소스를 찾음
         if (roomDetails.roomImageUrl.endsWith("_image")) {
-            Genre.fromServerValue(roomDetails.roomImageUrl).imageResId
+            GenreBackgroundImage.fromServerValue(roomDetails.roomImageUrl).imageResId
         }
         // 그렇지 않으면 URL로 그대로 사용
         else {
