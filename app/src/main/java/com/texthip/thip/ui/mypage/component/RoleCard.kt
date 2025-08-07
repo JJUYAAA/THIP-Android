@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.DarkGrey
 import com.texthip.thip.ui.theme.NeonGreen
-import com.texthip.thip.ui.theme.Pink
+import com.texthip.thip.ui.theme.Art
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -129,7 +129,7 @@ fun RoleCardPreview() {
                 role = "예술가",
                 imageResId = R.drawable.character_art,
                 genreColor = White,
-                roleColor = Pink,
+                roleColor = Art,
                 selected = selected2,
                 onClick = { selected2 = !selected2 }
             )

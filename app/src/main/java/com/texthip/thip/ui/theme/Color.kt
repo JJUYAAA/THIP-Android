@@ -13,16 +13,16 @@ val NeonGreen50 = Color(0x80A7FFB4)
 
 val Red = Color(0xFFFF9496)
 
-val Mint = Color(0xFFA0F8E8)
-val MintSub = Color(0xFF4FD9C0)
-val Orange = Color(0xFFFDB770)
-val OrangeSub = Color(0xFFFF8B17)
-val genreColor = Color(0xFFB5B35D)
-val Skyblue = Color(0xFFA1D5FF)
-val SkyblueSub = Color(0xFF6DB5EE)
-val Pink = Color(0xFFFF8BAC)
-val Lavendar = Color(0xFFC8A5FF)
-val LavendaSub = Color(0xFFA76FFF)
+val Literature = Color(0xFFA0F8E8)
+val LiteratureSub = Color(0xFF4FD9C0)
+val SocialScience = Color(0xFFFDB770)
+val SocialScienceSub = Color(0xFFFF8B17)
+val Humanities = Color(0xFFA1D5FF)
+val HumanitiesSub = Color(0xFF6DB5EE)
+val Art = Color(0xFFFF8BAC)
+val ArtSub = Color(0xFFFB5A88)
+val ScienceIt = Color(0xFFC8A5FF)
+val ScienceItSub = Color(0xFFA76FFF)
 val Yellow = Color(0xFFFFECA7)
 val KakaoYellow = Color(0xFFFEE500)
 
@@ -52,16 +52,16 @@ data class ThipColors(
     val NeonGreen: Color,
     val NeonGreen50: Color,
     val Red: Color,
-    val Mint: Color,
-    val MintSub: Color,
-    val Orange: Color,
-    val OrangeSub: Color,
-    val genreColor: Color,
-    val Skyblue: Color,
-    val SkyblueSub: Color,
-    val Pink: Color,
-    val Lavendar: Color,
-    val LavendaSub: Color,
+    val Literature: Color,
+    val LiteratureSub: Color,
+    val SocialScience: Color,
+    val SocialScienceSub: Color,
+    val Humanities: Color,
+    val HumanitiesSub: Color,
+    val Art: Color,
+    val ArtSub: Color,
+    val ScienceIt: Color,
+    val ScienceItSub: Color,
     val Yellow: Color,
     val KakaoYellow: Color,
     val PureWhite: Color,
@@ -89,16 +89,16 @@ val defaultThipColors = ThipColors(
     NeonGreen = NeonGreen,
     NeonGreen50 = NeonGreen50,
     Red = Red,
-    Mint = Mint,
-    MintSub = MintSub,
-    Orange = Orange,
-    OrangeSub = OrangeSub,
-    genreColor = genreColor,
-    Skyblue = Skyblue,
-    SkyblueSub = SkyblueSub,
-    Pink = Pink,
-    Lavendar = Lavendar,
-    LavendaSub = LavendaSub,
+    Literature = Literature,
+    LiteratureSub = LiteratureSub,
+    SocialScience = SocialScience,
+    SocialScienceSub = SocialScienceSub,
+    Humanities = Humanities,
+    HumanitiesSub = HumanitiesSub,
+    Art = Art,
+    ArtSub = ArtSub,
+    ScienceIt = ScienceIt,
+    ScienceItSub = ScienceItSub,
     Yellow = Yellow,
     KakaoYellow = KakaoYellow,
     PureWhite = PureWhite,

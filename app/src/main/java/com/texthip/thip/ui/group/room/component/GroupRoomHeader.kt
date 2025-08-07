@@ -158,7 +158,7 @@ fun GroupRoomHeader(
                 Text(
                     text = data.genre,
                     style = typography.info_m500_s12,
-                    color = colors.Orange // TODO: 장르에 맞는 색으로 변경
+                    color = colors.SocialScience // TODO: 장르에 맞는 색으로 변경
                 )
             }
         }
