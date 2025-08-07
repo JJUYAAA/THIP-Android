@@ -42,7 +42,7 @@ fun SavedFeedCard(
             .padding(20.dp)
     ) {
         ProfileBar(
-            profileImage = profileImage,
+            profileImage = "https://example.com/image1.jpg",
             topText = feedItem.userName,
             bottomText = feedItem.userRole,
             showSubscriberInfo = false,

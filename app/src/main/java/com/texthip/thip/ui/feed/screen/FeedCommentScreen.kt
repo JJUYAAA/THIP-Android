@@ -2,7 +2,16 @@ package com.texthip.thip.ui.feed.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -31,7 +40,8 @@ import com.texthip.thip.ui.common.forms.CommentTextField
 import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.group.note.component.*
+import com.texthip.thip.ui.group.note.component.CommentItem
+import com.texthip.thip.ui.group.note.component.ReplyItem
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme
@@ -45,7 +55,8 @@ fun FeedCommentScreen(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
     bookImage: Painter? = null,
-    profileImage: Painter? = null,
+//    profileImage: Painter? = null,
+    profileImage: String,
     currentUserId: Int,
     currentUserName: String,
     currentUserGenre: String,
@@ -381,7 +392,7 @@ private fun FeedCommentScreenPrev() {
                 tags = listOf("에세이", "문학", "힐링")
             ),
             bookImage = painterResource(R.drawable.bookcover_sample),
-            profileImage = painterResource(R.drawable.character_literature),
+            profileImage = "https://example.com/image1.jpg",
             onLikeClick = {},
             onCommentInputChange = {},
             onSendClick = {},
