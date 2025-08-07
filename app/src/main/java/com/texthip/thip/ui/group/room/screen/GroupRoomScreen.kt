@@ -38,7 +38,6 @@ import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.GradationTopAppBar
 import com.texthip.thip.ui.group.room.component.GroupRoomBody
 import com.texthip.thip.ui.group.room.component.GroupRoomHeader
-import com.texthip.thip.ui.group.room.mock.GroupRoomHeaderData
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomUiState
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomViewModel
@@ -148,14 +147,13 @@ fun GroupRoomContent(
                     .padding(top = 70.dp, bottom = 20.dp)
             ) {
                 GroupRoomHeader(
-                    data = GroupRoomHeaderData(
-                        groupRoomName = roomDetails.roomName,
-                        introductionContent = roomDetails.roomDescription,
-                        isPrivate = !roomDetails.isPublic,
-                        period = "${roomDetails.progressStartDate} ~ ${roomDetails.progressEndDate}",
-                        participantCount = roomDetails.memberCount,
-                        genre = roomDetails.category
-                    )
+                    roomName = roomDetails.roomName,
+                    roomDescription = roomDetails.roomDescription,
+                    isPublic = roomDetails.isPublic,
+                    progressStartDate = roomDetails.progressStartDate,
+                    progressEndDate = roomDetails.progressEndDate,
+                    memberCount = roomDetails.memberCount,
+                    category = roomDetails.category
                 )
 
                 Spacer(Modifier.height(30.dp))

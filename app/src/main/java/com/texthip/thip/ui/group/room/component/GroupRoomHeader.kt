@@ -23,13 +23,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
-import com.texthip.thip.ui.group.room.mock.GroupRoomHeaderData
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupRoomHeader(
-    data: GroupRoomHeaderData
+    roomName: String,
+    roomDescription: String,
+    isPublic: Boolean,
+    progressStartDate: String,
+    progressEndDate: String,
+    memberCount: Int,
+    category: String
 ) {
     Column(
         modifier = Modifier.padding(horizontal = 20.dp)
@@ -39,12 +44,12 @@ fun GroupRoomHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = data.groupRoomName,
+                text = roomName,
                 style = typography.bigtitle_b700_s22_h24,
                 color = colors.White
             )
 
-            if (data.isPrivate) {
+            if (!isPublic) {
                 Icon(
                     painter = painterResource(R.drawable.ic_lock),
                     contentDescription = "Lock Icon",
@@ -65,7 +70,7 @@ fun GroupRoomHeader(
             Spacer(Modifier.height(4.dp))
 
             Text(
-                text = data.introductionContent,
+                text = roomDescription,
                 style = typography.copy_r400_s12_h20,
                 color = colors.White
             )
@@ -94,7 +99,11 @@ fun GroupRoomHeader(
                 }
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    text = data.period,
+                    text = stringResource(
+                        R.string.group_room_period,
+                        progressStartDate,
+                        progressEndDate
+                    ),
                     style = typography.timedate_r400_s11,
                     color = colors.White
                 )
@@ -134,7 +143,7 @@ fun GroupRoomHeader(
                 }
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    text = stringResource(R.string.participate_num, data.participantCount),
+                    text = stringResource(R.string.participate_num, memberCount),
                     style = typography.menu_sb600_s12,
                     color = colors.White
                 )
@@ -156,7 +165,7 @@ fun GroupRoomHeader(
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 Text(
-                    text = data.genre,
+                    text = category,
                     style = typography.info_m500_s12,
                     color = colors.SocialScience // TODO: 장르에 맞는 색으로 변경
                 )
@@ -169,13 +178,12 @@ fun GroupRoomHeader(
 @Composable
 private fun GroupRoomHeaderPreview() {
     GroupRoomHeader(
-        data = GroupRoomHeaderData(
-            groupRoomName = "호르몬 체인지 완독하는 방",
-            introductionContent = "‘시집만 읽는 사람들’ 3월 모임입니다. 이번 달 모임방은 심장보다 단단한 토마토 한 알 완독합니다.",
-            isPrivate = true,
-            period = "2023.10.01 ~ 2023.10.31",
-            participantCount = 22,
-            genre = "문학"
-        )
+        roomName = "호르몬 체인지 완독하는 방",
+        roomDescription = "‘시집만 읽는 사람들’ 3월 모임입니다. 이번 달 모임방은 심장보다 단단한 토마토 한 알 완독합니다.",
+        isPublic = true,
+        progressStartDate = "2023.10.01",
+        progressEndDate = "2023.10.31",
+        memberCount = 22,
+        category = "문학"
     )
 }
