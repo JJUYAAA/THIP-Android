@@ -9,7 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.texthip.thip.ui.group.done.Screen.GroupDoneScreen
+import com.texthip.thip.ui.group.done.screen.GroupDoneScreen
 import com.texthip.thip.ui.group.makeroom.screen.GroupMakeRoomScreen
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
 import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
@@ -19,7 +19,7 @@ import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
-import com.texthip.thip.ui.group.myroom.mock.GroupMyUiState
+import com.texthip.thip.ui.group.myroom.mock.RoomType
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
@@ -42,7 +42,7 @@ fun NavGraphBuilder.groupNavigation(
         val groupViewModel: GroupViewModel = hiltViewModel()
         
         // 네비게이션 파라미터로 전달된 토스트 메시지가 있는지 확인
-        LaunchedEffect(Unit) {
+        LaunchedEffect(backStackEntry) {
             val toastMessage = backStackEntry.savedStateHandle.get<String>("toast_message")
             
             toastMessage?.let { message ->
@@ -107,7 +107,7 @@ fun NavGraphBuilder.groupNavigation(
         GroupMyScreen(
             viewModel = groupMyViewModel,
             onCardClick = { room ->
-                val isRecruiting = room.type == GroupMyUiState.RECRUITING
+                val isRecruiting = room.type == RoomType.RECRUITING.value
                 if (isRecruiting) {
                     navController.navigateToGroupRecruit(room.roomId)
                 } else {
