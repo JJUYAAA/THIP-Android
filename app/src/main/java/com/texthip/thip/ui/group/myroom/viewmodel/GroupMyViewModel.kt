@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.ui.group.myroom.mock.GroupMyUiState
+import com.texthip.thip.ui.group.myroom.mock.RoomType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,7 +48,7 @@ class GroupMyViewModel @Inject constructor(
                     updateState { it.copy(isLoadingMore = true) }
                 }
 
-                repository.getMyRoomsByType(uiState.value.currentRoomType, nextCursor)
+                repository.getMyRoomsByType(uiState.value.currentRoomType.value, nextCursor)
                     .onSuccess { paginationResult ->
                         val currentList = if (reset) emptyList() else uiState.value.myRooms
                         updateState { 
@@ -77,7 +78,7 @@ class GroupMyViewModel @Inject constructor(
         loadMyRooms(reset = true)
     }
     
-    fun changeRoomType(roomType: String) {
+    fun changeRoomType(roomType: RoomType) {
         if (roomType != uiState.value.currentRoomType) {
             updateState { it.copy(currentRoomType = roomType) }
             loadMyRooms(reset = true)

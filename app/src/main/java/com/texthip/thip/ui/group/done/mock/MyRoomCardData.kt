@@ -1,7 +1,7 @@
 package com.texthip.thip.ui.group.done.mock
 
 import com.texthip.thip.data.mapper.GroupDataMapper
-import com.texthip.thip.ui.group.myroom.mock.GroupMyUiState
+import com.texthip.thip.ui.group.myroom.mock.RoomType
 
 data class MyRoomCardData(
     val roomId: Int,
@@ -22,10 +22,10 @@ data class MyRoomsPaginationResult(
 // 타입 기반 모집 상태 확인 함수
 fun MyRoomCardData.isRecruitingByType(): Boolean {
     return when (type) {
-        GroupMyUiState.RECRUITING -> true
-        GroupMyUiState.PLAYING_AND_RECRUITING -> false
-        GroupMyUiState.PLAYING -> false
-        GroupMyUiState.EXPIRED -> false
+        RoomType.RECRUITING.value -> true
+        RoomType.PLAYING_AND_RECRUITING.value -> false
+        RoomType.PLAYING.value -> false
+        RoomType.EXPIRED.value -> false
         else -> false
     }
 }

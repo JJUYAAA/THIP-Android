@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
-import com.texthip.thip.ui.group.myroom.mock.GroupMyUiState
 import com.texthip.thip.ui.group.room.mock.GroupRoomRecruitUiState
+import com.texthip.thip.ui.group.room.mock.RoomAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,7 +51,7 @@ class GroupRoomRecruitViewModel @Inject constructor(
         viewModelScope.launch {
             val roomId = uiState.value.roomDetail?.id ?: return@launch
             
-            repository.joinOrCancelRoom(roomId, GroupMyUiState.ACTION_JOIN)
+            repository.joinOrCancelRoom(roomId, RoomAction.JOIN.value)
                 .onSuccess {
                     updateState { it.copy(currentButtonType = GroupBottomButtonType.CANCEL) }
                     showToastMessage("참여가 완료되었습니다")
@@ -74,7 +74,7 @@ class GroupRoomRecruitViewModel @Inject constructor(
             viewModelScope.launch {
                 val roomId = uiState.value.roomDetail?.id ?: return@launch
                 
-                repository.joinOrCancelRoom(roomId, GroupMyUiState.ACTION_CANCEL)
+                repository.joinOrCancelRoom(roomId, RoomAction.CANCEL.value)
                     .onSuccess {
                         updateState { 
                             it.copy(

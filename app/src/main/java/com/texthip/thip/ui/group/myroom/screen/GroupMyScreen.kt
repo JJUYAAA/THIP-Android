@@ -29,11 +29,11 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardItemRoom
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.done.mock.MyRoomCardData
-import com.texthip.thip.ui.group.done.mock.isRecruitingByType
 import com.texthip.thip.ui.group.done.mock.getEndDateInDays
+import com.texthip.thip.ui.group.done.mock.isRecruitingByType
 import com.texthip.thip.ui.group.myroom.component.GroupMyRoomFilterRow
+import com.texthip.thip.ui.group.myroom.mock.RoomType
 import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
-import com.texthip.thip.ui.group.myroom.mock.GroupMyUiState
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -65,8 +65,8 @@ fun GroupMyScreen(
     // Filter 상태를 
     val selectedStates = remember(uiState.currentRoomType) {
         when (uiState.currentRoomType) {
-            GroupMyUiState.PLAYING -> booleanArrayOf(true, false)
-            GroupMyUiState.RECRUITING -> booleanArrayOf(false, true)
+            RoomType.PLAYING -> booleanArrayOf(true, false)
+            RoomType.RECRUITING -> booleanArrayOf(false, true)
             else -> booleanArrayOf(false, false) // playingAndRecruiting
         }
     }
@@ -101,23 +101,21 @@ fun GroupMyScreen(
                             idx == 0 -> {
                                 if (selectedStates[0]) {
                                     // 이미 선택된 상태면 전체로 변경
-                                    GroupMyUiState.PLAYING_AND_RECRUITING
+                                    RoomType.PLAYING_AND_RECRUITING
                                 } else {
                                     // 선택되지 않은 상태면 진행중만
-                                    GroupMyUiState.PLAYING
+                                    RoomType.PLAYING
                                 }
                             }
                             // 모집중 버튼을 눌렀을 때  
                             idx == 1 -> {
                                 if (selectedStates[1]) {
-                                    // 이미 선택된 상태면 전체로 변경
-                                    GroupMyUiState.PLAYING_AND_RECRUITING
+                                    RoomType.PLAYING_AND_RECRUITING
                                 } else {
-                                    // 선택되지 않은 상태면 모집중만
-                                    GroupMyUiState.RECRUITING
+                                    RoomType.RECRUITING
                                 }
                             }
-                            else -> GroupMyUiState.PLAYING_AND_RECRUITING
+                            else -> RoomType.PLAYING_AND_RECRUITING
                         }
                         viewModel.changeRoomType(newRoomType)
                     }
