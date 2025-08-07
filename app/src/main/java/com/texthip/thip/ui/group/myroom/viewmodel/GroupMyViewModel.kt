@@ -41,7 +41,7 @@ class GroupMyViewModel @Inject constructor(
                 isLoadingData = true
                 
                 if (reset) {
-                    updateState { it.copy(isLoading = true, myRooms = emptyList()) }
+                    updateState { it.copy(isLoading = true, myRooms = emptyList(), hasMore = true) }
                     nextCursor = null
                     isLastPage = false
                 } else {
@@ -54,7 +54,8 @@ class GroupMyViewModel @Inject constructor(
                         updateState { 
                             it.copy(
                                 myRooms = currentList + paginationResult.data,
-                                error = null
+                                error = null,
+                                hasMore = !paginationResult.isLast
                             ) 
                         }
                         nextCursor = paginationResult.nextCursor

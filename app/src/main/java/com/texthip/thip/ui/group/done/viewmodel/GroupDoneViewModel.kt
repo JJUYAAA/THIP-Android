@@ -23,6 +23,7 @@ class GroupDoneViewModel @Inject constructor(
     private var nextCursor: String? = null
     private var isLastPage = false
     private var isLoadingMore = false
+    private var isInitialLoading = false
     
     private fun updateState(update: (GroupDoneUiState) -> GroupDoneUiState) {
         _uiState.value = update(_uiState.value)
@@ -47,17 +48,21 @@ class GroupDoneViewModel @Inject constructor(
     }
 
     fun loadExpiredRooms(reset: Boolean = false) {
-        if (isLoadingMore && !reset) return
-        if (isLastPage && !reset) return
+        // 중복 호출 방지
+        if (reset) {
+            if (isInitialLoading) return
+            isInitialLoading = true
+        } else {
+            if (isLoadingMore || isLastPage) return
+            isLoadingMore = true
+        }
         
         viewModelScope.launch {
             try {
                 if (reset) {
-                    updateState { it.copy(isLoading = true, expiredRooms = emptyList()) }
+                    updateState { it.copy(isLoading = true, expiredRooms = emptyList(), hasMore = true) }
                     nextCursor = null
                     isLastPage = false
-                } else {
-                    isLoadingMore = true
                 }
 
                 repository.getMyRoomsByType(RoomType.EXPIRED.value, nextCursor)
@@ -66,7 +71,9 @@ class GroupDoneViewModel @Inject constructor(
                         updateState { 
                             it.copy(
                                 expiredRooms = currentList + paginationResult.data,
-                                error = null
+                                error = null,
+                                isLoadingMore = false,
+                                hasMore = !paginationResult.isLast
                             )
                         }
                         nextCursor = paginationResult.nextCursor
@@ -76,8 +83,13 @@ class GroupDoneViewModel @Inject constructor(
                         updateState { it.copy(error = exception.message) }
                     }
             } finally {
-                updateState { it.copy(isLoading = false) }
-                isLoadingMore = false
+                if (reset) {
+                    updateState { it.copy(isLoading = false) }
+                    isInitialLoading = false
+                } else {
+                    updateState { it.copy(isLoadingMore = false) }
+                    isLoadingMore = false
+                }
             }
         }
     }

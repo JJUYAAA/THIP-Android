@@ -57,7 +57,7 @@ fun GroupMyScreen(
     }
     
     LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore && uiState.myRooms.isNotEmpty()) {
+        if (shouldLoadMore && uiState.canLoadMore) {
             viewModel.loadMoreMyRooms()
         }
     }

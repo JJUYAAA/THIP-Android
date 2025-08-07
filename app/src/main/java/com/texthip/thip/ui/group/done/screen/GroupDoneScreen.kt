@@ -51,7 +51,7 @@ fun GroupDoneScreen(
     }
 
     LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore && uiState.expiredRooms.isNotEmpty()) {
+        if (shouldLoadMore && uiState.canLoadMore) {
             viewModel.loadMoreExpiredRooms()
         }
     }
