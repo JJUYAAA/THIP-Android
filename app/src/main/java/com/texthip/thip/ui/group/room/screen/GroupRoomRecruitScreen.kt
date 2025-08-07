@@ -22,10 +22,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -47,7 +45,7 @@ import com.texthip.thip.ui.group.myroom.mock.GroupBookData
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
-import com.texthip.thip.ui.group.viewmodel.GroupViewModel
+import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -56,41 +54,37 @@ import kotlinx.coroutines.delay
 @Composable
 fun GroupRoomRecruitScreen(
     roomId: Int,
-    viewModel: GroupViewModel? = hiltViewModel(),
+    viewModel: GroupRoomRecruitViewModel = hiltViewModel(),
     mockRoomDetail: GroupRoomData? = null, // Preview용 mock 데이터
     onRecommendationClick: (GroupCardItemRoomData) -> Unit = {},
-    onParticipation: () -> Unit = {},   // 참여
-    onCancelParticipation: () -> Unit = {}, // 참여 취소
-    onCloseRecruitment: () -> Unit = {}, // 모집 마감
-    onBackClick: () -> Unit = {} // 뒤로가기 추가
+    onNavigateToGroupScreen: (String) -> Unit = {}, // GroupScreen으로 네비게이션 + 토스트 메시지
+    onBackClick: () -> Unit = {} // 뒤로가기
 ) {
     val context = LocalContext.current
     
-    var roomDetail by remember { mutableStateOf(mockRoomDetail) }
-    var isLoading by remember { mutableStateOf(mockRoomDetail == null && viewModel != null) }
+    // ViewModel states
+    val roomDetail by viewModel.roomDetail.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val currentButtonType by viewModel.currentButtonType.collectAsState()
+    val showToast by viewModel.showToast.collectAsState()
+    val toastMessage by viewModel.toastMessage.collectAsState()
+    val showDialog by viewModel.showDialog.collectAsState()
+    val dialogTitle by viewModel.dialogTitle.collectAsState()
+    val dialogDescription by viewModel.dialogDescription.collectAsState()
+    val shouldNavigateToGroupScreen by viewModel.shouldNavigateToGroupScreen.collectAsState()
     
-    var currentButtonType by remember { mutableStateOf(mockRoomDetail?.buttonType) }
-    var showToast by remember { mutableStateOf(false) }
-    var toastMessage by remember { mutableStateOf("") }
-    var showDialog by remember { mutableStateOf(false) }
-    var dialogTitle by remember { mutableStateOf("") }
-    var dialogDescription by remember { mutableStateOf("") }
-    var pendingAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+    // 데이터 로딩 - mockRoomDetail이 없을 때만 실행
+    LaunchedEffect(roomId) {
+        if (mockRoomDetail == null) {
+            viewModel.loadRoomDetail(roomId)
+        }
+    }
     
-    // 데이터 로딩 - ViewModel이 있고 mockRoomDetail이 없을 때만 실행
-    LaunchedEffect(roomId, viewModel) {
-        if (viewModel != null && mockRoomDetail == null) {
-            isLoading = true
-            
-            viewModel.getRoomRecruiting(roomId)
-                .onSuccess { data ->
-                    roomDetail = data
-                    currentButtonType = data.buttonType
-                    isLoading = false
-                }
-                .onFailure { error ->
-                    isLoading = false
-                }
+    // GroupScreen으로 네비게이션 처리
+    LaunchedEffect(shouldNavigateToGroupScreen) {
+        if (shouldNavigateToGroupScreen) {
+            onNavigateToGroupScreen(toastMessage) // 토스트 메시지와 함께 네비게이션
+            viewModel.onNavigatedToGroupScreen()
         }
     }
 
@@ -106,8 +100,9 @@ fun GroupRoomRecruitScreen(
             return@Box
         }
         
-        // 데이터가 없는 경우
-        val detail = roomDetail ?: return@Box
+        // 데이터가 없는 경우 (Preview에서는 mock 데이터 사용)
+        val detail = roomDetail ?: mockRoomDetail ?: return@Box
+        
         Image(
             painter = painterResource(id = R.drawable.group_room_recruiting),
             contentDescription = "배경 이미지",
@@ -145,7 +140,7 @@ fun GroupRoomRecruitScreen(
                 DefaultTopAppBar(
                     isRightIconVisible = false,
                     isTitleVisible = false,
-                    onLeftClick = onBackClick, // 뒤로가기 콜백 연결
+                    onLeftClick = onBackClick,
                 )
 
                 Column(
@@ -364,51 +359,35 @@ fun GroupRoomRecruitScreen(
             }
         }
 
-        // 하단 버튼
-        if (currentButtonType != null) {
-            val buttonText = when (currentButtonType) {
+        // 하단 버튼 (Preview에서는 mockRoomDetail의 buttonType 사용)
+        val buttonType = currentButtonType ?: mockRoomDetail?.buttonType
+        if (buttonType != null) {
+            val buttonText = when (buttonType) {
                 GroupBottomButtonType.JOIN -> stringResource(R.string.group_room_screen_participant)
                 GroupBottomButtonType.CANCEL -> stringResource(R.string.group_room_screen_cancel)
                 GroupBottomButtonType.CLOSE -> stringResource(R.string.group_room_screen_end)
-                null -> TODO()
             }
 
             Button(
                 onClick = {
-                    when (currentButtonType) {
+                    when (buttonType) {
                         GroupBottomButtonType.JOIN -> {
-                            onParticipation() // 외부 콜백 호출
-                            showToast = true
-                            toastMessage = context.getString(R.string.group_participant_complete_alarm)
-                            currentButtonType = GroupBottomButtonType.CANCEL
+                            viewModel.onParticipationClick()
                         }
 
                         GroupBottomButtonType.CANCEL -> {
-                            dialogTitle = context.getString(R.string.group_participant_cancel_popup)
-                            dialogDescription =
-                                context.getString(R.string.group_participant_cancel_comment)
-                            pendingAction = {
-                                onCancelParticipation()
-                                showToast = true
-                                toastMessage =
-                                    context.getString(R.string.group_participant_cancel_alarm)
-                                currentButtonType = GroupBottomButtonType.JOIN
-                            }
-                            showDialog = true
+                            viewModel.onCancelParticipationClick(
+                                dialogTitle = context.getString(R.string.group_participant_cancel_popup),
+                                dialogDescription = context.getString(R.string.group_participant_cancel_comment)
+                            )
                         }
 
                         GroupBottomButtonType.CLOSE -> {
-                            dialogTitle = context.getString(R.string.group_participant_close_popup)
-                            dialogDescription =
-                                context.getString(R.string.group_participant_close_comment)
-                            pendingAction = {
-                                onCloseRecruitment()
-                                showToast = true
-                                toastMessage = context.getString(R.string.group_participant_close_alarm)
-                            }
-                            showDialog = true
+                            viewModel.onCloseRecruitmentClick(
+                                dialogTitle = context.getString(R.string.group_participant_close_popup),
+                                dialogDescription = context.getString(R.string.group_participant_close_comment)
+                            )
                         }
-                        null -> {} // currentButtonType이 null인 경우 아무것도 하지 않음
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -428,8 +407,8 @@ fun GroupRoomRecruitScreen(
             }
         }
 
-        // 토스트 팝업
-        if (showToast) {
+        // 토스트 팝업 - GroupScreen으로 네비게이션할 때는 표시하지 않음
+        if (showToast && !shouldNavigateToGroupScreen) {
             ToastWithDate(
                 message = toastMessage,
                 modifier = Modifier
@@ -451,75 +430,37 @@ fun GroupRoomRecruitScreen(
                     title = dialogTitle,
                     description = dialogDescription,
                     onConfirm = {
-                        showDialog = false
-                        pendingAction?.invoke()
+                        viewModel.onDialogConfirm()
                     },
                     onCancel = {
-                        showDialog = false
-                        pendingAction = null
+                        viewModel.onDialogCancel()
                     }
                 )
             }
         }
     }
 
-    // 토스트 3초
-    LaunchedEffect(showToast) {
-        if (showToast) {
+    // 토스트 3초 후 자동 숨김 (GroupScreen으로 네비게이션 시에는 GroupScreen에서 관리)
+    LaunchedEffect(showToast, shouldNavigateToGroupScreen) {
+        if (showToast && !shouldNavigateToGroupScreen) {
             delay(3000)
-            showToast = false
+            viewModel.hideToast()
         }
     }
 }
 
 @Preview(name = "참여 버튼 상태")
 @Composable
-fun GroupRoomRecruitScreenPreviewJoin() {
+fun GroupRoomRecruitScreenPreview() {
     ThipTheme {
         val recommendations = listOf(
             GroupCardItemRoomData(
                 id = 1,
-                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
+                title = "일본 소설 좋아하는 사람들",
                 participants = 19,
                 maxParticipants = 25,
                 isRecruiting = true,
                 endDate = 2,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                id = 2,
-                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
-                participants = 12,
-                maxParticipants = 16,
-                isRecruiting = true,
-                endDate = 6,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                id = 3,
-                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
-                participants = 30,
-                maxParticipants = 30,
-                isRecruiting = false,
-                endDate = 0,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                id = 4,
-                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
-                participants = 10,
-                maxParticipants = 12,
-                isRecruiting = true,
-                endDate = 8,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                id = 5,
-                title = "에세이 나눔방",
-                participants = 14,
-                maxParticipants = 20,
-                isRecruiting = true,
-                endDate = 4,
                 genreIndex = 0
             )
         )
@@ -528,7 +469,7 @@ fun GroupRoomRecruitScreenPreviewJoin() {
             title = "심장보다 단단한 토마토 한 알",
             author = "고선지",
             publisher = "푸른출판사",
-            description = "'시집만 읽는 사람들' 3월 모임에서 읽는 시집. 상처받고 단단해진 마음을 담은 감동적인 시와 해설이 어우러진 책으로, 읽는 이로 하여금 자신의 이야기를 투영하게 하는 힘이 있다.",
+            description = "'시집만 읽는 사람들' 3월 모임에서 읽는 시집.",
             imageUrl = null
         )
 
@@ -536,7 +477,7 @@ fun GroupRoomRecruitScreenPreviewJoin() {
             id = 1,
             title = "시집만 읽는 사람들 3월",
             isSecret = true,
-            description = "'시집만 읽는 사람들' 3월 모임입니다. 이번 달 모임에서는 심장보다 단단한 토마토 한 알을 함께 읽어요.",
+            description = "'시집만 읽는 사람들' 3월 모임입니다.",
             startDate = "2025.01.12",
             endDate = "2025.02.12",
             members = 22,
@@ -544,157 +485,15 @@ fun GroupRoomRecruitScreenPreviewJoin() {
             daysLeft = 4,
             genre = "문학",
             bookData = bookData,
-            recommendations = recommendations
+            recommendations = recommendations,
+            buttonType = GroupBottomButtonType.JOIN
         )
 
         GroupRoomRecruitScreen(
             roomId = 1,
-            viewModel = null,
-            mockRoomDetail = detailJoin.copy(buttonType = GroupBottomButtonType.JOIN),
+            mockRoomDetail = detailJoin,
             onRecommendationClick = {},
-            onParticipation = {},
-            onCancelParticipation = {},
-            onCloseRecruitment = {},
-            onBackClick = {}
-        )
-    }
-}
-
-@Preview(name = "참여 취소 버튼 상태")
-@Composable
-fun GroupRoomRecruitScreenPreviewCancel() {
-    ThipTheme {
-        val recommendations = listOf(
-            GroupCardItemRoomData(
-                id = 6,
-                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
-                participants = 19,
-                maxParticipants = 25,
-                isRecruiting = true,
-                endDate = 2,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                id = 7,
-                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
-                participants = 12,
-                maxParticipants = 16,
-                isRecruiting = true,
-                endDate = 6,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                id = 8,
-                title = "에세이 나눔방",
-                participants = 14,
-                maxParticipants = 20,
-                isRecruiting = true,
-                endDate = 4,
-                genreIndex = 0
-            )
-        )
-
-        val bookData = GroupBookData(
-            title = "심장보다 단단한 토마토 한 알",
-            author = "고선지",
-            publisher = "푸른출판사",
-            description = "'시집만 읽는 사람들' 3월 모임에서 읽는 시집. 상처받고 단단해진 마음을 담은 감동적인 시와 해설이 어우러진 책으로, 읽는 이로 하여금 자신의 이야기를 투영하게 하는 힘이 있다.",
-            imageUrl = null
-        )
-
-        val detailCancel = GroupRoomData(
-            id = 2,
-            title = "시집만 읽는 사람들 3월",
-            isSecret = true,
-            description = "'시집만 읽는 사람들' 3월 모임입니다. 이번 달 모임에서는 심장보다 단단한 토마토 한 알을 함께 읽어요.",
-            startDate = "2025.01.12",
-            endDate = "2025.02.12",
-            members = 23, // 참여 후 인원 증가
-            maxMembers = 30,
-            daysLeft = 4,
-            genre = "고전 문학",
-            bookData = bookData,
-            recommendations = recommendations
-        )
-
-        GroupRoomRecruitScreen(
-            roomId = 2,
-            viewModel = null,
-            mockRoomDetail = detailCancel.copy(buttonType = GroupBottomButtonType.CANCEL),
-            onRecommendationClick = {},
-            onParticipation = {},
-            onCancelParticipation = {},
-            onCloseRecruitment = {},
-            onBackClick = {}
-        )
-    }
-}
-
-@Preview(name = "모집 마감 버튼 상태")
-@Composable
-fun GroupRoomRecruitScreenClose() {
-    ThipTheme {
-        val recommendations = listOf(
-            GroupCardItemRoomData(
-                id = 9,
-                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
-                participants = 19,
-                maxParticipants = 25,
-                isRecruiting = true,
-                endDate = 2,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                id = 10,
-                title = "일본 소설 좋아하는 사람들 일본 소설 좋아하는 사람들",
-                participants = 12,
-                maxParticipants = 16,
-                isRecruiting = true,
-                endDate = 6,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                id = 11,
-                title = "미스터리 소설 탐구",
-                participants = 8,
-                maxParticipants = 15,
-                isRecruiting = true,
-                endDate = 3,
-                genreIndex = 0
-            )
-        )
-
-        val bookData = GroupBookData(
-            title = "심장보다 단단한 토마토 한 알",
-            author = "고선지",
-            publisher = "푸른출판사",
-            description = "'시집만 읽는 사람들' 3월 모임에서 읽는 시집. 상처받고 단단해진 마음을 담은 감동적인 시와 해설이 어우러진 책으로, 읽는 이로 하여금 자신의 이야기를 투영하게 하는 힘이 있다.",
-            imageUrl = null
-        )
-
-        val detailClose = GroupRoomData(
-            id = 3,
-            title = "시집만 읽는 사람들 3월",
-            isSecret = false, // 오픈방으로 변경
-            description = "'시집만 읽는 사람들' 3월 모임입니다. 이번 달 모임에서는 심장보다 단단한 토마토 한 알을 함께 읽어요. 모임장이 모집을 마감할 수 있는 상태입니다.",
-            startDate = "2025.01.12",
-            endDate = "2025.02.12",
-            members = 15, // 적절한 인원
-            maxMembers = 30,
-            daysLeft = 7, // 마감일이 조금 더 남음
-            genre = "문학",
-            bookData = bookData,
-            recommendations = recommendations
-        )
-
-        GroupRoomRecruitScreen(
-            roomId = 3,
-            viewModel = null,
-            mockRoomDetail = detailClose.copy(buttonType = GroupBottomButtonType.CLOSE),
-            onRecommendationClick = {},
-            onParticipation = {},
-            onCancelParticipation = {},
-            onCloseRecruitment = {},
+            onNavigateToGroupScreen = {},
             onBackClick = {}
         )
     }
