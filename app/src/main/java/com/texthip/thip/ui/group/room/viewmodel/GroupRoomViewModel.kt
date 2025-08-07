@@ -23,12 +23,12 @@ class GroupRoomViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<GroupRoomUiState>(GroupRoomUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    fun fetchRoomsPlaying(roomId: Int, userId: Int) {
+    fun fetchRoomsPlaying(roomId: Int) {
         // ViewModel의 생명주기와 연결된 코루틴 스코프에서 실행
         viewModelScope.launch {
             _uiState.value = GroupRoomUiState.Loading
 
-            roomsRepository.getRoomsPlaying(roomId = roomId, userId = userId)
+            roomsRepository.getRoomsPlaying(roomId = roomId)
                 .onSuccess { roomsPlaying ->
                     if (roomsPlaying != null) {
                         _uiState.value = GroupRoomUiState.Success(roomsPlaying)

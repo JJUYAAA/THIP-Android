@@ -12,7 +12,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.group.makeroom.screen.GroupMakeRoomScreen
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
@@ -23,14 +22,15 @@ import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
 import com.texthip.thip.ui.group.screen.GroupDoneScreen
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
+import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
-import com.texthip.thip.ui.navigator.extensions.navigateToRecommendedGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
+import com.texthip.thip.ui.navigator.extensions.navigateToRecommendedGroupRecruit
 import com.texthip.thip.ui.navigator.routes.GroupRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
@@ -226,6 +226,7 @@ fun NavGraphBuilder.groupNavigation(
     composable<GroupRoutes.Room> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Room>()
         val roomId = route.roomId
+
         val parentEntry = remember(navController) {
             try {
                 navController.getBackStackEntry(MainTabRoutes.Group)
@@ -238,21 +239,13 @@ fun NavGraphBuilder.groupNavigation(
         } else {
             viewModel()
         }
-        
-        // suspend 함수를 위한 LaunchedEffect 사용
-        var roomDetail by remember { mutableStateOf<GroupRoomData?>(null) }
-        LaunchedEffect(roomId) {
-            roomDetail = groupViewModel.getRoomDetail(roomId)
-        }
-        
-        roomDetail?.let {
-            GroupRoomScreen(
-                onBackClick = {
-                    navigateBack()
-                }
-            )
-        } ?: run {
-            // 로딩 중이거나 데이터를 찾을 수 없는 경우
-        }
+
+        GroupRoomScreen(
+//            roomId = roomId,
+            roomId = 1,
+            onBackClick = {
+                navigateBack()
+            }
+        )
     }
 }

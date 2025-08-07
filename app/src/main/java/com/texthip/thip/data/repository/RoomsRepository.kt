@@ -10,12 +10,10 @@ class RoomsRepository @Inject constructor(
     private val roomsService: RoomsService,
 ) {
     suspend fun getRoomsPlaying(
-        roomId: Int,
-        userId: Int
+        roomId: Int
     ) = runCatching {
         roomsService.getRoomsPlaying(
-            roomId = roomId,
-            userId = userId
+            roomId = roomId
         ).handleBaseResponse().getOrThrow()
     }
 }
