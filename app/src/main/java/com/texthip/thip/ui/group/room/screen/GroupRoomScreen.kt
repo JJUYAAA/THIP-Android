@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.group.room.screen
 
 import RoomsPlayingResponse
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,6 +44,7 @@ import com.texthip.thip.ui.group.room.viewmodel.GroupRoomUiState
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.utils.type.Genre
 
 @Composable
 fun GroupRoomScreen(
@@ -48,7 +52,6 @@ fun GroupRoomScreen(
     onBackClick: () -> Unit = {},
     viewModel: GroupRoomViewModel = hiltViewModel()
 ) {
-    // ViewModel의 UI 상태를 구독
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // 화면이 처음 그려질 때 데이터 로딩 실행
@@ -92,6 +95,17 @@ fun GroupRoomContent(
 
     val isOwner = roomDetails.isHost
 
+    val imageModel = remember(roomDetails.roomImageUrl) {
+        // 서버에서 받은 문자열이 "_image"로 끝나면 Enum에서 로컬 리소스를 찾음
+        if (roomDetails.roomImageUrl.endsWith("_image")) {
+            Genre.fromServerValue(roomDetails.roomImageUrl).imageResId
+        }
+        // 그렇지 않으면 URL로 그대로 사용
+        else {
+            roomDetails.roomImageUrl
+        }
+    }
+
     Box(
         if (isBottomSheetVisible || isLeaveDialogVisible || isDeleteDialogVisible) {
             Modifier
@@ -102,19 +116,36 @@ fun GroupRoomContent(
         }
     ) {
         Box(modifier = Modifier.verticalScroll(scrollState)) {
-            AsyncImage(
-                model = roomDetails.roomImageUrl, // TODO: 이미지 처리하기
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(360.dp)
-            )
+                    .height(336.dp)
+            ) {
+                AsyncImage(
+                    model = imageModel,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colorStops = arrayOf(
+                                    0.0594f to Color.Transparent,
+                                    0.94f to colors.Black
+                                )
+                            )
+                        )
+                )
+            }
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 76.dp, bottom = 20.dp)
+                    .padding(top = 70.dp, bottom = 20.dp)
             ) {
                 GroupRoomHeader(
                     data = GroupRoomHeaderData(
@@ -227,7 +258,7 @@ private fun GroupRoomScreenPreview() {
                 isHost = true,
                 roomId = 1,
                 roomName = "호르몬 체인지 완독하는 방",
-                roomImageUrl = "",
+                roomImageUrl = "문학_image",
                 isPublic = false,
                 progressStartDate = "2023.10.01",
                 progressEndDate = "2023.10.31",
