@@ -36,7 +36,21 @@ class GroupMakeRoomViewModel @Inject constructor(
     private val _isLoadingBooks = MutableStateFlow(false)
     val isLoadingBooks: StateFlow<Boolean> = _isLoadingBooks.asStateFlow()
 
-    val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
+    private val _genres = MutableStateFlow<List<String>>(emptyList())
+    val genres: StateFlow<List<String>> = _genres.asStateFlow()
+    
+    init {
+        loadGenres()
+    }
+    
+    private fun loadGenres() {
+        viewModelScope.launch {
+            groupRepository.getGenres()
+                .onSuccess { genresList ->
+                    _genres.value = genresList
+                }
+        }
+    }
 
     // 책 선택
     fun selectBook(book: BookData) {
@@ -180,14 +194,15 @@ class GroupMakeRoomViewModel @Inject constructor(
     
     // 장르 인덱스를 API 카테고리명으로 변환
     private fun getApiCategoryName(genreIndex: Int): String {
-        return when (genreIndex) {
-            0 -> "문학"
-            1 -> "과학/IT"
-            2 -> "사회과학"
-            3 -> "인문학"
-            4 -> "예술"
-            else -> "문학" // 기본값
+        val currentGenres = _genres.value
+        if (genreIndex >= 0 && genreIndex < currentGenres.size) {
+            val genre = currentGenres[genreIndex]
+            return when (genre) {
+                "과학·IT" -> "과학/IT"
+                else -> genre
+            }
         }
+        return "문학" // 기본값
     }
 
     // 에러 메시지 클리어

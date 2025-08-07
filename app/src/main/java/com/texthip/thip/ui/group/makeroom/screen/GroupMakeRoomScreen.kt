@@ -55,7 +55,7 @@ fun GroupMakeRoomScreen(
     val groupBooks by viewModel.groupBooks.collectAsState()
     val isLoadingBooks by viewModel.isLoadingBooks.collectAsState()
     val scrollState = rememberScrollState()
-    val genres = viewModel.genres
+    val genres by viewModel.genres.collectAsState()
 
     // 에러 메시지 표시
     LaunchedEffect(uiState.errorMessage) {

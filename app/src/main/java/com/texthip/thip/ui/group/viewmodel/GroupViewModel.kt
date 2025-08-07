@@ -5,15 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.repository.GroupRepository
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
-import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,22 +43,12 @@ class GroupViewModel @Inject constructor(
     
     private val _roomSectionsError = MutableStateFlow<String?>(null)
     val roomSectionsError: StateFlow<String?> = _roomSectionsError.asStateFlow()
-    
 
     private val _userName = MutableStateFlow("")
     val userName: StateFlow<String> = _userName.asStateFlow()
 
-    private val _doneGroups = MutableStateFlow<List<GroupCardItemRoomData>>(emptyList())
-    val doneGroups: StateFlow<List<GroupCardItemRoomData>> = _doneGroups.asStateFlow()
-
-    private val _myRoomGroups = MutableStateFlow<List<GroupCardItemRoomData>>(emptyList())
-    val myRoomGroups: StateFlow<List<GroupCardItemRoomData>> = _myRoomGroups.asStateFlow()
-
     private val _searchGroups = MutableStateFlow<List<GroupCardItemRoomData>>(emptyList())
     val searchGroups: StateFlow<List<GroupCardItemRoomData>> = _searchGroups.asStateFlow()
-
-    private val _genres = MutableStateFlow<List<String>>(emptyList())
-    val genres: StateFlow<List<String>> = _genres.asStateFlow()
     
     private val _selectedGenreIndex = MutableStateFlow(0)
     val selectedGenreIndex: StateFlow<Int> = _selectedGenreIndex.asStateFlow()
@@ -78,7 +67,6 @@ class GroupViewModel @Inject constructor(
         loadUserName()
         loadMyGroups()
         loadRoomSections()
-        loadMyRoomGroups()
         loadSearchGroups()
     }
     
@@ -93,22 +81,19 @@ class GroupViewModel @Inject constructor(
 
     fun loadMyGroups(reset: Boolean = false) = viewModelScope.launch {
         if (reset) {
-            currentMyGroupsPage = 1
-            loadedPagesCount = 0
-            _myGroups.value = emptyList()
-            _hasMoreMyGroups.value = true
+            resetMyGroupsData()
             _isRefreshing.value = true
         }
         try {
             // Pager를 위한 초기 배치 로드
-            loadPageBatch()
+            loadPageBatchSuspend()
         } finally {
             _isRefreshing.value = false
         }
     }
     
-    private fun loadPageBatch() = viewModelScope.launch {
-        if (!_hasMoreMyGroups.value || isBatchLoading) return@launch
+    private suspend fun loadPageBatchSuspend() {
+        if (!_hasMoreMyGroups.value || isBatchLoading) return
         
         try {
             isBatchLoading = true
@@ -139,6 +124,10 @@ class GroupViewModel @Inject constructor(
         }
     }
     
+    private fun loadPageBatch() = viewModelScope.launch {
+        loadPageBatchSuspend()
+    }
+    
     // GroupPager에서 현재 카드 인덱스를 알려주면 미리 로드 판단
     fun onCardVisible(cardIndex: Int) {
         val totalCards = _myGroups.value.size
@@ -155,10 +144,16 @@ class GroupViewModel @Inject constructor(
         viewModelScope.launch {
             _roomSectionsError.value = null
             
-            val currentGenres = _genres.value
+            // Repository에서 직접 장르 목록 가져오기
+            val genresResult = repository.getGenres()
             val selectedIndex = _selectedGenreIndex.value
-            val selectedGenre = if (currentGenres.isNotEmpty() && selectedIndex >= 0 && selectedIndex < currentGenres.size) {
-                currentGenres[selectedIndex]
+            val selectedGenre = if (genresResult.isSuccess) {
+                val genres = genresResult.getOrThrow()
+                if (selectedIndex >= 0 && selectedIndex < genres.size) {
+                    genres[selectedIndex]
+                } else {
+                    genres.firstOrNull() ?: "문학" // 기본값
+                }
             } else {
                 "문학" // 기본값
             }
@@ -174,19 +169,17 @@ class GroupViewModel @Inject constructor(
     }
     
     fun selectGenre(genreIndex: Int) {
-        if (genreIndex >= 0 && genreIndex != _selectedGenreIndex.value) {
-            _selectedGenreIndex.value = genreIndex
-            loadRoomSections() // 장르 변경 시 새로운 데이터 로드
+        // Repository에서 직접 장르 목록 확인
+        val genresResult = repository.getGenres()
+        if (genresResult.isSuccess) {
+            val genres = genresResult.getOrThrow()
+            if (genreIndex >= 0 && genreIndex < genres.size && genreIndex != _selectedGenreIndex.value) {
+                _selectedGenreIndex.value = genreIndex
+                loadRoomSections() // 장른 변경 시 새로운 데이터 로드
+            }
         }
     }
     
-    private fun loadMyRoomGroups() {
-        viewModelScope.launch {
-            // getMyRoomGroups() 제거됨 - API 연결 완료 후 실제 API 사용 예정
-            // 현재는 빈 리스트로 설정
-            _myRoomGroups.value = emptyList()
-        }
-    }
     
     private fun loadSearchGroups() {
         viewModelScope.launch {
@@ -203,68 +196,14 @@ class GroupViewModel @Inject constructor(
             try {
                 // 모든 데이터를 병렬로 새로고침하고 완료를 기다림
                 val jobs = listOf(
-                    async {
-                        repository.getUserName()
-                            .onSuccess { userName ->
-                                _userName.value = userName
-                            }
-                    },
-                    async {
+                    async { loadUserName() },
+                    async { 
                         // 내 모임방 데이터 리셋 후 로드
-                        currentMyGroupsPage = 1
-                        loadedPagesCount = 0
-                        _myGroups.value = emptyList()
-                        _hasMoreMyGroups.value = true
-                        
-                        // 첫 번째 배치 로드 (3페이지)
-                        if (!_hasMoreMyGroups.value || isBatchLoading) return@async
-                        
-                        try {
-                            isBatchLoading = true
-                            val currentBatchStart = currentMyGroupsPage
-                            val batchEndPage = currentBatchStart + PAGES_PER_BATCH - 1
-                            
-                            for (page in currentBatchStart..batchEndPage) {
-                                if (!_hasMoreMyGroups.value) break
-                                
-                                repository.getMyJoinedRooms(page)
-                                    .onSuccess { paginationResult ->
-                                        _myGroups.value = _myGroups.value + paginationResult.data
-                                        _hasMoreMyGroups.value = paginationResult.hasMore
-                                        loadedPagesCount++
-                                        currentMyGroupsPage = page + 1
-                                    }
-                                    .onFailure {
-                                        break
-                                    }
-                            }
-                        } finally {
-                            isBatchLoading = false
-                        }
+                        resetMyGroupsData()
+                        loadPageBatchSuspend()
                     },
-                    async {
-                        _roomSectionsError.value = null
-                        
-                        val currentGenres = _genres.value
-                        val selectedIndex = _selectedGenreIndex.value
-                        val selectedGenre = if (currentGenres.isNotEmpty() && selectedIndex >= 0 && selectedIndex < currentGenres.size) {
-                            currentGenres[selectedIndex]
-                        } else {
-                            "문학" // 기본값
-                        }
-                        
-                        repository.getRoomSections(selectedGenre)
-                            .onSuccess { sections ->
-                                _roomSections.value = sections
-                            }
-                            .onFailure { error ->
-                                _roomSectionsError.value = error.message
-                            }
-                    },
-                    async {
-                        // getMyRoomGroups() 제거됨 - API 연결 완료 후 실제 API 사용 예정
-                        _myRoomGroups.value = emptyList()
-                    }
+                    async { loadRoomSections() },
+                    async { loadSearchGroups() }
                 )
                 
                 jobs.awaitAll()
@@ -273,10 +212,12 @@ class GroupViewModel @Inject constructor(
             }
         }
     }
-
     
-    suspend fun getRoomRecruiting(roomId: Int): Result<GroupRoomData> {
-        return repository.getRoomRecruiting(roomId)
+    private fun resetMyGroupsData() {
+        currentMyGroupsPage = 1
+        loadedPagesCount = 0
+        _myGroups.value = emptyList()
+        _hasMoreMyGroups.value = true
     }
     
     fun showToastMessage(message: String) {

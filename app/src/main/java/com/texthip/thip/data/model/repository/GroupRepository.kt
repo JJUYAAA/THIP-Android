@@ -32,6 +32,10 @@ class GroupRepository @Inject constructor(
         context.getString(R.string.humanities),
         context.getString(R.string.art)
     )
+    
+    fun getGenres(): Result<List<String>> {
+        return Result.success(genres)
+    }
     private var cachedUserName: String? = null
     
     // UI 장르명 → API 카테고리명 매핑
@@ -43,12 +47,8 @@ class GroupRepository @Inject constructor(
     }
     
     fun getUserName(): Result<String> {
-        return try {
-            val name = cachedUserName ?: "사용자" // 캐시된 이름이 없으면 기본값
-            Result.success(name)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        val name = cachedUserName ?: "사용자" // 캐시된 이름이 없으면 기본값
+        return Result.success(name)
     }
     suspend fun getMyJoinedRooms(page: Int): Result<PaginationResult<GroupCardData>> {
         return try {
@@ -178,19 +178,10 @@ class GroupRepository @Inject constructor(
         }
     }
     
+    // TODO: 실제 검색 API 엔드포인트로 대체 필요
     suspend fun getSearchGroups(): Result<List<GroupCardItemRoomData>> {
-        return try {
-            // 기존에 로드된 섹션 데이터들을 합쳐서 반환
-            val sectionsResult = getRoomSections()
-            if (sectionsResult.isSuccess) {
-                val allRooms = sectionsResult.getOrThrow().flatMap { it.rooms }
-                Result.success(allRooms)
-            } else {
-                Result.failure(sectionsResult.exceptionOrNull() ?: Exception("Failed to load search groups"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        // 현재 더미 데이터 - API 연결 전까지 빈 리스트 반환
+        return Result.success(emptyList())
     }
     
     // 모집중인 모임방 상세 정보 API 연동
