@@ -3,9 +3,9 @@ package com.texthip.thip.ui.group.makeroom.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.book.response.BookSavedResponse
-import com.texthip.thip.data.model.repository.GroupRepository
+import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.data.model.group.request.CreateRoomRequest
-import com.texthip.thip.data.model.repository.BookRepository
+import com.texthip.thip.data.repository.BookRepository
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomUiState
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -2,9 +2,8 @@ package com.texthip.thip.ui.group.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.texthip.thip.data.model.repository.GroupRepository
+import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
-import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async

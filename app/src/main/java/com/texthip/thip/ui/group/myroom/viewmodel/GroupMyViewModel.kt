@@ -2,7 +2,7 @@ package com.texthip.thip.ui.group.myroom.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.texthip.thip.data.model.repository.GroupRepository
+import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.ui.group.done.mock.MyRoomCardData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

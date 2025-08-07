@@ -2,7 +2,7 @@ package com.texthip.thip.ui.group.room.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.texthip.thip.data.model.repository.GroupRepository
+import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -1,7 +1,7 @@
 package com.texthip.thip.data.di
 
-import com.texthip.thip.data.model.service.BookService
-import com.texthip.thip.data.model.service.GroupService
+import com.texthip.thip.data.service.BookService
+import com.texthip.thip.data.service.GroupService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
