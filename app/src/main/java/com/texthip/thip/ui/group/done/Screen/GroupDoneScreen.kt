@@ -38,9 +38,7 @@ fun GroupDoneScreen(
     onNavigateBack: () -> Unit = {},
     viewModel: GroupDoneViewModel = hiltViewModel()
 ) {
-    val expiredRooms by viewModel.expiredRooms.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val userName by viewModel.userName.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
 
     // 무한 스크롤을 위한 로직
@@ -53,7 +51,7 @@ fun GroupDoneScreen(
     }
 
     LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore && expiredRooms.isNotEmpty()) {
+        if (shouldLoadMore && uiState.expiredRooms.isNotEmpty()) {
             viewModel.loadMoreExpiredRooms()
         }
     }
@@ -67,7 +65,7 @@ fun GroupDoneScreen(
         )
         
         PullToRefreshBox(
-            isRefreshing = isLoading,
+            isRefreshing = uiState.isLoading,
             onRefresh = { viewModel.refreshData() },
             modifier = Modifier.fillMaxSize()
         ) {
@@ -87,13 +85,13 @@ fun GroupDoneScreen(
                 ) {
                     item {
                         Text(
-                            text = stringResource(R.string.group_done_user_comment, userName),
+                            text = stringResource(R.string.group_done_user_comment, uiState.userName),
                             color = colors.White,
                             style = typography.menu_r400_s14_h24
                         )
                     }
 
-                    items(expiredRooms) { room ->
+                    items(uiState.expiredRooms) { room ->
                         CardItemRoom(
                             title = room.roomName,
                             imageUrl = room.bookImageUrl,

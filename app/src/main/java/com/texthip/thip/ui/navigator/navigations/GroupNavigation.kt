@@ -19,6 +19,7 @@ import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
+import com.texthip.thip.ui.group.myroom.mock.GroupMyUiState
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
@@ -106,7 +107,7 @@ fun NavGraphBuilder.groupNavigation(
         GroupMyScreen(
             viewModel = groupMyViewModel,
             onCardClick = { room ->
-                val isRecruiting = room.type == "recruiting"
+                val isRecruiting = room.type == GroupMyUiState.RECRUITING
                 if (isRecruiting) {
                     navController.navigateToGroupRecruit(room.roomId)
                 } else {
@@ -122,10 +123,10 @@ fun NavGraphBuilder.groupNavigation(
     // Group Search 화면
     composable<GroupRoutes.Search> {
         val groupViewModel: GroupViewModel = hiltViewModel()
-        val searchGroups by groupViewModel.searchGroups.collectAsState()
+        val uiState by groupViewModel.uiState.collectAsState()
         
         GroupSearchScreen(
-            roomList = searchGroups,
+            roomList = uiState.roomSections.flatMap { it.rooms },   //임시
             onNavigateBack = {
                 navigateBack()
             },

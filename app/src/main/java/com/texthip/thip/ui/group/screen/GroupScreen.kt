@@ -52,20 +52,14 @@ fun GroupScreen(
     LaunchedEffect(Unit) {
         viewModel.refreshDataOnScreenEnter()
     }
-    val myGroups by viewModel.myGroups.collectAsState()
-    val roomSections by viewModel.roomSections.collectAsState()
-    val selectedGenreIndex by viewModel.selectedGenreIndex.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
-    val roomSectionsError by viewModel.roomSectionsError.collectAsState()
-    val showToast by viewModel.showToast.collectAsState()
-    val toastMessage by viewModel.toastMessage.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         PullToRefreshBox(
-            isRefreshing = isRefreshing,
+            isRefreshing = uiState.isRefreshing,
             onRefresh = {
                 viewModel.refreshGroupData()
             },
@@ -97,7 +91,7 @@ fun GroupScreen(
             Spacer(Modifier.height(20.dp))
 
             GroupPager(
-                groupCards = myGroups,
+                groupCards = uiState.myGroups,
                 onCardClick = { groupCard ->
                     onNavigateToGroupRoom(groupCard.id)
                 },
@@ -117,9 +111,9 @@ fun GroupScreen(
 
             // 마감 임박한 독서 모임방
             GroupRoomDeadlineSection(
-                roomSections = roomSections,
-                selectedGenreIndex = selectedGenreIndex,
-                errorMessage = roomSectionsError,
+                roomSections = uiState.roomSections,
+                selectedGenreIndex = uiState.selectedGenreIndex,
+                errorMessage = uiState.roomSectionsError,
                 onGenreSelect = { genreIndex ->
                     viewModel.selectGenre(genreIndex)
                 },
@@ -141,9 +135,9 @@ fun GroupScreen(
         )
         
         // 토스트 팝업
-        if (showToast) {
+        if (uiState.showToast) {
             ToastWithDate(
-                message = toastMessage,
+                message = uiState.toastMessage,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(horizontal = 20.dp, vertical = 16.dp)
@@ -153,8 +147,8 @@ fun GroupScreen(
     }
     
     // 토스트 3초 후 자동 숨김 - showToast가 true가 된 시점부터 카운트
-    LaunchedEffect(showToast) {
-        if (showToast) {
+    LaunchedEffect(uiState.showToast) {
+        if (uiState.showToast) {
             delay(3000L)
             viewModel.hideToast()
         }

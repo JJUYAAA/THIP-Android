@@ -33,6 +33,7 @@ import com.texthip.thip.ui.group.done.mock.isRecruitingByType
 import com.texthip.thip.ui.group.done.mock.getEndDateInDays
 import com.texthip.thip.ui.group.myroom.component.GroupMyRoomFilterRow
 import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
+import com.texthip.thip.ui.group.myroom.mock.GroupMyUiState
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -43,9 +44,7 @@ fun GroupMyScreen(
     onNavigateBack: () -> Unit = {},
     viewModel: GroupMyViewModel = hiltViewModel()
 ) {
-    val myRooms by viewModel.myRooms.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val currentRoomType by viewModel.currentRoomType.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
     
     // 무한 스크롤 로직
@@ -58,23 +57,22 @@ fun GroupMyScreen(
     }
     
     LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore && myRooms.isNotEmpty()) {
+        if (shouldLoadMore && uiState.myRooms.isNotEmpty()) {
             viewModel.loadMoreMyRooms()
         }
     }
     
-    // Filter 상태를 room type에 따라 설정 (토글 방식)
-    val selectedStates = remember(currentRoomType) {
-        when (currentRoomType) {
-            GroupMyViewModel.PLAYING -> booleanArrayOf(true, false)
-            GroupMyViewModel.RECRUITING -> booleanArrayOf(false, true)
-            else -> booleanArrayOf(false, false) // playingAndRecruiting (둘 다 비활성화 = 전체)
+    // Filter 상태를 
+    val selectedStates = remember(uiState.currentRoomType) {
+        when (uiState.currentRoomType) {
+            GroupMyUiState.PLAYING -> booleanArrayOf(true, false)
+            GroupMyUiState.RECRUITING -> booleanArrayOf(false, true)
+            else -> booleanArrayOf(false, false) // playingAndRecruiting
         }
     }
 
     Column(
         Modifier
-            .background(colors.Black)
             .fillMaxSize()
     ) {
         DefaultTopAppBar(
@@ -83,7 +81,7 @@ fun GroupMyScreen(
         )
         
         PullToRefreshBox(
-            isRefreshing = isLoading,
+            isRefreshing = uiState.isLoading,
             onRefresh = { viewModel.refreshData() },
             modifier = Modifier.fillMaxSize()
         ) {
@@ -103,23 +101,23 @@ fun GroupMyScreen(
                             idx == 0 -> {
                                 if (selectedStates[0]) {
                                     // 이미 선택된 상태면 전체로 변경
-                                    GroupMyViewModel.PLAYING_AND_RECRUITING
+                                    GroupMyUiState.PLAYING_AND_RECRUITING
                                 } else {
                                     // 선택되지 않은 상태면 진행중만
-                                    GroupMyViewModel.PLAYING
+                                    GroupMyUiState.PLAYING
                                 }
                             }
                             // 모집중 버튼을 눌렀을 때  
                             idx == 1 -> {
                                 if (selectedStates[1]) {
                                     // 이미 선택된 상태면 전체로 변경
-                                    GroupMyViewModel.PLAYING_AND_RECRUITING
+                                    GroupMyUiState.PLAYING_AND_RECRUITING
                                 } else {
                                     // 선택되지 않은 상태면 모집중만
-                                    GroupMyViewModel.RECRUITING
+                                    GroupMyUiState.RECRUITING
                                 }
                             }
-                            else -> GroupMyViewModel.PLAYING_AND_RECRUITING
+                            else -> GroupMyUiState.PLAYING_AND_RECRUITING
                         }
                         viewModel.changeRoomType(newRoomType)
                     }
@@ -127,14 +125,14 @@ fun GroupMyScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                if (myRooms.isNotEmpty()) {
+                if (uiState.myRooms.isNotEmpty()) {
                     LazyColumn(
                         state = listState,
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         contentPadding = PaddingValues(bottom = 20.dp),
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        items(myRooms) { room ->
+                        items(uiState.myRooms) { room ->
                             CardItemRoom(
                                 title = room.roomName,
                                 participants = room.memberCount,
@@ -146,7 +144,7 @@ fun GroupMyScreen(
                             )
                         }
                     }
-                } else if (!isLoading) {
+                } else if (!uiState.isLoading) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize(),

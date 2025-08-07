@@ -51,11 +51,7 @@ fun GroupMakeRoomScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val savedBooks by viewModel.savedBooks.collectAsState()
-    val groupBooks by viewModel.groupBooks.collectAsState()
-    val isLoadingBooks by viewModel.isLoadingBooks.collectAsState()
     val scrollState = rememberScrollState()
-    val genres by viewModel.genres.collectAsState()
 
     // 에러 메시지 표시
     LaunchedEffect(uiState.errorMessage) {
@@ -115,7 +111,7 @@ fun GroupMakeRoomScreen(
                 Spacer(modifier = Modifier.padding(top = 12.dp))
                 GenreChipRow(
                     modifier = Modifier.width(18.dp),
-                    genres = genres,
+                    genres = uiState.genres,
                     selectedIndex = uiState.selectedGenreIndex,
                     onSelect = viewModel::selectGenre
                 )
@@ -219,9 +215,9 @@ fun GroupMakeRoomScreen(
                 onRequestBook = {
                     viewModel.toggleBookSearchSheet(false)
                 },
-                savedBooks = savedBooks,
-                groupBooks = groupBooks,
-                isLoading = isLoadingBooks
+                savedBooks = uiState.savedBooks,
+                groupBooks = uiState.groupBooks,
+                isLoading = uiState.isLoadingBooks
             )
         }
 

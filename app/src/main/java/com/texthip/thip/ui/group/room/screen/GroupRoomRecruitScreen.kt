@@ -62,35 +62,26 @@ fun GroupRoomRecruitScreen(
 ) {
     val context = LocalContext.current
     
-    // ViewModel states
-    val roomDetail by viewModel.roomDetail.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val currentButtonType by viewModel.currentButtonType.collectAsState()
-    val showToast by viewModel.showToast.collectAsState()
-    val toastMessage by viewModel.toastMessage.collectAsState()
-    val showDialog by viewModel.showDialog.collectAsState()
-    val dialogTitle by viewModel.dialogTitle.collectAsState()
-    val dialogDescription by viewModel.dialogDescription.collectAsState()
-    val shouldNavigateToGroupScreen by viewModel.shouldNavigateToGroupScreen.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     
-    // 데이터 로딩 - mockRoomDetail이 없을 때만 실행
+    // 데이터 로딩
     LaunchedEffect(roomId) {
         if (mockRoomDetail == null) {
             viewModel.loadRoomDetail(roomId)
         }
     }
     
-    // GroupScreen으로 네비게이션 처리
-    LaunchedEffect(shouldNavigateToGroupScreen) {
-        if (shouldNavigateToGroupScreen) {
-            onNavigateToGroupScreen(toastMessage) // 토스트 메시지와 함께 네비게이션
+    // GroupScreen으로 네비게이션
+    LaunchedEffect(uiState.shouldNavigateToGroupScreen, uiState.toastMessage) {
+        if (uiState.shouldNavigateToGroupScreen) {
+            onNavigateToGroupScreen(uiState.toastMessage)
             viewModel.onNavigatedToGroupScreen()
         }
     }
 
     Box(Modifier.fillMaxSize()) {
         // 로딩 상태
-        if (isLoading) {
+        if (uiState.isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -101,7 +92,7 @@ fun GroupRoomRecruitScreen(
         }
         
         // 데이터가 없는 경우 (Preview에서는 mock 데이터 사용)
-        val detail = roomDetail ?: mockRoomDetail ?: return@Box
+        val detail = uiState.roomDetail ?: mockRoomDetail ?: return@Box
         
         Image(
             painter = painterResource(id = R.drawable.group_room_recruiting),
@@ -360,7 +351,7 @@ fun GroupRoomRecruitScreen(
         }
 
         // 하단 버튼 (Preview에서는 mockRoomDetail의 buttonType 사용)
-        val buttonType = currentButtonType ?: mockRoomDetail?.buttonType
+        val buttonType = uiState.currentButtonType ?: mockRoomDetail?.buttonType
         if (buttonType != null) {
             val buttonText = when (buttonType) {
                 GroupBottomButtonType.JOIN -> stringResource(R.string.group_room_screen_participant)
@@ -407,10 +398,10 @@ fun GroupRoomRecruitScreen(
             }
         }
 
-        // 토스트 팝업 - GroupScreen으로 네비게이션할 때는 표시하지 않음
-        if (showToast && !shouldNavigateToGroupScreen) {
+        // 토스트 팝업
+        if (uiState.showToast && !uiState.shouldNavigateToGroupScreen) {
             ToastWithDate(
-                message = toastMessage,
+                message = uiState.toastMessage,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(horizontal = 20.dp, vertical = 16.dp)
@@ -418,7 +409,7 @@ fun GroupRoomRecruitScreen(
             )
         }
 
-        if (showDialog) {
+        if (uiState.showDialog) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -427,8 +418,8 @@ fun GroupRoomRecruitScreen(
                 contentAlignment = Alignment.Center
             ) {
                 DialogPopup(
-                    title = dialogTitle,
-                    description = dialogDescription,
+                    title = uiState.dialogTitle,
+                    description = uiState.dialogDescription,
                     onConfirm = {
                         viewModel.onDialogConfirm()
                     },
@@ -441,8 +432,8 @@ fun GroupRoomRecruitScreen(
     }
 
     // 토스트 3초 후 자동 숨김 (GroupScreen으로 네비게이션 시에는 GroupScreen에서 관리)
-    LaunchedEffect(showToast, shouldNavigateToGroupScreen) {
-        if (showToast && !shouldNavigateToGroupScreen) {
+    LaunchedEffect(uiState.showToast, uiState.shouldNavigateToGroupScreen) {
+        if (uiState.showToast && !uiState.shouldNavigateToGroupScreen) {
             delay(3000)
             viewModel.hideToast()
         }
