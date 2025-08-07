@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -269,7 +268,7 @@ private fun FeedScreenPreview() {
             isLiked = false,
             isSaved = false,
             isLocked = it % 2 == 0,
-            imageUrl = R.drawable.bookcover_sample
+            imageUrl = R.drawable.img_book_cover_sample
         )
     }
     val mockFollowerImages = listOf(

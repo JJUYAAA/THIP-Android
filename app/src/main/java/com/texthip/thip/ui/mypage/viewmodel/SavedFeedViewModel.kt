@@ -36,7 +36,7 @@ class SavedFeedViewModel: ViewModel() {
                 commentCount = 4,
                 isLiked = false,
                 isSaved = true,
-                imageUrl = R.drawable.bookcover_sample
+                imageUrl = R.drawable.img_book_cover_sample
             ),
             FeedItem(
                 id = 3,
@@ -51,7 +51,7 @@ class SavedFeedViewModel: ViewModel() {
                 commentCount = 4,
                 isLiked = false,
                 isSaved = true,
-                imageUrl = R.drawable.bookcover_sample
+                imageUrl = R.drawable.img_book_cover_sample
             ),
             FeedItem(
                 id = 4,
@@ -66,7 +66,7 @@ class SavedFeedViewModel: ViewModel() {
                 commentCount = 4,
                 isLiked = false,
                 isSaved = true,
-                imageUrl = R.drawable.bookcover_sample
+                imageUrl = R.drawable.img_book_cover_sample
             ),
             FeedItem(
                 id = 5,

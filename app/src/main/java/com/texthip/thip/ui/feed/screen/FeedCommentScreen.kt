@@ -377,10 +377,10 @@ private fun FeedCommentScreenPrev() {
                 isLiked = true,
                 isSaved = false,
                 isLocked = true,
-                imageUrl = R.drawable.bookcover_sample,
+                imageUrl = R.drawable.img_book_cover_sample,
                 tags = listOf("에세이", "문학", "힐링")
             ),
-            bookImage = painterResource(R.drawable.bookcover_sample),
+            bookImage = painterResource(R.drawable.img_book_cover_sample),
             profileImage = painterResource(R.drawable.character_literature),
             onLikeClick = {},
             onCommentInputChange = {},

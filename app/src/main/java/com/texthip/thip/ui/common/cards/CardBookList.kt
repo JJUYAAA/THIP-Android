@@ -44,7 +44,7 @@ fun CardBookList(
     ) {
         // 책 이미지
         AsyncImage(
-            model = imageUrl ?: R.drawable.bookcover_sample,
+            model = imageUrl ?: R.drawable.img_book_cover_sample,
             contentDescription = "책 이미지",
             modifier = Modifier.size(width = 80.dp, height = 108.dp),
             contentScale = ContentScale.Crop

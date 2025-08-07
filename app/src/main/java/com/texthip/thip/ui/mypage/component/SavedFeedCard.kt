@@ -148,7 +148,7 @@ private fun SavedFeedCardPrev() {
         commentCount = 5,
         isLiked = false,
         isSaved = true,
-        imageUrl = R.drawable.bookcover_sample
+        imageUrl = R.drawable.img_book_cover_sample
     )
 
     Column {

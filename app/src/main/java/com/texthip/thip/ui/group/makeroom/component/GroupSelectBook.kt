@@ -85,7 +85,7 @@ fun GroupSelectBook(
                 verticalAlignment = Alignment.Bottom
             ) {
                 AsyncImage(
-                    model = selectedBook.imageUrl ?: R.drawable.bookcover_sample,
+                    model = selectedBook.imageUrl ?: R.drawable.img_book_cover_sample,
                     contentDescription = selectedBook.title,
                     modifier = Modifier
                         .height(80.dp)

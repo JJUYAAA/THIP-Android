@@ -142,7 +142,7 @@ private fun MyFeedCardPrev() {
         isLiked = false,
         isSaved = true,
         isLocked = false,
-        imageUrl = R.drawable.bookcover_sample
+        imageUrl = R.drawable.img_book_cover_sample
     )
 
     Column {

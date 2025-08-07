@@ -2,11 +2,9 @@ package com.texthip.thip.ui.common.cards
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -88,7 +86,7 @@ fun CardRoomBook(
             ) {
                 // 책 이미지
                 AsyncImage(
-                    model = imageUrl ?: R.drawable.bookcover_sample,
+                    model = imageUrl ?: R.drawable.img_book_cover_sample,
                     contentDescription = "책 이미지",
                     modifier = Modifier.size(width = 80.dp, height = 107.dp),
                     contentScale = ContentScale.Crop
