@@ -65,10 +65,16 @@ class GroupRoomRecruitViewModel @Inject constructor(
     
     fun onParticipationClick() {
         viewModelScope.launch {
-            // TODO: 실제 참여하기 API 호출
-            // 현재는 mock 로직으로 처리
-            _currentButtonType.value = GroupBottomButtonType.CANCEL
-            showToastMessage("참여가 완료되었습니다")
+            val roomId = _roomDetail.value?.id ?: return@launch
+            
+            repository.joinOrCancelRoom(roomId, "join")
+                .onSuccess {
+                    _currentButtonType.value = GroupBottomButtonType.CANCEL
+                    showToastMessage("참여가 완료되었습니다")
+                }
+                .onFailure { error ->
+                    showToastMessage("참여 처리 중 오류가 발생했습니다: ${error.message}")
+                }
         }
     }
     
@@ -78,10 +84,17 @@ class GroupRoomRecruitViewModel @Inject constructor(
         _dialogDescription.value = dialogDescription
         pendingAction = {
             viewModelScope.launch {
-                // TODO: 실제 참여 취소 API 호출
-                // 현재는 mock 로직으로 처리
-                _toastMessage.value = "모임방 참여가 취소되었어요! 다른 방을 찾아보세요."
-                _shouldNavigateToGroupScreen.value = true
+                val roomId = _roomDetail.value?.id ?: return@launch
+                
+                repository.joinOrCancelRoom(roomId, "cancel")
+                    .onSuccess {
+                        _currentButtonType.value = GroupBottomButtonType.JOIN
+                        _toastMessage.value = "모임방 참여가 취소되었어요! 다른 방을 찾아보세요."
+                        _shouldNavigateToGroupScreen.value = true
+                    }
+                    .onFailure { error ->
+                        showToastMessage("참여 취소 중 오류가 발생했습니다: ${error.message}")
+                    }
             }
         }
         _showDialog.value = true

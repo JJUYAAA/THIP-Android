@@ -4,6 +4,7 @@ import android.content.Context
 import com.texthip.thip.R
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.group.request.CreateRoomRequest
+import com.texthip.thip.data.model.group.request.RoomJoinRequest
 import com.texthip.thip.data.model.group.response.PaginationResult
 import com.texthip.thip.data.model.group.response.RoomMainResponse
 import com.texthip.thip.data.model.service.GroupService
@@ -263,6 +264,20 @@ class GroupRepository @Inject constructor(
                 .handleBaseResponse()
                 .mapCatching { createRoomResponse ->
                     createRoomResponse?.roomId ?: throw Exception("방 생성 실패: roomId가 없습니다")
+                }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // 모임방 참여/취소 API 연동
+    suspend fun joinOrCancelRoom(roomId: Int, type: String): Result<String> {
+        return try {
+            val request = RoomJoinRequest(type = type)
+            groupService.joinOrCancelRoom(roomId, request)
+                .handleBaseResponse()
+                .mapCatching { response ->
+                    response?.type ?: throw Exception("참여/취소 처리 실패: 응답이 없습니다")
                 }
         } catch (e: Exception) {
             Result.failure(e)

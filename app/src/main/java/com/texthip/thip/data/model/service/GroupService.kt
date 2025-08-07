@@ -3,9 +3,11 @@ package com.texthip.thip.data.model.service
 import com.texthip.thip.data.model.base.BaseResponse
 import com.texthip.thip.data.model.book.response.BookListResponse
 import com.texthip.thip.data.model.group.request.CreateRoomRequest
+import com.texthip.thip.data.model.group.request.RoomJoinRequest
 import com.texthip.thip.data.model.group.response.CreateRoomResponse
 import com.texthip.thip.data.model.group.response.JoinedRoomListResponse
 import com.texthip.thip.data.model.group.response.MyRoomListResponse
+import com.texthip.thip.data.model.group.response.RoomJoinResponse
 import com.texthip.thip.data.model.group.response.RoomRecruitingResponse
 import com.texthip.thip.data.model.group.response.RoomMainList
 import retrofit2.http.Body
@@ -39,5 +41,11 @@ interface GroupService {
     suspend fun createRoom(
         @Body request: CreateRoomRequest
     ): BaseResponse<CreateRoomResponse>
+
+    @POST("rooms/{roomId}/join")
+    suspend fun joinOrCancelRoom(
+        @Path("roomId") roomId: Int,
+        @Body request: RoomJoinRequest
+    ): BaseResponse<RoomJoinResponse>
 
 }
