@@ -1,7 +1,6 @@
 package com.texthip.thip.data.repository
 
 import com.texthip.thip.data.model.base.handleBaseResponse
-import com.texthip.thip.data.model.book.response.BookSavedResponse
 import com.texthip.thip.data.service.BookService
 import javax.inject.Inject
 import javax.inject.Singleton

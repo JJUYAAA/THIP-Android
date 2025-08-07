@@ -164,8 +164,6 @@ fun NavGraphBuilder.groupNavigation(
     
     // Group Room 화면
     composable<GroupRoutes.Room> { backStackEntry ->
-        val route = backStackEntry.toRoute<GroupRoutes.Room>()
-
         GroupRoomScreen(
             onBackClick = {
                 navigateBack()

@@ -5,11 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
 import com.texthip.thip.data.model.book.response.BookSavedResponse
-import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.data.model.group.request.CreateRoomRequest
 import com.texthip.thip.data.repository.BookRepository
+import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.ui.group.makeroom.mock.BookData
-import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +28,10 @@ class GroupMakeRoomViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(GroupMakeRoomUiState())
     val uiState: StateFlow<GroupMakeRoomUiState> = _uiState.asStateFlow()
+    
+    companion object {
+        private val DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+    }
     
     private fun updateState(update: (GroupMakeRoomUiState) -> GroupMakeRoomUiState) {
         _uiState.value = update(_uiState.value)
@@ -153,8 +156,8 @@ class GroupMakeRoomViewModel @Inject constructor(
                     category = getApiCategoryName(currentState.selectedGenreIndex),
                     roomName = currentState.roomTitle.trim(),
                     description = currentState.roomDescription.trim(),
-                    progressStartDate = currentState.meetingStartDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
-                    progressEndDate = currentState.meetingEndDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
+                    progressStartDate = currentState.meetingStartDate.format(DATE_FORMATTER),
+                    progressEndDate = currentState.meetingEndDate.format(DATE_FORMATTER),
                     recruitCount = currentState.memberLimit,
                     password = if (currentState.isPrivate) currentState.password else null,
                     isPublic = !currentState.isPrivate

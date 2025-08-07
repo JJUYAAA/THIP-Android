@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
 import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
-import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitUiState
 import com.texthip.thip.ui.group.room.mock.RoomAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

@@ -2,17 +2,15 @@ package com.texthip.thip.data.repository
 
 import android.content.Context
 import com.texthip.thip.R
-import com.texthip.thip.data.mapper.GroupDataMapper
 import com.texthip.thip.data.manager.GenreManager
 import com.texthip.thip.data.manager.UserDataManager
+import com.texthip.thip.data.mapper.GroupDataMapper
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.group.request.CreateRoomRequest
 import com.texthip.thip.data.model.group.request.RoomJoinRequest
 import com.texthip.thip.data.model.group.response.PaginationResult
 import com.texthip.thip.data.service.GroupService
 import com.texthip.thip.ui.group.done.mock.MyRoomsPaginationResult
-import com.texthip.thip.ui.group.myroom.mock.GroupCardData
-import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject

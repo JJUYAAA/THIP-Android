@@ -3,7 +3,6 @@ package com.texthip.thip.ui.group.done.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.repository.GroupRepository
-import com.texthip.thip.ui.group.done.viewmodel.GroupDoneUiState
 import com.texthip.thip.ui.group.myroom.mock.RoomType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
