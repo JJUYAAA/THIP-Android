@@ -32,7 +32,7 @@ fun ActionBookButton(
 ) {
     Box(
         modifier = Modifier
-            .background(color = colors.DarkGrey, shape = RoundedCornerShape(12.dp))
+            .background(color = colors.DarkGrey02, shape = RoundedCornerShape(12.dp))
             .clickable {
                 onClick()
             }
