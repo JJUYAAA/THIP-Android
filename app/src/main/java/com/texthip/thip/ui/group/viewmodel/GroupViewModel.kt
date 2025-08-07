@@ -22,13 +22,13 @@ class GroupViewModel @Inject constructor(
 
     private val _myGroups = MutableStateFlow<List<GroupCardData>>(emptyList())
     val myGroups: StateFlow<List<GroupCardData>> = _myGroups
-    
+
     private val _hasMoreMyGroups = MutableStateFlow(true)
     val hasMoreMyGroups: StateFlow<Boolean> = _hasMoreMyGroups.asStateFlow()
-    
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
-    
+
     private val _isLoadingMoreMyGroups = MutableStateFlow(false)
     val isLoadingMoreMyGroups: StateFlow<Boolean> = _isLoadingMoreMyGroups.asStateFlow()
     
@@ -69,7 +69,7 @@ class GroupViewModel @Inject constructor(
         loadRoomSections()
         loadSearchGroups()
     }
-    
+
     private fun loadUserName() {
         viewModelScope.launch {
             repository.getUserName()
@@ -91,21 +91,21 @@ class GroupViewModel @Inject constructor(
             _isRefreshing.value = false
         }
     }
-    
+
     private suspend fun loadPageBatchSuspend() {
         if (!_hasMoreMyGroups.value || isBatchLoading) return
-        
+
         try {
             isBatchLoading = true
             _isLoadingMoreMyGroups.value = true
-            
+
             // 3페이지씩 배치로 로드 (Pager 미리보기용)
             val currentBatchStart = currentMyGroupsPage
             val batchEndPage = currentBatchStart + PAGES_PER_BATCH - 1
-            
+
             for (page in currentBatchStart..batchEndPage) {
                 if (!_hasMoreMyGroups.value) break
-                
+
                 repository.getMyJoinedRooms(page)
                     .onSuccess { paginationResult ->
                         _myGroups.value = _myGroups.value + paginationResult.data
@@ -123,19 +123,20 @@ class GroupViewModel @Inject constructor(
             _isLoadingMoreMyGroups.value = false
         }
     }
-    
+
     private fun loadPageBatch() = viewModelScope.launch {
         loadPageBatchSuspend()
     }
-    
+
     // GroupPager에서 현재 카드 인덱스를 알려주면 미리 로드 판단
     fun onCardVisible(cardIndex: Int) {
         val totalCards = _myGroups.value.size
         val currentPageEquivalent = (cardIndex / 3) + 1  // 3개씩 한 페이지라고 가정
-        
+
         // 현재 로드된 페이지의 임계점에 도달하면 다음 배치 로드
-        if (currentPageEquivalent >= loadedPagesCount - PRELOAD_THRESHOLD && 
-            _hasMoreMyGroups.value && !isBatchLoading) {
+        if (currentPageEquivalent >= loadedPagesCount - PRELOAD_THRESHOLD &&
+            _hasMoreMyGroups.value && !isBatchLoading
+        ) {
             loadPageBatch()
         }
     }
@@ -143,7 +144,7 @@ class GroupViewModel @Inject constructor(
     private fun loadRoomSections() {
         viewModelScope.launch {
             _roomSectionsError.value = null
-            
+
             // Repository에서 직접 장르 목록 가져오기
             val genresResult = repository.getGenres()
             val selectedIndex = _selectedGenreIndex.value
@@ -157,7 +158,7 @@ class GroupViewModel @Inject constructor(
             } else {
                 "문학" // 기본값
             }
-            
+
             repository.getRoomSections(selectedGenre)
                 .onSuccess { sections ->
                     _roomSections.value = sections
@@ -167,7 +168,7 @@ class GroupViewModel @Inject constructor(
                 }
         }
     }
-    
+
     fun selectGenre(genreIndex: Int) {
         // Repository에서 직접 장르 목록 확인
         val genresResult = repository.getGenres()
@@ -179,8 +180,8 @@ class GroupViewModel @Inject constructor(
             }
         }
     }
-    
-    
+
+
     private fun loadSearchGroups() {
         viewModelScope.launch {
             repository.getSearchGroups()
@@ -189,7 +190,7 @@ class GroupViewModel @Inject constructor(
                 }
         }
     }
-    
+
     fun refreshGroupData() {
         viewModelScope.launch {
             _isRefreshing.value = true
@@ -197,7 +198,7 @@ class GroupViewModel @Inject constructor(
                 // 모든 데이터를 병렬로 새로고침하고 완료를 기다림
                 val jobs = listOf(
                     async { loadUserName() },
-                    async { 
+                    async {
                         // 내 모임방 데이터 리셋 후 로드
                         resetMyGroupsData()
                         loadPageBatchSuspend()
@@ -205,28 +206,32 @@ class GroupViewModel @Inject constructor(
                     async { loadRoomSections() },
                     async { loadSearchGroups() }
                 )
-                
+
                 jobs.awaitAll()
             } finally {
                 _isRefreshing.value = false
             }
         }
     }
-    
+
     private fun resetMyGroupsData() {
         currentMyGroupsPage = 1
         loadedPagesCount = 0
         _myGroups.value = emptyList()
         _hasMoreMyGroups.value = true
     }
-    
+
     fun showToastMessage(message: String) {
         _toastMessage.value = message
         _showToast.value = true
     }
-    
+
     fun hideToast() {
         _showToast.value = false
+    }
+
+    fun refreshDataOnScreenEnter() {
+        refreshGroupData()
     }
 
 }

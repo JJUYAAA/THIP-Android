@@ -48,6 +48,10 @@ fun GroupScreen(
     onNavigateToGroupRoom: (Int) -> Unit = {},  // 기록장 화면으로 이동
     viewModel: GroupViewModel = hiltViewModel()
 ) {
+    // 화면 재진입 시 데이터 새로고침
+    LaunchedEffect(Unit) {
+        viewModel.refreshDataOnScreenEnter()
+    }
     val myGroups by viewModel.myGroups.collectAsState()
     val roomSections by viewModel.roomSections.collectAsState()
     val selectedGenreIndex by viewModel.selectedGenreIndex.collectAsState()
