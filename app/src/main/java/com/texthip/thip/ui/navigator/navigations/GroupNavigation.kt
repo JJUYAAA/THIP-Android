@@ -17,6 +17,7 @@ import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
 import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
+import com.texthip.thip.ui.group.room.screen.GroupRoomMatesScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
 import com.texthip.thip.ui.group.screen.GroupDoneScreen
@@ -29,6 +30,7 @@ import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomMates
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
 import com.texthip.thip.ui.navigator.extensions.navigateToRecommendedGroupRecruit
 import com.texthip.thip.ui.navigator.routes.GroupRoutes
@@ -245,6 +247,26 @@ fun NavGraphBuilder.groupNavigation(
             roomId = 1,
             onBackClick = {
                 navigateBack()
+            },
+            onNavigateToMates = {
+                navController.navigateToGroupRoomMates(roomId)
+            },
+        )
+    }
+
+    // Group Room Mates 화면
+    composable<GroupRoutes.RoomMates> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.RoomMates>()
+        val roomId = route.roomId
+
+        GroupRoomMatesScreen(
+//            roomId = roomId,
+            roomId = 1,
+            onBackClick = {
+                navigateBack()
+            },
+            onUserClick = {
+                // 네비게이션 로직 (예: 유저 프로필로 이동)
             }
         )
     }

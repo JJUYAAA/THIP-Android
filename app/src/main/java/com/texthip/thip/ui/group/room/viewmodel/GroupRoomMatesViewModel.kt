@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed interface UsersUiState {
-    data object Loading : UsersUiState
-    data class Success(val users: RoomsUsersResponse) : UsersUiState
-    data class Error(val message: String) : UsersUiState
+sealed interface GroupRoomMatesUiState {
+    data object Loading : GroupRoomMatesUiState
+    data class Success(val users: RoomsUsersResponse) : GroupRoomMatesUiState
+    data class Error(val message: String) : GroupRoomMatesUiState
 }
 
 @HiltViewModel
@@ -21,21 +21,21 @@ class GroupRoomMatesViewModel @Inject constructor(
     private val roomsRepository: RoomsRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UsersUiState>(UsersUiState.Loading)
+    private val _uiState = MutableStateFlow<GroupRoomMatesUiState>(GroupRoomMatesUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     fun fetchUsers(roomId: Int) {
         viewModelScope.launch {
-            _uiState.value = UsersUiState.Loading
+            _uiState.value = GroupRoomMatesUiState.Loading
 
             roomsRepository.getRoomsUsers(roomId = roomId)
                 .onSuccess { users ->
                     if (users != null) {
-                        _uiState.value = UsersUiState.Success(users)
+                        _uiState.value = GroupRoomMatesUiState.Success(users)
                     }
                 }
                 .onFailure { throwable ->
-                    _uiState.value = UsersUiState.Error(
+                    _uiState.value = GroupRoomMatesUiState.Error(
                         throwable.message ?: "알 수 없는 오류가 발생했습니다."
                     )
                 }

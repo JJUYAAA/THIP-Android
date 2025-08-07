@@ -49,6 +49,7 @@ import com.texthip.thip.utils.type.GenreBackgroundImage
 fun GroupRoomScreen(
     roomId: Int,
     onBackClick: () -> Unit = {},
+    onNavigateToMates: () -> Unit = {},
     viewModel: GroupRoomViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -65,13 +66,16 @@ fun GroupRoomScreen(
                 CircularProgressIndicator()
             }
         }
+
         is GroupRoomUiState.Success -> {
             // 성공 시, 실제 데이터를 화면에 표시
             GroupRoomContent(
                 roomDetails = state.roomsPlaying,
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
+                onNavigateToMates = onNavigateToMates
             )
         }
+
         is GroupRoomUiState.Error -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = state.message, color = colors.White) // TODO: 에러 메시지 스타일링
@@ -84,7 +88,8 @@ fun GroupRoomScreen(
 @Composable
 fun GroupRoomContent(
     roomDetails: RoomsPlayingResponse,
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onNavigateToMates: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
@@ -154,7 +159,9 @@ fun GroupRoomContent(
                     progressEndDate = roomDetails.progressEndDate,
                     memberCount = roomDetails.memberCount,
                     category = roomDetails.category
-                )
+                ) {
+                    onNavigateToMates()
+                }
 
                 Spacer(Modifier.height(30.dp))
 

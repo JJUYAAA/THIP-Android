@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.group.room.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,7 +37,8 @@ fun GroupRoomHeader(
     progressEndDate: String,
     memberCount: Int,
     category: String,
-    color: String = "RED", // TODO: 서버에서 색상 추가해주면 수정
+    color: String = "RED", // TODO: 서버에서 색상 추가해주면 수정,
+    onNavigateToMates: () -> Unit = { }
 ) {
     val categoryColorEnum = GenreColor.fromString(color)
     val categoryColor = categoryColorEnum.colorProvider()
@@ -114,7 +116,9 @@ fun GroupRoomHeader(
                 )
             }
 
-            Column {
+            Column(
+                modifier = Modifier.clickable { onNavigateToMates() }
+            ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,

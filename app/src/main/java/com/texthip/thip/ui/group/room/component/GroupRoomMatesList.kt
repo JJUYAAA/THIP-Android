@@ -9,13 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.data.model.rooms.response.RoomsUsersResponse
+import com.texthip.thip.data.model.rooms.response.UserList
 import com.texthip.thip.ui.common.header.ProfileBar
-import com.texthip.thip.ui.group.room.mock.GroupRoomMateData
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
 fun GroupRoomMatesList(
-    members: List<GroupRoomMateData>
+    members: RoomsUsersResponse,
+    onUserClick: (Int) -> Unit = {}
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -23,17 +25,19 @@ fun GroupRoomMatesList(
             .fillMaxWidth()
             .padding(20.dp)
     ) {
-        members.forEachIndexed { index, member ->
+        val userList = members.userList
+        userList.forEachIndexed { index, member ->
             ProfileBar(
-                profileImage = member.profileImageUrl,
+                profileImage = member.imageUrl,
                 topText = member.nickname,
-                bottomText = member.role,
-                bottomTextColor = member.roleColor,
+                bottomText = member.alias,
+//                bottomTextColor = member.aliasColor,
+                bottomTextColor = colors.ScienceIt, // TODO: 서버에서 보내주는 색상으로 수정
                 showSubscriberInfo = true,
-                subscriberCount = member.subscriberCount
-            ) {}
+                subscriberCount = member.followerCount
+            ) { onUserClick }
 
-            if (index != members.lastIndex) {
+            if (index != userList.lastIndex) {
                 HorizontalDivider(
                     color = colors.DarkGrey02,
                     thickness = 1.dp
@@ -47,35 +51,24 @@ fun GroupRoomMatesList(
 @Composable
 private fun GroupRoomMatesListPreview() {
     GroupRoomMatesList(
-        members = listOf(
-            GroupRoomMateData(
-                profileImageUrl = null,
-                nickname = "Thiper",
-                role = "칭호칭호",
-                roleColor = colors.Yellow,
-                subscriberCount = 100
-            ),
-            GroupRoomMateData(
-                profileImageUrl = null,
-                nickname = "thipthip",
-                role = "공식 인플루언서",
-                roleColor = colors.NeonGreen,
-                subscriberCount = 50
-            ),
-            GroupRoomMateData(
-                profileImageUrl = null,
-                nickname = "Thiper",
-                role = "칭호칭호",
-                roleColor = colors.Yellow,
-                subscriberCount = 100
-            ),
-            GroupRoomMateData(
-                profileImageUrl = null,
-                nickname = "thip01",
-                role = "작가",
-                roleColor = colors.NeonGreen,
-                subscriberCount = 100
-            ),
-        )
+        members =
+            RoomsUsersResponse(
+                listOf(
+                    UserList(
+                        userId = 1,
+                        nickname = "김희용",
+                        alias = "문학가",
+                        imageUrl = "https://example.com/image1.jpg",
+                        followerCount = 100
+                    ),
+                    UserList(
+                        userId = 2,
+                        nickname = "노성준",
+                        alias = "문학가",
+                        imageUrl = "https://example.com/image1.jpg",
+                        followerCount = 100
+                    ),
+                )
+            )
     )
 }
