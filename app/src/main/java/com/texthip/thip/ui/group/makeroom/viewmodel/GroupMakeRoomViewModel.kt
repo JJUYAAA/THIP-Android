@@ -1,7 +1,9 @@
 package com.texthip.thip.ui.group.makeroom.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.texthip.thip.R
 import com.texthip.thip.data.model.book.response.BookSavedResponse
 import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.data.model.group.request.CreateRoomRequest
@@ -9,6 +11,7 @@ import com.texthip.thip.data.repository.BookRepository
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class GroupMakeRoomViewModel @Inject constructor(
     private val groupRepository: GroupRepository,
-    private val bookRepository: BookRepository
+    private val bookRepository: BookRepository,
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GroupMakeRoomUiState())
@@ -130,13 +134,13 @@ class GroupMakeRoomViewModel @Inject constructor(
         val currentState = _uiState.value
 
         if (!currentState.isFormValid) {
-            onError("입력 정보를 확인해주세요")
+            onError(context.getString(R.string.error_form_validation))
             return
         }
 
         val selectedBook = currentState.selectedBook
         if (selectedBook?.isbn == null) {
-            onError("책 정보가 올바르지 않습니다")
+            onError(context.getString(R.string.error_book_info_invalid))
             return
         }
 
@@ -160,10 +164,10 @@ class GroupMakeRoomViewModel @Inject constructor(
                 result.onSuccess { roomId ->
                     onSuccess(roomId)
                 }.onFailure { exception ->
-                    onError("모임방 생성에 실패했습니다: ${exception.message}")
+                    onError(context.getString(R.string.error_room_creation_failed, exception.message ?: ""))
                 }
             } catch (e: Exception) {
-                onError("네트워크 오류가 발생했습니다: ${e.message}")
+                onError(context.getString(R.string.error_network_error, e.message ?: ""))
             } finally {
                 updateState { it.copy(isLoading = false) }
             }

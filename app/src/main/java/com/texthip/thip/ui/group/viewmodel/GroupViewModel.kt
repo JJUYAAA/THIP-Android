@@ -1,10 +1,13 @@
 package com.texthip.thip.ui.group.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.texthip.thip.R
 import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.ui.group.mock.GroupUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GroupViewModel @Inject constructor(
-    private val repository: GroupRepository
+    private val repository: GroupRepository,
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GroupUiState())
@@ -121,10 +125,10 @@ class GroupViewModel @Inject constructor(
                 if (selectedIndex >= 0 && selectedIndex < genres.size) {
                     genres[selectedIndex]
                 } else {
-                    genres.firstOrNull() ?: "문학"
+                    genres.firstOrNull() ?: context.getString(R.string.literature)
                 }
             } else {
-                "문학"
+                context.getString(R.string.literature)
             }
 
             repository.getRoomSections(selectedGenre)

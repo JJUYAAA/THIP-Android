@@ -1,12 +1,15 @@
 package com.texthip.thip.ui.group.room.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.texthip.thip.R
 import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.room.mock.GroupRoomRecruitUiState
 import com.texthip.thip.ui.group.room.mock.RoomAction
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GroupRoomRecruitViewModel @Inject constructor(
-    private val repository: GroupRepository
+    private val repository: GroupRepository,
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GroupRoomRecruitUiState())
@@ -54,10 +58,10 @@ class GroupRoomRecruitViewModel @Inject constructor(
             repository.joinOrCancelRoom(roomId, RoomAction.JOIN.value)
                 .onSuccess {
                     updateState { it.copy(currentButtonType = GroupBottomButtonType.CANCEL) }
-                    showToastMessage("참여가 완료되었습니다")
+                    showToastMessage(context.getString(R.string.success_participation_complete))
                 }
                 .onFailure { error ->
-                    showToastMessage("참여 처리 중 오류가 발생했습니다: ${error.message}")
+                    showToastMessage(context.getString(R.string.error_participation_failed, error.message ?: ""))
                 }
         }
     }
@@ -79,14 +83,14 @@ class GroupRoomRecruitViewModel @Inject constructor(
                         updateState { 
                             it.copy(
                                 currentButtonType = GroupBottomButtonType.JOIN,
-                                toastMessage = "모임방 참여가 취소되었어요! 다른 방을 찾아보세요.",
+                                toastMessage = context.getString(R.string.success_participation_cancelled),
                                 showToast = true,
                                 shouldNavigateToGroupScreen = true
                             )
                         }
                     }
                     .onFailure { error ->
-                        showToastMessage("참여 취소 중 오류가 발생했습니다: ${error.message}")
+                        showToastMessage(context.getString(R.string.error_participation_cancel_failed))
                     }
             }
         }
@@ -103,7 +107,7 @@ class GroupRoomRecruitViewModel @Inject constructor(
         pendingAction = {
             viewModelScope.launch {
                 // TODO: 실제 모집 마감 API 호출
-                showToastMessage("모집이 마감되었습니다")
+                showToastMessage(context.getString(R.string.success_recruitment_closed))
             }
         }
     }

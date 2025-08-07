@@ -25,7 +25,7 @@ class GenreManager @Inject constructor(
     
     fun mapGenreToApiCategory(genre: String): String {
         return when (genre) {
-            "과학·IT" -> "과학/IT"
+            context.getString(R.string.science_it) -> context.getString(R.string.api_genre_science_it)
             else -> genre
         }
     }

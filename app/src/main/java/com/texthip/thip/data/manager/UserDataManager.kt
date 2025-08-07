@@ -15,12 +15,5 @@ class UserDataManager @Inject constructor() {
     fun cacheUserName(name: String) {
         cachedUserName = name
     }
-    
-    fun clearUserData() {
-        cachedUserName = null
-    }
-    
-    fun hasUserName(): Boolean {
-        return cachedUserName != null
-    }
+
 }
