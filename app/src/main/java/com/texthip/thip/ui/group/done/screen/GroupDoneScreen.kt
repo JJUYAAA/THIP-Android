@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.done.Screen
+package com.texthip.thip.ui.group.done.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
