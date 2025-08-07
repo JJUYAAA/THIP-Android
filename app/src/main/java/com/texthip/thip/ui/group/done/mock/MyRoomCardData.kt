@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.group.done.mock
 
-import com.texthip.thip.data.mapper.GroupDataMapper
 import com.texthip.thip.ui.group.myroom.mock.RoomType
 
 data class MyRoomCardData(
@@ -31,5 +30,10 @@ fun MyRoomCardData.isRecruitingByType(): Boolean {
 }
 
 fun MyRoomCardData.getEndDateInDays(): Int {
-    return GroupDataMapper().extractDaysFromDeadline(endDate)
+    return when {
+        endDate.contains("일 뒤") -> {
+            endDate.replace("일 뒤", "").trim().toIntOrNull() ?: 0
+        }
+        else -> 0
+    }
 }
