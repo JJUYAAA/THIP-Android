@@ -12,15 +12,10 @@ class BookRepository @Inject constructor(
 ) {
 
     /** 저장된 책 또는 모임 책 목록 조회 */
-    suspend fun getBooks(type: String): Result<List<BookSavedResponse>> {
-        return try {
-            bookService.getBooks(type)
-                .handleBaseResponse()
-                .mapCatching { bookListResponse ->
-                    bookListResponse?.bookList ?: emptyList()
-                }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun getBooks(type: String) = runCatching {
+        bookService.getBooks(type)
+            .handleBaseResponse()
+            .getOrThrow()
+            ?.bookList ?: emptyList()
     }
 }

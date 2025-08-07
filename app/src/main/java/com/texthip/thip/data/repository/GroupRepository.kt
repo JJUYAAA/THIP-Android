@@ -38,138 +38,107 @@ class GroupRepository @Inject constructor(
     }
     
     /** 내가 참여 중인 모임방 목록 조회 */
-    suspend fun getMyJoinedRooms(page: Int): Result<PaginationResult<GroupCardData>> {
-        return try {
-            groupService.getJoinedRooms(page)
-                .handleBaseResponse()
-                .mapCatching { data ->
-                    data?.let { joinedRoomsDto ->
-                        userDataManager.cacheUserName(joinedRoomsDto.nickname)
-                        
-                        val groups = joinedRoomsDto.roomList.map { dto ->
-                            groupDataMapper.toGroupCardData(dto, joinedRoomsDto.nickname)
-                        }
-
-                        PaginationResult(
-                            data = groups,
-                            hasMore = !joinedRoomsDto.last,
-                            currentPage = joinedRoomsDto.page,
-                            nickname = joinedRoomsDto.nickname
-                        )
-                    } ?: PaginationResult(
-                        data = emptyList(),
-                        hasMore = false,
-                        currentPage = page,
-                        nickname = ""
-                    )
+    suspend fun getMyJoinedRooms(page: Int) = runCatching {
+        groupService.getJoinedRooms(page)
+            .handleBaseResponse()
+            .getOrThrow()
+            ?.let { joinedRoomsDto ->
+                userDataManager.cacheUserName(joinedRoomsDto.nickname)
+                
+                val groups = joinedRoomsDto.roomList.map { dto ->
+                    groupDataMapper.toGroupCardData(dto, joinedRoomsDto.nickname)
                 }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+
+                PaginationResult(
+                    data = groups,
+                    hasMore = !joinedRoomsDto.last,
+                    currentPage = joinedRoomsDto.page,
+                    nickname = joinedRoomsDto.nickname
+                )
+            } ?: PaginationResult(
+                data = emptyList(),
+                hasMore = false,
+                currentPage = page,
+                nickname = ""
+            )
     }
 
     /** 카테고리별 모임방 섹션 조회 (마감임박/인기) */
-    suspend fun getRoomSections(category: String = ""): Result<List<GroupRoomSectionData>> {
-        return try {
-            val finalCategory = category.ifEmpty { genreManager.getDefaultGenre() }
-            val apiCategory = genreManager.mapGenreToApiCategory(finalCategory)
-            
-            groupService.getRooms(apiCategory)
-                .handleBaseResponse()
-                .mapCatching { data ->
-                    data?.let { roomsData ->
-                        val sections = listOf(
-                            GroupRoomSectionData(
-                                title = context.getString(R.string.room_section_deadline),
-                                rooms = roomsData.deadlineRoomList.map { dto -> 
-                                    val daysLeft = groupDataMapper.extractDaysFromDeadline(dto.deadlineDate)
-                                    groupDataMapper.toGroupCardItemRoomData(dto, daysLeft)
-                                },
-                                genres = genreManager.getGenres()
-                            ),
-                            GroupRoomSectionData(
-                                title = context.getString(R.string.room_section_popular), 
-                                rooms = roomsData.popularRoomList.map { dto ->
-                                    val daysLeft = groupDataMapper.extractDaysFromDeadline(dto.deadlineDate)
-                                    groupDataMapper.toGroupCardItemRoomData(dto, daysLeft)
-                                },
-                                genres = genreManager.getGenres()
-                            )
-                        )
-                        sections
-                    }.orEmpty()
-                }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun getRoomSections(category: String = "") = runCatching {
+        val finalCategory = category.ifEmpty { genreManager.getDefaultGenre() }
+        val apiCategory = genreManager.mapGenreToApiCategory(finalCategory)
+        
+        groupService.getRooms(apiCategory)
+            .handleBaseResponse()
+            .getOrThrow()
+            ?.let { roomsData ->
+                listOf(
+                    GroupRoomSectionData(
+                        title = context.getString(R.string.room_section_deadline),
+                        rooms = roomsData.deadlineRoomList.map { dto -> 
+                            val daysLeft = groupDataMapper.extractDaysFromDeadline(dto.deadlineDate)
+                            groupDataMapper.toGroupCardItemRoomData(dto, daysLeft)
+                        },
+                        genres = genreManager.getGenres()
+                    ),
+                    GroupRoomSectionData(
+                        title = context.getString(R.string.room_section_popular), 
+                        rooms = roomsData.popularRoomList.map { dto ->
+                            val daysLeft = groupDataMapper.extractDaysFromDeadline(dto.deadlineDate)
+                            groupDataMapper.toGroupCardItemRoomData(dto, daysLeft)
+                        },
+                        genres = genreManager.getGenres()
+                    )
+                )
+            }.orEmpty()
     }
 
     /** 타입별 내 모임방 목록 조회 */
-    suspend fun getMyRoomsByType(type: String?, cursor: String? = null): Result<MyRoomsPaginationResult> {
-        return try {
-            groupService.getMyRooms(type, cursor)
-                .handleBaseResponse()
-                .mapCatching { myRoomsDto ->
-                    myRoomsDto?.let { data ->
-                        val myRoomCards = data.roomList.map { room ->
-                            groupDataMapper.toMyRoomCardData(room)
-                        }
-
-                        MyRoomsPaginationResult(
-                            data = myRoomCards,
-                            nextCursor = data.nextCursor,
-                            isLast = data.isLast
-                        )
-                    } ?: MyRoomsPaginationResult(
-                        data = emptyList(),
-                        nextCursor = null,
-                        isLast = true
-                    )
+    suspend fun getMyRoomsByType(type: String?, cursor: String? = null) = runCatching {
+        groupService.getMyRooms(type, cursor)
+            .handleBaseResponse()
+            .getOrThrow()
+            ?.let { data ->
+                val myRoomCards = data.roomList.map { room ->
+                    groupDataMapper.toMyRoomCardData(room)
                 }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+
+                MyRoomsPaginationResult(
+                    data = myRoomCards,
+                    nextCursor = data.nextCursor,
+                    isLast = data.isLast
+                )
+            } ?: MyRoomsPaginationResult(
+                data = emptyList(),
+                nextCursor = null,
+                isLast = true
+            )
     }
     
     /** 모집중인 모임방 상세 정보 조회 */
-    suspend fun getRoomRecruiting(roomId: Int): Result<GroupRoomData> {
-        return try {
-            groupService.getRoomRecruiting(roomId)
-                .handleBaseResponse()
-                .mapCatching { recruitingDto ->
-                    recruitingDto?.let { data ->
-                        groupDataMapper.toGroupRoomData(data)
-                    } ?: throw Exception("No recruiting data found for room $roomId")
-                }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun getRoomRecruiting(roomId: Int) = runCatching {
+        groupService.getRoomRecruiting(roomId)
+            .handleBaseResponse()
+            .getOrThrow()
+            ?.let { data ->
+                groupDataMapper.toGroupRoomData(data)
+            } ?: throw Exception("No recruiting data found for room $roomId")
     }
 
     /** 새 모임방 생성 */
-    suspend fun createRoom(request: CreateRoomRequest): Result<Int> {
-        return try {
-            groupService.createRoom(request)
-                .handleBaseResponse()
-                .mapCatching { createRoomResponse ->
-                    createRoomResponse?.roomId ?: throw Exception("Failed to create room: roomId is null")
-                }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun createRoom(request: CreateRoomRequest) = runCatching {
+        groupService.createRoom(request)
+            .handleBaseResponse()
+            .getOrThrow()
+            ?.roomId ?: throw Exception("Failed to create room: roomId is null")
     }
 
     /** 모임방 참여 또는 취소 */
-    suspend fun joinOrCancelRoom(roomId: Int, type: String): Result<String> {
-        return try {
-            val request = RoomJoinRequest(type = type)
-            groupService.joinOrCancelRoom(roomId, request)
-                .handleBaseResponse()
-                .mapCatching { response ->
-                    response?.type ?: throw Exception("Failed to join/cancel room: no response")
-                }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun joinOrCancelRoom(roomId: Int, type: String) = runCatching {
+        val request = RoomJoinRequest(type = type)
+        groupService.joinOrCancelRoom(roomId, request)
+            .handleBaseResponse()
+            .getOrThrow()
+            ?.type ?: throw Exception("Failed to join/cancel room: no response")
     }
 }
