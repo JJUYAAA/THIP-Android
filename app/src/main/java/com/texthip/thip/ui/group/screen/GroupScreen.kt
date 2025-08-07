@@ -13,15 +13,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FloatingButton
+import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
 import com.texthip.thip.ui.group.myroom.component.GroupMySectionHeader
 import com.texthip.thip.ui.group.myroom.component.GroupPager
@@ -30,6 +34,7 @@ import com.texthip.thip.ui.group.myroom.component.GroupSearchTextField
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +54,8 @@ fun GroupScreen(
     val scrollState = rememberScrollState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val roomSectionsError by viewModel.roomSectionsError.collectAsState()
+    val showToast by viewModel.showToast.collectAsState()
+    val toastMessage by viewModel.toastMessage.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -128,6 +135,25 @@ fun GroupScreen(
             icon = painterResource(id = R.drawable.ic_makegroup),
             onClick = onNavigateToMakeRoom
         )
+        
+        // 토스트 팝업
+        if (showToast) {
+            ToastWithDate(
+                message = toastMessage,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 20.dp, vertical = 16.dp)
+                    .zIndex(2f)
+            )
+        }
+    }
+    
+    // 토스트 3초 후 자동 숨김 - showToast가 true가 된 시점부터 카운트
+    LaunchedEffect(showToast) {
+        if (showToast) {
+            delay(3000L)
+            viewModel.hideToast()
+        }
     }
 }
 

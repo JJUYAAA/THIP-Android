@@ -64,6 +64,12 @@ class GroupViewModel @Inject constructor(
     private val _selectedGenreIndex = MutableStateFlow(0)
     val selectedGenreIndex: StateFlow<Int> = _selectedGenreIndex.asStateFlow()
     
+    private val _showToast = MutableStateFlow(false)
+    val showToast: StateFlow<Boolean> = _showToast.asStateFlow()
+    
+    private val _toastMessage = MutableStateFlow("")
+    val toastMessage: StateFlow<String> = _toastMessage.asStateFlow()
+    
     init {
         loadInitialData()
     }
@@ -271,6 +277,15 @@ class GroupViewModel @Inject constructor(
     
     suspend fun getRoomRecruiting(roomId: Int): Result<GroupRoomData> {
         return repository.getRoomRecruiting(roomId)
+    }
+    
+    fun showToastMessage(message: String) {
+        _toastMessage.value = message
+        _showToast.value = true
+    }
+    
+    fun hideToast() {
+        _showToast.value = false
     }
 
 }

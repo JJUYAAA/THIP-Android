@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.navigator.navigations
 
 import android.annotation.SuppressLint
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,6 +39,16 @@ fun NavGraphBuilder.groupNavigation(
     // 메인 Group 화면
     composable<MainTabRoutes.Group> { backStackEntry ->
         val groupViewModel: GroupViewModel = hiltViewModel()
+        
+        // 네비게이션 파라미터로 전달된 토스트 메시지가 있는지 확인
+        LaunchedEffect(Unit) {
+            val toastMessage = backStackEntry.savedStateHandle.get<String>("toast_message")
+            
+            toastMessage?.let { message ->
+                backStackEntry.savedStateHandle.remove<String>("toast_message")
+                groupViewModel.showToastMessage(message)
+            }
+        }
         
         GroupScreen(
             viewModel = groupViewModel,
@@ -138,14 +149,11 @@ fun NavGraphBuilder.groupNavigation(
             onRecommendationClick = { recommendation ->
                 navController.navigateToRecommendedGroupRecruit(recommendation.id)
             },
-            onParticipation = {
-                // TODO: 참여 API 호출
-            },
-            onCancelParticipation = {
-                // TODO: 참여 취소 API 호출
-            },
-            onCloseRecruitment = {
-                // TODO: 모집 마감 API 호출
+            onNavigateToGroupScreen = { toastMessage ->
+                // GroupScreen에 토스트 메시지 전달
+                val groupEntry = navController.getBackStackEntry(MainTabRoutes.Group)
+                groupEntry.savedStateHandle["toast_message"] = toastMessage
+                navController.popBackStack(MainTabRoutes.Group, false)
             },
             onBackClick = {
                 navigateBack()
