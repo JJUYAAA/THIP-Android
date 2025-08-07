@@ -9,7 +9,7 @@ import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.data.model.group.request.CreateRoomRequest
 import com.texthip.thip.data.repository.BookRepository
 import com.texthip.thip.ui.group.makeroom.mock.BookData
-import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomUiState
+import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

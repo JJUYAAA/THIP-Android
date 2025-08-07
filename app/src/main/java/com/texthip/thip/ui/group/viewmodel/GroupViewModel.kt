@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
 import com.texthip.thip.data.repository.GroupRepository
-import com.texthip.thip.ui.group.mock.GroupUiState
+import com.texthip.thip.ui.group.viewmodel.GroupUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async

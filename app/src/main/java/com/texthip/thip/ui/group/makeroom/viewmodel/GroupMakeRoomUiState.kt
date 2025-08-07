@@ -1,5 +1,7 @@
-package com.texthip.thip.ui.group.makeroom.mock
+package com.texthip.thip.ui.group.makeroom.viewmodel
 
+import com.texthip.thip.ui.group.makeroom.mock.BookData
+import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomRequest
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 

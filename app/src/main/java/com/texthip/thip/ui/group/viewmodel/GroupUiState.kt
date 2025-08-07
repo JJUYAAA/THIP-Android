@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.mock
+package com.texthip.thip.ui.group.viewmodel
 
 import com.texthip.thip.ui.group.myroom.mock.GroupCardData
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData

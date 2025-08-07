@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.group.room.mock
+package com.texthip.thip.ui.group.room.viewmodel
 
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
