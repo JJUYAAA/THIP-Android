@@ -16,4 +16,12 @@ class RoomsRepository @Inject constructor(
             roomId = roomId
         ).handleBaseResponse().getOrThrow()
     }
+
+    suspend fun getRoomsUsers(
+        roomId: Int
+    ) = runCatching {
+        roomsService.getRoomsUsers(
+            roomId = roomId
+        ).handleBaseResponse().getOrThrow()
+    }
 }
