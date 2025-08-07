@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RoomJoinResponse(
     @SerialName("roomId") val roomId: Int,
-    @SerialName("type") val type: String // "join" 또는 "cancel"
+    @SerialName("type") val type: String
 )

@@ -25,12 +25,12 @@ interface GroupService {
 
     @GET("rooms")
     suspend fun getRooms(
-        @Query("category") category: String = "문학"   // 디폴트=문학
+        @Query("category") category: String = "문학"
     ): BaseResponse<RoomMainList>
 
     @GET("rooms/my")
     suspend fun getMyRooms(
-        @Query("type") type: String? = null,  // "playingAndRecruiting", "recruiting", "playing", "expired"
+        @Query("type") type: String? = null,
         @Query("cursor") cursor: String? = null
     ): BaseResponse<MyRoomListResponse>
 

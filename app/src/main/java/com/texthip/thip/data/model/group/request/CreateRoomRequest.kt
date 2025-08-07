@@ -8,9 +8,9 @@ data class CreateRoomRequest(
     val category: String,
     val roomName: String,
     val description: String,
-    val progressStartDate: String, // yyyy.MM.dd 형식
-    val progressEndDate: String,   // yyyy.MM.dd 형식
-    val recruitCount: Int,         // 1~30명
-    val password: String? = null,  // 비공개방일 때만 필요 (숫자 4자리)
+    val progressStartDate: String,
+    val progressEndDate: String,
+    val recruitCount: Int,
+    val password: String? = null,
     val isPublic: Boolean
 )

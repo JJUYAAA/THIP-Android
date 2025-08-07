@@ -9,6 +9,6 @@ interface BookService {
 
     @GET("books")
     suspend fun getBooks(
-        @Query("type") type: String  // "saved" 또는 "joining"
+        @Query("type") type: String
     ): BaseResponse<BookListResponse>
 }

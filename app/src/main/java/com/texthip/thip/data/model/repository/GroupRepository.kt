@@ -38,7 +38,6 @@ class GroupRepository @Inject constructor(
     }
     private var cachedUserName: String? = null
     
-    // UI 장르명 → API 카테고리명 매핑
     private fun mapGenreToApiCategory(genre: String): String {
         return when (genre) {
             "과학·IT" -> "과학/IT"
@@ -47,7 +46,7 @@ class GroupRepository @Inject constructor(
     }
     
     fun getUserName(): Result<String> {
-        val name = cachedUserName ?: "사용자" // 캐시된 이름이 없으면 기본값
+        val name = cachedUserName ?: "사용자"
         return Result.success(name)
     }
     suspend fun getMyJoinedRooms(page: Int): Result<PaginationResult<GroupCardData>> {
@@ -56,7 +55,6 @@ class GroupRepository @Inject constructor(
                 .handleBaseResponse()
                 .mapCatching { data ->
                     data?.let { joinedRoomsDto ->
-                        // API 응답에서 받은 닉네임을 캐시에 저장
                         cachedUserName = joinedRoomsDto.nickname
                         
                         val groups = joinedRoomsDto.roomList.map { dto ->
@@ -120,7 +118,6 @@ class GroupRepository @Inject constructor(
         }
     }
 
-    // 완료된 모임방 API 연동
     suspend fun getMyRoomsByType(type: String?, cursor: String? = null): Result<MyRoomsPaginationResult> {
         return try {
             groupService.getMyRooms(type, cursor)
@@ -174,24 +171,21 @@ class GroupRepository @Inject constructor(
             deadlineDate.contains("일 뒤") -> {
                 deadlineDate.replace("일 뒤", "").trim().toIntOrNull() ?: 0
             }
-            else -> 0 // 파싱할 수 없는 경우 0 반환
+            else -> 0
         }
     }
     
     // TODO: 실제 검색 API 엔드포인트로 대체 필요
     suspend fun getSearchGroups(): Result<List<GroupCardItemRoomData>> {
-        // 현재 더미 데이터 - API 연결 전까지 빈 리스트 반환
         return Result.success(emptyList())
     }
     
-    // 모집중인 모임방 상세 정보 API 연동
     suspend fun getRoomRecruiting(roomId: Int): Result<GroupRoomData> {
         return try {
             groupService.getRoomRecruiting(roomId)
                 .handleBaseResponse()
                 .mapCatching { recruitingDto ->
                     recruitingDto?.let { data ->
-                        // 책 정보 변환
                         val bookData = GroupBookData(
                             title = data.bookTitle,
                             author = data.authorName,
@@ -200,21 +194,19 @@ class GroupRepository @Inject constructor(
                             imageUrl = data.bookImageUrl
                         )
                         
-                        // 추천 모임방 변환
                         val recommendations = data.recommendRooms.map { recommendDto ->
                             GroupCardItemRoomData(
-                                id = recommendDto.roomId, // API에서 제공하는 실제 roomId
+                                id = recommendDto.roomId,
                                 title = recommendDto.roomName,
                                 participants = recommendDto.memberCount,
                                 maxParticipants = recommendDto.recruitCount,
                                 isRecruiting = true,
                                 endDate = extractDaysFromDeadline(recommendDto.recruitEndDate),
                                 imageUrl = recommendDto.roomImageUrl,
-                                genreIndex = 0, // 기본값
+                                genreIndex = 0,
                             )
                         }
                         
-                        // GroupRoomData로 변환
                         GroupRoomData(
                             id = data.roomId,
                             title = data.roomName,
@@ -239,36 +231,33 @@ class GroupRepository @Inject constructor(
         }
     }
     
-    // 버튼 타입 결정 로직
     private fun determineButtonType(isHost: Boolean, isJoining: Boolean): GroupBottomButtonType {
         return when {
-            isHost -> GroupBottomButtonType.CLOSE // 호스트는 모집 마감 가능
-            isJoining -> GroupBottomButtonType.CANCEL // 참여 중이면 취소 가능
-            else -> GroupBottomButtonType.JOIN // 참여하지 않았으면 참여 가능
+            isHost -> GroupBottomButtonType.CLOSE
+            isJoining -> GroupBottomButtonType.CANCEL
+            else -> GroupBottomButtonType.JOIN
         }
     }
 
-    // 모임방 생성 API 연동
     suspend fun createRoom(request: CreateRoomRequest): Result<Int> {
         return try {
             groupService.createRoom(request)
                 .handleBaseResponse()
                 .mapCatching { createRoomResponse ->
-                    createRoomResponse?.roomId ?: throw Exception("방 생성 실패: roomId가 없습니다")
+                    createRoomResponse?.roomId ?: throw Exception("Failed to create room: roomId is null")
                 }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    // 모임방 참여/취소 API 연동
     suspend fun joinOrCancelRoom(roomId: Int, type: String): Result<String> {
         return try {
             val request = RoomJoinRequest(type = type)
             groupService.joinOrCancelRoom(roomId, request)
                 .handleBaseResponse()
                 .mapCatching { response ->
-                    response?.type ?: throw Exception("참여/취소 처리 실패: 응답이 없습니다")
+                    response?.type ?: throw Exception("Failed to join/cancel room: no response")
                 }
         } catch (e: Exception) {
             Result.failure(e)
