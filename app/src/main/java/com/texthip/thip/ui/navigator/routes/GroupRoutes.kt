@@ -27,4 +27,7 @@ sealed class GroupRoutes : Routes() {
 
     @Serializable
     data class Note(val roomId: Int) : GroupRoutes()
+
+    @Serializable
+    data class NoteCreate(val roomId: Int) : GroupRoutes()
 }

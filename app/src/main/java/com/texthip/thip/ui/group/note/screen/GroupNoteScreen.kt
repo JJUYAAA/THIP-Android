@@ -65,6 +65,7 @@ import kotlinx.coroutines.delay
 fun GroupNoteScreen(
     roomId: Int,
     onBackClick: () -> Unit = {},
+    onCreateNoteClick: () -> Unit = {},
     viewModel: GroupNoteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -76,7 +77,8 @@ fun GroupNoteScreen(
     GroupNoteContent(
         uiState = uiState,
         onEvent = viewModel::onEvent,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        onCreateNoteClick = onCreateNoteClick
     )
 }
 
@@ -84,7 +86,8 @@ fun GroupNoteScreen(
 fun GroupNoteContent(
     uiState: GroupNoteUiState,
     onEvent: (GroupNoteEvent) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onCreateNoteClick: () -> Unit
 ) {
     var isCommentBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedPostForComment by remember { mutableStateOf<PostList?>(null) }
@@ -313,7 +316,7 @@ fun GroupNoteContent(
                     FabMenuItem(
                         icon = painterResource(R.drawable.ic_write),
                         text = stringResource(R.string.write_record),
-                        onClick = { }
+                        onClick = onCreateNoteClick
                     ),
                     FabMenuItem(
                         icon = painterResource(R.drawable.ic_vote),
@@ -443,7 +446,8 @@ private fun GroupNoteScreenPreview() {
                 totalEnabled = true
             ),
             onEvent = {},
-            onBackClick = {}
+            onBackClick = {},
+            onCreateNoteClick = {}
         )
     }
 }

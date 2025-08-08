@@ -17,6 +17,7 @@ import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
 import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
+import com.texthip.thip.ui.group.note.screen.GroupNoteCreateScreen
 import com.texthip.thip.ui.group.note.screen.GroupNoteScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomMatesScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
@@ -30,6 +31,7 @@ import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupNote
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupNoteCreate
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomMates
@@ -287,9 +289,22 @@ fun NavGraphBuilder.groupNavigation(
             onBackClick = {
                 navigateBack()
             },
-//            onNoteClick = { noteId ->
-//                // 노트 상세 화면으로 이동
-//            }
+            onCreateNoteClick = {
+                navController.navigateToGroupNoteCreate(1)
+            },
+        )
+    }
+
+     // Group Note Create 화면
+    composable<GroupRoutes.NoteCreate> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.NoteCreate>()
+        val roomId = route.roomId
+
+        GroupNoteCreateScreen(
+            roomId = roomId,
+            onBackClick = {
+                navigateBack()
+            }
         )
     }
 }
