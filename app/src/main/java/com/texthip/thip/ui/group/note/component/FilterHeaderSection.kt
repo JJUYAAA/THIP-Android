@@ -32,7 +32,8 @@ fun FilterHeaderSection(
     onFirstPageChange: (String) -> Unit,
     onLastPageChange: (String) -> Unit,
     onTotalToggle: () -> Unit,
-    onDisabledClick: () -> Unit = { }
+    onDisabledClick: () -> Unit = { },
+    onApplyPageFilter: () -> Unit
 ) {
     var isPageInputVisible by rememberSaveable { mutableStateOf(false) }
     val isPageFiltered = firstPage.isNotBlank() || lastPage.isNotBlank()
@@ -77,6 +78,7 @@ fun FilterHeaderSection(
                 lastPage = lastPage,
                 onLastPageChange = onLastPageChange,
                 onFinishClick = {
+                    onApplyPageFilter()
                     isPageInputVisible = false
                 }
             )
@@ -98,6 +100,7 @@ private fun FilterHeaderSectionPreview() {
         onFirstPageChange = { firstPage = it },
         onLastPageChange = { lastPage = it },
         onTotalToggle = { isTotalSelected = !isTotalSelected },
-        totalEnabled = true
+        totalEnabled = true,
+        onApplyPageFilter = {},
     )
 }

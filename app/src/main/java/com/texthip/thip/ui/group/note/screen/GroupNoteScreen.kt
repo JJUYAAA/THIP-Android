@@ -302,7 +302,8 @@ fun GroupNoteContent(
                         onFirstPageChange = { onEvent(GroupNoteEvent.OnPageStartChanged(it)) },
                         onLastPageChange = { onEvent(GroupNoteEvent.OnPageEndChanged(it)) },
                         onTotalToggle = { onEvent(GroupNoteEvent.OnOverviewToggled(!uiState.isOverview)) },
-                        onDisabledClick = { showToast = true }
+                        onDisabledClick = { showToast = true },
+                        onApplyPageFilter = { onEvent(GroupNoteEvent.ApplyPageFilter) }
                     )
                 }
             }

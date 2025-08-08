@@ -73,7 +73,13 @@ class GroupNoteViewModel @Inject constructor(
             is GroupNoteEvent.OnPageStartChanged -> _uiState.update { it.copy(pageStart = event.page) }
             is GroupNoteEvent.OnPageEndChanged -> _uiState.update { it.copy(pageEnd = event.page) }
             is GroupNoteEvent.OnOverviewToggled -> _uiState.update { it.copy(isOverview = event.isSelected) }
-            GroupNoteEvent.ApplyPageFilter -> loadPosts(isRefresh = true)
+            GroupNoteEvent.ApplyPageFilter -> {
+                val currentState = _uiState.value
+                val isFilterActive = currentState.pageStart.isNotBlank() || currentState.pageEnd.isNotBlank()
+
+                _uiState.update { it.copy(isPageFilter = isFilterActive) }
+                loadPosts(isRefresh = true)
+            }
             GroupNoteEvent.LoadMorePosts -> loadPosts(isRefresh = false)
         }
     }
