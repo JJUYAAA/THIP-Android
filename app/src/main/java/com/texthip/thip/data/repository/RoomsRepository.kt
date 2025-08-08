@@ -1,6 +1,7 @@
 package com.texthip.thip.data.repository
 
 import com.texthip.thip.data.model.base.handleBaseResponse
+import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.service.RoomsService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,6 +45,22 @@ class RoomsRepository @Inject constructor(
             isOverview = isOverview,
             isPageFilter = isPageFilter,
             cursor = cursor
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun postRoomsRecord(
+        roomId: Int,
+        content: String,
+        isOverview: Boolean = false,
+        page: Int = 0
+    ) = runCatching {
+        roomsService.postRoomsRecord(
+            roomId = roomId,
+            request = RoomsRecordRequest(
+                page = page,
+                isOverview = isOverview,
+                content = content
+            )
         ).handleBaseResponse().getOrThrow()
     }
 }
