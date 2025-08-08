@@ -9,30 +9,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.data.model.rooms.response.CurrentVote
+import com.texthip.thip.data.model.rooms.response.VoteItem
 import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.cards.CardChat
 import com.texthip.thip.ui.common.cards.CardNote
 import com.texthip.thip.ui.common.cards.CardVote
-import com.texthip.thip.ui.group.room.mock.GroupRoomBodyData
-import com.texthip.thip.ui.group.room.mock.mockVoteData
 
 @Composable
 fun GroupRoomBody(
     modifier: Modifier = Modifier,
-    data: GroupRoomBodyData
+    bookTitle: String,
+    authorName: String,
+    currentPage: Int,
+    userPercentage: Double,
+    currentVotes: List<CurrentVote>
 ) {
     Column(
         modifier = modifier.padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         ActionBookButton(
-            bookTitle = data.bookTitle,
-            bookAuthor = data.bookAuthor
+            bookTitle = bookTitle,
+            bookAuthor = authorName
         ) {}
 
         CardNote(
-            currentPage = data.currentPage,
-            percentage = data.percentage,
+            currentPage = currentPage,
+            percentage = userPercentage
         ) {}
 
         CardChat(
@@ -41,7 +45,7 @@ fun GroupRoomBody(
         ) {}
 
         CardVote(
-            voteData = data.voteList
+            voteData = currentVotes
         )
     }
 }
@@ -50,12 +54,30 @@ fun GroupRoomBody(
 @Composable
 private fun GroupRoomBodyPreview() {
     GroupRoomBody(
-        data = GroupRoomBodyData(
-            bookTitle = "호르몬 체인지",
-            bookAuthor = "최정화",
-            currentPage = 100,
-            percentage = 50,
-            voteList = mockVoteData
+        bookTitle = "책 제목",
+        authorName = "저자 이름",
+        currentPage = 100,
+        userPercentage = 50.0,
+        currentVotes =  listOf(
+            CurrentVote(
+                content = "3연에 나오는 심장은 무엇을 의미하는 걸까요?",
+                page = 12,
+                isOverview = false,
+                voteItems = listOf(
+                    VoteItem("사랑"),
+                    VoteItem("희생"),
+                    VoteItem("고통"),
+                )
+            ),
+            CurrentVote(
+                content = "가장 인상 깊었던 구절은 무엇인가요?",
+                page = 25,
+                isOverview = false,
+                voteItems = listOf(
+                    VoteItem("1연 1행"),
+                    VoteItem("2연 3행"),
+                )
+            )
         )
     )
 }

@@ -55,4 +55,7 @@ fun NavHostController.navigateToGroupRoom(roomId: Int) {
     navigate(GroupRoutes.Room(roomId))
 }
 
-
+// 독서메이트 화면으로 이동
+fun NavHostController.navigateToGroupRoomMates(roomId: Int) {
+    navigate(GroupRoutes.RoomMates(roomId))
+}

@@ -48,6 +48,8 @@ import com.texthip.thip.ui.common.forms.CommentTextField
 import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.group.note.component.CommentItem
+import com.texthip.thip.ui.group.note.component.ReplyItem
 import com.texthip.thip.ui.feed.component.ImageViewerModal
 import com.texthip.thip.ui.feed.mock.FeedItemType
 import com.texthip.thip.ui.group.note.component.CommentItem
@@ -65,6 +67,8 @@ import com.texthip.thip.ui.group.note.mock.ReplyItem as FeedReplyItem
 fun FeedCommentScreen(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
+    bookImage: Painter? = null,
+    profileImage: String,
     feedType: FeedItemType,
     profileImage: Painter? = null,
     currentUserId: Int,
@@ -531,6 +535,11 @@ private fun FeedCommentScreenPrev() {
                 R.drawable.bookcover_sample,
                 R.drawable.bookcover_sample
             ),
+            bookImage = painterResource(R.drawable.bookcover_sample),
+            profileImage = "https://example.com/image1.jpg",
+            onLikeClick = {},
+            onCommentInputChange = {},
+            onSendClick = {},
             tags = listOf("에세이", "문학", "힐링")
         )
         val commentList = remember { mutableStateListOf<FeedCommentItem>() }

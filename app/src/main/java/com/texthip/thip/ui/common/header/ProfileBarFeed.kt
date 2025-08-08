@@ -88,7 +88,7 @@ fun ProfileBarFeedPreview() {
             profileImage = null,
             nickname = "user.01",
             genreName = "칭호칭호",
-            genreColor = colors.Orange,
+            genreColor = colors.SocialScience,
             date = "2025.01.12"
         )
     }
