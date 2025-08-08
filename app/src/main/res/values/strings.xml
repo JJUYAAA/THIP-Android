@@ -222,6 +222,7 @@
     <string name="no_comment_subtext">첫번째 댓글을 남겨보세요</string>
     <string name="pin_modal_title">이 기록을 피드에 핀할까요?</string>
     <string name="pin_modal_content">핀하면 내 피드에 글을 옮길 수 있어요.</string>
+    <string name="sort_comment">댓글 많은 순</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>
@@ -337,8 +338,8 @@
     <string name="search_watch_feed">피드 글 둘러보기</string>
     <string name="search_no_feed_comment_1">이 책으로 작성된 피드가 없어요.</string>
     <string name="search_no_feed_comment_2">첫번째 피드를 작성해보세요!</string>
-    <string name="search_filter_popular">인기순</string>
-    <string name="search_filter_latest">최신순</string>
+    <string name="sort_like">인기순</string>
+    <string name="sort_latest">최신순</string>
     <string name="search_book_comment">소개</string>
     <string name="search_book_author">%1$s 저 · %2$s</string>
     <string name="group_filter_popular">인기순</string>

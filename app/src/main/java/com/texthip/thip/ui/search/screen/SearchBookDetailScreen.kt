@@ -65,8 +65,8 @@ fun SearchBookDetailScreen(
     var selectedFilterOption by remember { mutableIntStateOf(0) }
 
     val filterOptions = listOf(
-        stringResource(R.string.search_filter_popular),
-        stringResource(R.string.search_filter_latest)
+        stringResource(R.string.sort_like),
+        stringResource(R.string.sort_latest)
     )
 
     // 알림 5초간 노출

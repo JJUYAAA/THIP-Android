@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.texthip.thip.ui.group.note.mock.VoteItem
+import com.texthip.thip.data.model.rooms.response.VoteItems
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -33,7 +33,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun GroupVoteButton(
     modifier: Modifier = Modifier,
-    voteItems: List<VoteItem>,
+    voteItems: List<VoteItems>,
     selectedIndex: Int?, // 선택한 인덱스
     hasVoted: Boolean = false, // 투표 여부
     onOptionSelected: (Int?) -> Unit
@@ -123,9 +123,9 @@ private fun GroupVoteButtonPreview() {
     var voteItems by remember {
         mutableStateOf(
             listOf(
-                VoteItem(1, "밥", 25, false),
-                VoteItem(2, "국수", 35, false),
-                VoteItem(3, "고기", 40, false)
+                VoteItems(1, "밥", 25, false),
+                VoteItems(2, "국수", 35, false),
+                VoteItems(3, "고기", 40, false)
             )
         )
     }
