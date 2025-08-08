@@ -2,20 +2,21 @@ package com.texthip.thip.ui.mypage.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.texthip.thip.ui.mypage.mock.BookItem
+import com.texthip.thip.ui.mypage.mock.FeedItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class SavedBookViewModel : ViewModel() {
+open class SavedBookViewModel : ViewModel() {
 
-    private val _bookList = MutableStateFlow<List<BookItem>>(emptyList())
-    val bookList: StateFlow<List<BookItem>> = _bookList
+    private val _books = MutableStateFlow<List<BookItem>>(emptyList())
+    open val bookList: StateFlow<List<BookItem>> = _books
 
     init {
         loadMockBooks()
     }
 
-    private fun loadMockBooks() {
-        _bookList.value = listOf(
+    open fun loadMockBooks() {
+        _books.value = listOf(
             BookItem(
                 id = 1,
                 title = "이기적 유전자",
@@ -83,9 +84,25 @@ class SavedBookViewModel : ViewModel() {
         )
     }
 
+    open val books: StateFlow<List<BookItem>> = _books
+
     fun toggleBookmark(id: Int) {
-        _bookList.value = _bookList.value.map {
+        _books.value = _books.value.map {
             if (it.id == id) it.copy(isSaved = !it.isSaved) else it
         }
     }
+}
+
+class EmptySavedBookViewModel : SavedBookViewModel() {
+    init {
+        //
+    }
+
+    override fun loadMockBooks() {
+    }
+
+    private val _books = MutableStateFlow<List<BookItem>>(emptyList())
+
+    override val books: StateFlow<List<BookItem>> = _books
+
 }
