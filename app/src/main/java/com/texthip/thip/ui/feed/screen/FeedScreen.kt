@@ -252,7 +252,7 @@ fun FeedScreen(
 @Composable
 private fun FeedScreenPreview() {
     ThipTheme {
-        /*val mockFeeds = List(5) {
+        val mockFeeds = List(5) {
             FeedItem(
                 id = it + 1,
                 userProfileImage = R.drawable.character_literature,
@@ -269,15 +269,31 @@ private fun FeedScreenPreview() {
                 isLocked = it % 2 == 0,
                 imageUrls = listOf(R.drawable.bookcover_sample)
             )
-        }*/
-        /*val mockFollowerImages = listOf(
+        }
+        val mockFollowerImages = listOf(
             "https://example.com/image1.jpg",
             "https://example.com/image2.jpg",
             "https://example.com/image3.jpg",
             "https://example.com/image4.jpg",
             "https://example.com/image5.jpg"
-        )*/
+        )
+        ThipTheme {
+            FeedScreen(
+                nickname = "ThipUser01",
+                userRole = "문학 칭호",
+                selectedTabIndex = 1,
+                feeds = mockFeeds,
+                totalFeedCount = mockFeeds.size,
+                followerProfileImageUrls = mockFollowerImages
+            )
+        }
+    }
+}
 
+@Preview(showBackground = true)
+@Composable
+private fun FeedScreenWithoutDataPreview() {
+    ThipTheme {
         val mockFeeds: List<FeedItem> = emptyList()
         val mockFollowerImages = emptyList<String>()
 
