@@ -125,7 +125,6 @@ fun SubscriptionScreen(
 
     Column(
         Modifier
-            .background(colors.Black)
             .fillMaxSize()
     ) {
         DefaultTopAppBar(
