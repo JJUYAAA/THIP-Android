@@ -59,3 +59,8 @@ fun NavHostController.navigateToGroupRoom(roomId: Int) {
 fun NavHostController.navigateToGroupRoomMates(roomId: Int) {
     navigate(GroupRoutes.RoomMates(roomId))
 }
+
+// 기록장 화면으로 이동
+fun NavHostController.navigateToGroupNote(roomId: Int) {
+    navigate(GroupRoutes.Note(roomId))
+}

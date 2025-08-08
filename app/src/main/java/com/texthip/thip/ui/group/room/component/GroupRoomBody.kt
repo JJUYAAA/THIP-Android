@@ -23,7 +23,8 @@ fun GroupRoomBody(
     authorName: String,
     currentPage: Int,
     userPercentage: Double,
-    currentVotes: List<CurrentVote>
+    currentVotes: List<CurrentVote>,
+    onNavigateToNote: () -> Unit = {},
 ) {
     Column(
         modifier = modifier.padding(horizontal = 20.dp),
@@ -37,7 +38,9 @@ fun GroupRoomBody(
         CardNote(
             currentPage = currentPage,
             percentage = userPercentage
-        ) {}
+        ) {
+            onNavigateToNote()
+        }
 
         CardChat(
             title = stringResource(R.string.group_room_chat),

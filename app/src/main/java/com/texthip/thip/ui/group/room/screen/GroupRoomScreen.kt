@@ -50,6 +50,7 @@ fun GroupRoomScreen(
     roomId: Int,
     onBackClick: () -> Unit = {},
     onNavigateToMates: () -> Unit = {},
+    onNavigateToNote: () -> Unit = {},
     viewModel: GroupRoomViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -72,7 +73,8 @@ fun GroupRoomScreen(
             GroupRoomContent(
                 roomDetails = state.roomsPlaying,
                 onBackClick = onBackClick,
-                onNavigateToMates = onNavigateToMates
+                onNavigateToMates = onNavigateToMates,
+                onNavigateToNote = onNavigateToNote
             )
         }
 
@@ -89,7 +91,8 @@ fun GroupRoomScreen(
 fun GroupRoomContent(
     roomDetails: RoomsPlayingResponse,
     onBackClick: () -> Unit = {},
-    onNavigateToMates: () -> Unit = {}
+    onNavigateToMates: () -> Unit = {},
+    onNavigateToNote: () -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
 
@@ -170,7 +173,8 @@ fun GroupRoomContent(
                     authorName = roomDetails.authorName,
                     currentPage = roomDetails.currentPage,
                     userPercentage = roomDetails.userPercentage,
-                    currentVotes = roomDetails.currentVotes
+                    currentVotes = roomDetails.currentVotes,
+                    onNavigateToNote = onNavigateToNote
                 )
             }
         }
