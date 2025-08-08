@@ -74,25 +74,27 @@ fun FeedSubscribeBarlist(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            followerProfileImageUrls.take(5).reversed().forEachIndexed { index, imageUrl ->
-                AsyncImage(
-                    model = imageUrl,
+            if (followerProfileImageUrls.isNotEmpty()) {
+                followerProfileImageUrls.take(5).reversed().forEachIndexed { index, imageUrl ->
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(Color.LightGray)
+                    )
+
+                    val isLast = index == followerProfileImageUrls.take(5).lastIndex
+                    Spacer(modifier = Modifier.width(if (isLast) 15.dp else 4.dp))
+                }
+
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_chevron),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(Color.LightGray)
+                    tint = colors.Grey
                 )
-
-                val isLast = index == followerProfileImageUrls.take(5).lastIndex
-                Spacer(modifier = Modifier.width(if (isLast) 15.dp else 4.dp))
             }
-
-            Icon(
-                painter = painterResource(id = R.drawable.ic_chevron),
-                contentDescription = null,
-                tint = colors.Grey
-            )
         }
     }
 }
