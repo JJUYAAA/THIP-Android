@@ -176,6 +176,7 @@
     <string name="report">신고하기</string>
     <string name="group_room_no_chat_title">아직 대화가 없어요</string>
     <string name="group_room_no_chat_content">첫번째 한마디를 남겨보세요!</string>
+    <string name="numbering">%d. %s</string>
 
     <!--    group note    -->
     <string name="tilde">~</string>

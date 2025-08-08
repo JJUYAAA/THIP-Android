@@ -101,7 +101,12 @@ fun CardVote(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(
-                                    text = "${index + 1}. ${item.itemName}",
+//                                    text = "${index + 1}. ${item.itemName}",
+                                    text = stringResource(
+                                        R.string.numbering,
+                                        index + 1,
+                                        item.itemName
+                                    ),
                                     color = colors.White,
                                     style = typography.feedcopy_r400_s14_h20
                                 )
