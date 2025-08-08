@@ -24,4 +24,26 @@ class RoomsRepository @Inject constructor(
             roomId = roomId
         ).handleBaseResponse().getOrThrow()
     }
+
+    suspend fun getRoomsPosts(
+        roomId: Int,
+        type: String = "group",
+        sort: String? = "latest",
+        pageStart: Int? = null,
+        pageEnd: Int? = null,
+        isOverview: Boolean? = false,
+        isPageFilter: Boolean? = false,
+        cursor: String? = null,
+    ) = runCatching {
+        roomsService.getRoomsPosts(
+            roomId = roomId,
+            type = type,
+            sort = sort,
+            pageStart = pageStart,
+            pageEnd = pageEnd,
+            isOverview = isOverview,
+            isPageFilter = isPageFilter,
+            cursor = cursor
+        ).handleBaseResponse().getOrThrow()
+    }
 }
