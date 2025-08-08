@@ -96,7 +96,7 @@ fun SearchPeopleScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             DefaultTopAppBar(
-                title = stringResource(R.string.group_room_search_topappbar),
+                title = stringResource(R.string.search_user),
                 onLeftClick = {},
             )
             Column(
@@ -110,7 +110,7 @@ fun SearchPeopleScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester),
-                    hint = stringResource(R.string.group_room_search_hint),
+                    hint = stringResource(R.string.search_user_you_look_for),
                     text = searchText,
                     onValueChange = {
                         searchText = it

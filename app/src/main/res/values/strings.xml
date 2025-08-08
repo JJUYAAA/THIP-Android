@@ -328,6 +328,9 @@
     <string name="delete_feed_dialog_title">이 피드를 삭제하시겠어요?</string>
     <string name="delete_feed_dialog_description">삭제 후에는 되돌릴 수 없어요.</string>
     <string name="no_user_you_look_for">찾는 사용자가 없어요</string>
+    <string name="search_user">사용자 찾기</string>
+    <string name="search_user_you_look_for">내가 찾는 사용자를 검색해보세요.</string>
+
 
     <!--    book search   -->
     <string name="book_popular_search">가장 많이 검색된 책</string>
