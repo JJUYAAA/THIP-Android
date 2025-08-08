@@ -6,7 +6,7 @@ import com.texthip.thip.ui.mypage.mock.FeedItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class SavedFeedViewModel: ViewModel() {
+open class SavedFeedViewModel: ViewModel() {
     private val _feeds = MutableStateFlow(
         listOf(
             FeedItem(
@@ -86,7 +86,9 @@ class SavedFeedViewModel: ViewModel() {
 
         )
     )
-    val feeds: StateFlow<List<FeedItem>> = _feeds
+
+
+    open val feeds: StateFlow<List<FeedItem>> = _feeds
 
     fun toggleBookmark(id: Int) {
         _feeds.value = _feeds.value.map {
@@ -99,4 +101,12 @@ class SavedFeedViewModel: ViewModel() {
             if (it.id == id) it.copy(isLiked = !it.isLiked) else it
         }
     }
+}
+
+class EmptySavedFeedViewModel : SavedFeedViewModel() {
+
+    private val _feeds = MutableStateFlow<List<FeedItem>>(emptyList())
+
+    override val feeds: StateFlow<List<FeedItem>> = _feeds
+
 }

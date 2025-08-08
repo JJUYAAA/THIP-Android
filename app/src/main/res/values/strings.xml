@@ -125,6 +125,10 @@
     <string name="customer_center_email">texthip2025@gmail.com</string>
     <string name="customer_center_description">이메일로 닉네임과 문의사항을 보내주시면\n빠른 시일 내로 해결해 드릴게요!</string>
 
+    <string name="no_saved_book">아직 저장한 책이 없어요</string>
+    <string name="no_saved_feed">아직 저장한 피드가 없어요</string>
+    <string name="do_thip_book">마음에 드는 책을 THIP 해보세요!</string>
+    <string name="do_thip_feed">마음에 드는 피드를 THIP 해보세요!</string>
 
     <!--    my room 컴포넌트    -->
     <string name="on_going">진행중</string>
