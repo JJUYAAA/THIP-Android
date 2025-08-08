@@ -48,7 +48,7 @@ fun LoginScreen() {
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = Purple)) {
-                    append(stringResource(R.string.thip))
+                    append(stringResource(R.string.splash_thip))
                 }
                 append(stringResource(R.string.splash_ment))
             },

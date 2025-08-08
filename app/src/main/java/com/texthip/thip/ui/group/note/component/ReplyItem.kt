@@ -42,7 +42,7 @@ fun ReplyItem(
         Icon(
             painter = painterResource(R.drawable.ic_reply),
             contentDescription = null,
-            tint = Color.White
+            tint = colors.White
         )
 
         Column(

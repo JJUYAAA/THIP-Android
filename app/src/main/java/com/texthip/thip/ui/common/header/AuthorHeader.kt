@@ -11,15 +11,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.OutlinedButton
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -34,6 +38,8 @@ fun AuthorHeader(
     buttonText: String = "",
     buttonWidth: Dp = 60.dp,
     showButton: Boolean = true,
+    showThipNum: Boolean = false,
+    thipNum: Int? = null,
     profileImageSize: Dp = 54.dp,
     onButtonClick: () -> Unit = {}
 ) {
@@ -91,6 +97,19 @@ fun AuthorHeader(
             onClick = onButtonClick
             )
         }
+        if(showThipNum && thipNum!=null){
+            Text(
+                text = stringResource(R.string.thip_num,thipNum),
+                style = typography.view_r400_s11_h20,
+                color = colors.White
+            )
+            Spacer(modifier = Modifier.width(18.dp))
+            Icon(
+                painter = painterResource(R.drawable.ic_chevron),
+                contentDescription = null,
+                tint = colors.White,
+            )
+        }
     }
 }
 
@@ -110,8 +129,9 @@ fun PreviewAuthorHeader() {
                 profileImage = null,
                 nickname = "열자자제한열열자제한",
                 badgeText = "칭호칭호칭호",
-                buttonWidth = 60.dp,
-                showButton = false
+                showButton = false,
+                showThipNum = true,
+                thipNum = 10
             )
         }
     }

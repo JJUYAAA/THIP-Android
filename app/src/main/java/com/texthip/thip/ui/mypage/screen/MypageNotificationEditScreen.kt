@@ -25,6 +25,7 @@ import androidx.compose.ui.zIndex
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
 import com.texthip.thip.ui.common.modal.ToastWithDate
+import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -65,11 +66,9 @@ fun NotificationScreen() {
                 .background(colors.Black)
                 .fillMaxSize()
         ) {
-            InputTopAppBar(
+            DefaultTopAppBar(
                 title = stringResource(R.string.notification_settings),
-                isRightButtonEnabled = true,
                 onLeftClick = {},
-                onRightClick = {}
             )
             Spacer(modifier = Modifier.height(40.dp))
             Column(
