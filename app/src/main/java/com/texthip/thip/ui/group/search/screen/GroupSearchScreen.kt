@@ -113,8 +113,7 @@ fun GroupSearchScreen(
             if (!isSearched) emptyList()
             else {
                 val filtered = roomList.filter { room ->
-                    (searchText.isBlank() || room.title.contains(searchText, ignoreCase = true)) &&
-                            (selectedGenreIndex == -1 || room.genreIndex == selectedGenreIndex)
+                    (searchText.isBlank() || room.title.contains(searchText, ignoreCase = true))
                 }
                 when (selectedSortOptionIndex) {
                     0 -> filtered.sortedBy { it.endDate }             // 마감임박순
@@ -250,7 +249,6 @@ fun PreviewGroupSearchScreen() {
                     isRecruiting = true,
                     endDate = 3,
                     imageUrl = null,
-                    genreIndex = 0,
                     isSecret = false
                 ),
                 GroupCardItemRoomData(
@@ -261,7 +259,6 @@ fun PreviewGroupSearchScreen() {
                     isRecruiting = true,
                     endDate = 7,
                     imageUrl = null,
-                    genreIndex = 1,
                     isSecret = true
                 ),
                 GroupCardItemRoomData(
@@ -272,7 +269,6 @@ fun PreviewGroupSearchScreen() {
                     isRecruiting = true,
                     endDate = 5,
                     imageUrl = null,
-                    genreIndex = 2,
                     isSecret = true
                 )
             )

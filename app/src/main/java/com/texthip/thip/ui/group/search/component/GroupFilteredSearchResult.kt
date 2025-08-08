@@ -122,7 +122,6 @@ fun GroupFilteredSearchResultPreview() {
                         isRecruiting = true,
                         endDate = 7,
                         imageUrl = null,
-                        genreIndex = 1,
                         isSecret = false
                     ), GroupCardItemRoomData(
                         id = 2,
@@ -132,7 +131,6 @@ fun GroupFilteredSearchResultPreview() {
                         isRecruiting = false,
                         endDate = 3,
                         imageUrl = null,
-                        genreIndex = 1,
                         isSecret = true
                     )
                 )

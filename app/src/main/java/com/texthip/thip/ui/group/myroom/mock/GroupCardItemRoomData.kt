@@ -8,7 +8,6 @@ data class GroupCardItemRoomData(
     val isRecruiting: Boolean,
     val endDate: Int? = null, // 남은 일 수
     val imageUrl: String? = null, // API에서 받은 이미지 URL
-    val genreIndex: Int, // 장르 인덱스
     val isSecret: Boolean = false
 )
 

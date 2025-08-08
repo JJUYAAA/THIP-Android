@@ -37,7 +37,6 @@ class GroupDataMapper @Inject constructor() {
             isRecruiting = true,
             endDate = daysLeft,
             imageUrl = dto.bookImageUrl,
-            genreIndex = 0,
             isSecret = false
         )
     }
@@ -82,8 +81,7 @@ class GroupDataMapper @Inject constructor() {
             maxParticipants = dto.recruitCount,
             isRecruiting = true,
             endDate = extractDaysFromDeadline(dto.recruitEndDate),
-            imageUrl = dto.roomImageUrl,
-            genreIndex = 0,
+            imageUrl = dto.roomImageUrl
         )
     }
     

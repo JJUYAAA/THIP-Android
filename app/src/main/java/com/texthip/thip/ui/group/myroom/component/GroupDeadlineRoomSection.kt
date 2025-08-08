@@ -238,7 +238,6 @@ fun PreviewGroupRoomPagerSection() {
                 maxParticipants = 30,
                 isRecruiting = true,
                 endDate = 3,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 2,
@@ -247,7 +246,6 @@ fun PreviewGroupRoomPagerSection() {
                 maxParticipants = 20,
                 isRecruiting = true,
                 endDate = 2,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 3,
@@ -256,7 +254,6 @@ fun PreviewGroupRoomPagerSection() {
                 maxParticipants = 30,
                 isRecruiting = true,
                 endDate = 3,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 4,
@@ -265,7 +262,6 @@ fun PreviewGroupRoomPagerSection() {
                 maxParticipants = 30,
                 isRecruiting = true,
                 endDate = 3,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 5,
@@ -274,7 +270,6 @@ fun PreviewGroupRoomPagerSection() {
                 maxParticipants = 20,
                 isRecruiting = true,
                 endDate = 1,
-                genreIndex = 1
             )
         )
 
@@ -287,7 +282,6 @@ fun PreviewGroupRoomPagerSection() {
                 maxParticipants = 30,
                 isRecruiting = true,
                 endDate = 7,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 7,
@@ -296,7 +290,6 @@ fun PreviewGroupRoomPagerSection() {
                 maxParticipants = 25,
                 isRecruiting = false,
                 endDate = 5,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 8,
@@ -305,7 +298,6 @@ fun PreviewGroupRoomPagerSection() {
                 maxParticipants = 25,
                 isRecruiting = true,
                 endDate = 10,
-                genreIndex = 1
             )
         )
 
@@ -318,7 +310,6 @@ fun PreviewGroupRoomPagerSection() {
                 maxParticipants = 30,
                 isRecruiting = false,
                 endDate = 14,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 10,
@@ -327,7 +318,6 @@ fun PreviewGroupRoomPagerSection() {
                 maxParticipants = 20,
                 isRecruiting = true,
                 endDate = 8,
-                genreIndex = 2
             ),
             GroupCardItemRoomData(
                 id = 11,
@@ -336,7 +326,6 @@ fun PreviewGroupRoomPagerSection() {
                 maxParticipants = 20,
                 isRecruiting = true,
                 endDate = 12,
-                genreIndex = 3
             )
         )
 
@@ -383,7 +372,6 @@ fun PreviewGroupRoomPagerSectionEmptyGenre() {
                 maxParticipants = 30,
                 isRecruiting = true,
                 endDate = 3,
-                genreIndex = 0 // 문학 장르만
             )
         )
 

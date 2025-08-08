@@ -53,7 +53,12 @@ class GroupRepository @Inject constructor(
                     currentPage = joinedRoomsDto.page,
                     nickname = joinedRoomsDto.nickname
                 )
-            }
+            } ?: PaginationResult(
+                data = emptyList(),
+                hasMore = false,
+                currentPage = page,
+                nickname = ""
+            )
     }
 
     /** 카테고리별 모임방 섹션 조회 (마감임박/인기) */
@@ -83,7 +88,7 @@ class GroupRepository @Inject constructor(
                         genres = genreManager.getGenres()
                     )
                 )
-            }.orEmpty()
+            } ?: emptyList()
     }
 
     /** 타입별 내 모임방 목록 조회 */
@@ -91,7 +96,7 @@ class GroupRepository @Inject constructor(
         groupService.getMyRooms(type, cursor)
             .handleBaseResponse()
             .getOrThrow()
-            ?.let { data ->
+?.let { data ->
                 val myRoomCards = data.roomList.map { room ->
                     groupDataMapper.toMyRoomCardData(room)
                 }
@@ -101,25 +106,29 @@ class GroupRepository @Inject constructor(
                     nextCursor = data.nextCursor,
                     isLast = data.isLast
                 )
-            }
+            } ?: MyRoomsPaginationResult(
+                data = emptyList(),
+                nextCursor = null,
+                isLast = true
+            )
     }
     
     /** 모집중인 모임방 상세 정보 조회 */
     suspend fun getRoomRecruiting(roomId: Int) = runCatching {
         groupService.getRoomRecruiting(roomId)
             .handleBaseResponse()
-            .getOrThrow()
-            ?.let { data ->
+            .getOrThrow()!!
+            .let { data ->
                 groupDataMapper.toGroupRoomData(data)
-            } ?: throw Exception("No recruiting data found for room $roomId")
+            }
     }
 
     /** 새 모임방 생성 */
     suspend fun createRoom(request: CreateRoomRequest) = runCatching {
         groupService.createRoom(request)
             .handleBaseResponse()
-            .getOrThrow()
-            ?.roomId ?: throw Exception("Failed to create room: roomId is null")
+            .getOrThrow()!!
+            .roomId
     }
 
     /** 모임방 참여 또는 취소 */
@@ -127,7 +136,7 @@ class GroupRepository @Inject constructor(
         val request = RoomJoinRequest(type = type)
         groupService.joinOrCancelRoom(roomId, request)
             .handleBaseResponse()
-            .getOrThrow()
-            ?.type ?: throw Exception("Failed to join/cancel room: no response")
+            .getOrThrow()!!
+            .type
     }
 }

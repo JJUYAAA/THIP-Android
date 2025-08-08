@@ -452,7 +452,6 @@ fun GroupRoomRecruitScreenPreview() {
                 maxParticipants = 25,
                 isRecruiting = true,
                 endDate = 2,
-                genreIndex = 0
             )
         )
 
