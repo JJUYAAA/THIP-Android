@@ -74,8 +74,9 @@ fun FeedCommentScreen(
     onLikeClick: () -> Unit = {},
     onCommentInputChange: (String) -> Unit = {},
     onSendClick: () -> Unit = {},
-    commentList: SnapshotStateList<FeedCommentItem> = remember { mutableStateListOf() }
+    commentList: SnapshotStateList<FeedCommentItem>? = null
 ) {
+    val CommentList = commentList ?: remember { mutableStateListOf<FeedCommentItem>() }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -193,7 +194,7 @@ fun FeedCommentScreen(
                 }
             }
             //댓글이 없는 경우
-            if (commentList.isEmpty()) {
+            if (CommentList.isEmpty()) {
                 item {
                     Column(
                         modifier = Modifier
@@ -216,7 +217,7 @@ fun FeedCommentScreen(
                     }
                 }
             } else {
-                commentList.forEachIndexed { index, commentItem ->
+                CommentList.forEachIndexed { index, commentItem ->
                     item {
                         Spacer(modifier = Modifier.height(40.dp))
                         Column(
@@ -250,7 +251,10 @@ fun FeedCommentScreen(
                                     val isMyComment = commentItem.userId == currentUserId
                                     Box(
                                         modifier = Modifier
-                                            .background(Color.Transparent, RoundedCornerShape(12.dp))
+                                            .background(
+                                                Color.Transparent,
+                                                RoundedCornerShape(12.dp)
+                                            )
                                             .border(
                                                 width = 1.dp,
                                                 color = colors.White,
@@ -341,7 +345,7 @@ fun FeedCommentScreen(
                         }
 
 
-                        if (index == commentList.lastIndex) {
+                        if (index == CommentList.lastIndex) {
                             Spacer(modifier = Modifier.height(40.dp))
                         }
                     }
@@ -362,9 +366,9 @@ fun FeedCommentScreen(
                 if (commentInput.value.isNotBlank()) {
                     val replyTargetNickname = replyTo.value
                     if (replyTargetNickname == null) {
-                        commentList.add(
+                        CommentList.add(
                             FeedCommentItem(
-                                commentId = commentList.size + 1,
+                                commentId = CommentList.size + 1,
                                 userId = currentUserId,
                                 nickName = currentUserName,
                                 genreName = currentUserGenre,
@@ -379,9 +383,9 @@ fun FeedCommentScreen(
                         )
                     } else {
                         val parentIndex =
-                            commentList.indexOfFirst { it.nickName == replyTargetNickname }
+                            CommentList.indexOfFirst { it.nickName == replyTargetNickname }
                         if (parentIndex != -1) {
-                            val parentComment = commentList[parentIndex]
+                            val parentComment = CommentList[parentIndex]
                             val newReply = FeedReplyItem(
                                 replyId = parentComment.replyList.size + 1,
                                 userId = currentUserId,
@@ -395,7 +399,7 @@ fun FeedCommentScreen(
                                 isLiked = false,
                                 likeCount = 0
                             )
-                            commentList[parentIndex] =
+                            CommentList[parentIndex] =
                                 parentComment.copy(replyList = parentComment.replyList + newReply)
                         }
                     }
