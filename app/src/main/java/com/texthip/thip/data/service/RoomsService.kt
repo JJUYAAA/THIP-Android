@@ -1,10 +1,14 @@
 package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
+import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsResponse
+import com.texthip.thip.data.model.rooms.response.RoomsRecordResponse
 import com.texthip.thip.data.model.rooms.response.RoomsUsersResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -30,4 +34,10 @@ interface RoomsService {
         @Query("isPageFilter") isPageFilter: Boolean? = false,
         @Query("cursor") cursor: String? = null,
     ): BaseResponse<RoomsPostsResponse>
+
+    @POST("rooms/{roomId}/record")
+    suspend fun postRoomsRecord(
+        @Path("roomId") roomId: Int,
+        @Body request: RoomsRecordRequest
+    ): BaseResponse<RoomsRecordResponse>
 }
