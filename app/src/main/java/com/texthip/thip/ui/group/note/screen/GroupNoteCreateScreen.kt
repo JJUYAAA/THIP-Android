@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.positionInRoot
@@ -20,22 +23,50 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.modal.ArrowPosition
 import com.texthip.thip.ui.common.modal.PopupModal
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.group.note.component.OpinionInputSection
 import com.texthip.thip.ui.group.note.component.PageInputSection
+import com.texthip.thip.ui.group.note.viewmodel.GroupNoteCreateEvent
+import com.texthip.thip.ui.group.note.viewmodel.GroupNoteCreateUiState
+import com.texthip.thip.ui.group.note.viewmodel.GroupNoteCreateViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
-fun GroupNoteCreateScreen() {
-    var pageText by rememberSaveable { mutableStateOf("") }
-    var isGeneralReview by rememberSaveable { mutableStateOf(false) }
-    var opinionText by rememberSaveable { mutableStateOf("") }
+fun GroupNoteCreateScreen(
+    roomId: Int,
+    onBackClick: () -> Unit,
+    viewModel: GroupNoteCreateViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val isFormFilled = pageText.isNotBlank() && opinionText.isNotBlank()
+    LaunchedEffect(key1 = roomId) {
+        viewModel.initialize(roomId)
+    }
 
+    LaunchedEffect(key1 = uiState.isSuccess) {
+        if (uiState.isSuccess) {
+            onBackClick()
+        }
+    }
+
+    GroupNoteCreateContent(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        onBackClick = onBackClick
+    )
+}
+
+@Composable
+fun GroupNoteCreateContent(
+    uiState: GroupNoteCreateUiState,
+    onEvent: (GroupNoteCreateEvent) -> Unit,
+    onBackClick: () -> Unit
+) {
     val density = LocalDensity.current
     var showTooltip by rememberSaveable { mutableStateOf(false) }
 
@@ -50,9 +81,9 @@ fun GroupNoteCreateScreen() {
         Column {
             InputTopAppBar(
                 title = stringResource(R.string.write_record),
-                isRightButtonEnabled = isFormFilled,
-                onLeftClick = { /* 뒤로가기 동작 */ },
-                onRightClick = { /* 완료 동작 */ }
+                isRightButtonEnabled = uiState.isFormFilled,
+                onLeftClick = onBackClick,
+                onRightClick = { onEvent(GroupNoteCreateEvent.CreateRecordClicked) }
             )
 
             Column(
@@ -61,10 +92,10 @@ fun GroupNoteCreateScreen() {
                 verticalArrangement = Arrangement.spacedBy(32.dp),
             ) {
                 PageInputSection(
-                    pageText = pageText,
-                    onPageTextChange = { pageText = it },
-                    isGeneralReview = isGeneralReview,
-                    onGeneralReviewToggle = { isGeneralReview = it },
+                    pageText = uiState.pageText,
+                    onPageTextChange = { onEvent(GroupNoteCreateEvent.PageChanged(it)) },
+                    isGeneralReview = uiState.isGeneralReview,
+                    onGeneralReviewToggle = { onEvent(GroupNoteCreateEvent.GeneralReviewToggled(it)) },
                     isEligible = isEligible,
                     bookTotalPage = 600,
                     onInfoClick = { showTooltip = true },
@@ -72,8 +103,8 @@ fun GroupNoteCreateScreen() {
                 )
 
                 OpinionInputSection(
-                    text = opinionText,
-                    onTextChange = { opinionText = it }
+                    text = uiState.opinionText,
+                    onTextChange = { onEvent(GroupNoteCreateEvent.OpinionChanged(it)) }
                 )
 
             }
@@ -97,14 +128,26 @@ fun GroupNoteCreateScreen() {
                 )
             }
         }
-    }
 
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+    }
 }
 
 @Preview
 @Composable
 private fun GroupNoteCreateScreenPreview() {
     ThipTheme {
-        GroupNoteCreateScreen()
+        GroupNoteCreateContent(
+            uiState = GroupNoteCreateUiState(pageText = "123", opinionText = "재미있었다."),
+            onEvent = {},
+            onBackClick = {}
+        )
     }
 }
