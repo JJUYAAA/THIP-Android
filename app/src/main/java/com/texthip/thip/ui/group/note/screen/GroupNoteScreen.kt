@@ -1,6 +1,8 @@
 package com.texthip.thip.ui.group.note.screen
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -25,10 +29,12 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,7 +65,9 @@ import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.type.SortType
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun GroupNoteScreen(
@@ -71,11 +79,39 @@ fun GroupNoteScreen(
     viewModel: GroupNoteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+
+    var showProgressBar by remember { mutableStateOf(false) }
+    val progress = remember { Animatable(0f) }
+    var progressJob by remember { mutableStateOf<Job?>(null) }
 
     LaunchedEffect(resultTabIndex) {
         if (resultTabIndex != null) {
             viewModel.onEvent(GroupNoteEvent.OnTabSelected(resultTabIndex))
             onResultConsumed()
+
+            showProgressBar = true
+            progress.snapTo(0f)
+            progressJob = scope.launch {
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = 3000, easing = LinearEasing)
+                )
+                delay(500)
+                if (showProgressBar) {
+                    showProgressBar = false
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(uiState.isLoading) {
+        // 로딩이 끝났고, 프로그레스 바가 보이는 중이라면
+        if (!uiState.isLoading && showProgressBar) {
+            progressJob?.cancel() // 진행 중인 3초 애니메이션 취소
+            progress.snapTo(1f) // 즉시 100%로 변경
+            delay(500) // 100% 상태를 잠시 보여줌
+            showProgressBar = false // 프로그레스 바 숨기기
         }
     }
 
@@ -89,7 +125,9 @@ fun GroupNoteScreen(
         uiState = uiState,
         onEvent = viewModel::onEvent,
         onBackClick = onBackClick,
-        onCreateNoteClick = onCreateNoteClick
+        onCreateNoteClick = onCreateNoteClick,
+        showProgressBar = showProgressBar,
+        progress = progress.value
     )
 }
 
@@ -98,7 +136,9 @@ fun GroupNoteContent(
     uiState: GroupNoteUiState,
     onEvent: (GroupNoteEvent) -> Unit,
     onBackClick: () -> Unit,
-    onCreateNoteClick: () -> Unit
+    onCreateNoteClick: () -> Unit,
+    showProgressBar: Boolean, // [추가]
+    progress: Float // [추가]
 ) {
     var isCommentBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedPostForComment by remember { mutableStateOf<PostList?>(null) }
@@ -238,6 +278,44 @@ fun GroupNoteContent(
                                 }
                             }
                         }
+                        item {
+                            AnimatedVisibility(visible = showProgressBar) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 20.dp, end = 20.dp, top = 32.dp),
+                                ) {
+                                    Text(
+                                        modifier = Modifier.padding(bottom = 12.dp),
+                                        text = if (progress < 1.0f) {
+                                            stringResource(R.string.posting_in_progress)
+                                        } else {
+                                            stringResource(R.string.posting_complete)
+                                        },
+                                        style = typography.view_m500_s14,
+                                        color = colors.NeonGreen
+                                    )
+
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(8.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(color = colors.Grey02) // 트랙(배경) 색상
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth(fraction = progress)
+                                                .fillMaxHeight()
+                                                .background(
+                                                    color = colors.NeonGreen,
+                                                    shape = RoundedCornerShape(12.dp)
+                                                )
+                                        )
+                                    }
+                                }
+                            }
+                        }
                         itemsIndexed(
                             uiState.posts,
                             key = { _, post -> post.postId }) { index, post ->
@@ -289,7 +367,10 @@ fun GroupNoteContent(
                         .padding(top = 118.dp)
                 ) {
                     Box(
-                        modifier = Modifier.fillMaxWidth().height(56.dp).background(color=colors.Black)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .background(color = colors.Black)
                     )
 
                     FilterButton(
@@ -458,7 +539,9 @@ private fun GroupNoteScreenPreview() {
             ),
             onEvent = {},
             onBackClick = {},
-            onCreateNoteClick = {}
+            onCreateNoteClick = {},
+            showProgressBar = true,
+            progress = 0.5f
         )
     }
 }
