@@ -2,6 +2,7 @@ package com.texthip.thip.ui.feed.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -106,87 +107,121 @@ fun FeedScreen(
         )
     )
     Box(modifier = Modifier.fillMaxSize()) {
-        LogoTopAppBar(
-            leftIcon = painterResource(R.drawable.ic_plusfriend),
-            hasNotification = false,
-            onLeftClick = {},
-            onRightClick = {},
-            modifier = Modifier.align(Alignment.TopStart)
-        )
-
-        // 스크롤 영역 전체
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 40.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            item {
-                Spacer(modifier = Modifier.height(40.dp))
-                HeaderMenuBarTab(
-                    titles = listOf("피드", "내 피드"),
-                    selectedTabIndex = selectedIndex.value,
-                    onTabSelected = { selectedIndex.value = it }
-                )
-            }
+            LogoTopAppBar(
+                leftIcon = painterResource(R.drawable.ic_plusfriend),
+                hasNotification = false,
+                onLeftClick = {},
+                onRightClick = {},
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            HeaderMenuBarTab(
+                titles = listOf("피드", "내 피드"),
+                selectedTabIndex = selectedIndex.value,
+                onTabSelected = { selectedIndex.value = it }
+            )
 
-            if (selectedIndex.value == 1) {
-                // 내 피드
-                item {
-                    Spacer(modifier = Modifier.height(32.dp))
-                    AuthorHeader(
-                        profileImage = null,
-                        nickname = nickname,
-                        badgeText = userRole,
-                        buttonText = "",
-                        buttonWidth = 60.dp,
-                        showButton = false
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    FeedSubscribeBarlist(
-                        modifier = Modifier.padding(horizontal = 20.dp),
-                        followerProfileImageUrls = followerProfileImageUrls,
-                        onClick = {
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(40.dp))
-                    Text(
-                        text = stringResource(R.string.whole_num, totalFeedCount),
-                        style = typography.menu_m500_s14_h24,
-                        color = colors.Grey,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp, start = 20.dp)
-                    )
-                    HorizontalDivider(
-                        color = colors.DarkGrey02,
-                        thickness = 1.dp,
-                        modifier = Modifier.padding(horizontal = 20.dp)
-                    )
-                }
-
-                if (totalFeedCount == 0) {
+            // 스크롤 영역 전체
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                if (selectedIndex.value == 1) {
+                    // 내 피드
                     item {
-                        Box(
+                        Spacer(modifier = Modifier.height(32.dp))
+                        AuthorHeader(
+                            profileImage = null,
+                            nickname = nickname,
+                            badgeText = userRole,
+                            buttonText = "",
+                            buttonWidth = 60.dp,
+                            showButton = false
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        FeedSubscribeBarlist(
+                            modifier = Modifier.padding(horizontal = 20.dp),
+                            followerProfileImageUrls = followerProfileImageUrls,
+                            onClick = {
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(40.dp))
+                        Text(
+                            text = stringResource(R.string.whole_num, totalFeedCount),
+                            style = typography.menu_m500_s14_h24,
+                            color = colors.Grey,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 110.dp),
-                            contentAlignment = Alignment.TopCenter
-                        ) {
-                            Text(
-                                text = stringResource(R.string.create_feed),
-                                style = typography.smalltitle_sb600_s18_h24,
-                                color = colors.Grey
+                                .padding(bottom = 12.dp, start = 20.dp)
+                        )
+                        HorizontalDivider(
+                            color = colors.DarkGrey02,
+                            thickness = 1.dp,
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        )
+                    }
+
+                    if (totalFeedCount == 0) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 110.dp),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.create_feed),
+                                    style = typography.smalltitle_sb600_s18_h24,
+                                    color = colors.Grey
+                                )
+                            }
+                        }
+                    } else {
+                        itemsIndexed(feedStateList, key = { _, item -> item.id }) { index, feed ->
+                            Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
+                            MyFeedCard(
+                                feedItem = feed,
+                                onLikeClick = {
+                                    val updated = feed.copy(
+                                        isLiked = !feed.isLiked,
+                                        likeCount = if (feed.isLiked) feed.likeCount - 1 else feed.likeCount + 1
+                                    )
+                                    feedStateList[index] = updated
+                                },
+                                onContentClick = {} //FeedCommentScreen으로
                             )
+                            Spacer(modifier = Modifier.height(40.dp))
+                            if (index != feeds.lastIndex) {
+                                HorizontalDivider(
+                                    color = colors.DarkGrey02,
+                                    thickness = 10.dp
+                                )
+                            }
                         }
                     }
                 } else {
+                    //피드
+                    item {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        MySubscribeBarlist(
+                            modifier = Modifier.padding(horizontal = 20.dp),
+                            subscriptions = mySubscriptions,
+                            onClick = {
+                            }
+                        )
+                    }
                     itemsIndexed(feedStateList, key = { _, item -> item.id }) { index, feed ->
-                        val bookImage = feed.imageUrl?.let { painterResource(it) }
-                        Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
-                        MyFeedCard(
+                        val profileImage = feed.userProfileImage?.let { painterResource(it) }
+
+                        SavedFeedCard(
                             feedItem = feed,
-                            bookImage = bookImage,
+                            profileImage = profileImage,
+                            onBookmarkClick = {
+                                val updated = feed.copy(isSaved = !feed.isSaved)
+                                feedStateList[index] = updated
+                            },
                             onLikeClick = {
                                 val updated = feed.copy(
                                     isLiked = !feed.isLiked,
@@ -194,8 +229,9 @@ fun FeedScreen(
                                 )
                                 feedStateList[index] = updated
                             },
+                            onContentClick = {} //FeedCommentScreen으로
+
                         )
-                        Spacer(modifier = Modifier.height(40.dp))
                         if (index != feeds.lastIndex) {
                             HorizontalDivider(
                                 color = colors.DarkGrey02,
@@ -204,49 +240,11 @@ fun FeedScreen(
                         }
                     }
                 }
-            } else {
-                //피드
-                item {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    MySubscribeBarlist(
-                        modifier = Modifier.padding(horizontal = 20.dp),
-                        subscriptions = mySubscriptions,
-                        onClick = {
-                        }
-                    )
-                }
-                itemsIndexed(feedStateList, key = { _, item -> item.id }) { index, feed ->
-                    val profileImage = feed.userProfileImage?.let { painterResource(it) }
-                    val bookImage = feed.imageUrl?.let { painterResource(it) }
-
-                    SavedFeedCard(
-                        feedItem = feed,
-                        profileImage = profileImage,
-                        bookImage = bookImage,
-                        onBookmarkClick = {
-                            val updated = feed.copy(isSaved = !feed.isSaved)
-                            feedStateList[index] = updated
-                        },
-                        onLikeClick = {
-                            val updated = feed.copy(
-                                isLiked = !feed.isLiked,
-                                likeCount = if (feed.isLiked) feed.likeCount - 1 else feed.likeCount + 1
-                            )
-                            feedStateList[index] = updated
-                        }
-                    )
-                    if (index != feeds.lastIndex) {
-                        HorizontalDivider(
-                            color = colors.DarkGrey02,
-                            thickness = 10.dp
-                        )
-                    }
-                }
             }
         }
         FloatingButton(
             icon = painterResource(id = R.drawable.ic_write),
-            onClick = {  }
+            onClick = { }
         )
     }
 }
@@ -254,40 +252,42 @@ fun FeedScreen(
 @Preview(showBackground = true)
 @Composable
 private fun FeedScreenPreview() {
-    val mockFeeds = List(5) {
-        FeedItem(
-            id = it + 1,
-            userProfileImage = R.drawable.character_literature,
-            userName = "user.$it",
-            userRole = "문학 칭호",
-            bookTitle = "책 제목 ",
-            authName = "한강",
-            timeAgo = "1시간 전",
-            content = "내용내용내용 입니다.",
-            likeCount = it,
-            commentCount = it,
-            isLiked = false,
-            isSaved = false,
-            isLocked = it % 2 == 0,
-            imageUrl = R.drawable.bookcover_sample
-        )
-    }
-    val mockFollowerImages = listOf(
-        "https://example.com/image1.jpg",
-        "https://example.com/image2.jpg",
-        "https://example.com/image3.jpg",
-        "https://example.com/image4.jpg",
-        "https://example.com/image5.jpg"
-    )
-
     ThipTheme {
-        FeedScreen(
-            nickname = "ThipUser01",
-            userRole = "문학 칭호",
-            selectedTabIndex = 0,
-            feeds = mockFeeds,
-            totalFeedCount = mockFeeds.size,
-            followerProfileImageUrls = mockFollowerImages
+        val mockFeeds = List(5) {
+            FeedItem(
+                id = it + 1,
+                userProfileImage = R.drawable.character_literature,
+                userName = "user.$it",
+                userRole = "문학 칭호",
+                bookTitle = "책 제목 ",
+                authName = "한강",
+                timeAgo = "1시간 전",
+                content = "내용내용내용 입니다. 내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.",
+                likeCount = it,
+                commentCount = it,
+                isLiked = false,
+                isSaved = false,
+                isLocked = it % 2 == 0,
+                imageUrls = listOf(R.drawable.bookcover_sample)
+            )
+        }
+        val mockFollowerImages = listOf(
+            "https://example.com/image1.jpg",
+            "https://example.com/image2.jpg",
+            "https://example.com/image3.jpg",
+            "https://example.com/image4.jpg",
+            "https://example.com/image5.jpg"
         )
+
+        ThipTheme {
+            FeedScreen(
+                nickname = "ThipUser01",
+                userRole = "문학 칭호",
+                selectedTabIndex = 0,
+                feeds = mockFeeds,
+                totalFeedCount = mockFeeds.size,
+                followerProfileImageUrls = mockFollowerImages
+            )
+        }
     }
 }

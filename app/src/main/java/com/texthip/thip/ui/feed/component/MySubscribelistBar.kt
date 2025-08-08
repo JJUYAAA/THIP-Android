@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,12 +62,12 @@ fun MySubscribeBarlist(
                     modifier = Modifier.size(20.dp),
                     painter = painterResource(id = R.drawable.ic_group),
                     contentDescription = null,
-                    tint = Color.Unspecified
+                    tint = colors.White
                 )
                 Text(
                     text = stringResource(R.string.my_subscription),
                     style = typography.smalltitle_sb600_s14_h20,
-                    color = Color.White,
+                    color = colors.White,
                     modifier = Modifier.padding(start = 2.dp)
                 )
             }
@@ -99,7 +99,7 @@ fun MySubscribeBarlist(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = typography.view_r400_s11_h20,
-                            color = Color.White,
+                            color = colors.White,
                             modifier = Modifier.width(36.dp)
                         )
                     }
@@ -125,7 +125,7 @@ private fun MySubscribeBarlistPrev() {
                 profileImageUrl = "https://example.com/profile$it.jpg",
                 nickname = "닉네임$it",
                 role = "문학가",
-                roleColor = Color.Red,
+                roleColor = colors.Red,
                 subscriberCount = 100 + it
             )
         }

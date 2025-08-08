@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +25,6 @@ import com.texthip.thip.ui.common.buttons.OptionChipButton
 import com.texthip.thip.ui.common.cards.CardAlarm
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.mypage.mock.ReactionItem
-import com.texthip.thip.ui.theme.Black
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
@@ -72,13 +71,13 @@ fun ReactionsScreen() {
             Row(modifier = Modifier.padding(start = 20.dp, top = 20.dp, bottom = 20.dp)) {
                 OptionChipButton(
                     text = stringResource(R.string.likes),
-                    isFilled = isLikesSelected,
+                    isFilled = true,
                     onClick = {isLikesSelected = !isLikesSelected}
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 OptionChipButton(
                     text = stringResource(R.string.comments),
-                    isFilled = isCommentsSelected,
+                    isFilled = true,
                     onClick = {isCommentsSelected = !isCommentsSelected}
                 )
 
@@ -89,14 +88,20 @@ fun ReactionsScreen() {
                     .padding(horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                items(filteredReactions) { item ->
+                itemsIndexed (filteredReactions) { index, item ->
+                    val isLastItem = index == filteredReactions.lastIndex
                     CardAlarm(
                         title = item.title,
                         message = item.message,
                         timeAgo = item.timeAgo,
                         isRead = true,
                         badgeText = item.type,
-                        onClick = {}
+                        onClick = {},
+                        modifier = if (isLastItem) {
+                            Modifier.padding(bottom = 20.dp)
+                        } else {
+                            Modifier
+                        }
                     )
                 }
             }

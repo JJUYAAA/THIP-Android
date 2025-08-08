@@ -33,7 +33,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun GroupEmptyCard(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color.White,
+    backgroundColor: Color = colors.White,
     onClick: () -> Unit = {}
 ) {
     // 그라데이션
