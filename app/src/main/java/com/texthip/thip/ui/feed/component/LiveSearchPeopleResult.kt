@@ -20,7 +20,8 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
 fun SearchPeopleResult(
-    peopleList: List<MySubscriptionData>
+    peopleList: List<MySubscriptionData>,
+    onThipNumClick: (MySubscriptionData) -> Unit = {}
 ) {
     LazyColumn {
         itemsIndexed(peopleList) { index, user ->
@@ -32,6 +33,7 @@ fun SearchPeopleResult(
                 showButton = false,
                 showThipNum = true,
                 thipNum = user.subscriberCount,
+                onThipNumClick = { onThipNumClick(user) }
             )
             if (index < peopleList.size - 1) {
                 Spacer(
