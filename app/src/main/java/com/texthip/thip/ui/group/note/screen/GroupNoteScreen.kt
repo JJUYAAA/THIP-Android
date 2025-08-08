@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -201,7 +202,11 @@ fun GroupNoteContent(
                         if (uiState.selectedTabIndex == 0) {
                             item {
                                 Row(
-                                    modifier = Modifier.padding(top = 76.dp, start = 20.dp, end = 20.dp),
+                                    modifier = Modifier.padding(
+                                        top = 76.dp,
+                                        start = 20.dp,
+                                        end = 20.dp
+                                    ),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                                 ) {
@@ -219,7 +224,9 @@ fun GroupNoteContent(
                                 }
                             }
                         }
-                        itemsIndexed(uiState.posts, key = { _, post -> post.postId }) { index, post ->
+                        itemsIndexed(
+                            uiState.posts,
+                            key = { _, post -> post.postId }) { index, post ->
                             val itemModifier = if (index == uiState.posts.lastIndex) {
                                 Modifier.padding(bottom = 20.dp)
                             } else {
@@ -247,7 +254,12 @@ fun GroupNoteContent(
 
                         if (uiState.isLoadingMore) {
                             item {
-                                Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
                                     CircularProgressIndicator()
                                 }
                             }
@@ -260,14 +272,16 @@ fun GroupNoteContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 119.dp)
-                        .background(color = colors.Black)
-                        .padding(top = 20.dp)
+                        .padding(top = 118.dp)
                 ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().height(56.dp).background(color=colors.Black)
+                    )
+
                     FilterButton(
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
-                            .padding(end = 20.dp),
+                            .padding(top = 20.dp, end = 20.dp),
                         selectedOption = stringResource(uiState.selectedSort.displayNameRes),
                         options = sortDisplayStrings,
                         onOptionSelected = { selectedString ->
@@ -280,6 +294,7 @@ fun GroupNoteContent(
                     )
 
                     FilterHeaderSection(
+                        modifier = Modifier.padding(top = 20.dp),
                         firstPage = uiState.pageStart,
                         lastPage = uiState.pageEnd,
                         isTotalSelected = uiState.isOverview,
@@ -397,9 +412,37 @@ fun GroupNoteContent(
 @Composable
 private fun GroupNoteScreenPreview() {
     ThipTheme {
-        GroupNoteScreen(
-            roomId = 1, // 예시로 1번 방 ID 사용
-            onBackClick = { /* 뒤로가기 동작 */ }
+        GroupNoteContent(
+            uiState = GroupNoteUiState(
+                posts = listOf(
+                    PostList(
+                        userId = 1,
+                        profileImageUrl = "https://example.com/profile.jpg",
+                        voteItems = emptyList(),
+                        postId = 1,
+                        postType = "RECORD",
+                        page = 1,
+                        postDate = "12시간 전",
+                        nickName = "사용자1",
+                        content = "첫 번째 기록입니다.",
+                        isLiked = false,
+                        likeCount = 10,
+                        commentCount = 2,
+                        isLocked = false,
+                        isWriter = true
+                    )
+                ),
+                selectedTabIndex = 0,
+                selectedSort = SortType.LATEST,
+                isLoading = false,
+                isLoadingMore = false,
+                pageStart = "1",
+                pageEnd = "10",
+                isOverview = false,
+                totalEnabled = true
+            ),
+            onEvent = {},
+            onBackClick = {}
         )
     }
 }

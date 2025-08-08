@@ -24,6 +24,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun FilterHeaderSection(
+    modifier: Modifier = Modifier,
     firstPage: String,
     lastPage: String,
     isTotalSelected: Boolean,
@@ -37,7 +38,7 @@ fun FilterHeaderSection(
     val isPageFiltered = firstPage.isNotBlank() || lastPage.isNotBlank()
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
         contentAlignment = Alignment.Center
