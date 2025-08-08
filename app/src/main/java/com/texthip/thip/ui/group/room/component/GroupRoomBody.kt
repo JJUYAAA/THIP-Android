@@ -1,7 +1,5 @@
 package com.texthip.thip.ui.group.room.component
 
-import CurrentVote
-import VoteItem
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -11,6 +9,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.data.model.rooms.response.CurrentVote
+import com.texthip.thip.data.model.rooms.response.VoteItem
 import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.cards.CardChat
 import com.texthip.thip.ui.common.cards.CardNote
@@ -19,7 +19,6 @@ import com.texthip.thip.ui.common.cards.CardVote
 @Composable
 fun GroupRoomBody(
     modifier: Modifier = Modifier,
-//    data: GroupRoomBodyData
     bookTitle: String,
     authorName: String,
     currentPage: Int,

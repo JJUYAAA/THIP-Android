@@ -1,6 +1,6 @@
 package com.texthip.thip.ui.group.room.screen
 
-import RoomsPlayingResponse
+import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

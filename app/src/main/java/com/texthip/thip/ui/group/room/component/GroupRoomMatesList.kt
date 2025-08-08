@@ -35,7 +35,7 @@ fun GroupRoomMatesList(
                 bottomTextColor = colors.ScienceIt, // TODO: 서버에서 보내주는 색상으로 수정
                 showSubscriberInfo = true,
                 subscriberCount = member.followerCount
-            ) { onUserClick }
+            ) { onUserClick(member.userId) }
 
             if (index != userList.lastIndex) {
                 HorizontalDivider(

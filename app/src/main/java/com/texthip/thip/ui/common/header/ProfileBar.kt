@@ -29,7 +29,6 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun ProfileBar(
     modifier: Modifier = Modifier,
-//    profileImage: Painter?,
     profileImage: String,
     topText: String,
     bottomText: String,
@@ -45,7 +44,6 @@ fun ProfileBar(
             .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
-//        if (profileImage != null) {
         AsyncImage(
             model = profileImage,
             contentDescription = "프로필 이미지",
@@ -53,14 +51,6 @@ fun ProfileBar(
                 .size(36.dp)
                 .clip(CircleShape)
         )
-//        } else {
-//            Box(
-//                modifier = Modifier
-//                    .size(36.dp)
-//                    .clip(CircleShape)
-//                    .background(Grey)
-//            )
-//        }
         Spacer(modifier = Modifier.width(8.dp))
         Column(
             modifier = Modifier.weight(1f),

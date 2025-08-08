@@ -1,6 +1,6 @@
 package com.texthip.thip.ui.group.room.viewmodel
 
-import RoomsPlayingResponse
+import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.repository.RoomsRepository
