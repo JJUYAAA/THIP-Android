@@ -40,7 +40,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun GroupMainCard(
     data: GroupCardData,
-    backgroundColor: Color = Color.White,
+    backgroundColor: Color = colors.White,
     onClick: () -> Unit = {}
 ) {
     // 그라데이션

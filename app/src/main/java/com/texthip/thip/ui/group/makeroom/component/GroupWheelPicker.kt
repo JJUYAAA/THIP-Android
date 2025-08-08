@@ -266,7 +266,7 @@ fun WheelPickerPreview() {
 
     Box(
         modifier = Modifier
-            .background(Color.Black),
+            .background(colors.Black),
         contentAlignment = Alignment.Center
     ) {
         Row(

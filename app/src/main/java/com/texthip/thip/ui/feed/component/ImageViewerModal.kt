@@ -22,11 +22,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
@@ -43,14 +45,14 @@ fun ImageViewerModal(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(colors.Black)
             .clickable { onDismiss() }
     ) {
         // 닫기 버튼
         Icon(
             painter = painterResource(R.drawable.ic_x),
             contentDescription = "닫기",
-            tint = Color.White,
+            tint = colors.White,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(20.dp)
@@ -93,8 +95,8 @@ fun ImageViewerModal(
                             .size(8.dp)
                             .clip(CircleShape)
                             .background(
-                                if (index == pagerState.currentPage) Color.White
-                                else Color.White.copy(alpha = 0.4f)
+                                if (index == pagerState.currentPage) colors.White
+                                else colors.White.copy(alpha = 0.4f)
                             )
                     )
                 }
@@ -104,14 +106,14 @@ fun ImageViewerModal(
         // 이미지 카운터 (예: 1/3)
         if (images.size > 1) {
             Text(
-                text = "${pagerState.currentPage + 1}/${images.size}",
+                text = stringResource(id = R.string.tag_count, images.size, 3),
                 style = typography.copy_r400_s14,
-                color = Color.White,
+                color = colors.White,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(20.dp)
                     .background(
-                        Color.Black.copy(alpha = 0.5f),
+                        colors.Black.copy(alpha = 0.5f),
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 6.dp)
