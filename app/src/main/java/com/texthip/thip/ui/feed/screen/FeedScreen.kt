@@ -122,8 +122,7 @@ fun FeedScreen(
                 selectedTabIndex = selectedIndex.value,
                 onTabSelected = { selectedIndex.value = it }
             )
-
-            // 스크롤 영역 전체
+            // 스크롤 영역
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -168,13 +167,13 @@ fun FeedScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 110.dp),
+                                    .padding(top = 244.dp),
                                 contentAlignment = Alignment.TopCenter
                             ) {
                                 Text(
                                     text = stringResource(R.string.create_feed),
                                     style = typography.smalltitle_sb600_s18_h24,
-                                    color = colors.Grey
+                                    color = colors.White
                                 )
                             }
                         }
@@ -190,7 +189,7 @@ fun FeedScreen(
                                     )
                                     feedStateList[index] = updated
                                 },
-                                onContentClick = {} //FeedCommentScreen으로
+                                onContentClick = {} //TODO FeedCommentScreen으로
                             )
                             Spacer(modifier = Modifier.height(40.dp))
                             if (index != feeds.lastIndex) {
@@ -253,7 +252,7 @@ fun FeedScreen(
 @Composable
 private fun FeedScreenPreview() {
     ThipTheme {
-        val mockFeeds = List(5) {
+        /*val mockFeeds = List(5) {
             FeedItem(
                 id = it + 1,
                 userProfileImage = R.drawable.character_literature,
@@ -270,20 +269,23 @@ private fun FeedScreenPreview() {
                 isLocked = it % 2 == 0,
                 imageUrls = listOf(R.drawable.bookcover_sample)
             )
-        }
-        val mockFollowerImages = listOf(
+        }*/
+        /*val mockFollowerImages = listOf(
             "https://example.com/image1.jpg",
             "https://example.com/image2.jpg",
             "https://example.com/image3.jpg",
             "https://example.com/image4.jpg",
             "https://example.com/image5.jpg"
-        )
+        )*/
+
+        val mockFeeds: List<FeedItem> = emptyList()
+        val mockFollowerImages = emptyList<String>()
 
         ThipTheme {
             FeedScreen(
                 nickname = "ThipUser01",
                 userRole = "문학 칭호",
-                selectedTabIndex = 0,
+                selectedTabIndex = 1,
                 feeds = mockFeeds,
                 totalFeedCount = mockFeeds.size,
                 followerProfileImageUrls = mockFollowerImages
