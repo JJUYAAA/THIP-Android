@@ -66,12 +66,23 @@ fun GroupNoteScreen(
     roomId: Int,
     onBackClick: () -> Unit = {},
     onCreateNoteClick: () -> Unit = {},
+    resultTabIndex: Int? = null,
+    onResultConsumed: () -> Unit = {},
     viewModel: GroupNoteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(resultTabIndex) {
+        if (resultTabIndex != null) {
+            viewModel.onEvent(GroupNoteEvent.OnTabSelected(resultTabIndex))
+            onResultConsumed()
+        }
+    }
+
     LaunchedEffect(key1 = roomId) {
-        viewModel.initialize(roomId)
+        if (resultTabIndex == null) {
+            viewModel.initialize(roomId)
+        }
     }
 
     GroupNoteContent(

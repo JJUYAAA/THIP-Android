@@ -283,14 +283,20 @@ fun NavGraphBuilder.groupNavigation(
         val route = backStackEntry.toRoute<GroupRoutes.Note>()
         val roomId = route.roomId
 
+        val result = backStackEntry.savedStateHandle.get<Int>("selected_tab_index")
+
         GroupNoteScreen(
 //            roomId = roomId,
             roomId = 1,
+            resultTabIndex = result,
+            onResultConsumed = {
+                backStackEntry.savedStateHandle.remove<Int>("selected_tab_index")
+            },
             onBackClick = {
                 navigateBack()
             },
             onCreateNoteClick = {
-                navController.navigateToGroupNoteCreate(1)
+                navController.navigateToGroupNoteCreate(roomId)
             },
         )
     }
@@ -301,8 +307,14 @@ fun NavGraphBuilder.groupNavigation(
         val roomId = route.roomId
 
         GroupNoteCreateScreen(
-            roomId = roomId,
+            roomId = 1,
             onBackClick = {
+                navigateBack()
+            },
+            onNavigateBackWithResult = {
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("selected_tab_index", 1)
                 navigateBack()
             }
         )

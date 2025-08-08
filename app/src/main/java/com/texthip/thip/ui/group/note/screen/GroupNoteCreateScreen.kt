@@ -40,6 +40,7 @@ import com.texthip.thip.ui.theme.ThipTheme
 fun GroupNoteCreateScreen(
     roomId: Int,
     onBackClick: () -> Unit,
+    onNavigateBackWithResult: () -> Unit,
     viewModel: GroupNoteCreateViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,7 +51,7 @@ fun GroupNoteCreateScreen(
 
     LaunchedEffect(key1 = uiState.isSuccess) {
         if (uiState.isSuccess) {
-            onBackClick()
+            onNavigateBackWithResult()
         }
     }
 
