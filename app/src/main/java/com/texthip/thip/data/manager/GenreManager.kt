@@ -37,8 +37,5 @@ class GenreManager @Inject constructor(
     fun isValidGenreIndex(index: Int): Boolean {
         return index >= 0 && index < genres.size
     }
-    
-    fun getGenreByIndex(index: Int): String? {
-        return if (isValidGenreIndex(index)) genres[index] else null
-    }
+
 }

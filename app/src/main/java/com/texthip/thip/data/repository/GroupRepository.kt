@@ -53,12 +53,7 @@ class GroupRepository @Inject constructor(
                     currentPage = joinedRoomsDto.page,
                     nickname = joinedRoomsDto.nickname
                 )
-            } ?: PaginationResult(
-                data = emptyList(),
-                hasMore = false,
-                currentPage = page,
-                nickname = ""
-            )
+            }
     }
 
     /** 카테고리별 모임방 섹션 조회 (마감임박/인기) */
@@ -106,11 +101,7 @@ class GroupRepository @Inject constructor(
                     nextCursor = data.nextCursor,
                     isLast = data.isLast
                 )
-            } ?: MyRoomsPaginationResult(
-                data = emptyList(),
-                nextCursor = null,
-                isLast = true
-            )
+            }
     }
     
     /** 모집중인 모임방 상세 정보 조회 */
