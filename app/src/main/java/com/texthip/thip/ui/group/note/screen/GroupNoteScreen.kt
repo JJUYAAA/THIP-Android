@@ -14,15 +14,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +33,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
+import com.texthip.thip.data.model.rooms.response.PostList
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.buttons.ExpandableFloatingButton
 import com.texthip.thip.ui.common.buttons.FabMenuItem
@@ -45,56 +49,78 @@ import com.texthip.thip.ui.group.note.component.CommentBottomSheet
 import com.texthip.thip.ui.group.note.component.FilterHeaderSection
 import com.texthip.thip.ui.group.note.component.TextCommentCard
 import com.texthip.thip.ui.group.note.component.VoteCommentCard
-import com.texthip.thip.ui.group.note.mock.GroupNoteRecord
-import com.texthip.thip.ui.group.note.mock.GroupNoteVote
 import com.texthip.thip.ui.group.note.mock.mockComment
-import com.texthip.thip.ui.group.note.mock.mockGroupNoteItems
+import com.texthip.thip.ui.group.note.viewmodel.GroupNoteEvent
+import com.texthip.thip.ui.group.note.viewmodel.GroupNoteUiState
+import com.texthip.thip.ui.group.note.viewmodel.GroupNoteViewModel
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.type.SortType
 import kotlinx.coroutines.delay
 
 @Composable
-fun GroupNoteScreen() {
-    val tabs = listOf(stringResource(R.string.group_record), stringResource(R.string.my_record))
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+fun GroupNoteScreen(
+    roomId: Int,
+    onBackClick: () -> Unit = {},
+    viewModel: GroupNoteViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    var firstPage by rememberSaveable { mutableStateOf("") }
-    var lastPage by rememberSaveable { mutableStateOf("") }
-    var isTotalSelected by rememberSaveable { mutableStateOf(false) }
-    var totalEnabled by rememberSaveable { mutableStateOf(false) }
-
-    var selectedFilter by rememberSaveable { mutableStateOf("최신순") }
-    val filters = listOf("최신순", "인기순", "댓글 많은 순")
-
-    val filteredItems = when (selectedTabIndex) {
-        0 -> mockGroupNoteItems // 전체 기록
-        1 -> mockGroupNoteItems.filter { it.isWriter } // 내 기록만
-        else -> emptyList()
+    LaunchedEffect(key1 = roomId) {
+        viewModel.initialize(roomId)
     }
 
-    var isCommentBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
-    var selectedNoteRecord by remember { mutableStateOf<GroupNoteRecord?>(null) }
-    var selectedNoteVote by remember { mutableStateOf<GroupNoteVote?>(null) }
-    var selectedItemForMenu by remember { mutableStateOf<Any?>(null) }
+    GroupNoteContent(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        onBackClick = onBackClick
+    )
+}
 
-    var isMenuBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
-
+@Composable
+fun GroupNoteContent(
+    uiState: GroupNoteUiState,
+    onEvent: (GroupNoteEvent) -> Unit,
+    onBackClick: () -> Unit
+) {
+    var isCommentBottomSheetVisible by remember { mutableStateOf(false) }
+    var selectedPostForComment by remember { mutableStateOf<PostList?>(null) }
+    var selectedPostForMenu by remember { mutableStateOf<PostList?>(null) }
     var isPinDialogVisible by remember { mutableStateOf(false) }
-
     var showToast by remember { mutableStateOf(false) }
 
-    // 토스트 3초
     LaunchedEffect(showToast) {
         if (showToast) {
-            delay(6000) // 2초 등장, 4초 노출
-            showToast = false // exit 에니메이션 2초
+            delay(3000)
+            showToast = false
+        }
+    }
+
+    val tabs = listOf(stringResource(R.string.group_record), stringResource(R.string.my_record))
+    val sortOptions = remember { SortType.entries.map { it.displayNameRes } }
+    val sortDisplayStrings = remember { SortType.entries.map { it.displayNameRes } }
+        .map { stringResource(it) }
+
+    val listState = rememberLazyListState()
+
+    val isScrolledToEnd by remember {
+        derivedStateOf {
+            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+            // 마지막 아이템이 보이고, 전체 아이템 수와 일치하며, 마지막 페이지가 아닐 때
+            lastVisibleItem != null && lastVisibleItem.index == listState.layoutInfo.totalItemsCount - 1 && !uiState.isLastPage
+        }
+    }
+
+    LaunchedEffect(isScrolledToEnd) {
+        if (isScrolledToEnd) {
+            onEvent(GroupNoteEvent.LoadMorePosts)
         }
     }
 
     Box(
-        if (isCommentBottomSheetVisible || isMenuBottomSheetVisible || isPinDialogVisible) {
+        if (isCommentBottomSheetVisible || selectedPostForMenu != null || isPinDialogVisible) {
             Modifier
                 .fillMaxSize()
                 .blur(5.dp)
@@ -126,19 +152,23 @@ fun GroupNoteScreen() {
             Column(modifier = Modifier.fillMaxSize()) {
                 DefaultTopAppBar(
                     title = stringResource(R.string.record_book),
-                    onLeftClick = {}
+                    onLeftClick = onBackClick
                 )
 
                 HeaderMenuBarTab(
                     titles = tabs,
-                    selectedTabIndex = selectedTabIndex,
-                    onTabSelected = { selectedTabIndex = it },
+                    selectedTabIndex = uiState.selectedTabIndex,
+                    onTabSelected = { onEvent(GroupNoteEvent.OnTabSelected(it)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp)
                 )
 
-                if (filteredItems.isEmpty()) {
+                if (uiState.isLoading) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else if (uiState.posts.isEmpty()) {
                     // 기록이 없을 때 중앙에 메시지
                     Column(
                         modifier = Modifier
@@ -156,7 +186,7 @@ fun GroupNoteScreen() {
                             color = colors.White
                         )
                         Text(
-                            text = when (selectedTabIndex) {
+                            text = when (uiState.selectedTabIndex) {
                                 0 -> stringResource(R.string.no_group_record_subtext)
                                 1 -> stringResource(R.string.no_my_record_subtext)
                                 else -> ""
@@ -167,8 +197,8 @@ fun GroupNoteScreen() {
                     }
                 } else {
                     // 피드 리스트 영역
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        if (selectedTabIndex == 0) {
+                    LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
+                        if (uiState.selectedTabIndex == 0) {
                             item {
                                 Row(
                                     modifier = Modifier.padding(top = 76.dp, start = 20.dp, end = 20.dp),
@@ -189,54 +219,44 @@ fun GroupNoteScreen() {
                                 }
                             }
                         }
-                        itemsIndexed(filteredItems) { index, item ->
-                            val isLast = index == filteredItems.lastIndex
-
-                            val itemModifier = if (isLast) {
+                        itemsIndexed(uiState.posts, key = { _, post -> post.postId }) { index, post ->
+                            val itemModifier = if (index == uiState.posts.lastIndex) {
                                 Modifier.padding(bottom = 20.dp)
                             } else {
                                 Modifier
                             }
 
-                            when (item) {
-                                is GroupNoteRecord -> TextCommentCard(
-                                    data = item,
+                            when (post.postType) {
+                                "RECORD" -> TextCommentCard(
+                                    data = post,
                                     modifier = itemModifier,
-                                    onCommentClick = {
-                                        selectedNoteRecord = item
-                                        isCommentBottomSheetVisible = true
-                                    },
-                                    onLongPress = {
-                                        selectedItemForMenu = item
-                                        isMenuBottomSheetVisible = true
-                                    },
-                                    onPinClick = {
-                                        isPinDialogVisible = true
-                                    }
+                                    onCommentClick = { isCommentBottomSheetVisible = true },
+                                    onLongPress = { selectedPostForMenu = post },
+                                    onPinClick = { isPinDialogVisible = true }
                                 )
 
-                                is GroupNoteVote -> VoteCommentCard(
-                                    data = item,
+                                "VOTE" -> VoteCommentCard(
+                                    data = post,
                                     modifier = itemModifier,
-                                    onCommentClick = {
-                                        selectedNoteVote = item
-                                        isCommentBottomSheetVisible = true
-                                    },
-                                    onLongPress = {
-                                        selectedItemForMenu = item
-                                        isMenuBottomSheetVisible = true
-                                    },
-                                    onPinClick = {
-                                        isPinDialogVisible = true
-                                    }
+                                    onCommentClick = { isCommentBottomSheetVisible = true },
+                                    onLongPress = { selectedPostForMenu = post },
+                                    onPinClick = { isPinDialogVisible = true }
                                 )
+                            }
+                        }
+
+                        if (uiState.isLoadingMore) {
+                            item {
+                                Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                                    CircularProgressIndicator()
+                                }
                             }
                         }
                     }
                 }
             }
 
-            if (selectedTabIndex == 0) {
+            if (uiState.selectedTabIndex == 0) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -248,19 +268,25 @@ fun GroupNoteScreen() {
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
                             .padding(end = 20.dp),
-                        selectedOption = selectedFilter,
-                        options = filters,
-                        onOptionSelected = { selectedFilter = it }
+                        selectedOption = stringResource(uiState.selectedSort.displayNameRes),
+                        options = sortDisplayStrings,
+                        onOptionSelected = { selectedString ->
+                            val selectedIndex = sortDisplayStrings.indexOf(selectedString)
+                            if (selectedIndex != -1) {
+                                val selectedSortType = SortType.entries[selectedIndex]
+                                onEvent(GroupNoteEvent.OnSortSelected(selectedSortType))
+                            }
+                        }
                     )
 
                     FilterHeaderSection(
-                        firstPage = firstPage,
-                        lastPage = lastPage,
-                        isTotalSelected = isTotalSelected,
-                        totalEnabled = totalEnabled,
-                        onFirstPageChange = { firstPage = it },
-                        onLastPageChange = { lastPage = it },
-                        onTotalToggle = { isTotalSelected = !isTotalSelected },
+                        firstPage = uiState.pageStart,
+                        lastPage = uiState.pageEnd,
+                        isTotalSelected = uiState.isOverview,
+                        totalEnabled = uiState.totalEnabled,
+                        onFirstPageChange = { onEvent(GroupNoteEvent.OnPageStartChanged(it)) },
+                        onLastPageChange = { onEvent(GroupNoteEvent.OnPageEndChanged(it)) },
+                        onTotalToggle = { onEvent(GroupNoteEvent.OnOverviewToggled(!uiState.isOverview)) },
                         onDisabledClick = { showToast = true }
                     )
                 }
@@ -283,14 +309,15 @@ fun GroupNoteScreen() {
         }
     }
 
-    if (isCommentBottomSheetVisible && (selectedNoteRecord != null || selectedNoteVote != null)) {
+    if (isCommentBottomSheetVisible && selectedPostForComment != null) {
         CommentBottomSheet(
             commentResponse = listOf(mockComment, mockComment, mockComment),
 //            commentResponse = emptyList(),
             onDismiss = {
                 isCommentBottomSheetVisible = false
-                selectedNoteRecord = null
-                selectedNoteVote = null
+//                selectedNoteRecord = null
+//                selectedNoteVote = null
+                selectedPostForComment = null
             },
             onSendReply = { replyText, commentId, replyTo ->
                 // 댓글 전송 로직 구현
@@ -298,12 +325,14 @@ fun GroupNoteScreen() {
         )
     }
 
-    if (isMenuBottomSheetVisible && selectedItemForMenu != null) {
-        val isWriter = when (val item = selectedItemForMenu) {
-            is GroupNoteRecord -> item.isWriter
-            is GroupNoteVote -> item.isWriter
-            else -> false
-        }
+//    if (isMenuBottomSheetVisible && selectedItemForMenu != null) {
+    if (selectedPostForMenu != null) {
+//        val isWriter = when (val item = selectedItemForMenu) {
+//            is GroupNoteRecord -> item.isWriter
+//            is GroupNoteVote -> item.isWriter
+//            else -> false
+//        }
+        val isWriter = selectedPostForMenu!!.isWriter
 
         val menuItems = if (isWriter) {
             listOf(
@@ -312,8 +341,9 @@ fun GroupNoteScreen() {
                     color = colors.Red,
                     onClick = {
                         // TODO: 삭제 처리
-                        isMenuBottomSheetVisible = false
-                        selectedItemForMenu = null
+//                        isMenuBottomSheetVisible = false
+//                        selectedItemForMenu = null
+                        selectedPostForMenu = null
                     }
                 )
             )
@@ -324,8 +354,9 @@ fun GroupNoteScreen() {
                     color = colors.Red,
                     onClick = {
                         // TODO: 신고 처리
-                        isMenuBottomSheetVisible = false
-                        selectedItemForMenu = null
+//                        isMenuBottomSheetVisible = false
+//                        selectedItemForMenu = null
+                        selectedPostForMenu = null
                     }
                 )
             )
@@ -334,8 +365,9 @@ fun GroupNoteScreen() {
         MenuBottomSheet(
             items = menuItems,
             onDismiss = {
-                isMenuBottomSheetVisible = false
-                selectedItemForMenu = null
+//                isMenuBottomSheetVisible = false
+//                selectedItemForMenu = null
+                selectedPostForMenu = null
             }
         )
     }
@@ -365,6 +397,9 @@ fun GroupNoteScreen() {
 @Composable
 private fun GroupNoteScreenPreview() {
     ThipTheme {
-        GroupNoteScreen()
+        GroupNoteScreen(
+            roomId = 1, // 예시로 1번 방 ID 사용
+            onBackClick = { /* 뒤로가기 동작 */ }
+        )
     }
 }

@@ -17,16 +17,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.data.model.rooms.response.PostList
 import com.texthip.thip.ui.common.buttons.ActionBarButton
 import com.texthip.thip.ui.common.header.ProfileBar
-import com.texthip.thip.ui.group.note.mock.GroupNoteRecord
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun TextCommentCard(
     modifier: Modifier = Modifier,
-    data: GroupNoteRecord,
+    data: PostList,
     onCommentClick: () -> Unit = {},
     onLongPress: () -> Unit = {},
     onPinClick: () -> Unit = {}
@@ -84,7 +84,9 @@ fun TextCommentCard(
 @Composable
 fun TextCommentCardPreview() {
     TextCommentCard(
-        data = GroupNoteRecord(
+        data = PostList(
+            postId = 1,
+            postType = "group",
             page = 132,
             postDate = "12시간 전",
             userId = 1,
@@ -96,7 +98,7 @@ fun TextCommentCardPreview() {
             isLiked = true,
             isWriter = false,
             isLocked = false,
-            recordId = 1
+            voteItems = emptyList()
         )
     )
 }
