@@ -52,7 +52,7 @@ fun SavedScreen(
     val tabs = listOf(stringResource(R.string.feed), stringResource(R.string.book))
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val feedList by feedViewModel.feeds.collectAsState()
-    val bookList by bookViewModel.bookList.collectAsState()
+    val bookList by bookViewModel.books.collectAsState()
 
     Column(
         Modifier

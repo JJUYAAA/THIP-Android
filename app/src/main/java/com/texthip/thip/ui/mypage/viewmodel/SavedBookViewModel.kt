@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 open class SavedBookViewModel : ViewModel() {
 
-    private val _books = MutableStateFlow<List<BookItem>>(emptyList())
-    open val bookList: StateFlow<List<BookItem>> = _books
+    protected val _books = MutableStateFlow<List<BookItem>>(emptyList())
+    open val books: StateFlow<List<BookItem>> = _books
 
     init {
         loadMockBooks()
@@ -83,9 +83,6 @@ open class SavedBookViewModel : ViewModel() {
             )
         )
     }
-
-    open val books: StateFlow<List<BookItem>> = _books
-
     fun toggleBookmark(id: Int) {
         _books.value = _books.value.map {
             if (it.id == id) it.copy(isSaved = !it.isSaved) else it
@@ -94,15 +91,6 @@ open class SavedBookViewModel : ViewModel() {
 }
 
 class EmptySavedBookViewModel : SavedBookViewModel() {
-    init {
-        //
-    }
-
-    override fun loadMockBooks() {
-    }
-
-    private val _books = MutableStateFlow<List<BookItem>>(emptyList())
-
-    override val books: StateFlow<List<BookItem>> = _books
+    override fun loadMockBooks() {}
 
 }
