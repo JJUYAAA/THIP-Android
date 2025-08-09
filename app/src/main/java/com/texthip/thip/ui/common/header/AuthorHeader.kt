@@ -100,7 +100,7 @@ fun AuthorHeader(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.thip_num, thipNum),
+                    text = stringResource(R.string.thip_num, thipNum)+ stringResource(R.string.thip_ing),
                     style = typography.view_r400_s11_h20,
                     color = colors.White
                 )

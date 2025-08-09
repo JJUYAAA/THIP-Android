@@ -134,10 +134,10 @@ fun SearchPeopleScreen(
                         Spacer(
                             modifier = Modifier
                                 .padding(top = 4.dp, bottom = 16.dp)
+                                .padding(horizontal = 20.dp)
                                 .fillMaxWidth()
                                 .height(1.dp)
                                 .background(colors.DarkGrey02)
-                                .padding(horizontal = 20.dp)
                         )
                         SearchPeopleResult(
                             modifier = Modifier.weight(1f),
