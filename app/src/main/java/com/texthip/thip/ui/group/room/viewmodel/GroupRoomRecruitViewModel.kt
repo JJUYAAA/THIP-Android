@@ -36,10 +36,16 @@ class GroupRoomRecruitViewModel @Inject constructor(
             
             repository.getRoomRecruiting(roomId)
                 .onSuccess { data ->
+                    // RoomRecruitingResponse에서 buttonType 결정
+                    val buttonType = when {
+                        data.isHost -> GroupBottomButtonType.CLOSE
+                        data.isJoining -> GroupBottomButtonType.CANCEL
+                        else -> GroupBottomButtonType.JOIN
+                    }
                     updateState { 
                         it.copy(
                             roomDetail = data,
-                            currentButtonType = data.buttonType,
+                            currentButtonType = buttonType,
                             isLoading = false
                         )
                     }
@@ -52,7 +58,7 @@ class GroupRoomRecruitViewModel @Inject constructor(
     
     fun onParticipationClick() {
         viewModelScope.launch {
-            val roomId = uiState.value.roomDetail?.id ?: return@launch
+            val roomId = uiState.value.roomDetail?.roomId ?: return@launch
             
             repository.joinOrCancelRoom(roomId, RoomAction.JOIN.value)
                 .onSuccess {
@@ -75,7 +81,7 @@ class GroupRoomRecruitViewModel @Inject constructor(
         }
         pendingAction = {
             viewModelScope.launch {
-                val roomId = uiState.value.roomDetail?.id ?: return@launch
+                val roomId = uiState.value.roomDetail?.roomId ?: return@launch
                 
                 repository.joinOrCancelRoom(roomId, RoomAction.CANCEL.value)
                     .onSuccess {

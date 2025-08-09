@@ -29,20 +29,21 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.cards.CardItemRoom
-import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
-import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData
+import com.texthip.thip.data.model.group.response.RoomMainList
+import com.texthip.thip.data.model.group.response.RoomMainResponse
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.util.DateUtils
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun GroupRoomDeadlineSection(
-    roomSections: List<GroupRoomSectionData>,
+    roomMainList: RoomMainList?,
     selectedGenreIndex: Int,
     errorMessage: String? = null,
     onGenreSelect: (Int) -> Unit,
-    onRoomClick: (GroupCardItemRoomData) -> Unit
+    onRoomClick: (RoomMainResponse) -> Unit
 ) {
     val sideMargin = 30.dp
 
@@ -63,27 +64,24 @@ fun GroupRoomDeadlineSection(
 
             val pageSpacing = (-(cardWidth - (cardWidth * scale)) / 2) + desiredGap
 
-            // 데이터가 없어도 기본 구조 표시
-            val effectiveRoomSections = roomSections.ifEmpty {
-                // 기본 구조를 위한 더미 섹션 생성
-                listOf(
-                    GroupRoomSectionData(
-                        title = stringResource(R.string.room_section_deadline),
-                        rooms = emptyList(),
-                        genres = listOf(
-                            stringResource(R.string.literature), 
-                            stringResource(R.string.science_it), 
-                            stringResource(R.string.social_science), 
-                            stringResource(R.string.humanities), 
-                            stringResource(R.string.art)
-                        )
-                    )
-                )
-            }
+            // 기본 장르 목록
+            val defaultGenres = listOf(
+                stringResource(R.string.literature), 
+                stringResource(R.string.science_it), 
+                stringResource(R.string.social_science), 
+                stringResource(R.string.humanities), 
+                stringResource(R.string.art)
+            )
+            
+            // 마감 임박 방 목록과 인기 방 목록을 섹션으로 구성
+            val roomSections = listOf(
+                Pair(stringResource(R.string.room_section_deadline), roomMainList?.deadlineRoomList ?: emptyList()),
+                Pair(stringResource(R.string.room_section_popular), roomMainList?.popularRoomList ?: emptyList())
+            )
 
             val effectivePagerState = rememberPagerState(
                 initialPage = 0,
-                pageCount = { effectiveRoomSections.size }
+                pageCount = { roomSections.size }
             )
 
             HorizontalPager(
@@ -92,7 +90,7 @@ fun GroupRoomDeadlineSection(
                 pageSpacing = pageSpacing,
                 modifier = Modifier.fillMaxWidth()
             ) { page ->
-                val section = effectiveRoomSections[page]
+                val (sectionTitle, rooms) = roomSections[page]
 
                 val isCurrent = effectivePagerState.currentPage == page
                 val scale = if (isCurrent) 1f else 0.94f
@@ -120,14 +118,14 @@ fun GroupRoomDeadlineSection(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = section.title,
+                            text = sectionTitle,
                             style = typography.title_b700_s20_h24,
                             color = colors.White
                         )
                         Spacer(Modifier.height(40.dp))
 
                         GenreChipRow(
-                            genres = section.genres,
+                            genres = defaultGenres,
                             selectedIndex = selectedGenreIndex,
                             onSelect = onGenreSelect
                         )
@@ -164,7 +162,7 @@ fun GroupRoomDeadlineSection(
                                     }
                                 }
                                 // 데이터 없음 상태
-                                section.rooms.isEmpty() -> {
+                                rooms.isEmpty() -> {
                                     Column(
                                         modifier = Modifier
                                             .padding(top = 30.dp)
@@ -192,21 +190,23 @@ fun GroupRoomDeadlineSection(
                                         verticalArrangement = Arrangement.spacedBy(20.dp),
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        section.rooms.forEach { room ->
+                                        rooms.forEach { room ->
+                                            // RoomMainResponse를 CardItemRoom에 맞게 변환
+                                            val daysLeft = DateUtils.extractDaysFromDeadline(room.deadlineDate)
                                             CardItemRoom(
-                                                title = room.title,
-                                                participants = room.participants,
-                                                maxParticipants = room.maxParticipants,
-                                                isRecruiting = room.isRecruiting,
-                                                endDate = room.endDate,
-                                                imageUrl = room.imageUrl,
+                                                title = room.roomName,
+                                                participants = room.memberCount,
+                                                maxParticipants = room.recruitCount,
+                                                isRecruiting = true, // RoomMainResponse에는 모집중인 방만 있음
+                                                endDate = daysLeft,
+                                                imageUrl = room.bookImageUrl,
                                                 onClick = { onRoomClick(room) },
                                                 hasBorder = true,
                                             )
                                         }
                                     }
                                     
-                                    if (section.rooms.size < 4) {
+                                    if (rooms.size < 4) {
                                         Spacer(
                                             modifier = Modifier
                                                 .weight(1f, fill = true)
@@ -223,132 +223,49 @@ fun GroupRoomDeadlineSection(
     }
 }
 
-@Preview()
+
+@Preview
 @Composable
 fun PreviewGroupRoomPagerSection() {
     ThipTheme {
-        val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
-
-        // 마감 임박한 독서 모임방
+        // RoomMainResponse 형태의 더미 데이터
         val deadlineRooms = listOf(
-            GroupCardItemRoomData(
-                id = 1,
-                title = "시집만 읽는 사람들 3월",
-                participants = 22,
-                maxParticipants = 30,
-                isRecruiting = true,
-                endDate = 3,
+            RoomMainResponse(
+                roomId = 1,
+                roomName = "시집만 읽는 사람들 3월",
+                memberCount = 22,
+                recruitCount = 30,
+                deadlineDate = "3일 뒤",
+                bookImageUrl = "https://picsum.photos/300/200?1"
             ),
-            GroupCardItemRoomData(
-                id = 2,
-                title = "일본 소설 좋아하는 사람들",
-                participants = 15,
-                maxParticipants = 20,
-                isRecruiting = true,
-                endDate = 2,
-            ),
-            GroupCardItemRoomData(
-                id = 3,
-                title = "명작 같이 읽기방",
-                participants = 22,
-                maxParticipants = 30,
-                isRecruiting = true,
-                endDate = 3,
-            ),
-            GroupCardItemRoomData(
-                id = 4,
-                title = "명작 같이 읽기방",
-                participants = 22,
-                maxParticipants = 30,
-                isRecruiting = true,
-                endDate = 3,
-            ),
-            GroupCardItemRoomData(
-                id = 5,
-                title = "물리책 읽는 방",
-                participants = 13,
-                maxParticipants = 20,
-                isRecruiting = true,
-                endDate = 1,
+            RoomMainResponse(
+                roomId = 2,
+                roomName = "일본 소설 좋아하는 사람들",
+                memberCount = 15,
+                recruitCount = 20,
+                deadlineDate = "2일 뒤",
+                bookImageUrl = "https://picsum.photos/300/200?2"
             )
         )
 
-        // 인기 있는 독서 모임방
         val popularRooms = listOf(
-            GroupCardItemRoomData(
-                id = 6,
-                title = "베스트셀러 토론방",
-                participants = 28,
-                maxParticipants = 30,
-                isRecruiting = true,
-                endDate = 7,
-            ),
-            GroupCardItemRoomData(
-                id = 7,
-                title = "인기 소설 완독방",
-                participants = 25,
-                maxParticipants = 25,
-                isRecruiting = false,
-                endDate = 5,
-            ),
-            GroupCardItemRoomData(
-                id = 8,
-                title = "트렌드 과학서 읽기",
-                participants = 20,
-                maxParticipants = 25,
-                isRecruiting = true,
-                endDate = 10,
+            RoomMainResponse(
+                roomId = 6,
+                roomName = "베스트셀러 토론방",
+                memberCount = 28,
+                recruitCount = 30,
+                deadlineDate = "7일 뒤",
+                bookImageUrl = "https://picsum.photos/300/200?6"
             )
         )
 
-        // 인플루언서, 작가 독서 모임방
-        val influencerRooms = listOf(
-            GroupCardItemRoomData(
-                id = 9,
-                title = "작가와 함께하는 독서방",
-                participants = 30,
-                maxParticipants = 30,
-                isRecruiting = false,
-                endDate = 14,
-            ),
-            GroupCardItemRoomData(
-                id = 10,
-                title = "유명 북튜버와 읽기",
-                participants = 18,
-                maxParticipants = 20,
-                isRecruiting = true,
-                endDate = 8,
-            ),
-            GroupCardItemRoomData(
-                id = 11,
-                title = "작가 초청 인문학방",
-                participants = 15,
-                maxParticipants = 20,
-                isRecruiting = true,
-                endDate = 12,
-            )
-        )
-
-        val roomSections = listOf(
-            GroupRoomSectionData(
-                title = stringResource(R.string.deadline_string),
-                rooms = deadlineRooms,
-                genres = genres
-            ),
-            GroupRoomSectionData(
-                title = "인기 있는 독서 모임방",
-                rooms = popularRooms,
-                genres = genres
-            ),
-            GroupRoomSectionData(
-                title = "인플루언서·작가 독서 모임방",
-                rooms = influencerRooms,
-                genres = genres
-            )
+        val roomMainList = RoomMainList(
+            deadlineRoomList = deadlineRooms,
+            popularRoomList = emptyList()
         )
 
         GroupRoomDeadlineSection(
-            roomSections = roomSections,
+            roomMainList = roomMainList,
             selectedGenreIndex = 0,
             errorMessage = null,
             onGenreSelect = {},
@@ -361,30 +278,24 @@ fun PreviewGroupRoomPagerSection() {
 @Composable
 fun PreviewGroupRoomPagerSectionEmptyGenre() {
     ThipTheme {
-        val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
-
-        // 특정 장르에만 데이터가 있는 경우 (문학 장르만 데이터 존재)
         val deadlineRooms = listOf(
-            GroupCardItemRoomData(
-                id = 12,
-                title = "시집만 읽는 사람들 3월",
-                participants = 22,
-                maxParticipants = 30,
-                isRecruiting = true,
-                endDate = 3,
+            RoomMainResponse(
+                roomId = 12,
+                roomName = "시집만 읽는 사람들 3월",
+                memberCount = 22,
+                recruitCount = 30,
+                deadlineDate = "3일 뒤",
+                bookImageUrl = "https://picsum.photos/300/200?12"
             )
         )
 
-        val roomSections = listOf(
-            GroupRoomSectionData(
-                title = "마감 임박한 독서 모임방",
-                rooms = deadlineRooms,
-                genres = genres
-            )
+        val roomMainList = RoomMainList(
+            deadlineRoomList = deadlineRooms,
+            popularRoomList = emptyList()
         )
 
         GroupRoomDeadlineSection(
-            roomSections = roomSections,
+            roomMainList = roomMainList,
             selectedGenreIndex = 0,
             errorMessage = null,
             onGenreSelect = {},

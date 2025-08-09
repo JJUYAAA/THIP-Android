@@ -33,9 +33,4 @@ class GenreManager @Inject constructor(
     fun getDefaultGenre(): String {
         return context.getString(R.string.literature)
     }
-    
-    fun isValidGenreIndex(index: Int): Boolean {
-        return index >= 0 && index < genres.size
-    }
-
 }

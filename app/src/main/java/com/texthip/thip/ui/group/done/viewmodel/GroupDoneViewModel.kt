@@ -65,18 +65,20 @@ class GroupDoneViewModel @Inject constructor(
                 }
 
                 repository.getMyRoomsByType(RoomType.EXPIRED.value, nextCursor)
-                    .onSuccess { paginationResult ->
-                        val currentList = if (reset) emptyList() else uiState.value.expiredRooms
-                        updateState { 
-                            it.copy(
-                                expiredRooms = currentList + paginationResult.data,
-                                error = null,
-                                isLoadingMore = false,
-                                hasMore = !paginationResult.isLast
-                            )
+                    .onSuccess { myRoomListResponse ->
+                        myRoomListResponse?.let { response ->
+                            val currentList = if (reset) emptyList() else uiState.value.expiredRooms
+                            updateState { 
+                                it.copy(
+                                    expiredRooms = currentList + response.roomList,
+                                    error = null,
+                                    isLoadingMore = false,
+                                    hasMore = !response.isLast
+                                )
+                            }
+                            nextCursor = response.nextCursor
+                            isLastPage = response.isLast
                         }
-                        nextCursor = paginationResult.nextCursor
-                        isLastPage = paginationResult.isLast
                     }
                     .onFailure { exception ->
                         updateState { it.copy(error = exception.message) }

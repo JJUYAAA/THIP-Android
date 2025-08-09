@@ -26,21 +26,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
+import com.texthip.thip.data.model.group.response.MyRoomResponse
 import com.texthip.thip.ui.common.cards.CardItemRoom
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.group.done.mock.MyRoomCardData
-import com.texthip.thip.ui.group.done.mock.getEndDateInDays
-import com.texthip.thip.ui.group.done.mock.isRecruitingByType
 import com.texthip.thip.ui.group.myroom.component.GroupMyRoomFilterRow
 import com.texthip.thip.ui.group.myroom.mock.RoomType
 import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.util.RoomUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupMyScreen(
-    onCardClick: (MyRoomCardData) -> Unit = {},
+    onCardClick: (MyRoomResponse) -> Unit = {},
     onNavigateBack: () -> Unit = {},
     viewModel: GroupMyViewModel = hiltViewModel()
 ) {
@@ -135,8 +134,8 @@ fun GroupMyScreen(
                                 title = room.roomName,
                                 participants = room.memberCount,
                                 maxParticipants = room.recruitCount,
-                                isRecruiting = room.isRecruitingByType(),
-                                endDate = room.getEndDateInDays(),
+                                isRecruiting = RoomUtils.isRecruitingByType(room.type),
+                                endDate = RoomUtils.getEndDateInDays(room.endDate),
                                 imageUrl = room.bookImageUrl,
                                 onClick = { onCardClick(room) }
                             )
@@ -167,4 +166,5 @@ fun GroupMyScreen(
         }
     }
 }
+
 

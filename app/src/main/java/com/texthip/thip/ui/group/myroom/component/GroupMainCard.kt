@@ -32,14 +32,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.texthip.thip.R
-import com.texthip.thip.ui.group.myroom.mock.GroupCardData
+import com.texthip.thip.data.model.group.response.JoinedRoomResponse
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun GroupMainCard(
-    data: GroupCardData,
+    data: JoinedRoomResponse,
+    userName: String = "",
     backgroundColor: Color = Color.White,
     onClick: () -> Unit = {}
 ) {
@@ -75,7 +76,7 @@ fun GroupMainCard(
             ) {
                 // 책 이미지
                 AsyncImage(
-                    model = data.imageUrl ?: R.drawable.img_book_cover_sample,
+                    model = data.bookImageUrl ?: R.drawable.img_book_cover_sample,
                     contentDescription = "책 이미지",
                     modifier = Modifier
                         .size(width = 80.dp, height = 107.dp),
@@ -89,7 +90,7 @@ fun GroupMainCard(
                     Spacer(Modifier.height(2.dp))
                     // 제목
                     Text(
-                        text = data.title,
+                        text = data.bookTitle,
                         style = typography.smalltitle_sb600_s18_h24,
                         color = colors.Black,
                         maxLines = 1
@@ -108,7 +109,7 @@ fun GroupMainCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = stringResource(R.string.group_participant, data.members),
+                                text = stringResource(R.string.group_participant, data.memberCount),
                                 color = colors.Grey02,
                                 style = typography.menu_sb600_s12,
                             )
@@ -123,13 +124,13 @@ fun GroupMainCard(
                     // 닉네임 + 진행도
                     Row(verticalAlignment = Alignment.Bottom) {
                         Text(
-                            text = stringResource(R.string.group_progress, data.nickname),
+                            text = stringResource(R.string.group_progress, userName),
                             color = colors.Grey02,
                             style = typography.view_m500_s14
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            text = "${data.progress}",
+                            text = "${data.userPercentage}",
                             color = colors.Purple,
                             style = typography.smalltitle_sb600_s16_h20
                         )
@@ -141,7 +142,7 @@ fun GroupMainCard(
                     }
                     Spacer(Modifier.height(10.dp))
 
-                    val percentage = data.progress.toFloat()
+                    val percentage = data.userPercentage.toFloat()
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -168,14 +169,14 @@ fun GroupMainCard(
 fun PreviewMyGroupMainCard() {
     ThipTheme {
         GroupMainCard(
-            data = GroupCardData(
-                id = 1,
-                title = "호르몬 체인지 완독하는 방",
-                members = 22,
-                imageUrl = "https://picsum.photos/300/200?1",
-                progress = 40,
-                nickname = "uibowl1"
+            data = JoinedRoomResponse(
+                roomId = 1,
+                bookTitle = "호르몬 체인지 완독하는 방",
+                memberCount = 22,
+                bookImageUrl = "https://picsum.photos/300/200?1",
+                userPercentage = 40
             ),
+            userName = "uibowl1님",
             onClick = {}
         )
     }

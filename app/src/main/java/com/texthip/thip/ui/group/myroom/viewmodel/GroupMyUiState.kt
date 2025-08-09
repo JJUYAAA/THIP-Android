@@ -1,10 +1,10 @@
 package com.texthip.thip.ui.group.myroom.viewmodel
 
-import com.texthip.thip.ui.group.done.mock.MyRoomCardData
+import com.texthip.thip.data.model.group.response.MyRoomResponse
 import com.texthip.thip.ui.group.myroom.mock.RoomType
 
 data class GroupMyUiState(
-    val myRooms: List<MyRoomCardData> = emptyList(),
+    val myRooms: List<MyRoomResponse> = emptyList(),
     val currentRoomType: RoomType = RoomType.PLAYING_AND_RECRUITING,
     val isLoading: Boolean = false,
     val isLoadingMore: Boolean = false,

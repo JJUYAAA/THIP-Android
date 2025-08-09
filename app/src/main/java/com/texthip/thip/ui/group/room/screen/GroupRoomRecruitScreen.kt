@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
+import com.texthip.thip.data.model.group.response.RecommendRoomResponse
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.common.cards.CardRoomBook
 import com.texthip.thip.ui.common.modal.DialogPopup
@@ -49,14 +50,14 @@ import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.util.DateUtils
 import kotlinx.coroutines.delay
 
 @Composable
 fun GroupRoomRecruitScreen(
     roomId: Int,
     viewModel: GroupRoomRecruitViewModel = hiltViewModel(),
-    mockRoomDetail: GroupRoomData? = null, // Preview용 mock 데이터
-    onRecommendationClick: (GroupCardItemRoomData) -> Unit = {},
+    onRecommendationClick: (RecommendRoomResponse) -> Unit = {},
     onNavigateToGroupScreen: (String) -> Unit = {}, // GroupScreen으로 네비게이션 + 토스트 메시지
     onBackClick: () -> Unit = {} // 뒤로가기
 ) {
@@ -66,9 +67,7 @@ fun GroupRoomRecruitScreen(
     
     // 데이터 로딩
     LaunchedEffect(roomId) {
-        if (mockRoomDetail == null) {
-            viewModel.loadRoomDetail(roomId)
-        }
+        viewModel.loadRoomDetail(roomId)
     }
     
     // GroupScreen으로 네비게이션
@@ -91,8 +90,8 @@ fun GroupRoomRecruitScreen(
             return@Box
         }
         
-        // 데이터가 없는 경우 (Preview에서는 mock 데이터 사용)
-        val detail = uiState.roomDetail ?: mockRoomDetail ?: return@Box
+        // 데이터가 없는 경우
+        val detail = uiState.roomDetail ?: return@Box
         
         Image(
             painter = painterResource(id = R.drawable.group_room_recruiting),
@@ -143,11 +142,11 @@ fun GroupRoomRecruitScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = detail.title,
+                            text = detail.roomName,
                             style = typography.bigtitle_b700_s22_h24,
                             color = colors.White
                         )
-                        if (detail.isSecret) {
+                        if (!detail.isPublic) {
                             Spacer(Modifier.width(2.dp))
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_lock),
@@ -172,7 +171,7 @@ fun GroupRoomRecruitScreen(
                     )
 
                     Text(
-                        text = detail.description,
+                        text = detail.roomDescription,
                         style = typography.copy_r400_s12_h20,
                         color = colors.Grey,
                         modifier = Modifier
@@ -206,8 +205,8 @@ fun GroupRoomRecruitScreen(
                                 modifier = Modifier.padding(top = 12.dp),
                                 text = stringResource(
                                     R.string.group_room_period,
-                                    detail.startDate,
-                                    detail.endDate
+                                    detail.progressStartDate,
+                                    detail.progressEndDate
                                 ),
                                 style = typography.timedate_r400_s11,
                                 color = colors.Grey
@@ -241,7 +240,7 @@ fun GroupRoomRecruitScreen(
                                 Text(
                                     text = stringResource(
                                         R.string.group_room_screen_participant_count,
-                                        detail.members
+                                        detail.memberCount
                                     ),
                                     style = typography.menu_sb600_s12,
                                     color = colors.White
@@ -250,7 +249,7 @@ fun GroupRoomRecruitScreen(
                                 Text(
                                     text = stringResource(
                                         R.string.group_room_screen_participant_count_max,
-                                        detail.maxMembers
+                                        detail.recruitCount
                                     ),
                                     style = typography.info_m500_s12,
                                     color = colors.Grey
@@ -277,10 +276,12 @@ fun GroupRoomRecruitScreen(
                                     color = colors.White
                                 )
                                 Spacer(Modifier.width(4.dp))
+                                // recruitEndDate에서 남은 일수 추출
+                                val daysLeft = DateUtils.extractDaysFromDeadline(detail.recruitEndDate)
                                 Text(
                                     text = stringResource(
                                         R.string.group_room_screen_end_date,
-                                        detail.daysLeft
+                                        daysLeft
                                     ),
                                     style = typography.info_m500_s12,
                                     color = colors.NeonGreen
@@ -301,7 +302,7 @@ fun GroupRoomRecruitScreen(
                                 )
                                 Spacer(Modifier.width(4.dp))
                                 Text(
-                                    text = detail.genre,
+                                    text = detail.category,
                                     style = typography.info_m500_s12,
                                     color = colors.genreColor
                                 )
@@ -311,15 +312,15 @@ fun GroupRoomRecruitScreen(
 
                     //읽을 책 정보
                     CardRoomBook(
-                        title = detail.bookData.title,
-                        author = detail.bookData.author,
-                        publisher = detail.bookData.publisher,
-                        description = detail.bookData.description,
-                        imageUrl = detail.bookData.imageUrl
+                        title = detail.bookTitle,
+                        author = detail.authorName,
+                        publisher = detail.publisher,
+                        description = detail.bookDescription,
+                        imageUrl = detail.bookImageUrl
                     )
 
                     // 추천 모임방이 있을 때만 표시
-                    if (detail.recommendations.isNotEmpty()) {
+                    if (detail.recommendRooms.isNotEmpty()) {
                         Text(
                             modifier = Modifier.padding(top = 40.dp),
                             text = stringResource(R.string.group_recommend),
@@ -334,13 +335,15 @@ fun GroupRoomRecruitScreen(
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
-                            items(detail.recommendations) { rec ->
+                            items(detail.recommendRooms) { rec ->
+                                // RecommendRoomResponse에서 데이터 추출
+                                val daysLeft = DateUtils.extractDaysFromDeadline(rec.recruitEndDate)
                                 CardItemRoomSmall(
-                                    title = rec.title,
-                                    participants = rec.participants,
-                                    maxParticipants = rec.maxParticipants,
-                                    endDate = rec.endDate,
-                                    imageUrl = rec.imageUrl,
+                                    title = rec.roomName,
+                                    participants = rec.memberCount,
+                                    maxParticipants = rec.recruitCount,
+                                    endDate = daysLeft,
+                                    imageUrl = rec.roomImageUrl,
                                     onClick = { onRecommendationClick(rec) }
                                 )
                             }
@@ -350,8 +353,8 @@ fun GroupRoomRecruitScreen(
             }
         }
 
-        // 하단 버튼 (Preview에서는 mockRoomDetail의 buttonType 사용)
-        val buttonType = uiState.currentButtonType ?: mockRoomDetail?.buttonType
+        // 하단 버튼
+        val buttonType = uiState.currentButtonType
         if (buttonType != null) {
             val buttonText = when (buttonType) {
                 GroupBottomButtonType.JOIN -> stringResource(R.string.group_room_screen_participant)
@@ -481,7 +484,6 @@ fun GroupRoomRecruitScreenPreview() {
 
         GroupRoomRecruitScreen(
             roomId = 1,
-            mockRoomDetail = detailJoin,
             onRecommendationClick = {},
             onNavigateToGroupScreen = {},
             onBackClick = {}

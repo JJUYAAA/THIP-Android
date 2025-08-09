@@ -1,10 +1,10 @@
 package com.texthip.thip.ui.group.room.viewmodel
 
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
-import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
+import com.texthip.thip.data.model.group.response.RoomRecruitingResponse
 
 data class GroupRoomRecruitUiState(
-    val roomDetail: GroupRoomData? = null,
+    val roomDetail: RoomRecruitingResponse? = null,
     val isLoading: Boolean = false,
     val currentButtonType: GroupBottomButtonType? = null,
     val showToast: Boolean = false,

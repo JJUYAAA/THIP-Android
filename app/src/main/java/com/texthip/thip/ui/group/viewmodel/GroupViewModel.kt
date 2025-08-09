@@ -79,15 +79,17 @@ class GroupViewModel @Inject constructor(
                 if (!uiState.value.hasMoreMyGroups) break
 
                 repository.getMyJoinedRooms(page)
-                    .onSuccess { paginationResult ->
-                        updateState { 
-                            it.copy(
-                                myGroups = it.myGroups + paginationResult.data,
-                                hasMoreMyGroups = paginationResult.hasMore
-                            )
+                    .onSuccess { joinedRoomsResponse ->
+                        joinedRoomsResponse?.let { response ->
+                            updateState { 
+                                it.copy(
+                                    myJoinedRooms = it.myJoinedRooms + response.roomList,
+                                    hasMoreMyGroups = !response.last
+                                )
+                            }
+                            loadedPagesCount++
+                            currentMyGroupsPage = page + 1
                         }
-                        loadedPagesCount++
-                        currentMyGroupsPage = page + 1
                     }
                     .onFailure {
                         break
@@ -131,8 +133,8 @@ class GroupViewModel @Inject constructor(
             }
 
             repository.getRoomSections(selectedGenre)
-                .onSuccess { sections ->
-                    updateState { it.copy(roomSections = sections) }
+                .onSuccess { roomMainList ->
+                    updateState { it.copy(roomMainList = roomMainList) }
                 }
                 .onFailure { error ->
                     updateState { it.copy(roomSectionsError = error.message) }
@@ -178,7 +180,7 @@ class GroupViewModel @Inject constructor(
         loadedPagesCount = 0
         updateState { 
             it.copy(
-                myGroups = emptyList(),
+                myJoinedRooms = emptyList(),
                 hasMoreMyGroups = true
             )
         }

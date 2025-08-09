@@ -18,5 +18,5 @@ data class MyRoomResponse(
     @SerialName("recruitCount") val recruitCount: Int,
     @SerialName("memberCount") val memberCount: Int,
     @SerialName("endDate") val endDate: String,
-    @SerialName("type") val type: String // "playingAndRecruiting", "recruiting", "playing", "expired"
+    @SerialName("type") val type: String
 )

@@ -126,15 +126,17 @@ fun NavGraphBuilder.groupNavigation(
         val uiState by groupViewModel.uiState.collectAsState()
         
         GroupSearchScreen(
-            roomList = uiState.roomSections.flatMap { it.rooms },   //임시
+            roomList = emptyList(),   //TODO: RoomMainResponse -> GroupCardItemRoomData 변환 필요
             onNavigateBack = {
                 navigateBack()
             },
             onRoomClick = { room ->
                 if (room.isRecruiting) {
-                    navController.navigateToGroupRecruit(room.id)
+                    // TODO: GroupCardItemRoomData -> RoomMainResponse 변환 후 roomId 사용
+                    // navController.navigateToGroupRecruit(room.roomId)
                 } else {
-                    navController.navigateToGroupRoom(room.id)
+                    // TODO: GroupCardItemRoomData -> RoomMainResponse 변환 후 roomId 사용
+                    // navController.navigateToGroupRoom(room.roomId)
                 }
             }
         )
@@ -148,7 +150,7 @@ fun NavGraphBuilder.groupNavigation(
         GroupRoomRecruitScreen(
             roomId = roomId,
             onRecommendationClick = { recommendation ->
-                navController.navigateToRecommendedGroupRecruit(recommendation.id)
+                navController.navigateToRecommendedGroupRecruit(recommendation.roomId)
             },
             onNavigateToGroupScreen = { toastMessage ->
                 // GroupScreen에 토스트 메시지 전달

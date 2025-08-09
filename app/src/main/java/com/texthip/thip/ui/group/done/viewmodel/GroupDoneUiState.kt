@@ -1,9 +1,9 @@
 package com.texthip.thip.ui.group.done.viewmodel
 
-import com.texthip.thip.ui.group.done.mock.MyRoomCardData
+import com.texthip.thip.data.model.group.response.MyRoomResponse
 
 data class GroupDoneUiState(
-    val expiredRooms: List<MyRoomCardData> = emptyList(),
+    val expiredRooms: List<MyRoomResponse> = emptyList(),
     val isLoading: Boolean = false,
     val isLoadingMore: Boolean = false,
     val hasMore: Boolean = true,

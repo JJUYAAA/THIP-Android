@@ -23,9 +23,3 @@ data class JoinedRoomResponse(
     @SerialName("userPercentage") val userPercentage: Int
 )
 
-data class PaginationResult<T>(
-    val data: List<T>,
-    val hasMore: Boolean,
-    val currentPage: Int,
-    val nickname: String = ""
-)

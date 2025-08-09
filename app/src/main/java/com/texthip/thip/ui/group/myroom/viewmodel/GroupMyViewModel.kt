@@ -48,17 +48,19 @@ class GroupMyViewModel @Inject constructor(
                 }
 
                 repository.getMyRoomsByType(uiState.value.currentRoomType.value, nextCursor)
-                    .onSuccess { paginationResult ->
-                        val currentList = if (reset) emptyList() else uiState.value.myRooms
-                        updateState { 
-                            it.copy(
-                                myRooms = currentList + paginationResult.data,
-                                error = null,
-                                hasMore = !paginationResult.isLast
-                            ) 
+                    .onSuccess { myRoomListResponse ->
+                        myRoomListResponse?.let { response ->
+                            val currentList = if (reset) emptyList() else uiState.value.myRooms
+                            updateState { 
+                                it.copy(
+                                    myRooms = currentList + response.roomList,
+                                    error = null,
+                                    hasMore = !response.isLast
+                                ) 
+                            }
+                            nextCursor = response.nextCursor
+                            isLastPage = response.isLast
                         }
-                        nextCursor = paginationResult.nextCursor
-                        isLastPage = paginationResult.isLast
                     }
                     .onFailure { exception ->
                         updateState { it.copy(error = exception.message) }

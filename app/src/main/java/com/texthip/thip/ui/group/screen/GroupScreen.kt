@@ -91,9 +91,10 @@ fun GroupScreen(
             Spacer(Modifier.height(20.dp))
 
             GroupPager(
-                groupCards = uiState.myGroups,
-                onCardClick = { groupCard ->
-                    onNavigateToGroupRoom(groupCard.id)
+                groupCards = uiState.myJoinedRooms,
+                userName = uiState.userName,
+                onCardClick = { joinedRoom ->
+                    onNavigateToGroupRoom(joinedRoom.roomId)
                 },
                 onCardVisible = { cardIndex ->
                     viewModel.onCardVisible(cardIndex)
@@ -111,18 +112,14 @@ fun GroupScreen(
 
             // 마감 임박한 독서 모임방
             GroupRoomDeadlineSection(
-                roomSections = uiState.roomSections,
+                roomMainList = uiState.roomMainList,
                 selectedGenreIndex = uiState.selectedGenreIndex,
                 errorMessage = uiState.roomSectionsError,
                 onGenreSelect = { genreIndex ->
                     viewModel.selectGenre(genreIndex)
                 },
                 onRoomClick = { room ->
-                    if (room.isRecruiting) {
-                        onNavigateToGroupRecruit(room.id)
-                    } else {
-                        onNavigateToGroupRoom(room.id)
-                    }
+                    onNavigateToGroupRecruit(room.roomId)
                 }
             )
             Spacer(Modifier.height(102.dp))
