@@ -163,7 +163,7 @@ fun ReactionsScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.no_saved_reation),
+                        text = stringResource(R.string.no_saved_reaction),
                         style = typography.smalltitle_sb600_s18_h24,
                         color = colors.White
                     )

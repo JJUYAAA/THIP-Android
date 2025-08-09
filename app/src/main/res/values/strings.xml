@@ -130,7 +130,7 @@
     <string name="do_thip_book">마음에 드는 책을 THIP 해보세요!</string>
     <string name="do_thip_feed">마음에 드는 피드를 THIP 해보세요!</string>
 
-    <string name="no_saved_reation">아직 저장한 반응이 없어요</string>
+    <string name="no_saved_reaction">아직 저장한 반응이 없어요</string>
     <string name="save_first_reaction">첫 번째 반응을 저장해 보세요!</string>
 
     <!--    my room 컴포넌트    -->
