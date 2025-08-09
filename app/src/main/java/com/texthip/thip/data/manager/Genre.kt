@@ -19,9 +19,5 @@ enum class Genre(
         fun fromDisplayKey(displayKey: String): Genre? {
             return entries.find { it.displayKey == displayKey }
         }
-
-        fun fromApiCategory(apiCategory: String): Genre? {
-            return entries.find { it.apiCategory == apiCategory }
-        }
     }
 }

@@ -42,10 +42,8 @@ import com.texthip.thip.ui.common.cards.CardRoomBook
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.group.myroom.mock.GroupBookData
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
-import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
-import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
+import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitUiState
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -56,13 +54,11 @@ import kotlinx.coroutines.delay
 @Composable
 fun GroupRoomRecruitScreen(
     roomId: Int,
-    viewModel: GroupRoomRecruitViewModel = hiltViewModel(),
     onRecommendationClick: (RecommendRoomResponse) -> Unit = {},
     onNavigateToGroupScreen: (String) -> Unit = {}, // GroupScreen으로 네비게이션 + 토스트 메시지
-    onBackClick: () -> Unit = {} // 뒤로가기
+    onBackClick: () -> Unit = {}, // 뒤로가기
+    viewModel: GroupRoomRecruitViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    
     val uiState by viewModel.uiState.collectAsState()
     
     // 데이터 로딩
@@ -77,6 +73,33 @@ fun GroupRoomRecruitScreen(
             viewModel.onNavigatedToGroupScreen()
         }
     }
+    
+    GroupRoomRecruitContent(
+        uiState = uiState,
+        onRecommendationClick = onRecommendationClick,
+        onBackClick = onBackClick,
+        onParticipationClick = { viewModel.onParticipationClick() },
+        onCancelParticipationClick = { title, description -> viewModel.onCancelParticipationClick(title, description) },
+        onCloseRecruitmentClick = { title, description -> viewModel.onCloseRecruitmentClick(title, description) },
+        onDialogConfirm = { viewModel.onDialogConfirm() },
+        onDialogCancel = { viewModel.onDialogCancel() },
+        onHideToast = { viewModel.hideToast() }
+    )
+}
+
+@Composable
+fun GroupRoomRecruitContent(
+    uiState: GroupRoomRecruitUiState,
+    onRecommendationClick: (RecommendRoomResponse) -> Unit = {},
+    onBackClick: () -> Unit = {},
+    onParticipationClick: () -> Unit = {},
+    onCancelParticipationClick: (String, String) -> Unit = { _, _ -> },
+    onCloseRecruitmentClick: (String, String) -> Unit = { _, _ -> },
+    onDialogConfirm: () -> Unit = {},
+    onDialogCancel: () -> Unit = {},
+    onHideToast: () -> Unit = {}
+) {
+    val context = LocalContext.current
 
     Box(Modifier.fillMaxSize()) {
         // 로딩 상태
@@ -366,20 +389,20 @@ fun GroupRoomRecruitScreen(
                 onClick = {
                     when (buttonType) {
                         GroupBottomButtonType.JOIN -> {
-                            viewModel.onParticipationClick()
+                            onParticipationClick()
                         }
 
                         GroupBottomButtonType.CANCEL -> {
-                            viewModel.onCancelParticipationClick(
-                                dialogTitle = context.getString(R.string.group_participant_cancel_popup),
-                                dialogDescription = context.getString(R.string.group_participant_cancel_comment)
+                            onCancelParticipationClick(
+                                context.getString(R.string.group_participant_cancel_popup),
+                                context.getString(R.string.group_participant_cancel_comment)
                             )
                         }
 
                         GroupBottomButtonType.CLOSE -> {
-                            viewModel.onCloseRecruitmentClick(
-                                dialogTitle = context.getString(R.string.group_participant_close_popup),
-                                dialogDescription = context.getString(R.string.group_participant_close_comment)
+                            onCloseRecruitmentClick(
+                                context.getString(R.string.group_participant_close_popup),
+                                context.getString(R.string.group_participant_close_comment)
                             )
                         }
                     }
@@ -423,12 +446,8 @@ fun GroupRoomRecruitScreen(
                 DialogPopup(
                     title = uiState.dialogTitle,
                     description = uiState.dialogDescription,
-                    onConfirm = {
-                        viewModel.onDialogConfirm()
-                    },
-                    onCancel = {
-                        viewModel.onDialogCancel()
-                    }
+                    onConfirm = onDialogConfirm,
+                    onCancel = onDialogCancel
                 )
             }
         }
@@ -438,7 +457,7 @@ fun GroupRoomRecruitScreen(
     LaunchedEffect(uiState.showToast, uiState.shouldNavigateToGroupScreen) {
         if (uiState.showToast && !uiState.shouldNavigateToGroupScreen) {
             delay(3000)
-            viewModel.hideToast()
+            onHideToast()
         }
     }
 }
@@ -447,46 +466,64 @@ fun GroupRoomRecruitScreen(
 @Composable
 fun GroupRoomRecruitScreenPreview() {
     ThipTheme {
-        val recommendations = listOf(
-            GroupCardItemRoomData(
-                id = 1,
-                title = "일본 소설 좋아하는 사람들",
-                participants = 19,
-                maxParticipants = 25,
-                isRecruiting = true,
-                endDate = 2,
+        GroupRoomRecruitContent(
+            uiState = GroupRoomRecruitUiState(
+                isLoading = false,
+                roomDetail = com.texthip.thip.data.model.group.response.RoomRecruitingResponse(
+                    isHost = false,
+                    isJoining = false,
+                    roomId = 1,
+                    roomName = "🌙 미드나이트 라이브러리 함께읽기",
+                    roomImageUrl = "https://picsum.photos/400/600?1",
+                    isPublic = false,
+                    progressStartDate = "2025.02.01",
+                    progressEndDate = "2025.02.28",
+                    recruitEndDate = "D-5",
+                    category = "문학",
+                    roomDescription = "매트 헤이그의 미드나이트 라이브러리를 함께 읽으며 인생의 가능성과 선택에 대해 이야기해요. 각자의 삶에서 후회했던 순간들을 공유하고, 서로 위로하며 성장하는 시간을 가져보아요. 따뜻한 마음으로 서로의 이야기를 들어주실 분들과 함께하고 싶습니다.",
+                    memberCount = 18,
+                    recruitCount = 20,
+                    isbn = "9788937477263",
+                    bookImageUrl = "https://picsum.photos/300/400?book1",
+                    bookTitle = "미드나이트 라이브러리",
+                    authorName = "매트 헤이그",
+                    bookDescription = "삶과 죽음 사이, 후회와 가능성 사이에서 펼쳐지는 놀라운 이야기. 인생의 무한한 가능성을 탐험하는 감동적인 소설",
+                    publisher = "인플루엔셜",
+                    recommendRooms = listOf(
+                        RecommendRoomResponse(
+                            roomId = 2,
+                            roomImageUrl = "https://picsum.photos/300/400?rec1",
+                            roomName = "📚 현대문학 깊이 탐구하기",
+                            memberCount = 12,
+                            recruitCount = 15,
+                            recruitEndDate = "D-3"
+                        ),
+                        RecommendRoomResponse(
+                            roomId = 3,
+                            roomImageUrl = "https://picsum.photos/300/400?rec2", 
+                            roomName = "✨ 철학 소설로 삶을 되돌아보기",
+                            memberCount = 8,
+                            recruitCount = 12,
+                            recruitEndDate = "D-7"
+                        ),
+                        RecommendRoomResponse(
+                            roomId = 4,
+                            roomImageUrl = "https://picsum.photos/300/400?rec3",
+                            roomName = "🎭 인간 심리를 다룬 소설 읽기",
+                            memberCount = 15,
+                            recruitCount = 18,
+                            recruitEndDate = "D-2"
+                        )
+                    )
+                ),
+                currentButtonType = GroupBottomButtonType.JOIN,
+                showDialog = false,
+                showToast = false,
+                toastMessage = "",
+                dialogTitle = "",
+                dialogDescription = "",
+                shouldNavigateToGroupScreen = false
             )
-        )
-
-        val bookData = GroupBookData(
-            title = "심장보다 단단한 토마토 한 알",
-            author = "고선지",
-            publisher = "푸른출판사",
-            description = "'시집만 읽는 사람들' 3월 모임에서 읽는 시집.",
-            imageUrl = null
-        )
-
-        val detailJoin = GroupRoomData(
-            id = 1,
-            title = "시집만 읽는 사람들 3월",
-            isSecret = true,
-            description = "'시집만 읽는 사람들' 3월 모임입니다.",
-            startDate = "2025.01.12",
-            endDate = "2025.02.12",
-            members = 22,
-            maxMembers = 30,
-            daysLeft = 4,
-            genre = "문학",
-            bookData = bookData,
-            recommendations = recommendations,
-            buttonType = GroupBottomButtonType.JOIN
-        )
-
-        GroupRoomRecruitScreen(
-            roomId = 1,
-            onRecommendationClick = {},
-            onNavigateToGroupScreen = {},
-            onBackClick = {}
         )
     }
 }

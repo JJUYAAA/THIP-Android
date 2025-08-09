@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
@@ -31,7 +32,9 @@ import com.texthip.thip.ui.common.cards.CardItemRoom
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.myroom.component.GroupMyRoomFilterRow
 import com.texthip.thip.ui.group.myroom.mock.RoomType
+import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyUiState
 import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.rooms.RoomUtils
@@ -44,6 +47,27 @@ fun GroupMyScreen(
     viewModel: GroupMyViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    
+    GroupMyContent(
+        uiState = uiState,
+        onCardClick = onCardClick,
+        onNavigateBack = onNavigateBack,
+        onRefresh = { viewModel.refreshData() },
+        onLoadMore = { viewModel.loadMoreMyRooms() },
+        onChangeRoomType = { viewModel.changeRoomType(it) }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GroupMyContent(
+    uiState: GroupMyUiState,
+    onCardClick: (MyRoomResponse) -> Unit = {},
+    onNavigateBack: () -> Unit = {},
+    onRefresh: () -> Unit = {},
+    onLoadMore: () -> Unit = {},
+    onChangeRoomType: (RoomType) -> Unit = {}
+) {
     val listState = rememberLazyListState()
     
     // 무한 스크롤 로직
@@ -57,7 +81,7 @@ fun GroupMyScreen(
     
     LaunchedEffect(shouldLoadMore) {
         if (shouldLoadMore && uiState.canLoadMore) {
-            viewModel.loadMoreMyRooms()
+            onLoadMore()
         }
     }
     
@@ -81,7 +105,7 @@ fun GroupMyScreen(
         
         PullToRefreshBox(
             isRefreshing = uiState.isLoading,
-            onRefresh = { viewModel.refreshData() },
+            onRefresh = onRefresh,
             modifier = Modifier.fillMaxSize()
         ) {
             Column(
@@ -116,7 +140,7 @@ fun GroupMyScreen(
                             }
                             else -> RoomType.PLAYING_AND_RECRUITING
                         }
-                        viewModel.changeRoomType(newRoomType)
+                        onChangeRoomType(newRoomType)
                     }
                 )
 
@@ -167,4 +191,72 @@ fun GroupMyScreen(
     }
 }
 
-
+@Preview
+@Composable
+fun GroupMyScreenPreview() {
+    ThipTheme {
+        GroupMyContent(
+            uiState = GroupMyUiState(
+                myRooms = listOf(
+                    MyRoomResponse(
+                        roomId = 1,
+                        roomName = "🌙 미드나이트 라이브러리 함께읽기",
+                        bookImageUrl = "https://picsum.photos/300/400?1",
+                        memberCount = 18,
+                        recruitCount = 20,
+                        type = "RECRUITING",
+                        endDate = "2025-02-15"
+                    ),
+                    MyRoomResponse(
+                        roomId = 2,
+                        roomName = "📚 현대문학 깊이 탐구하기",
+                        bookImageUrl = "https://picsum.photos/300/400?2",
+                        memberCount = 12,
+                        recruitCount = 15,
+                        type = "PLAYING",
+                        endDate = "2025-01-28"
+                    ),
+                    MyRoomResponse(
+                        roomId = 3,
+                        roomName = "🔬 과학책으로 세상 이해하기",
+                        bookImageUrl = "https://picsum.photos/300/400?3",
+                        memberCount = 25,
+                        recruitCount = 30,
+                        type = "RECRUITING",
+                        endDate = "2025-03-01"
+                    ),
+                    MyRoomResponse(
+                        roomId = 4,
+                        roomName = "✨ 철학 고전 함께 읽기",
+                        bookImageUrl = "https://picsum.photos/300/400?4",
+                        memberCount = 8,
+                        recruitCount = 12,
+                        type = "PLAYING",
+                        endDate = "2025-02-10"
+                    ),
+                    MyRoomResponse(
+                        roomId = 5,
+                        roomName = "🎨 예술과 문학의 아름다운 만남",
+                        bookImageUrl = "https://picsum.photos/300/400?5",
+                        memberCount = 6,
+                        recruitCount = 10,
+                        type = "RECRUITING",
+                        endDate = "2025-02-20"
+                    ),
+                    MyRoomResponse(
+                        roomId = 6,
+                        roomName = "💭 심리학 도서 탐험대",
+                        bookImageUrl = "https://picsum.photos/300/400?6",
+                        memberCount = 14,
+                        recruitCount = 18,
+                        type = "PLAYING",
+                        endDate = "2025-01-30"
+                    )
+                ),
+                currentRoomType = RoomType.PLAYING_AND_RECRUITING,
+                isLoading = false,
+                hasMore = true
+            )
+        )
+    }
+}

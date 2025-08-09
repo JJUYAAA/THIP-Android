@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
+import com.texthip.thip.data.model.group.response.RoomMainList
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
@@ -31,6 +32,7 @@ import com.texthip.thip.ui.group.myroom.component.GroupMySectionHeader
 import com.texthip.thip.ui.group.myroom.component.GroupPager
 import com.texthip.thip.ui.group.myroom.component.GroupRoomDeadlineSection
 import com.texthip.thip.ui.group.myroom.component.GroupSearchTextField
+import com.texthip.thip.ui.group.viewmodel.GroupUiState
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -53,6 +55,39 @@ fun GroupScreen(
         viewModel.refreshDataOnScreenEnter()
     }
     val uiState by viewModel.uiState.collectAsState()
+    
+    GroupContent(
+        uiState = uiState,
+        onNavigateToMakeRoom = onNavigateToMakeRoom,
+        onNavigateToGroupDone = onNavigateToGroupDone,
+        onNavigateToAlarm = onNavigateToAlarm,
+        onNavigateToGroupSearch = onNavigateToGroupSearch,
+        onNavigateToGroupMy = onNavigateToGroupMy,
+        onNavigateToGroupRecruit = onNavigateToGroupRecruit,
+        onNavigateToGroupRoom = onNavigateToGroupRoom,
+        onRefreshGroupData = { viewModel.refreshGroupData() },
+        onCardVisible = { cardIndex -> viewModel.onCardVisible(cardIndex) },
+        onSelectGenre = { genreIndex -> viewModel.selectGenre(genreIndex) },
+        onHideToast = { viewModel.hideToast() }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GroupContent(
+    uiState: GroupUiState,
+    onNavigateToMakeRoom: () -> Unit = {},
+    onNavigateToGroupDone: () -> Unit = {},
+    onNavigateToAlarm: () -> Unit = {},
+    onNavigateToGroupSearch: () -> Unit = {},
+    onNavigateToGroupMy: () -> Unit = {},
+    onNavigateToGroupRecruit: (Int) -> Unit = {},
+    onNavigateToGroupRoom: (Int) -> Unit = {},
+    onRefreshGroupData: () -> Unit = {},
+    onCardVisible: (Int) -> Unit = {},
+    onSelectGenre: (Int) -> Unit = {},
+    onHideToast: () -> Unit = {}
+) {
     val scrollState = rememberScrollState()
 
     Box(
@@ -60,9 +95,7 @@ fun GroupScreen(
     ) {
         PullToRefreshBox(
             isRefreshing = uiState.isRefreshing,
-            onRefresh = {
-                viewModel.refreshGroupData()
-            },
+            onRefresh = onRefreshGroupData,
             modifier = Modifier.fillMaxSize()
         ) {
             Column(
@@ -96,9 +129,7 @@ fun GroupScreen(
                 onCardClick = { joinedRoom ->
                     onNavigateToGroupRoom(joinedRoom.roomId)
                 },
-                onCardVisible = { cardIndex ->
-                    viewModel.onCardVisible(cardIndex)
-                }
+                onCardVisible = onCardVisible
             )
             Spacer(Modifier.height(32.dp))
 
@@ -115,9 +146,7 @@ fun GroupScreen(
                 roomMainList = uiState.roomMainList,
                 selectedGenreIndex = uiState.selectedGenreIndex,
                 errorMessage = uiState.roomSectionsError,
-                onGenreSelect = { genreIndex ->
-                    viewModel.selectGenre(genreIndex)
-                },
+                onGenreSelect = onSelectGenre,
                 onRoomClick = { room ->
                     onNavigateToGroupRecruit(room.roomId)
                 }
@@ -147,7 +176,7 @@ fun GroupScreen(
     LaunchedEffect(uiState.showToast) {
         if (uiState.showToast) {
             delay(3000L)
-            viewModel.hideToast()
+            onHideToast()
         }
     }
 }
@@ -157,6 +186,94 @@ fun GroupScreen(
 @Composable
 fun PreviewGroupScreen() {
     ThipTheme {
-        GroupScreen()
+        GroupContent(
+            uiState = GroupUiState(
+                userName = "김독서",
+                myJoinedRooms = listOf(
+                    com.texthip.thip.data.model.group.response.JoinedRoomResponse(
+                        roomId = 1,
+                        bookImageUrl = "https://picsum.photos/300/400?joined1",
+                        bookTitle = "미드나이트 라이브러리",
+                        memberCount = 18,
+                        userPercentage = 75
+                    ),
+                    com.texthip.thip.data.model.group.response.JoinedRoomResponse(
+                        roomId = 2,
+                        bookImageUrl = "https://picsum.photos/300/400?joined2",
+                        bookTitle = "코스모스",
+                        memberCount = 25,
+                        userPercentage = 42
+                    ),
+                    com.texthip.thip.data.model.group.response.JoinedRoomResponse(
+                        roomId = 3,
+                        bookImageUrl = "https://picsum.photos/300/400?joined3",
+                        bookTitle = "사피엔스",
+                        memberCount = 15,
+                        userPercentage = 88
+                    )
+                ),
+                roomMainList = RoomMainList(
+                    deadlineRoomList = listOf(
+                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                            roomId = 4,
+                            bookImageUrl = "https://picsum.photos/300/400?deadline1",
+                            roomName = "🌙 미드나이트 라이브러리 함께읽기",
+                            recruitCount = 20,
+                            memberCount = 18,
+                            deadlineDate = "D-2"
+                        ),
+                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                            roomId = 5,
+                            bookImageUrl = "https://picsum.photos/300/400?deadline2",
+                            roomName = "📚 현대문학 깊이 탐구하기",
+                            recruitCount = 15,
+                            memberCount = 12,
+                            deadlineDate = "D-3"
+                        ),
+                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                            roomId = 6,
+                            bookImageUrl = "https://picsum.photos/300/400?deadline3",
+                            roomName = "🔬 과학책으로 세상 이해하기",
+                            recruitCount = 30,
+                            memberCount = 25,
+                            deadlineDate = "D-5"
+                        )
+                    ),
+                    popularRoomList = listOf(
+                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                            roomId = 7,
+                            bookImageUrl = "https://picsum.photos/300/400?popular1",
+                            roomName = "✨ 철학 고전 함께 읽기",
+                            recruitCount = 12,
+                            memberCount = 10,
+                            deadlineDate = "D-7"
+                        ),
+                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                            roomId = 8,
+                            bookImageUrl = "https://picsum.photos/300/400?popular2",
+                            roomName = "🎨 예술과 문학의 만남",
+                            recruitCount = 20,
+                            memberCount = 16,
+                            deadlineDate = "D-10"
+                        ),
+                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                            roomId = 9,
+                            bookImageUrl = "https://picsum.photos/300/400?popular3",
+                            roomName = "💭 심리학 도서 탐험대",
+                            recruitCount = 18,
+                            memberCount = 14,
+                            deadlineDate = "D-12"
+                        )
+                    )
+                ),
+                selectedGenreIndex = 2,
+                isRefreshing = false,
+                hasMoreMyGroups = true,
+                isLoadingMoreMyGroups = false,
+                roomSectionsError = null,
+                showToast = false,
+                toastMessage = ""
+            )
+        )
     }
 }

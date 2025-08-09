@@ -24,8 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
+import com.texthip.thip.data.model.group.response.MyRoomResponse
 import com.texthip.thip.ui.common.cards.CardItemRoom
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.group.done.viewmodel.GroupDoneUiState
 import com.texthip.thip.ui.group.done.viewmodel.GroupDoneViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -39,6 +41,23 @@ fun GroupDoneScreen(
     viewModel: GroupDoneViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    GroupDoneContent(
+        uiState = uiState,
+        onNavigateBack = onNavigateBack,
+        onRefresh = { viewModel.refreshData() },
+        onLoadMore = { viewModel.loadMoreExpiredRooms() }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GroupDoneContent(
+    uiState: GroupDoneUiState,
+    onNavigateBack: () -> Unit = {},
+    onRefresh: () -> Unit = {},
+    onLoadMore: () -> Unit = {}
+) {
     val listState = rememberLazyListState()
 
     // 무한 스크롤을 위한 로직
@@ -52,7 +71,7 @@ fun GroupDoneScreen(
 
     LaunchedEffect(shouldLoadMore) {
         if (shouldLoadMore && uiState.canLoadMore) {
-            viewModel.loadMoreExpiredRooms()
+            onLoadMore()
         }
     }
 
@@ -66,7 +85,7 @@ fun GroupDoneScreen(
         
         PullToRefreshBox(
             isRefreshing = uiState.isLoading,
-            onRefresh = { viewModel.refreshData() },
+            onRefresh = onRefresh,
             modifier = Modifier.fillMaxSize()
         ) {
             Column(
@@ -112,8 +131,60 @@ fun GroupDoneScreen(
 @Composable
 fun GroupDoneScreenPreview() {
     ThipTheme {
-        // Preview에서는 ViewModel을 사용할 수 없으므로 기본 레이아웃만 표시
-        GroupDoneScreen()
+        GroupDoneContent(
+            uiState = GroupDoneUiState(
+                userName = "김독서",
+                expiredRooms = listOf(
+                    MyRoomResponse(
+                        roomId = 1,
+                        roomName = "🌙 미드나이트 라이브러리 함께읽기",
+                        bookImageUrl = "https://picsum.photos/300/400?1",
+                        memberCount = 18,
+                        recruitCount = 20,
+                        endDate = "2025-01-31",
+                        type = "EXPIRED"
+                    ),
+                    MyRoomResponse(
+                        roomId = 2,
+                        roomName = "📚 현대문학 깊이읽기 모임",
+                        bookImageUrl = "https://picsum.photos/300/400?2",
+                        memberCount = 12,
+                        recruitCount = 15,
+                        endDate = "2024-12-28",
+                        type = "EXPIRED"
+                    ),
+                    MyRoomResponse(
+                        roomId = 3,
+                        roomName = "🔬 과학책으로 세상보기",
+                        bookImageUrl = "https://picsum.photos/300/400?3",
+                        memberCount = 25,
+                        recruitCount = 30,
+                        endDate = "2024-12-15",
+                        type = "EXPIRED"
+                    ),
+                    MyRoomResponse(
+                        roomId = 4,
+                        roomName = "✨ 철학 고전 탐구하기",
+                        bookImageUrl = "https://picsum.photos/300/400?4",
+                        memberCount = 10,
+                        recruitCount = 12,
+                        endDate = "2024-11-20",
+                        type = "EXPIRED"
+                    ),
+                    MyRoomResponse(
+                        roomId = 5,
+                        roomName = "🎨 예술과 문학의 만남",
+                        bookImageUrl = "https://picsum.photos/300/400?5",
+                        memberCount = 16,
+                        recruitCount = 20,
+                        endDate = "2024-10-31",
+                        type = "EXPIRED"
+                    )
+                ),
+                isLoading = false,
+                hasMore = true
+            )
+        )
     }
 }
 
