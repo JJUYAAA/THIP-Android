@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,7 +38,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MySubscriptionScreen(
-    navController: NavController? = null
+    navController: NavController? = null,
+    titleText: String = stringResource(R.string.my_thip_list)
 ) {
     val initialmembers = listOf(
         MySubscriptionData(
@@ -160,7 +161,7 @@ fun MySubscriptionScreen(
         ) {
             DefaultTopAppBar(
                 onLeftClick = {},
-                title = stringResource(R.string.my_thip_list)
+                title = titleText
             )
             Column(
                 modifier = Modifier

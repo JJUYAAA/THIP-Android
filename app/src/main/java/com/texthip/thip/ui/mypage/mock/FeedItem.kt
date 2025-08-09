@@ -15,6 +15,6 @@ data class FeedItem(
     val isSaved: Boolean,
     val isLocked: Boolean = false,
     val tags: List<String> = emptyList(),
-    val imageUrl: Int? = null
+    val imageUrls: List<Int>? = emptyList()
 )
 

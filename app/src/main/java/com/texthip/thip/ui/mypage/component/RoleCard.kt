@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.DarkGrey
 import com.texthip.thip.ui.theme.NeonGreen
-import com.texthip.thip.ui.theme.Pink
+import com.texthip.thip.ui.theme.Art
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -52,21 +52,17 @@ fun RoleCard(
     val borderColor = if (selected) White else DarkGrey
     val bgAlpha = if (selected) 1f else 0.3f
     val backgroundBrush = if (selected) {
-        Brush.verticalGradient(
-            colors = listOf(
-                colors.Black.copy(alpha = 0.7f), //상단은 어둡게
-                colors.White.copy(alpha = 0.2f)  //하단은 밝게
-            )
-        )
+        colors.Black800
     } else {
-        SolidColor(colors.Black.copy(alpha = 0.3f))
+        colors.Black700
     }
+    val actualGenreColor = if (selected) genreColor else colors.Grey01
     Box(
         modifier = modifier
             .width(162.dp)
             .height(100.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(brush = backgroundBrush, shape = RoundedCornerShape(12.dp))
+            .background(color = backgroundBrush, shape = RoundedCornerShape(12.dp))
             .border(
                 width = 1.dp,
                 color = borderColor,
@@ -92,7 +88,7 @@ fun RoleCard(
             Text(
                 text = genre,
                 style = typography.smalltitle_m500_s18_h24,
-                color = genreColor
+                color = actualGenreColor
             )
             Text(
                 text = role,
@@ -129,7 +125,7 @@ fun RoleCardPreview() {
                 role = "예술가",
                 imageResId = R.drawable.character_art,
                 genreColor = White,
-                roleColor = Pink,
+                roleColor = Art,
                 selected = selected2,
                 onClick = { selected2 = !selected2 }
             )

@@ -9,10 +9,15 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 // Feed
 fun NavGraphBuilder.feedNavigation(navController: NavHostController) {
     composable<MainTabRoutes.Feed> {
+        //TODO 추후 view model 적용 예정
         FeedScreen(
             navController = navController,
-            nickname = "User",
-            userRole = "독서가"
+            nickname = "ThipUser01",
+            userRole = "문학가",
+            feeds = emptyList(),
+            totalFeedCount = 0,
+            selectedTabIndex = 0,
+            followerProfileImageUrls = emptyList()
         )
     }
 }

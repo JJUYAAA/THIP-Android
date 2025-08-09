@@ -27,7 +27,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun CardNote(
     currentPage: Int,
-    percentage: Int,
+    percentage: Double,
     onClick: () -> Unit = { }
 ) {
     Column(
@@ -85,7 +85,7 @@ fun CardNote(
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(fraction = percentage / 100f)
+                    .fillMaxWidth(fraction = (percentage / 100f).toFloat())
                     .fillMaxHeight()
                     .background(color = colors.Purple, shape = RoundedCornerShape(12.dp))
             )
@@ -98,7 +98,7 @@ fun CardNote(
 private fun CardNotePreview() {
     CardNote(
         currentPage = 50,
-        percentage = 30,
+        percentage = 30.0,
         onClick = { }
     )
 }

@@ -327,7 +327,7 @@ fun GroupRoomRecruitContent(
                                 Text(
                                     text = detail.category,
                                     style = typography.info_m500_s12,
-                                    color = colors.genreColor
+                                    color = colors.SocialScience
                                 )
                             }
                         }

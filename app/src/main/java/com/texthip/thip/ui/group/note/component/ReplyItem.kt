@@ -42,7 +42,7 @@ fun ReplyItem(
         Icon(
             painter = painterResource(R.drawable.ic_reply),
             contentDescription = null,
-            tint = Color.White
+            tint = colors.White
         )
 
         Column(
@@ -54,7 +54,7 @@ fun ReplyItem(
                 profileImage = painterResource(R.drawable.character_literature),
                 nickname = data.nickName,
                 genreName = data.genreName,
-                genreColor = colors.Orange,
+                genreColor = colors.SocialScience,
                 date = data.postDate
             )
 

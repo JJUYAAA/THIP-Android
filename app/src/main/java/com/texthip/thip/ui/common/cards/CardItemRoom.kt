@@ -100,7 +100,7 @@ fun CardItemRoom(
                             modifier = Modifier.size(20.dp),
                             painter = painterResource(id = R.drawable.ic_group),
                             contentDescription = "그룹 아이콘",
-                            tint = Color.White
+                            tint = colors.White
                         )
                         Spacer(modifier = Modifier.width(4.dp))
 

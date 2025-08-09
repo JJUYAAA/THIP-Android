@@ -66,9 +66,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.accompanist.pager)
-    implementation(libs.accompanist.pager.indicators)
     implementation(libs.coil.compose)
+    implementation(libs.foundation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,6 +75,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("androidx.compose.foundation:foundation:1.5.0")
 
     // Hilt
     implementation(libs.hilt.android)

@@ -6,15 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,45 +29,55 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun MyFeedCard(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
-    bookImage: Painter? = null,
-    onLikeClick: () -> Unit = {}
+    onLikeClick: () -> Unit = {},
+    onContentClick: () -> Unit = {}
 ) {
+    val images = feedItem.imageUrls.orEmpty().map { painterResource(id = it) }
+    val hasImages = images.isNotEmpty()
+    val maxLines = if (hasImages) 3 else 8
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp)
-        ) {
-            ActionBookButton(
-                bookTitle = feedItem.bookTitle,
-                bookAuthor = feedItem.authName,
-
-                onClick = {}
-            )
-        }
-        if (bookImage  != null) {
-            Image(
-                painter = bookImage ,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(480.dp),
-                contentScale = ContentScale.Crop
-            )
-        }
+        ActionBookButton(
+            bookTitle = feedItem.bookTitle,
+            bookAuthor = feedItem.authName,
+            onClick = {}
+        )
 
         Text(
             text = feedItem.content,
             style = typography.feedcopy_r400_s14_h20,
             color = colors.White,
+            maxLines = maxLines,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(vertical = 16.dp)
+                .clickable { onContentClick() }
         )
+
+        if (hasImages) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                images.take(3).forEach { image ->
+                    Image(
+                        painter = image,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .size(100.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        }
+
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -104,7 +113,6 @@ fun MyFeedCard(
                 )
             }
         }
-
     }
 }
 
@@ -119,15 +127,14 @@ private fun MyFeedCardPrev() {
         bookTitle = "책 제목",
         authName = "한강",
         timeAgo = "3시간 전",
-        content = "무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷",
+        content = "무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷무한대로입력가능합니닷",
         likeCount = 10,
         commentCount = 5,
         isLiked = false,
         isSaved = true,
         isLocked = true,
-        imageUrl = null
+        imageUrls = null
     )
-
     val feed2 = FeedItem(
         id = 2,
         userProfileImage = R.drawable.character_art,
@@ -136,23 +143,21 @@ private fun MyFeedCardPrev() {
         bookTitle = "책 제목",
         authName = "한강",
         timeAgo = "3시간 전",
-        content = "한줄만 입력 가능",
+        content = "세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!세 줄만 보여줄거임!!",
         likeCount = 10,
         commentCount = 5,
         isLiked = false,
         isSaved = true,
         isLocked = false,
-        imageUrl = R.drawable.img_book_cover_sample
+        imageUrls = listOf(R.drawable.bookcover_sample,R.drawable.bookcover_sample)
     )
 
     Column {
         MyFeedCard(
-            feedItem = feed1,
-            bookImage = null
+            feedItem = feed1
         )
         MyFeedCard(
-            feedItem = feed2,
-            bookImage = painterResource(feed2.imageUrl!!)
+            feedItem = feed2
         )
     }
 

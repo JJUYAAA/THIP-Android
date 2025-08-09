@@ -26,7 +26,7 @@ fun HeaderMenuBarTab(
     titles: List<String>,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    indicatorColor: Color = Color.White,
+    indicatorColor: Color = colors.White,
 ) {
     ScrollableTabRow(
         selectedTabIndex = selectedTabIndex,

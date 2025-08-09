@@ -65,7 +65,7 @@ fun CardRoomBook(
                 Text(
                     text = title,
                     style = typography.menu_m500_s16_h24,
-                    color = Color.White,
+                    color = colors.White,
                     maxLines = 1,
                     modifier = Modifier.weight(1f),
                 )
@@ -74,7 +74,7 @@ fun CardRoomBook(
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_right),
                     contentDescription = "더보기",
-                    tint = Color.White,
+                    tint = colors.White,
                 )
             }
 
