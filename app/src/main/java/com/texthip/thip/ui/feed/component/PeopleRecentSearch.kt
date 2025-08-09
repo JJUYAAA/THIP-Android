@@ -31,7 +31,7 @@ fun PeopleRecentSearch(
     onSearchClick: (String) -> Unit,
     onRemove: (String) -> Unit
 ) {
-    Column {
+    Column (modifier = modifier){
         Text(
             text = stringResource(R.string.group_recent_search),
             color = colors.White,

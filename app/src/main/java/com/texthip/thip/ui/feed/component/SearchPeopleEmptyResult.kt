@@ -15,6 +15,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun SearchPeopleEmptyResult(
+    modifier: Modifier= Modifier,
     mainText: String
 ) {
     Column(

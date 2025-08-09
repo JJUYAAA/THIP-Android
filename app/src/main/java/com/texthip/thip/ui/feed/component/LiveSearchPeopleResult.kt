@@ -20,10 +20,11 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
 fun SearchPeopleResult(
+    modifier: Modifier = Modifier,
     peopleList: List<MySubscriptionData>,
     onThipNumClick: (MySubscriptionData) -> Unit = {}
 ) {
-    LazyColumn {
+    LazyColumn (modifier = modifier){
         itemsIndexed(peopleList) { index, user ->
             AuthorHeader(
                 profileImage = user.profileImageUrl,
@@ -38,7 +39,7 @@ fun SearchPeopleResult(
             if (index < peopleList.size - 1) {
                 Spacer(
                     modifier = Modifier
-                        .padding(vertical = 12.dp)
+                        .padding(vertical = 12.dp, horizontal = 20.dp)
                         .fillMaxWidth()
                         .height(1.dp)
                         .background(colors.DarkGrey02)
