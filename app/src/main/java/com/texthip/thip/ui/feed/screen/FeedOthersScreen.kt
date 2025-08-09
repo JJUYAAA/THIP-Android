@@ -119,7 +119,7 @@ fun FeedOthersScreen(
                             onContentClick = {} //TODO FeedCommentScreen으로
                         )
                         Spacer(modifier = Modifier.height(40.dp))
-                        if (index != feeds.lastIndex) {
+                        if (index != feedStateList.lastIndex) {
                             HorizontalDivider(
                                 color = colors.DarkGrey02,
                                 thickness = 10.dp
