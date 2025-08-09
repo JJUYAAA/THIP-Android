@@ -87,13 +87,8 @@ fun AuthorHeader(
         if (showButton) {
             OutlinedButton(
                 modifier = Modifier
-                    .then(
-                        if (buttonWidth != null)
-                            Modifier
                                 .width(buttonWidth)
-                                .height(33.dp)
-                        else Modifier
-                    ),
+                                .height(33.dp),
                 text = buttonText,
                 textStyle = typography.view_m500_s14,
                 onClick = onButtonClick
