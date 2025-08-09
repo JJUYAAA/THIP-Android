@@ -89,7 +89,7 @@ fun FeedOthersScreen(
                         modifier = Modifier.padding(horizontal = 20.dp)
                     )
                 }
-                if (totalFeedCount == 0) {
+                if (feedStateList.isEmpty()) {
                     item {
                         Box(
                             modifier = Modifier
