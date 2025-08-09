@@ -182,9 +182,9 @@ class GroupMakeRoomViewModel @Inject constructor(
         val currentGenres = uiState.value.genres
         if (genreIndex >= 0 && genreIndex < currentGenres.size) {
             val genre = currentGenres[genreIndex]
-            return genre.apiCategory
+            return genre.networkApiCategory
         }
-        return Genre.getDefault().apiCategory
+        return Genre.getDefault().networkApiCategory
     }
 
     fun clearError() {

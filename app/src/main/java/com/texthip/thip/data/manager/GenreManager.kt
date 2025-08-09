@@ -11,7 +11,7 @@ class GenreManager @Inject constructor() {
     }
     
     fun mapGenreToApiCategory(genre: Genre): String {
-        return genre.apiCategory
+        return genre.networkApiCategory
     }
     
     fun getDefaultGenre(): Genre {
