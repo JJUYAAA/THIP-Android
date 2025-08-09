@@ -1,0 +1,27 @@
+package com.texthip.thip.data.manager
+
+/**
+ * 도서 장르를 나타내는 enum class
+ */
+enum class Genre(
+    val displayKey: String,
+    val apiCategory: String
+) {
+    LITERATURE("literature", "문학"),
+    SCIENCE_IT("science_it", "과학·IT"),
+    SOCIAL_SCIENCE("social_science", "사회과학"),
+    HUMANITIES("humanities", "인문학"),
+    ART("art", "예술");
+
+    companion object {
+        fun getDefault() = LITERATURE
+
+        fun fromDisplayKey(displayKey: String): Genre? {
+            return entries.find { it.displayKey == displayKey }
+        }
+
+        fun fromApiCategory(apiCategory: String): Genre? {
+            return entries.find { it.apiCategory == apiCategory }
+        }
+    }
+}

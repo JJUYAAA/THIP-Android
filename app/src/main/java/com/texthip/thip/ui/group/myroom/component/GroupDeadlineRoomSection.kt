@@ -30,11 +30,13 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.cards.CardItemRoom
 import com.texthip.thip.data.model.group.response.RoomMainList
+import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.data.model.group.response.RoomMainResponse
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.util.DateUtils
+import com.texthip.thip.utils.rooms.DateUtils
+import com.texthip.thip.utils.rooms.toDisplayStrings
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
@@ -64,14 +66,8 @@ fun GroupRoomDeadlineSection(
 
             val pageSpacing = (-(cardWidth - (cardWidth * scale)) / 2) + desiredGap
 
-            // 기본 장르 목록
-            val defaultGenres = listOf(
-                stringResource(R.string.literature), 
-                stringResource(R.string.science_it), 
-                stringResource(R.string.social_science), 
-                stringResource(R.string.humanities), 
-                stringResource(R.string.art)
-            )
+            // Genre enum을 현지화된 문자열로 변환
+            val genreStrings = Genre.entries.toDisplayStrings()
             
             // 마감 임박 방 목록과 인기 방 목록을 섹션으로 구성
             val roomSections = listOf(
@@ -125,7 +121,7 @@ fun GroupRoomDeadlineSection(
                         Spacer(Modifier.height(40.dp))
 
                         GenreChipRow(
-                            genres = defaultGenres,
+                            genres = genreStrings,
                             selectedIndex = selectedGenreIndex,
                             onSelect = onGenreSelect
                         )

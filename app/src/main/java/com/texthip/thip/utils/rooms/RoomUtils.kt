@@ -1,4 +1,4 @@
-package com.texthip.thip.util
+package com.texthip.thip.utils.rooms
 
 
 object RoomUtils {

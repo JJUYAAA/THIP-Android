@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
 import com.texthip.thip.data.model.book.response.BookSavedResponse
 import com.texthip.thip.data.model.group.request.CreateRoomRequest
+import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.data.repository.BookRepository
 import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.ui.group.makeroom.mock.BookData
@@ -181,12 +182,9 @@ class GroupMakeRoomViewModel @Inject constructor(
         val currentGenres = uiState.value.genres
         if (genreIndex >= 0 && genreIndex < currentGenres.size) {
             val genre = currentGenres[genreIndex]
-            return when (genre) {
-                "과학·IT" -> "과학/IT"
-                else -> genre
-            }
+            return genre.apiCategory
         }
-        return "문학"
+        return Genre.getDefault().apiCategory
     }
 
     fun clearError() {

@@ -2,6 +2,7 @@ package com.texthip.thip.data.repository
 
 import com.texthip.thip.data.manager.GenreManager
 import com.texthip.thip.data.manager.UserDataManager
+import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.group.request.CreateRoomRequest
 import com.texthip.thip.data.model.group.request.RoomJoinRequest
@@ -21,7 +22,7 @@ class GroupRepository @Inject constructor(
 ) {
     
     /** 장르 목록 조회 */
-    fun getGenres(): Result<List<String>> {
+    fun getGenres(): Result<List<Genre>> {
         return Result.success(genreManager.getGenres())
     }
     
@@ -44,9 +45,9 @@ class GroupRepository @Inject constructor(
     }
 
     /** 카테고리별 모임방 섹션 조회 (마감임박/인기) */
-    suspend fun getRoomSections(category: String = ""): Result<RoomMainList?> = runCatching {
-        val finalCategory = category.ifEmpty { genreManager.getDefaultGenre() }
-        val apiCategory = genreManager.mapGenreToApiCategory(finalCategory)
+    suspend fun getRoomSections(genre: Genre? = null): Result<RoomMainList?> = runCatching {
+        val selectedGenre = genre ?: genreManager.getDefaultGenre()
+        val apiCategory = genreManager.mapGenreToApiCategory(selectedGenre)
         
         groupService.getRooms(apiCategory)
             .handleBaseResponse()

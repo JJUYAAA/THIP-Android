@@ -34,7 +34,7 @@ import com.texthip.thip.ui.group.myroom.mock.RoomType
 import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.util.RoomUtils
+import com.texthip.thip.utils.rooms.RoomUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

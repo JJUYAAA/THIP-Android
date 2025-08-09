@@ -50,7 +50,7 @@ import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.util.DateUtils
+import com.texthip.thip.utils.rooms.DateUtils
 import kotlinx.coroutines.delay
 
 @Composable

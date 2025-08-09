@@ -3,7 +3,7 @@ package com.texthip.thip.ui.group.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.texthip.thip.R
+import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.data.repository.GroupRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -126,10 +126,10 @@ class GroupViewModel @Inject constructor(
                 if (selectedIndex >= 0 && selectedIndex < genres.size) {
                     genres[selectedIndex]
                 } else {
-                    genres.firstOrNull() ?: context.getString(R.string.literature)
+                    genres.firstOrNull() ?: Genre.getDefault()
                 }
             } else {
-                context.getString(R.string.literature)
+                Genre.getDefault()
             }
 
             repository.getRoomSections(selectedGenre)

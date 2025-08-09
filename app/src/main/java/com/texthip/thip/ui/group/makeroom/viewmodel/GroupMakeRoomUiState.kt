@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.group.makeroom.viewmodel
 
+import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomRequest
 import java.time.LocalDate
@@ -21,7 +22,7 @@ data class GroupMakeRoomUiState(
     val savedBooks: List<BookData> = emptyList(),
     val groupBooks: List<BookData> = emptyList(),
     val isLoadingBooks: Boolean = false,
-    val genres: List<String> = emptyList()
+    val genres: List<Genre> = emptyList()
 ) {
     // 유효성 검사 로직
     val isDurationValid: Boolean

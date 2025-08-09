@@ -41,6 +41,7 @@ import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.rooms.toDisplayStrings
 
 
 @Composable
@@ -111,7 +112,7 @@ fun GroupMakeRoomScreen(
                 Spacer(modifier = Modifier.padding(top = 12.dp))
                 GenreChipRow(
                     modifier = Modifier.width(18.dp),
-                    genres = uiState.genres,
+                    genres = uiState.genres.toDisplayStrings(),
                     selectedIndex = uiState.selectedGenreIndex,
                     onSelect = viewModel::selectGenre
                 )
