@@ -25,6 +25,7 @@ fun GroupRoomBody(
     userPercentage: Double,
     currentVotes: List<CurrentVote>,
     onNavigateToNote: () -> Unit = {},
+    onVoteClick: (CurrentVote) -> Unit = {}
 ) {
     Column(
         modifier = modifier.padding(horizontal = 20.dp),
@@ -48,7 +49,8 @@ fun GroupRoomBody(
         ) {}
 
         CardVote(
-            voteData = currentVotes
+            voteData = currentVotes,
+            onVoteClick = onVoteClick
         )
     }
 }
@@ -61,7 +63,7 @@ private fun GroupRoomBodyPreview() {
         authorName = "저자 이름",
         currentPage = 100,
         userPercentage = 50.0,
-        currentVotes =  listOf(
+        currentVotes = listOf(
             CurrentVote(
                 content = "3연에 나오는 심장은 무엇을 의미하는 걸까요?",
                 page = 12,

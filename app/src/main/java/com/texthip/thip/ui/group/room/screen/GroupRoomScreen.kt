@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.group.room.screen
 
-import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +32,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.texthip.thip.R
+import com.texthip.thip.data.model.rooms.response.CurrentVote
+import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.GradationTopAppBar
@@ -50,7 +51,7 @@ fun GroupRoomScreen(
     roomId: Int,
     onBackClick: () -> Unit = {},
     onNavigateToMates: () -> Unit = {},
-    onNavigateToNote: () -> Unit = {},
+    onNavigateToNote: (page: Int?, isOverview: Boolean?) -> Unit = { _, _ -> },
     viewModel: GroupRoomViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -92,7 +93,7 @@ fun GroupRoomContent(
     roomDetails: RoomsPlayingResponse,
     onBackClick: () -> Unit = {},
     onNavigateToMates: () -> Unit = {},
-    onNavigateToNote: () -> Unit = {},
+    onNavigateToNote: (page: Int?, isOverview: Boolean?) -> Unit = { _, _ -> },
 ) {
     val scrollState = rememberScrollState()
 
@@ -174,7 +175,16 @@ fun GroupRoomContent(
                     currentPage = roomDetails.currentPage,
                     userPercentage = roomDetails.userPercentage,
                     currentVotes = roomDetails.currentVotes,
-                    onNavigateToNote = onNavigateToNote
+                    // 일반 노트 카드 클릭 시 필터 없이 이동
+                    onNavigateToNote = { onNavigateToNote(null, null) },
+                    // 투표 카드 클릭 시 필터 값과 함께 이동
+                    onVoteClick = { vote: CurrentVote ->
+                        if (vote.isOverview) {
+                            onNavigateToNote(null, true)
+                        } else {
+                            onNavigateToNote(vote.page, false)
+                        }
+                    }
                 )
             }
         }

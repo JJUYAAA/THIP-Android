@@ -76,6 +76,8 @@ fun GroupNoteScreen(
     onCreateNoteClick: () -> Unit = {},
     resultTabIndex: Int? = null,
     onResultConsumed: () -> Unit = {},
+    initialPage: Int? = null,
+    initialIsOverview: Boolean? = null,
     viewModel: GroupNoteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -116,8 +118,9 @@ fun GroupNoteScreen(
     }
 
     LaunchedEffect(key1 = roomId) {
+        // 기록 생성 후 돌아온 경우가 아닐 때 (처음 진입 시) 초기화
         if (resultTabIndex == null) {
-            viewModel.initialize(roomId)
+            viewModel.initialize(roomId, initialPage, initialIsOverview)
         }
     }
 

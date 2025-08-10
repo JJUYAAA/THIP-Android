@@ -61,8 +61,12 @@ fun NavHostController.navigateToGroupRoomMates(roomId: Int) {
 }
 
 // 기록장 화면으로 이동
-fun NavHostController.navigateToGroupNote(roomId: Int) {
-    navigate(GroupRoutes.Note(roomId))
+fun NavHostController.navigateToGroupNote(
+    roomId: Int,
+    page: Int? = null,
+    isOverview: Boolean? = null
+) {
+    navigate(GroupRoutes.Note(roomId = roomId, page = page, isOverview = isOverview))
 }
 
 // 기록 생성 화면으로 이동

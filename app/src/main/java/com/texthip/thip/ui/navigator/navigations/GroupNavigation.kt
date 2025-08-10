@@ -255,8 +255,8 @@ fun NavGraphBuilder.groupNavigation(
             onNavigateToMates = {
                 navController.navigateToGroupRoomMates(roomId)
             },
-            onNavigateToNote = {
-                navController.navigateToGroupNote(roomId)
+            onNavigateToNote = { page, isOverview ->
+                navController.navigateToGroupNote(roomId, page, isOverview)
             },
         )
     }
@@ -282,6 +282,8 @@ fun NavGraphBuilder.groupNavigation(
     composable<GroupRoutes.Note> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Note>()
         val roomId = route.roomId
+        val page = route.page
+        val isOverview = route.isOverview
 
         val result = backStackEntry.savedStateHandle.get<Int>("selected_tab_index")
 
@@ -289,12 +291,12 @@ fun NavGraphBuilder.groupNavigation(
 //            roomId = roomId,
             roomId = 1,
             resultTabIndex = result,
+            initialPage = page,
+            initialIsOverview = isOverview,
             onResultConsumed = {
                 backStackEntry.savedStateHandle.remove<Int>("selected_tab_index")
             },
-            onBackClick = {
-                navigateBack()
-            },
+            onBackClick = { navigateBack() },
             onCreateNoteClick = {
                 navController.navigateToGroupNoteCreate(roomId)
             },

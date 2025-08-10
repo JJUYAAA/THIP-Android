@@ -55,8 +55,23 @@ class GroupNoteViewModel @Inject constructor(
     private var nextCursor: String? = null
     private var roomId: Int = -1
 
-    fun initialize(roomId: Int) {
+    fun initialize(
+        roomId: Int,
+        initialPage: Int? = null,
+        initialIsOverview: Boolean? = null
+    ) {
         this.roomId = roomId
+
+        if (initialPage != null || initialIsOverview != null) {
+            _uiState.update {
+                it.copy(
+                    pageStart = initialPage?.toString() ?: "",
+                    pageEnd = initialPage?.toString() ?: "",
+                    isOverview = initialIsOverview ?: false,
+                    isPageFilter = initialPage != null
+                )
+            }
+        }
         loadPosts(isRefresh = true)
     }
 
