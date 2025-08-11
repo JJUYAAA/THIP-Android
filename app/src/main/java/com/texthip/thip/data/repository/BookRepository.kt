@@ -1,6 +1,7 @@
 package com.texthip.thip.data.repository
 
 import com.texthip.thip.data.model.base.handleBaseResponse
+import com.texthip.thip.data.model.book.response.BookSearchResponse
 import com.texthip.thip.data.service.BookService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,5 +17,12 @@ class BookRepository @Inject constructor(
             .handleBaseResponse()
             .getOrThrow()
             ?.bookList ?: emptyList()
+    }
+
+    /** 책 검색 */
+    suspend fun searchBooks(keyword: String, page: Int = 1): Result<BookSearchResponse?> = runCatching {
+        bookService.searchBooks(keyword, page)
+            .handleBaseResponse()
+            .getOrThrow()
     }
 }

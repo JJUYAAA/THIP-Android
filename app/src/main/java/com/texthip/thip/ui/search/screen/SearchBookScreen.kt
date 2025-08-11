@@ -9,12 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -24,6 +22,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.SearchBookTextField
@@ -33,6 +32,7 @@ import com.texthip.thip.ui.search.component.SearchBookFilteredResult
 import com.texthip.thip.ui.search.component.SearchEmptyResult
 import com.texthip.thip.ui.search.component.SearchRecentBook
 import com.texthip.thip.ui.search.mock.BookData
+import com.texthip.thip.ui.search.viewmodel.SearchBookViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import kotlinx.serialization.json.Json
 import androidx.core.content.edit
@@ -43,9 +43,10 @@ import kotlinx.serialization.builtins.serializer
 fun SearchBookScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController? = null,
-    bookList: List<BookData> = emptyList(),
-    popularBooks: List<BookData> = emptyList()
+    popularBooks: List<BookData> = emptyList(),
+    viewModel: SearchBookViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val sharedPrefs = remember { 
         context.getSharedPreferences("book_search_prefs", Context.MODE_PRIVATE) 
@@ -73,41 +74,9 @@ fun SearchBookScreen(
             recentSearches = emptyList()
         }
     }
-    var searchText by rememberSaveable { mutableStateOf("") }
-    var isSearched by rememberSaveable { mutableStateOf(false) }
+    
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-
-    val liveFilteredBookList by remember(searchText) {
-        derivedStateOf {
-            if (searchText.isBlank()) emptyList() else
-                bookList.filter { book ->
-                    book.title.contains(searchText, ignoreCase = true) ||
-                            book.author.contains(searchText, ignoreCase = true) ||
-                            book.publisher.contains(searchText, ignoreCase = true)
-                }
-        }
-    }
-
-    val filteredBookList by remember(searchText, isSearched) {
-        derivedStateOf {
-            if (!isSearched) emptyList()
-            else {
-                bookList.filter { book ->
-                    searchText.isBlank() ||
-                            book.title.contains(searchText, ignoreCase = true) ||
-                            book.author.contains(searchText, ignoreCase = true) ||
-                            book.publisher.contains(searchText, ignoreCase = true)
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(isSearched) {
-        if (isSearched) {
-            focusManager.clearFocus()
-        }
-    }
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -130,59 +99,87 @@ fun SearchBookScreen(
                         .fillMaxWidth()
                         .focusRequester(focusRequester),
                     hint = stringResource(R.string.book_search_hint),
-                    text = searchText,
-                    onValueChange = {
-                        searchText = it
-                        isSearched = false
+                    text = uiState.searchQuery,
+                    onValueChange = { query ->
+                        viewModel.updateSearchQuery(query)
                     },
                     onSearch = { query ->
                         if (query.isNotBlank() && !recentSearches.contains(query)) {
                             val newSearches = listOf(query) + recentSearches.take(9) // 최대 10개 유지
                             saveRecentSearches(newSearches)
                         }
-                        isSearched = true
+                        viewModel.onSearchButtonClick()
+                        focusManager.clearFocus()
                     }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
                 when {
-                    searchText.isBlank() && !isSearched -> {
+                    // 1. 검색어가 없는 상태 - 최근 검색어와 인기 책 표시
+                    uiState.searchQuery.isBlank() -> {
                         SearchRecentBook(
                             recentSearches = recentSearches,
                             popularBooks = popularBooks,
                             popularBookDate = "01.12", // TODO: 서버로 날짜를 받아 오게 수정
                             onSearchClick = { keyword ->
-                                searchText = keyword
-                                isSearched = true
+                                viewModel.updateSearchQuery(keyword)
+                                viewModel.onSearchButtonClick()
                             },
                             onRemove = { keyword ->
                                 val updatedSearches = recentSearches.filterNot { it == keyword }
                                 saveRecentSearches(updatedSearches)
                             },
                             onBookClick = { book ->
-                                // 책 클릭 시 처리
+                                // 책 클릭 시 처리 (책 상세 화면으로 이동)
                             }
                         )
                     }
 
-                    searchText.isNotBlank() && !isSearched -> {
-                        if (liveFilteredBookList.isEmpty()) {
-                            SearchEmptyResult(
-                                mainText = stringResource(R.string.book_no_search_result1),
-                                subText = stringResource(R.string.book_no_search_result2),
-                                onRequestBook = { /*책 요청 처리*/ }
-                            )
-                        } else {
-                            SearchActiveField(
-                                bookList = liveFilteredBookList
-                            )
-                        }
+                    // 2. 검색 완료 상태 - 전체 검색 결과 표시 (무한 스크롤 포함)
+                    uiState.hasSearchResults -> {
+                        SearchBookFilteredResult(
+                            resultCount = uiState.totalElements,
+                            bookList = uiState.searchResults.map { item ->
+                                BookData(
+                                    title = item.title,
+                                    author = item.authorName,
+                                    publisher = item.publisher,
+                                    imageUrl = item.imageUrl
+                                )
+                            },
+                            isLoading = uiState.isSearching || uiState.isLoadingMore,
+                            hasMore = uiState.canLoadMore,
+                            onLoadMore = {
+                                viewModel.loadMoreBooks()
+                            }
+                        )
                     }
 
-                    isSearched -> {
-                        SearchBookFilteredResult(
-                            resultCount = filteredBookList.size,
-                            bookList = filteredBookList,
+                    // 3. Live search 결과가 있는 상태 - SearchActiveField 표시 (무한 스크롤 포함)
+                    uiState.hasLiveResults -> {
+                        SearchActiveField(
+                            bookList = uiState.liveSearchResults.map { item ->
+                                BookData(
+                                    title = item.title,
+                                    author = item.authorName,
+                                    publisher = item.publisher,
+                                    imageUrl = item.imageUrl
+                                )
+                            },
+                            isLoading = uiState.isLiveSearching || uiState.isLiveLoadingMore,
+                            hasMore = uiState.canLiveLoadMore,
+                            onLoadMore = {
+                                viewModel.loadMoreLiveSearchResults()
+                            }
+                        )
+                    }
+
+                    // 4. 검색어는 있지만 결과가 없는 상태 - Empty 표시
+                    uiState.showEmptyState -> {
+                        SearchEmptyResult(
+                            mainText = stringResource(R.string.book_no_search_result1),
+                            subText = stringResource(R.string.book_no_search_result2),
+                            onRequestBook = { /*책 요청 처리*/ }
                         )
                     }
                 }
@@ -197,15 +194,6 @@ fun SearchBookScreen(
 fun PreviewBookSearchScreen_Default() {
     ThipTheme {
         SearchBookScreen(
-            bookList = listOf(
-                BookData(title = "aaa", author = "리처드 도킨스", publisher = "을유문화사", imageUrl = null),
-                BookData(title = "abc", author = "마틴 셀리그만", publisher = "물푸레", imageUrl = null),
-                BookData(title = "abcd", author = "빅터 프랭클", publisher = "청림출판", imageUrl = null),
-                BookData(title = "abcde", author = "칼 융", publisher = "문학과지성사", imageUrl = null),
-                BookData(title = "abcdef", author = "에릭 프롬", publisher = "까치글방", imageUrl = null),
-                BookData(title = "abcedfg", author = "알베르 카뮈", publisher = "민음사", imageUrl = null),
-                BookData(title = "abcdefgh", author = "장 폴 사르트르", publisher = "문학동네", imageUrl = null),
-            ),
             popularBooks = listOf(
                 BookData(title = "단 한번의 삶", author = "리처드 도킨스", publisher = "을유문화사", imageUrl = null),
                 BookData(title = "사랑", author = "마틴 셀리그만", publisher = "물푸레", imageUrl = null),
@@ -222,15 +210,6 @@ fun PreviewBookSearchScreen_Default() {
 fun PreviewBookSearchScreen_EmptyPopular() {
     ThipTheme {
         SearchBookScreen(
-            bookList = listOf(
-                BookData(title = "aaa", author = "리처드 도킨스", publisher = "을유문화사", imageUrl = null),
-                BookData(title = "abc", author = "마틴 셀리그만", publisher = "물푸레", imageUrl = null),
-                BookData(title = "abcd", author = "빅터 프랭클", publisher = "청림출판", imageUrl = null),
-                BookData(title = "abcde", author = "칼 융", publisher = "문학과지성사", imageUrl = null),
-                BookData(title = "abcdef", author = "에릭 프롬", publisher = "까치글방", imageUrl = null),
-                BookData(title = "abcedfg", author = "알베르 카뮈", publisher = "민음사", imageUrl = null),
-                BookData(title = "abcdefgh", author = "장 폴 사르트르", publisher = "문학동네", imageUrl = null),
-            ),
             popularBooks = emptyList()
         )
     }
