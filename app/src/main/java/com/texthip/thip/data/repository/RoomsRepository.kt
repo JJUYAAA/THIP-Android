@@ -63,4 +63,12 @@ class RoomsRepository @Inject constructor(
             )
         ).handleBaseResponse().getOrThrow()
     }
+
+    suspend fun getRoomsBookPage(
+        roomId: Int,
+    ) = runCatching {
+        roomsService.getRoomsBookPage(
+            roomId = roomId
+        ).handleBaseResponse().getOrThrow()
+    }
 }
