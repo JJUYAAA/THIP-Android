@@ -27,6 +27,7 @@ import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupNote
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupNoteCreate
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
@@ -182,6 +183,9 @@ fun NavGraphBuilder.groupNavigation(
             },
             onNavigateToMates = {
                 navController.navigateToGroupRoomMates(roomId)
+            },
+            onNavigateToNote = { page, isOverview ->
+                navController.navigateToGroupNote(roomId, page, isOverview)
             },
         )
     }
