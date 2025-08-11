@@ -2,6 +2,7 @@ package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
+import com.texthip.thip.data.model.rooms.response.RoomsBookPageResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsResponse
 import com.texthip.thip.data.model.rooms.response.RoomsRecordResponse
@@ -40,4 +41,9 @@ interface RoomsService {
         @Path("roomId") roomId: Int,
         @Body request: RoomsRecordRequest
     ): BaseResponse<RoomsRecordResponse>
+
+    @GET("rooms/{roomId}/book-page")
+    suspend fun getRoomsBookPage(
+        @Path("roomId") roomId: Int,
+    ): BaseResponse<RoomsBookPageResponse>
 }
