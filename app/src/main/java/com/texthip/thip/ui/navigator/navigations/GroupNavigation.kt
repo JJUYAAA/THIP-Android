@@ -4,28 +4,25 @@ import android.annotation.SuppressLint
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.texthip.thip.ui.group.done.screen.GroupDoneScreen
 import com.texthip.thip.ui.group.makeroom.screen.GroupMakeRoomScreen
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
-import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
-import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
 import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
 import com.texthip.thip.ui.group.note.screen.GroupNoteCreateScreen
 import com.texthip.thip.ui.group.note.screen.GroupNoteScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomMatesScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
-import com.texthip.thip.ui.group.screen.GroupDoneScreen
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
+import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
+import com.texthip.thip.ui.group.myroom.mock.RoomType
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
@@ -48,9 +45,17 @@ fun NavGraphBuilder.groupNavigation(
 ) {
     // 메인 Group 화면
     composable<MainTabRoutes.Group> { backStackEntry ->
-        val groupViewModel: GroupViewModel = viewModel(
-            viewModelStoreOwner = backStackEntry
-        )
+        val groupViewModel: GroupViewModel = hiltViewModel()
+        
+        // 네비게이션 파라미터로 전달된 토스트 메시지가 있는지 확인
+        LaunchedEffect(backStackEntry) {
+            val toastMessage = backStackEntry.savedStateHandle.get<String>("toast_message")
+            
+            toastMessage?.let { message ->
+                backStackEntry.savedStateHandle.remove<String>("toast_message")
+                groupViewModel.showToastMessage(message)
+            }
+        }
         
         GroupScreen(
             viewModel = groupViewModel,
@@ -80,7 +85,7 @@ fun NavGraphBuilder.groupNavigation(
     
     // Group MakeRoom 화면
     composable<GroupRoutes.MakeRoom> {
-        val viewModel: GroupMakeRoomViewModel = viewModel()
+        val viewModel: GroupMakeRoomViewModel = hiltViewModel()
         GroupMakeRoomScreen(
             viewModel = viewModel,
             onNavigateBack = {
@@ -94,24 +99,7 @@ fun NavGraphBuilder.groupNavigation(
     
     // Group Done 화면
     composable<GroupRoutes.Done> {
-        val parentEntry = remember(navController) {
-            try {
-                navController.getBackStackEntry(MainTabRoutes.Group)
-            } catch (e: Exception) {
-                null
-            }
-        }
-        val groupViewModel: GroupViewModel = if (parentEntry != null) {
-            viewModel(viewModelStoreOwner = parentEntry)
-        } else {
-            viewModel()
-        }
-        val userName by groupViewModel.userName.collectAsState()
-        val doneGroups by groupViewModel.doneGroups.collectAsState()
-        
         GroupDoneScreen(
-            name = userName,
-            allDataList = doneGroups,
             onNavigateBack = {
                 navigateBack()
             }
@@ -120,27 +108,16 @@ fun NavGraphBuilder.groupNavigation(
     
     // Group My 화면
     composable<GroupRoutes.My> {
-        val parentEntry = remember(navController) {
-            try {
-                navController.getBackStackEntry(MainTabRoutes.Group)
-            } catch (e: Exception) {
-                null
-            }
-        }
-        val groupViewModel: GroupViewModel = if (parentEntry != null) {
-            viewModel(viewModelStoreOwner = parentEntry)
-        } else {
-            viewModel()
-        }
-        val myRoomGroups by groupViewModel.myRoomGroups.collectAsState()
+        val groupMyViewModel: GroupMyViewModel = hiltViewModel()
         
         GroupMyScreen(
-            allDataList = myRoomGroups,
+            viewModel = groupMyViewModel,
             onCardClick = { room ->
-                if (room.isRecruiting) {
-                    navController.navigateToGroupRecruit(room.id)
+                val isRecruiting = room.type == RoomType.RECRUITING.value
+                if (isRecruiting) {
+                    navController.navigateToGroupRecruit(room.roomId)
                 } else {
-                    navController.navigateToGroupRoom(room.id)
+                    navController.navigateToGroupRoom(room.roomId)
                 }
             },
             onNavigateBack = {
@@ -151,30 +128,21 @@ fun NavGraphBuilder.groupNavigation(
     
     // Group Search 화면
     composable<GroupRoutes.Search> {
-        val parentEntry = remember(navController) {
-            try {
-                navController.getBackStackEntry(MainTabRoutes.Group)
-            } catch (e: Exception) {
-                null
-            }
-        }
-        val groupViewModel: GroupViewModel = if (parentEntry != null) {
-            viewModel(viewModelStoreOwner = parentEntry)
-        } else {
-            viewModel()
-        }
-        val searchGroups by groupViewModel.searchGroups.collectAsState()
+        val groupViewModel: GroupViewModel = hiltViewModel()
+        val uiState by groupViewModel.uiState.collectAsState()
         
         GroupSearchScreen(
-            roomList = searchGroups,
+            roomList = emptyList(),   //TODO: RoomMainResponse -> GroupCardItemRoomData 변환 필요
             onNavigateBack = {
                 navigateBack()
             },
             onRoomClick = { room ->
                 if (room.isRecruiting) {
-                    navController.navigateToGroupRecruit(room.id)
+                    // TODO: GroupCardItemRoomData -> RoomMainResponse 변환 후 roomId 사용
+                    // navController.navigateToGroupRecruit(room.roomId)
                 } else {
-                    navController.navigateToGroupRoom(room.id)
+                    // TODO: GroupCardItemRoomData -> RoomMainResponse 변환 후 roomId 사용
+                    // navController.navigateToGroupRoom(room.roomId)
                 }
             }
         )
@@ -184,48 +152,22 @@ fun NavGraphBuilder.groupNavigation(
     composable<GroupRoutes.Recruit> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Recruit>()
         val roomId = route.roomId
-        val parentEntry = remember(navController) {
-            try {
-                navController.getBackStackEntry(MainTabRoutes.Group)
-            } catch (e: Exception) {
-                null
+        
+        GroupRoomRecruitScreen(
+            roomId = roomId,
+            onRecommendationClick = { recommendation ->
+                navController.navigateToRecommendedGroupRecruit(recommendation.roomId)
+            },
+            onNavigateToGroupScreen = { toastMessage ->
+                // GroupScreen에 토스트 메시지 전달
+                val groupEntry = navController.getBackStackEntry(MainTabRoutes.Group)
+                groupEntry.savedStateHandle["toast_message"] = toastMessage
+                navController.popBackStack(MainTabRoutes.Group, false)
+            },
+            onBackClick = {
+                navigateBack()
             }
-        }
-        val groupViewModel: GroupViewModel = if (parentEntry != null) {
-            viewModel(viewModelStoreOwner = parentEntry)
-        } else {
-            viewModel()
-        }
-        
-        // suspend 함수를 위한 LaunchedEffect 사용
-        var roomDetail by remember { mutableStateOf<GroupRoomData?>(null) }
-        LaunchedEffect(roomId) {
-            roomDetail = groupViewModel.getRoomDetail(roomId)
-        }
-        
-        roomDetail?.let { detail ->
-            GroupRoomRecruitScreen(
-                detail = detail,
-                buttonType = GroupBottomButtonType.JOIN, // 기본값, 실제로는 사용자 상태에 따라 결정
-                onRecommendationClick = { recommendation ->
-                    navController.navigateToRecommendedGroupRecruit(recommendation.id)
-                },
-                onParticipation = {
-                    // 참여 로직
-                },
-                onCancelParticipation = {
-                    // 참여 취소 로직
-                },
-                onCloseRecruitment = {
-                    // 모집 마감 로직
-                },
-                onBackClick = {
-                    navigateBack()
-                }
-            )
-        } ?: run {
-            // 로딩 중이거나 데이터를 찾을 수 없는 경우
-        }
+        )
     }
     
     // Group Room 화면

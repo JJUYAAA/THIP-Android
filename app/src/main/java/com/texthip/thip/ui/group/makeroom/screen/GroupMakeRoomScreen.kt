@@ -24,8 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
+import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
 import com.texthip.thip.ui.common.forms.WarningTextField
@@ -37,24 +38,22 @@ import com.texthip.thip.ui.group.makeroom.component.GroupSelectBook
 import com.texthip.thip.ui.group.makeroom.component.GroupMemberLimitPicker
 import com.texthip.thip.ui.group.makeroom.component.SectionDivider
 import com.texthip.thip.ui.group.makeroom.mock.BookData
-import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
-import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
+import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomUiState
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.rooms.toDisplayStrings
 
 
 @Composable
 fun GroupMakeRoomScreen(
-    viewModel: GroupMakeRoomViewModel,
     onNavigateBack: () -> Unit,
     onGroupCreated: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: GroupMakeRoomViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val scrollState = rememberScrollState()
-    val genres = viewModel.genres
 
     // 에러 메시지 표시
     LaunchedEffect(uiState.errorMessage) {
@@ -62,6 +61,54 @@ fun GroupMakeRoomScreen(
             viewModel.clearError()
         }
     }
+
+    GroupMakeRoomContent(
+        uiState = uiState,
+        onNavigateBack = onNavigateBack,
+        onGroupCreated = onGroupCreated,
+        onCreateGroup = {
+            viewModel.createGroup(
+                onSuccess = { roomId ->
+                    // TODO: 생성된 roomId를 사용하여 해당 방으로 이동할 수 있음
+                    onGroupCreated()
+                },
+                onError = { errorMessage ->
+                    // TODO: 에러 메시지 표시 (토스트 메시지 등)
+                    // 현재는 uiState.errorMessage를 통해 처리
+                }
+            )
+        },
+        onSelectBook = viewModel::selectBook,
+        onToggleBookSearchSheet = viewModel::toggleBookSearchSheet,
+        onSelectGenre = viewModel::selectGenre,
+        onUpdateRoomTitle = viewModel::updateRoomTitle,
+        onUpdateRoomDescription = viewModel::updateRoomDescription,
+        onSetDateRange = viewModel::setDateRange,
+        onSetMemberLimit = viewModel::setMemberLimit,
+        onTogglePrivate = viewModel::togglePrivate,
+        onUpdatePassword = viewModel::updatePassword,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun GroupMakeRoomContent(
+    modifier: Modifier = Modifier,
+    uiState: GroupMakeRoomUiState,
+    onNavigateBack: () -> Unit = {},
+    onGroupCreated: () -> Unit = {},    // 그룹이 만들어졌을때 로직
+    onCreateGroup: () -> Unit = {},
+    onSelectBook: (BookData) -> Unit = {},
+    onToggleBookSearchSheet: (Boolean) -> Unit = {},
+    onSelectGenre: (Int) -> Unit = {},
+    onUpdateRoomTitle: (String) -> Unit = {},
+    onUpdateRoomDescription: (String) -> Unit = {},
+    onSetDateRange: (java.time.LocalDate, java.time.LocalDate) -> Unit = { _, _ -> },
+    onSetMemberLimit: (Int) -> Unit = {},
+    onTogglePrivate: (Boolean) -> Unit = {},
+    onUpdatePassword: (String) -> Unit = {}
+) {
+    val scrollState = rememberScrollState()
 
     Box {
         Column(
@@ -75,12 +122,7 @@ fun GroupMakeRoomScreen(
                 title = stringResource(R.string.group_making_group),
                 isRightButtonEnabled = uiState.isFormValid && !uiState.isLoading,
                 onLeftClick = onNavigateBack,
-                onRightClick = {
-                    viewModel.createGroup(
-                        onSuccess = onGroupCreated,
-                        onError = { /* 에러는 uiState.errorMessage로 처리 */ }
-                    )
-                }
+                onRightClick = onCreateGroup
             )
 
             Column(
@@ -94,8 +136,8 @@ fun GroupMakeRoomScreen(
 
                 GroupSelectBook(
                     selectedBook = uiState.selectedBook,
-                    onChangeBookClick = { viewModel.toggleBookSearchSheet(true) },
-                    onSelectBookClick = { viewModel.toggleBookSearchSheet(true) }
+                    onChangeBookClick = { onToggleBookSearchSheet(true) },
+                    onSelectBookClick = { onToggleBookSearchSheet(true) }
                 )
 
                 SectionDivider()
@@ -108,9 +150,9 @@ fun GroupMakeRoomScreen(
                 Spacer(modifier = Modifier.padding(top = 12.dp))
                 GenreChipRow(
                     modifier = Modifier.width(18.dp),
-                    genres = genres,
+                    genres = uiState.genres.toDisplayStrings(),
                     selectedIndex = uiState.selectedGenreIndex,
-                    onSelect = viewModel::selectGenre
+                    onSelect = onSelectGenre
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -132,7 +174,7 @@ fun GroupMakeRoomScreen(
                     hint = stringResource(R.string.group_room_title_hint),
                     value = uiState.roomTitle,
                     maxLength = 15,
-                    onValueChange = viewModel::updateRoomTitle
+                    onValueChange = onUpdateRoomTitle
                 )
 
                 SectionDivider()
@@ -141,20 +183,20 @@ fun GroupMakeRoomScreen(
                     title = stringResource(R.string.group_room_explain),
                     hint = stringResource(R.string.group_room_explain_hint),
                     value = uiState.roomDescription,
-                    onValueChange = viewModel::updateRoomDescription
+                    onValueChange = onUpdateRoomDescription
                 )
 
                 SectionDivider()
 
                 GroupRoomDurationPicker(
-                    onDateRangeSelected = viewModel::setDateRange
+                    onDateRangeSelected = onSetDateRange
                 )
 
                 SectionDivider()
 
                 GroupMemberLimitPicker(
                     selectedCount = uiState.memberLimit,
-                    onCountSelected = viewModel::setMemberLimit
+                    onCountSelected = onSetMemberLimit
                 )
 
                 SectionDivider()
@@ -177,7 +219,7 @@ fun GroupMakeRoomScreen(
                     )
                     ToggleSwitchButton(
                         isChecked = uiState.isPrivate,
-                        onToggleChange = viewModel::togglePrivate
+                        onToggleChange = onTogglePrivate
                     )
                 }
 
@@ -185,7 +227,7 @@ fun GroupMakeRoomScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                     WarningTextField(
                         value = uiState.password,
-                        onValueChange = viewModel::updatePassword,
+                        onValueChange = onUpdatePassword,
                         hint = stringResource(R.string.group_password_hint),
                         showWarning = uiState.password.isNotEmpty() && uiState.password.length < 4,
                         warningMessage = stringResource(R.string.group_private_warning_message),
@@ -204,16 +246,17 @@ fun GroupMakeRoomScreen(
 
         if (uiState.showBookSearchSheet) {
             GroupBookSearchBottomSheet(
-                onDismiss = { viewModel.toggleBookSearchSheet(false) },
+                onDismiss = { onToggleBookSearchSheet(false) },
                 onBookSelect = { book: BookData ->
-                    viewModel.selectBook(book)
-                    viewModel.toggleBookSearchSheet(false)
+                    onSelectBook(book)
+                    onToggleBookSearchSheet(false)
                 },
                 onRequestBook = {
-                    viewModel.toggleBookSearchSheet(false)
+                    onToggleBookSearchSheet(false)
                 },
-                savedBooks = dummySavedBooks,
-                groupBooks = dummyGroupBooks
+                savedBooks = uiState.savedBooks,
+                groupBooks = uiState.groupBooks,
+                isLoading = uiState.isLoadingBooks
             )
         }
 
@@ -235,13 +278,51 @@ fun GroupMakeRoomScreen(
 @Preview
 @Composable
 private fun GroupMakeRoomScreenPreview() {
-    val mockViewModel: GroupMakeRoomViewModel = viewModel()
-
     ThipTheme {
-        GroupMakeRoomScreen(
-            viewModel = mockViewModel,
-            onNavigateBack = { },
-            onGroupCreated = { }
+        GroupMakeRoomContent(
+            uiState = GroupMakeRoomUiState(
+                selectedBook = BookData(
+                    title = "미드나이트 라이브러리",
+                    imageUrl = "https://picsum.photos/300/400?1",
+                    author = "매트 헤이그",
+                    isbn = "9788937477263"
+                ),
+                selectedGenreIndex = 2,
+                roomTitle = "인생에 대해 고민하는 독서모임",
+                roomDescription = "매트 헤이그의 미드나이트 라이브러리를 함께 읽으며 인생의 가능성과 선택에 대해 이야기해요. 따뜻한 마음으로 서로의 이야기를 들어주실 분들과 함께하고 싶어요.",
+                memberLimit = 12,
+                isPrivate = true,
+                password = "1234",
+                genres = Genre.entries.toList(),
+                savedBooks = listOf(
+                    BookData(
+                        title = "코스모스",
+                        imageUrl = "https://picsum.photos/300/400?2",
+                        author = "칼 세이건",
+                        isbn = "9788983711892"
+                    ),
+                    BookData(
+                        title = "사피엔스",
+                        imageUrl = "https://picsum.photos/300/400?3",
+                        author = "유발 하라리",
+                        isbn = "9788934972464"
+                    )
+                ),
+                groupBooks = listOf(
+                    BookData(
+                        title = "1984",
+                        imageUrl = "https://picsum.photos/300/400?4",
+                        author = "조지 오웰",
+                        isbn = "9788937460777"
+                    ),
+                    BookData(
+                        title = "어린왕자",
+                        imageUrl = "https://picsum.photos/300/400?5",
+                        author = "생텍쥐페리",
+                        isbn = "9788932917245"
+                    )
+                )
+            )
         )
     }
 }

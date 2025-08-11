@@ -53,7 +53,7 @@ fun SearchBookTextField(
             .fillMaxWidth()
             .height(40.dp)
             .clip(shape)
-            .background(colors.DarkGrey),
+            .background(colors.DarkGrey02),
         contentAlignment = Alignment.CenterStart
     ) {
         Row(

@@ -34,7 +34,7 @@ fun CardInputBook(
     modifier: Modifier = Modifier,
     title: String,
     author: String,
-    imageRes: Int? = R.drawable.bookcover_sample, // 기본 이미지 리소스
+    imageRes: Int? = R.drawable.img_book_cover_sample, // 기본 이미지 리소스
     onChangeClick: () -> Unit = {}
 ) {
     Row(
