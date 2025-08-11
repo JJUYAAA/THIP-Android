@@ -25,6 +25,7 @@ class SearchBookViewModel @Inject constructor(
 
     init {
         loadPopularBooks()
+        loadRecentSearches()
     }
     
     private fun updateState(update: (SearchBookUiState) -> SearchBookUiState) {
@@ -50,6 +51,8 @@ class SearchBookViewModel @Inject constructor(
         val query = uiState.value.searchQuery.trim()
         if (query.isNotBlank()) {
             performCompleteSearch(query)
+            // 검색 완료 후 최신 검색어 목록 불러오기 (새로운 검색어가 추가되었을 수 있음)
+            loadRecentSearches()
         }
     }
 
@@ -336,15 +339,81 @@ class SearchBookViewModel @Inject constructor(
         }
     }
 
+    private fun loadRecentSearches() {
+        viewModelScope.launch {
+            try {
+                updateState { it.copy(isLoadingRecentSearches = true) }
+
+                bookRepository.getRecentSearches()
+                    .onSuccess { response ->
+                        response?.let { recentSearchResponse ->
+                            updateState {
+                                it.copy(
+                                    recentSearches = recentSearchResponse.recentSearchList,
+                                    isLoadingRecentSearches = false,
+                                    error = null
+                                )
+                            }
+                        } ?: run {
+                            updateState {
+                                it.copy(
+                                    recentSearches = emptyList(),
+                                    isLoadingRecentSearches = false,
+                                    error = null
+                                )
+                            }
+                        }
+                    }
+                    .onFailure { throwable ->
+                        updateState {
+                            it.copy(
+                                recentSearches = emptyList(),
+                                isLoadingRecentSearches = false,
+                                error = null // 최근 검색어 로딩 실패는 조용히 처리
+                            )
+                        }
+                    }
+            } catch (e: Exception) {
+                updateState {
+                    it.copy(
+                        recentSearches = emptyList(),
+                        isLoadingRecentSearches = false,
+                        error = null
+                    )
+                }
+            }
+        }
+    }
+
+    fun deleteRecentSearch(recentSearchId: Int) {
+        viewModelScope.launch {
+            try {
+                bookRepository.deleteRecentSearch(recentSearchId)
+                    .onSuccess {
+                        // 삭제 성공 시 목록 새로고침
+                        loadRecentSearches()
+                    }
+                    .onFailure {
+                        // 삭제 실패는 조용히 처리하거나 Toast로 알림 표시 가능
+                    }
+            } catch (e: Exception) {
+                // 예외 처리
+            }
+        }
+    }
+
     private fun clearSearchResults() {
         searchJob?.cancel()
         loadMoreJob?.cancel()
         updateState {
             SearchBookUiState(
                 searchQuery = it.searchQuery,
-                popularBooks = it.popularBooks // 인기 책은 유지
+                popularBooks = it.popularBooks, // 인기 책은 유지
+                recentSearches = it.recentSearches // 최근 검색어도 유지
             )
         }
+        // 검색어가 삭제되어 초기화면으로 돌아갈 때 최신 검색기록 불러오기
+        loadRecentSearches()
     }
 
     fun showToastMessage(message: String) {
@@ -362,6 +431,11 @@ class SearchBookViewModel @Inject constructor(
 
     fun clearError() {
         updateState { it.copy(error = null) }
+    }
+
+    fun refreshData() {
+        loadPopularBooks()
+        loadRecentSearches()
     }
 
     override fun onCleared() {

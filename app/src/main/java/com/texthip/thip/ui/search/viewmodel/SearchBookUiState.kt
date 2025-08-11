@@ -2,15 +2,18 @@ package com.texthip.thip.ui.search.viewmodel
 
 import com.texthip.thip.data.model.book.response.BookSearchItem
 import com.texthip.thip.data.model.book.response.PopularBookItem
+import com.texthip.thip.data.model.book.response.RecentSearchItem
 
 data class SearchBookUiState(
     val searchQuery: String = "",
     val liveSearchResults: List<BookSearchItem> = emptyList(), // Live search 결과 (검색어 입력 시)
     val searchResults: List<BookSearchItem> = emptyList(), // 완료된 검색 결과 (검색 버튼 클릭 시)
     val popularBooks: List<PopularBookItem> = emptyList(), // 인기 책 목록
+    val recentSearches: List<RecentSearchItem> = emptyList(), // 최근 검색어 목록
     val isLiveSearching: Boolean = false, // Live search 로딩 상태
     val isSearching: Boolean = false, // 완료된 검색 로딩 상태
     val isLoadingPopularBooks: Boolean = false, // 인기 책 로딩 상태
+    val isLoadingRecentSearches: Boolean = false, // 최근 검색어 로딩 상태
     val isLoadingMore: Boolean = false,
     val isLiveLoadingMore: Boolean = false, // Live search 무한 스크롤 로딩
     val hasMorePages: Boolean = true,

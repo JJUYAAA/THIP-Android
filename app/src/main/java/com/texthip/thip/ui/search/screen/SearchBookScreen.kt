@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.search.screen
 
-import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,15 +8,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,10 +35,6 @@ import com.texthip.thip.ui.search.component.SearchRecentBook
 import com.texthip.thip.ui.search.mock.BookData
 import com.texthip.thip.ui.search.viewmodel.SearchBookViewModel
 import com.texthip.thip.ui.theme.ThipTheme
-import kotlinx.serialization.json.Json
-import androidx.core.content.edit
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
 
 @Composable
 fun SearchBookScreen(
@@ -46,36 +43,29 @@ fun SearchBookScreen(
     viewModel: SearchBookViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-    val sharedPrefs = remember { 
-        context.getSharedPreferences("book_search_prefs", Context.MODE_PRIVATE) 
-    }
-
-    var recentSearches by remember {
-        mutableStateOf(
-            try {
-                val jsonString = sharedPrefs.getString("recent_book_searches", "[]") ?: "[]"
-                Json.decodeFromString<List<String>>(jsonString)
-            } catch (e: Exception) {
-                emptyList()
-            }
-        )
-    }
-
-    fun saveRecentSearches(searches: List<String>) {
-        try {
-            val jsonString = Json.encodeToString(ListSerializer(String.serializer()), searches)
-            sharedPrefs.edit {
-                putString("recent_book_searches", jsonString)
-            }
-            recentSearches = searches
-        } catch (e: Exception) {
-            recentSearches = emptyList()
-        }
-    }
-    
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    // 화면 진입 시 무조건 새로고침
+    LaunchedEffect(Unit) {
+        viewModel.refreshData()
+    }
+
+    // 화면 생명주기를 감지하여 새로고침 (뒤로가기 포함)
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshData()
+            }
+        }
+        
+        lifecycleOwner.lifecycle.addObserver(observer)
+        
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -103,10 +93,6 @@ fun SearchBookScreen(
                         viewModel.updateSearchQuery(query)
                     },
                     onSearch = { query ->
-                        if (query.isNotBlank() && !recentSearches.contains(query)) {
-                            val newSearches = listOf(query) + recentSearches.take(9) // 최대 10개 유지
-                            saveRecentSearches(newSearches)
-                        }
                         viewModel.onSearchButtonClick()
                         focusManager.clearFocus()
                     }
@@ -117,7 +103,7 @@ fun SearchBookScreen(
                     // 1. 검색어가 없는 상태 - 최근 검색어와 인기 책 표시
                     uiState.searchQuery.isBlank() -> {
                         SearchRecentBook(
-                            recentSearches = recentSearches,
+                            recentSearches = uiState.recentSearches.map { it.searchTerm },
                             popularBooks = uiState.popularBooks.map { item ->
                                 BookData(
                                     title = item.title,
@@ -132,8 +118,11 @@ fun SearchBookScreen(
                                 viewModel.onSearchButtonClick()
                             },
                             onRemove = { keyword ->
-                                val updatedSearches = recentSearches.filterNot { it == keyword }
-                                saveRecentSearches(updatedSearches)
+                                // 서버에서 해당 검색어를 찾아서 삭제
+                                val recentSearchItem = uiState.recentSearches.find { it.searchTerm == keyword }
+                                recentSearchItem?.let {
+                                    viewModel.deleteRecentSearch(it.recentSearchId)
+                                }
                             },
                             onBookClick = { book ->
                                 // 책 클릭 시 처리 (책 상세 화면으로 이동)
@@ -142,7 +131,7 @@ fun SearchBookScreen(
                     }
 
                     // 2. 검색 완료 상태 - 전체 검색 결과 표시 (무한 스크롤 포함)
-                    uiState.hasSearchResults -> {
+                    uiState.isSearchCompleted -> {
                         SearchBookFilteredResult(
                             resultCount = uiState.totalElements,
                             bookList = uiState.searchResults.map { item ->
