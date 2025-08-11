@@ -22,6 +22,10 @@ class SearchBookViewModel @Inject constructor(
     
     private var searchJob: Job? = null
     private var loadMoreJob: Job? = null
+
+    init {
+        loadPopularBooks()
+    }
     
     private fun updateState(update: (SearchBookUiState) -> SearchBookUiState) {
         _uiState.value = update(_uiState.value)
@@ -286,11 +290,60 @@ class SearchBookViewModel @Inject constructor(
     }
 
 
+    private fun loadPopularBooks() {
+        viewModelScope.launch {
+            try {
+                updateState { it.copy(isLoadingPopularBooks = true) }
+
+                bookRepository.getMostSearchedBooks()
+                    .onSuccess { response ->
+                        response?.let { mostSearchedBooks ->
+                            updateState {
+                                it.copy(
+                                    popularBooks = mostSearchedBooks.bookList,
+                                    isLoadingPopularBooks = false,
+                                    error = null
+                                )
+                            }
+                        } ?: run {
+                            updateState {
+                                it.copy(
+                                    popularBooks = emptyList(),
+                                    isLoadingPopularBooks = false,
+                                    error = null
+                                )
+                            }
+                        }
+                    }
+                    .onFailure {
+                        updateState {
+                            it.copy(
+                                popularBooks = emptyList(),
+                                isLoadingPopularBooks = false,
+                                error = null // 인기 책 로딩 실패는 조용히 처리
+                            )
+                        }
+                    }
+            } catch (e: Exception) {
+                updateState {
+                    it.copy(
+                        popularBooks = emptyList(),
+                        isLoadingPopularBooks = false,
+                        error = null
+                    )
+                }
+            }
+        }
+    }
+
     private fun clearSearchResults() {
         searchJob?.cancel()
         loadMoreJob?.cancel()
         updateState {
-            SearchBookUiState(searchQuery = it.searchQuery)
+            SearchBookUiState(
+                searchQuery = it.searchQuery,
+                popularBooks = it.popularBooks // 인기 책은 유지
+            )
         }
     }
 

@@ -43,7 +43,6 @@ import kotlinx.serialization.builtins.serializer
 fun SearchBookScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController? = null,
-    popularBooks: List<BookData> = emptyList(),
     viewModel: SearchBookViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -119,7 +118,14 @@ fun SearchBookScreen(
                     uiState.searchQuery.isBlank() -> {
                         SearchRecentBook(
                             recentSearches = recentSearches,
-                            popularBooks = popularBooks,
+                            popularBooks = uiState.popularBooks.map { item ->
+                                BookData(
+                                    title = item.title,
+                                    author = "",
+                                    publisher = "",
+                                    imageUrl = item.imageUrl
+                                )
+                            },
                             popularBookDate = "01.12", // TODO: 서버로 날짜를 받아 오게 수정
                             onSearchClick = { keyword ->
                                 viewModel.updateSearchQuery(keyword)
@@ -193,15 +199,7 @@ fun SearchBookScreen(
 @Composable
 fun PreviewBookSearchScreen_Default() {
     ThipTheme {
-        SearchBookScreen(
-            popularBooks = listOf(
-                BookData(title = "단 한번의 삶", author = "리처드 도킨스", publisher = "을유문화사", imageUrl = null),
-                BookData(title = "사랑", author = "마틴 셀리그만", publisher = "물푸레", imageUrl = null),
-                BookData(title = "호모 사피엔스", author = "빅터 프랭클", publisher = "청림출판", imageUrl = null),
-                BookData(title = "코스모스 실버", author = "칼 융", publisher = "문학과지성사", imageUrl = null),
-                BookData(title = "오만과 편견", author = "에릭 프롬", publisher = "까치글방", imageUrl = null),
-            )
-        )
+        SearchBookScreen()
     }
 }
 
@@ -209,8 +207,6 @@ fun PreviewBookSearchScreen_Default() {
 @Composable
 fun PreviewBookSearchScreen_EmptyPopular() {
     ThipTheme {
-        SearchBookScreen(
-            popularBooks = emptyList()
-        )
+        SearchBookScreen()
     }
 }
