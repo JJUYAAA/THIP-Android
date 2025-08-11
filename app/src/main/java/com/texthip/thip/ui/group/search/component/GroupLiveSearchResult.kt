@@ -1,7 +1,6 @@
 package com.texthip.thip.ui.group.search.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.theme.ThipTheme
@@ -31,7 +29,7 @@ fun GroupLiveSearchResult(
                 participants = room.participants,
                 maxParticipants = room.maxParticipants,
                 endDate = room.endDate,
-                imageRes = room.imageRes,
+                imageUrl = room.imageUrl,
                 isWide = true,
                 isSecret = room.isSecret,
                 onClick = { onRoomClick(room) }
@@ -66,8 +64,7 @@ fun GroupLiveSearchResultPreview() {
                         maxParticipants = 10,
                         isRecruiting = true,
                         endDate = 7,
-                        imageRes = R.drawable.bookcover_sample,
-                        genreIndex = 0,
+                        imageUrl = null,
                         isSecret = false
                     ),
                     GroupCardItemRoomData(
@@ -77,8 +74,7 @@ fun GroupLiveSearchResultPreview() {
                         maxParticipants = 12,
                         isRecruiting = false,  
                         endDate = 3,
-                        imageRes = R.drawable.bookcover_sample,
-                        genreIndex = 1,
+                        imageUrl = null,
                         isSecret = true
                     ),
                     GroupCardItemRoomData(
@@ -88,8 +84,7 @@ fun GroupLiveSearchResultPreview() {
                         maxParticipants = 8,
                         isRecruiting = true,
                         endDate = null,
-                        imageRes = R.drawable.bookcover_sample,
-                        genreIndex = 2,
+                        imageUrl = null,
                         isSecret = false
                     )
                 )

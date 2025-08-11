@@ -1,41 +1,38 @@
 package com.texthip.thip.ui.group.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.texthip.thip.data.group.repository.GroupRepository
-import com.texthip.thip.ui.group.myroom.mock.GroupCardData
-import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
-import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData
-import com.texthip.thip.ui.group.myroom.mock.GroupRoomData
+import com.texthip.thip.data.manager.Genre
+import com.texthip.thip.data.repository.GroupRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class GroupViewModel(
-    private val repository: GroupRepository = GroupRepository()
+@HiltViewModel
+class GroupViewModel @Inject constructor(
+    private val repository: GroupRepository,
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val _myGroups = MutableStateFlow<List<GroupCardData>>(emptyList())
-    val myGroups: StateFlow<List<GroupCardData>> = _myGroups.asStateFlow()
-
-    private val _roomSections = MutableStateFlow<List<GroupRoomSectionData>>(emptyList())
-    val roomSections: StateFlow<List<GroupRoomSectionData>> = _roomSections.asStateFlow()
-
-    private val _userName = MutableStateFlow("")
-    val userName: StateFlow<String> = _userName.asStateFlow()
-
-    private val _doneGroups = MutableStateFlow<List<GroupCardItemRoomData>>(emptyList())
-    val doneGroups: StateFlow<List<GroupCardItemRoomData>> = _doneGroups.asStateFlow()
-
-    private val _myRoomGroups = MutableStateFlow<List<GroupCardItemRoomData>>(emptyList())
-    val myRoomGroups: StateFlow<List<GroupCardItemRoomData>> = _myRoomGroups.asStateFlow()
-
-    private val _searchGroups = MutableStateFlow<List<GroupCardItemRoomData>>(emptyList())
-    val searchGroups: StateFlow<List<GroupCardItemRoomData>> = _searchGroups.asStateFlow()
-
-    private val _genres = MutableStateFlow<List<String>>(emptyList())
-    val genres: StateFlow<List<String>> = _genres.asStateFlow()
+    private val _uiState = MutableStateFlow(GroupUiState())
+    val uiState: StateFlow<GroupUiState> = _uiState.asStateFlow()
+    
+    private var currentMyGroupsPage = 1
+    private var loadedPagesCount = 0
+    private val pagesPerBatch = 3
+    private val preloadThreshold = 2
+    private var isBatchLoading = false
+    
+    private fun updateState(update: (GroupUiState) -> GroupUiState) {
+        _uiState.value = update(_uiState.value)
+    }
     
     init {
         loadInitialData()
@@ -45,72 +42,165 @@ class GroupViewModel(
         loadUserName()
         loadMyGroups()
         loadRoomSections()
-        loadDoneGroups()
-        loadMyRoomGroups()
-        loadSearchGroups()
     }
-    
+
     private fun loadUserName() {
         viewModelScope.launch {
             repository.getUserName()
                 .onSuccess { userName ->
-                    _userName.value = userName
+                    updateState { it.copy(userName = userName) }
                 }
         }
     }
-    
-    private fun loadMyGroups() {
-        viewModelScope.launch {
-            repository.getMyGroups()
-                .onSuccess { groups ->
-                    _myGroups.value = groups
-                }
+
+    fun loadMyGroups(reset: Boolean = false) = viewModelScope.launch {
+        if (reset) {
+            resetMyGroupsData()
+            updateState { it.copy(isRefreshing = true) }
+        }
+        try {
+            loadPageBatchSuspend()
+        } finally {
+            updateState { it.copy(isRefreshing = false) }
         }
     }
-    
+
+    private suspend fun loadPageBatchSuspend() {
+        if (!uiState.value.hasMoreMyGroups || isBatchLoading) return
+
+        try {
+            isBatchLoading = true
+            updateState { it.copy(isLoadingMoreMyGroups = true) }
+
+            val currentBatchStart = currentMyGroupsPage
+            val batchEndPage = currentBatchStart + pagesPerBatch - 1
+
+            for (page in currentBatchStart..batchEndPage) {
+                if (!uiState.value.hasMoreMyGroups) break
+
+                repository.getMyJoinedRooms(page)
+                    .onSuccess { joinedRoomsResponse ->
+                        joinedRoomsResponse?.let { response ->
+                            updateState { 
+                                it.copy(
+                                    myJoinedRooms = it.myJoinedRooms + response.roomList,
+                                    hasMoreMyGroups = !response.last
+                                )
+                            }
+                            loadedPagesCount++
+                            currentMyGroupsPage = page + 1
+                        }
+                    }
+                    .onFailure {
+                        break
+                    }
+            }
+        } finally {
+            isBatchLoading = false
+            updateState { it.copy(isLoadingMoreMyGroups = false) }
+        }
+    }
+
+    private fun loadPageBatch() = viewModelScope.launch {
+        loadPageBatchSuspend()
+    }
+
+    fun onCardVisible(cardIndex: Int) {
+        val currentPageEquivalent = (cardIndex / 3) + 1
+
+        if (currentPageEquivalent >= loadedPagesCount - preloadThreshold &&
+            uiState.value.hasMoreMyGroups && !isBatchLoading
+        ) {
+            loadPageBatch()
+        }
+    }
+
     private fun loadRoomSections() {
         viewModelScope.launch {
-            repository.getRoomSections()
-                .onSuccess { sections ->
-                    _roomSections.value = sections
+            updateState { it.copy(roomSectionsError = null) }
+
+            val genresResult = repository.getGenres()
+            val selectedIndex = uiState.value.selectedGenreIndex
+            val selectedGenre = if (genresResult.isSuccess) {
+                val genres = genresResult.getOrThrow()
+                if (selectedIndex >= 0 && selectedIndex < genres.size) {
+                    genres[selectedIndex]
+                } else {
+                    genres.firstOrNull() ?: Genre.getDefault()
+                }
+            } else {
+                Genre.getDefault()
+            }
+
+            repository.getRoomSections(selectedGenre)
+                .onSuccess { roomMainList ->
+                    updateState { it.copy(roomMainList = roomMainList) }
+                }
+                .onFailure { error ->
+                    updateState { it.copy(roomSectionsError = error.message) }
                 }
         }
     }
-    
-    private fun loadDoneGroups() {
-        viewModelScope.launch {
-            repository.getDoneGroups()
-                .onSuccess { groups ->
-                    _doneGroups.value = groups
-                }
+
+    fun selectGenre(genreIndex: Int) {
+        val genresResult = repository.getGenres()
+        if (genresResult.isSuccess) {
+            val genres = genresResult.getOrThrow()
+            if (genreIndex >= 0 && genreIndex < genres.size && genreIndex != uiState.value.selectedGenreIndex) {
+                updateState { it.copy(selectedGenreIndex = genreIndex) }
+                loadRoomSections()
+            }
         }
     }
-    
-    private fun loadMyRoomGroups() {
-        viewModelScope.launch {
-            repository.getMyRoomGroups()
-                .onSuccess { groups ->
-                    _myRoomGroups.value = groups
-                }
-        }
-    }
-    
-    private fun loadSearchGroups() {
-        viewModelScope.launch {
-            repository.getSearchGroups()
-                .onSuccess { groups ->
-                    _searchGroups.value = groups
-                }
-        }
-    }
-    
+
+
+
     fun refreshGroupData() {
-        loadInitialData()
+        viewModelScope.launch {
+            updateState { it.copy(isRefreshing = true) }
+            try {
+                val jobs = listOf(
+                    async { loadUserName() },
+                    async {
+                        resetMyGroupsData()
+                        loadPageBatchSuspend()
+                    },
+                    async { loadRoomSections() },
+                )
+
+                jobs.awaitAll()
+            } finally {
+                updateState { it.copy(isRefreshing = false) }
+            }
+        }
     }
-    
-    
-    suspend fun getRoomDetail(roomId: Int): GroupRoomData? {
-        return repository.getRoomDetail(roomId).getOrNull()
+
+    private fun resetMyGroupsData() {
+        currentMyGroupsPage = 1
+        loadedPagesCount = 0
+        updateState { 
+            it.copy(
+                myJoinedRooms = emptyList(),
+                hasMoreMyGroups = true
+            )
+        }
+    }
+
+    fun showToastMessage(message: String) {
+        updateState { 
+            it.copy(
+                toastMessage = message,
+                showToast = true
+            )
+        }
+    }
+
+    fun hideToast() {
+        updateState { it.copy(showToast = false) }
+    }
+
+    fun refreshDataOnScreenEnter() {
+        refreshGroupData()
     }
 
 }

@@ -1,139 +1,193 @@
 package com.texthip.thip.ui.group.makeroom.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.texthip.thip.R
+import com.texthip.thip.data.model.book.response.BookSavedResponse
+import com.texthip.thip.data.model.group.request.CreateRoomRequest
+import com.texthip.thip.data.manager.Genre
+import com.texthip.thip.data.repository.BookRepository
+import com.texthip.thip.data.repository.GroupRepository
 import com.texthip.thip.ui.group.makeroom.mock.BookData
-import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomRequest
-import com.texthip.thip.ui.group.makeroom.mock.GroupMakeRoomUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-// 나중에 서버와 연동할 때 사용할 뷰모델 예시
-class GroupMakeRoomViewModel(
-    private val groupRepository: GroupRepository = MockGroupRepository() // 기본값으로 Mock Repository 사용
+@HiltViewModel
+class GroupMakeRoomViewModel @Inject constructor(
+    private val groupRepository: GroupRepository,
+    private val bookRepository: BookRepository,
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GroupMakeRoomUiState())
     val uiState: StateFlow<GroupMakeRoomUiState> = _uiState.asStateFlow()
+    
+    companion object {
+        private val DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+    }
+    
+    private fun updateState(update: (GroupMakeRoomUiState) -> GroupMakeRoomUiState) {
+        _uiState.value = update(_uiState.value)
+    }
+    
+    init {
+        loadGenres()
+    }
+    
+    private fun loadGenres() {
+        viewModelScope.launch {
+            groupRepository.getGenres()
+                .onSuccess { genresList ->
+                    updateState { it.copy(genres = genresList) }
+                }
+        }
+    }
 
-    val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
-
-    // 책 선택
     fun selectBook(book: BookData) {
-        _uiState.value = _uiState.value.copy(selectedBook = book)
+        updateState { it.copy(selectedBook = book) }
     }
 
-    // 책 검색 시트 표시 상태 변경
     fun toggleBookSearchSheet(show: Boolean) {
-        _uiState.value = _uiState.value.copy(showBookSearchSheet = show)
+        updateState { it.copy(showBookSearchSheet = show) }
+        if (show) {
+            loadBooks()
+        }
+    }
+    
+    private fun loadBooks() {
+        viewModelScope.launch {
+            updateState { it.copy(isLoadingBooks = true) }
+            try {
+                val savedBooksResult = bookRepository.getBooks("saved")
+                savedBooksResult.onSuccess { bookDtos ->
+                    updateState { it.copy(savedBooks = bookDtos.map { dto -> dto.toBookData() }) }
+                }.onFailure {
+                    updateState { it.copy(savedBooks = emptyList()) }
+                }
+                
+                val groupBooksResult = bookRepository.getBooks("joining")
+                groupBooksResult.onSuccess { bookDtos ->
+                    updateState { it.copy(groupBooks = bookDtos.map { dto -> dto.toBookData() }) }
+                }.onFailure {
+                    updateState { it.copy(groupBooks = emptyList()) }
+                }
+            } catch (e: Exception) {
+                updateState { it.copy(savedBooks = emptyList(), groupBooks = emptyList()) }
+            } finally {
+                updateState { it.copy(isLoadingBooks = false) }
+            }
+        }
+    }
+    
+    private fun BookSavedResponse.toBookData(): BookData {
+        return BookData(
+            title = this.bookTitle,
+            imageUrl = this.imageUrl,
+            author = this.authorName,
+            isbn = this.isbn
+        )
     }
 
-    // 장르 선택
     fun selectGenre(index: Int) {
-        _uiState.value = _uiState.value.copy(selectedGenreIndex = index)
+        updateState { it.copy(selectedGenreIndex = index) }
     }
 
-    // 방 제목 변경
     fun updateRoomTitle(title: String) {
-        _uiState.value = _uiState.value.copy(roomTitle = title)
+        updateState { it.copy(roomTitle = title) }
     }
 
-    // 방 설명 변경
     fun updateRoomDescription(description: String) {
-        _uiState.value = _uiState.value.copy(roomDescription = description)
+        updateState { it.copy(roomDescription = description) }
     }
 
-    // 모임 날짜 범위 설정
     fun setDateRange(startDate: LocalDate, endDate: LocalDate) {
-        _uiState.value = _uiState.value.copy(
-            meetingStartDate = startDate,
-            meetingEndDate = endDate
-        )
+        updateState { 
+            it.copy(
+                meetingStartDate = startDate,
+                meetingEndDate = endDate
+            )
+        }
     }
 
-    // 인원 수 설정
     fun setMemberLimit(count: Int) {
-        _uiState.value = _uiState.value.copy(memberLimit = count)
+        updateState { it.copy(memberLimit = count) }
     }
 
-    // 비밀방 설정
     fun togglePrivate(isPrivate: Boolean) {
-        _uiState.value = _uiState.value.copy(
-            isPrivate = isPrivate,
-            password = if (!isPrivate) "" else _uiState.value.password
-        )
+        updateState { 
+            it.copy(
+                isPrivate = isPrivate,
+                password = if (!isPrivate) "" else it.password
+            )
+        }
     }
 
-    // 비밀번호 설정
     fun updatePassword(password: String) {
-        _uiState.value = _uiState.value.copy(password = password)
+        updateState { it.copy(password = password) }
     }
 
-    // 그룹 생성 요청
-    fun createGroup(onSuccess: () -> Unit, onError: (String) -> Unit) {
+    fun createGroup(onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
         val currentState = _uiState.value
 
         if (!currentState.isFormValid) {
-            //onError("입력 정보를 확인해주세요")
+            onError(context.getString(R.string.error_form_validation))
+            return
+        }
+
+        val selectedBook = currentState.selectedBook
+        if (selectedBook?.isbn == null) {
+            onError(context.getString(R.string.error_book_info_invalid))
             return
         }
 
         viewModelScope.launch {
             try {
-                _uiState.value = currentState.copy(isLoading = true, errorMessage = null)
+                updateState { it.copy(isLoading = true, errorMessage = null) }
 
-                val request = currentState.toRequest()
-                val result = groupRepository.createGroup(request)
+                val request = CreateRoomRequest(
+                    isbn = selectedBook.isbn,
+                    category = getApiCategoryName(currentState.selectedGenreIndex),
+                    roomName = currentState.roomTitle.trim(),
+                    description = currentState.roomDescription.trim(),
+                    progressStartDate = currentState.meetingStartDate.format(DATE_FORMATTER),
+                    progressEndDate = currentState.meetingEndDate.format(DATE_FORMATTER),
+                    recruitCount = currentState.memberLimit,
+                    password = if (currentState.isPrivate) currentState.password else null,
+                    isPublic = !currentState.isPrivate
+                )
 
-                if (result.isSuccess) {
-                    onSuccess()
-                } else {
-                    //onError(result.message ?: "그룹 생성에 실패했습니다")
+                val result = groupRepository.createRoom(request)
+                result.onSuccess { roomId ->
+                    onSuccess(roomId)
+                }.onFailure { exception ->
+                    onError(context.getString(R.string.error_room_creation_failed, exception.message ?: ""))
                 }
             } catch (e: Exception) {
-                //onError("네트워크 오류가 발생했습니다: ${e.message}")
+                onError(context.getString(R.string.error_network_error, e.message ?: ""))
             } finally {
-                _uiState.value = _uiState.value.copy(isLoading = false)
+                updateState { it.copy(isLoading = false) }
             }
         }
     }
-
-    // 에러 메시지 클리어
-    fun clearError() {
-        _uiState.value = _uiState.value.copy(errorMessage = null)
+    
+    private fun getApiCategoryName(genreIndex: Int): String {
+        val currentGenres = uiState.value.genres
+        if (genreIndex >= 0 && genreIndex < currentGenres.size) {
+            val genre = currentGenres[genreIndex]
+            return genre.networkApiCategory
+        }
+        return Genre.getDefault().networkApiCategory
     }
-}
 
-// Repository 예시
-interface GroupRepository {
-    suspend fun createGroup(request: GroupMakeRoomRequest): ApiResult<GroupCreateResponse>
-}
-
-// API 응답 클래스 예시
-data class ApiResult<T>(
-    val isSuccess: Boolean,
-    val data: T? = null,
-    val message: String? = null
-)
-
-data class GroupCreateResponse(
-    val groupId: String,
-    val groupName: String
-)
-
-// Mock Repository 구현
-class MockGroupRepository : GroupRepository {
-    override suspend fun createGroup(request: GroupMakeRoomRequest): ApiResult<GroupCreateResponse> {
-        // 임시로 성공 응답 반환
-        return ApiResult(
-            isSuccess = true,
-            data = GroupCreateResponse(
-                groupId = "mock_group_${System.currentTimeMillis()}",
-                groupName = request.roomTitle
-            )
-        )
+    fun clearError() {
+        updateState { it.copy(errorMessage = null) }
     }
 }

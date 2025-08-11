@@ -16,16 +16,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.texthip.thip.R
-import com.texthip.thip.ui.group.myroom.mock.GroupCardData
+import com.texthip.thip.data.model.group.response.JoinedRoomResponse
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun GroupPager(
-    groupCards: List<GroupCardData>,
-    onCardClick: (GroupCardData) -> Unit
+    groupCards: List<JoinedRoomResponse>,
+    userName: String = "",
+    onCardClick: (JoinedRoomResponse) -> Unit,
+    onCardVisible: ((Int) -> Unit)? = null
 ) {
     val scale = 0.86f
     val desiredGap = 10.dp
@@ -56,6 +57,7 @@ fun GroupPager(
             ) {
                 GroupMainCard(
                     data = groupCards[0],
+                    userName = userName,
                     onClick = { onCardClick(groupCards[0]) },
                     backgroundColor = colors.White
                 )
@@ -70,9 +72,17 @@ fun GroupPager(
                 pageCount = { infinitePageCount }
             )
 
-            // 시작 페이지로 이동
-            LaunchedEffect(groupCards.size) {
-                pagerState.scrollToPage(startPage)
+            // 초기 로딩 시에만 시작 페이지로 이동
+            LaunchedEffect(Unit) {
+                if (pagerState.currentPage == 0) {
+                    pagerState.scrollToPage(startPage)
+                }
+            }
+            
+            // 현재 보이는 카드 인덱스를 ViewModel에 알림
+            LaunchedEffect(pagerState.currentPage) {
+                val currentPageIndex = ((pagerState.currentPage - startPage) % groupCards.size + groupCards.size) % groupCards.size
+                onCardVisible?.invoke(currentPageIndex)
             }
 
             HorizontalPager(
@@ -104,6 +114,7 @@ fun GroupPager(
                 ) {
                     GroupMainCard(
                         data = groupCards[actualIndex],
+                        userName = userName,
                         onClick = { onCardClick(groupCards[actualIndex]) },
                         backgroundColor = bgColor
                     )
@@ -125,55 +136,55 @@ fun GroupPager(
 }
 
 
-@Preview()
+@Preview
 @Composable
 fun PreviewMyGroupPager() {
     ThipTheme {
         val list = listOf(
-            GroupCardData(
-                title = "호르몬 체인지 완독하는 방",
-                members = 22,
-                imageRes = R.drawable.bookcover_sample,
-                progress = 40,
-                nickname = "uibowl1님"
+            JoinedRoomResponse(
+                roomId = 1,
+                bookTitle = "호르몬 체인지 완독하는 방",
+                memberCount = 22,
+                bookImageUrl = "https://picsum.photos/300/200?1",
+                userPercentage = 40
             ),
-            GroupCardData(
-                title = "명작 읽기방",
-                members = 10,
-                imageRes = R.drawable.bookcover_sample,
-                progress = 70,
-                nickname = "joyce님"
+            JoinedRoomResponse(
+                roomId = 2,
+                bookTitle = "명작 읽기방",
+                memberCount = 10,
+                bookImageUrl = "https://picsum.photos/300/200?2",
+                userPercentage = 70
             ),
-            GroupCardData(
-                title = "또 다른 방",
-                members = 13,
-                imageRes = R.drawable.bookcover_sample,
-                progress = 10,
-                nickname = "other님"
+            JoinedRoomResponse(
+                roomId = 3,
+                bookTitle = "또 다른 방",
+                memberCount = 13,
+                bookImageUrl = "https://picsum.photos/300/200?3",
+                userPercentage = 10
             )
         )
         GroupPager(groupCards = list, onCardClick = {})
     }
 }
 
-@Preview()
+@Preview
 @Composable
 fun PreviewSingleGroupPager() {
     ThipTheme {
-        val singleList = listOf(
-            GroupCardData(
-                title = "단일 그룹",
-                members = 15,
-                imageRes = R.drawable.bookcover_sample,
-                progress = 60,
-                nickname = "single님"
+        val single = listOf(
+            JoinedRoomResponse(
+                roomId = 4,
+                bookTitle = "단일 그룹",
+                memberCount = 15,
+                bookImageUrl = "https://picsum.photos/300/200?4",
+                userPercentage = 60
             )
         )
-        GroupPager(groupCards = singleList, onCardClick = {})
+        GroupPager(groupCards = single, onCardClick = {}, userName = "규빈")
     }
 }
 
-@Preview()
+@Preview
 @Composable
 fun PreviewEmptyGroupPager() {
     ThipTheme {

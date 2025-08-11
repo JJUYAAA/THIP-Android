@@ -198,20 +198,20 @@ fun PreviewBookSearchScreen_Default() {
     ThipTheme {
         SearchBookScreen(
             bookList = listOf(
-                BookData("aaa", "리처드 도킨스", "을유문화사", R.drawable.bookcover_sample),
-                BookData("abc", "마틴 셀리그만", "물푸레", R.drawable.bookcover_sample),
-                BookData("abcd", "빅터 프랭클", "청림출판", R.drawable.bookcover_sample),
-                BookData("abcde", "칼 융", "문학과지성사", R.drawable.bookcover_sample),
-                BookData("abcdef", "에릭 프롬", "까치글방", R.drawable.bookcover_sample),
-                BookData("abcedfg", "알베르 카뮈", "민음사", R.drawable.bookcover_sample),
-                BookData("abcdefgh", "장 폴 사르트르", "문학동네", R.drawable.bookcover_sample),
+                BookData(title = "aaa", author = "리처드 도킨스", publisher = "을유문화사", imageUrl = null),
+                BookData(title = "abc", author = "마틴 셀리그만", publisher = "물푸레", imageUrl = null),
+                BookData(title = "abcd", author = "빅터 프랭클", publisher = "청림출판", imageUrl = null),
+                BookData(title = "abcde", author = "칼 융", publisher = "문학과지성사", imageUrl = null),
+                BookData(title = "abcdef", author = "에릭 프롬", publisher = "까치글방", imageUrl = null),
+                BookData(title = "abcedfg", author = "알베르 카뮈", publisher = "민음사", imageUrl = null),
+                BookData(title = "abcdefgh", author = "장 폴 사르트르", publisher = "문학동네", imageUrl = null),
             ),
             popularBooks = listOf(
-                BookData("단 한번의 삶", "리처드 도킨스", "을유문화사", R.drawable.bookcover_sample),
-                BookData("사랑", "마틴 셀리그만", "물푸레", R.drawable.bookcover_sample),
-                BookData("호모 사피엔스", "빅터 프랭클", "청림출판", R.drawable.bookcover_sample),
-                BookData("코스모스 실버", "칼 융", "문학과지성사", R.drawable.bookcover_sample),
-                BookData("오만과 편견", "에릭 프롬", "까치글방", R.drawable.bookcover_sample),
+                BookData(title = "단 한번의 삶", author = "리처드 도킨스", publisher = "을유문화사", imageUrl = null),
+                BookData(title = "사랑", author = "마틴 셀리그만", publisher = "물푸레", imageUrl = null),
+                BookData(title = "호모 사피엔스", author = "빅터 프랭클", publisher = "청림출판", imageUrl = null),
+                BookData(title = "코스모스 실버", author = "칼 융", publisher = "문학과지성사", imageUrl = null),
+                BookData(title = "오만과 편견", author = "에릭 프롬", publisher = "까치글방", imageUrl = null),
             )
         )
     }
@@ -223,13 +223,13 @@ fun PreviewBookSearchScreen_EmptyPopular() {
     ThipTheme {
         SearchBookScreen(
             bookList = listOf(
-                BookData("aaa", "리처드 도킨스", "을유문화사", R.drawable.bookcover_sample),
-                BookData("abc", "마틴 셀리그만", "물푸레", R.drawable.bookcover_sample),
-                BookData("abcd", "빅터 프랭클", "청림출판", R.drawable.bookcover_sample),
-                BookData("abcde", "칼 융", "문학과지성사", R.drawable.bookcover_sample),
-                BookData("abcdef", "에릭 프롬", "까치글방", R.drawable.bookcover_sample),
-                BookData("abcedfg", "알베르 카뮈", "민음사", R.drawable.bookcover_sample),
-                BookData("abcdefgh", "장 폴 사르트르", "문학동네", R.drawable.bookcover_sample),
+                BookData(title = "aaa", author = "리처드 도킨스", publisher = "을유문화사", imageUrl = null),
+                BookData(title = "abc", author = "마틴 셀리그만", publisher = "물푸레", imageUrl = null),
+                BookData(title = "abcd", author = "빅터 프랭클", publisher = "청림출판", imageUrl = null),
+                BookData(title = "abcde", author = "칼 융", publisher = "문학과지성사", imageUrl = null),
+                BookData(title = "abcdef", author = "에릭 프롬", publisher = "까치글방", imageUrl = null),
+                BookData(title = "abcedfg", author = "알베르 카뮈", publisher = "민음사", imageUrl = null),
+                BookData(title = "abcdefgh", author = "장 폴 사르트르", publisher = "문학동네", imageUrl = null),
             ),
             popularBooks = emptyList()
         )

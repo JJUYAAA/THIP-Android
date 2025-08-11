@@ -7,5 +7,5 @@ data class GroupBookData(
     val author: String,
     val publisher: String,
     val description: String,
-    val imageRes: Int = R.drawable.bookcover_sample
+    val imageUrl: String? = null // API에서 받은 이미지 URL
 )

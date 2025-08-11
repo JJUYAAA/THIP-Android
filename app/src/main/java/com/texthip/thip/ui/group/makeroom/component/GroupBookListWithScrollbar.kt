@@ -42,7 +42,7 @@ fun GroupBookListWithScrollbar(
             books.forEachIndexed { index, book ->
                 CardBookSearch(
                     title = book.title,
-                    imageRes = book.imageRes,
+                    imageUrl = book.imageUrl,
                     onClick = { onBookClick(book) }
                 )
 
@@ -67,7 +67,7 @@ fun PreviewBookListWithScrollbar() {
     ThipTheme {
         Column {
             GroupBookListWithScrollbar(
-                books = List(20) { BookData("Book $it", R.drawable.bookcover_sample) },
+                books = List(20) { BookData("Book $it", null) },
                 onBookClick = {}
             )
         }

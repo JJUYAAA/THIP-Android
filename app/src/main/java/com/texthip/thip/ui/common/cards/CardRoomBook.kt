@@ -1,13 +1,10 @@
 package com.texthip.thip.ui.common.cards
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,12 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -41,7 +38,7 @@ fun CardRoomBook(
     author: String,
     publisher: String,
     description: String,
-    imageRes: Int? = R.drawable.bookcover_sample,
+    imageUrl: String? = null, // API에서 받은 이미지 URL
     onClick: () -> Unit = {}
 ) {
     Card(
@@ -88,19 +85,12 @@ fun CardRoomBook(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // 책 이미지
-                Box(
-                    modifier = Modifier
-                        .size(width = 80.dp, height = 107.dp)
-                ) {
-                    imageRes?.let {
-                        Image(
-                            painter = painterResource(id = it),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
+                AsyncImage(
+                    model = imageUrl ?: R.drawable.img_book_cover_sample,
+                    contentDescription = "책 이미지",
+                    modifier = Modifier.size(width = 80.dp, height = 107.dp),
+                    contentScale = ContentScale.Crop
+                )
 
                 Spacer(modifier = Modifier.width(16.dp))
 

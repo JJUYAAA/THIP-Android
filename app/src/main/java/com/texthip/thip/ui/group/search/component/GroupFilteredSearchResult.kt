@@ -78,7 +78,7 @@ fun GroupFilteredSearchResult(
                         participants = room.participants,
                         maxParticipants = room.maxParticipants,
                         endDate = room.endDate,
-                        imageRes = room.imageRes,
+                        imageUrl = room.imageUrl,
                         isWide = true,
                         isSecret = room.isSecret,
                         onClick = { onRoomClick(room) }
@@ -121,8 +121,7 @@ fun GroupFilteredSearchResultPreview() {
                         maxParticipants = 10,
                         isRecruiting = true,
                         endDate = 7,
-                        imageRes = R.drawable.bookcover_sample,
-                        genreIndex = 1,
+                        imageUrl = null,
                         isSecret = false
                     ), GroupCardItemRoomData(
                         id = 2,
@@ -131,8 +130,7 @@ fun GroupFilteredSearchResultPreview() {
                         maxParticipants = 12,
                         isRecruiting = false,
                         endDate = 3,
-                        imageRes = R.drawable.bookcover_sample,
-                        genreIndex = 1,
+                        imageUrl = null,
                         isSecret = true
                     )
                 )

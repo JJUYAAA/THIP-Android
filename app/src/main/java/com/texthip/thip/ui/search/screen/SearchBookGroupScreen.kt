@@ -109,7 +109,7 @@ fun SearchBookGroupScreen(
                                 maxParticipants = item.maxParticipants,
                                 isRecruiting = item.isRecruiting,
                                 endDate = item.endDate,
-                                imageRes = item.imageRes,
+                                imageUrl = item.imageUrl,
                                 onClick = { onCardClick(item) }
                             )
                         }
@@ -151,7 +151,6 @@ fun GroupRecruitingScreenPreview() {
                 maxParticipants = 30,
                 endDate = 3,
                 isRecruiting = true,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 2,
@@ -160,7 +159,6 @@ fun GroupRecruitingScreenPreview() {
                 maxParticipants = 30,
                 endDate = 3,
                 isRecruiting = true,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 3,
@@ -169,7 +167,6 @@ fun GroupRecruitingScreenPreview() {
                 maxParticipants = 30,
                 endDate = 3,
                 isRecruiting = true,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 4,
@@ -178,7 +175,6 @@ fun GroupRecruitingScreenPreview() {
                 maxParticipants = 30,
                 endDate = 3,
                 isRecruiting = true,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 5,
@@ -187,7 +183,6 @@ fun GroupRecruitingScreenPreview() {
                 maxParticipants = 30,
                 endDate = 3,
                 isRecruiting = true,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 6,
@@ -196,7 +191,6 @@ fun GroupRecruitingScreenPreview() {
                 maxParticipants = 30,
                 endDate = 3,
                 isRecruiting = true,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 7,
@@ -205,7 +199,6 @@ fun GroupRecruitingScreenPreview() {
                 maxParticipants = 30,
                 endDate = 3,
                 isRecruiting = true,
-                genreIndex = 0
             ),
             GroupCardItemRoomData(
                 id = 8,
@@ -214,7 +207,6 @@ fun GroupRecruitingScreenPreview() {
                 maxParticipants = 30,
                 endDate = 3,
                 isRecruiting = true,
-                genreIndex = 0
             )
         )
 

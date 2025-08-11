@@ -113,8 +113,7 @@ fun GroupSearchScreen(
             if (!isSearched) emptyList()
             else {
                 val filtered = roomList.filter { room ->
-                    (searchText.isBlank() || room.title.contains(searchText, ignoreCase = true)) &&
-                            (selectedGenreIndex == -1 || room.genreIndex == selectedGenreIndex)
+                    (searchText.isBlank() || room.title.contains(searchText, ignoreCase = true))
                 }
                 when (selectedSortOptionIndex) {
                     0 -> filtered.sortedBy { it.endDate }             // 마감임박순
@@ -242,13 +241,36 @@ fun PreviewGroupSearchScreen() {
     ThipTheme {
         GroupSearchScreen(
             roomList = listOf(
-                GroupCardItemRoomData(1, "aaa", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(2, "abc", 15, 20, true, 7, R.drawable.bookcover_sample, 1, true),
-                GroupCardItemRoomData(3, "abcd", 10, 15, true, 5, R.drawable.bookcover_sample, 2, true),
-                GroupCardItemRoomData(4, "abcde", 8, 12, false, 2, R.drawable.bookcover_sample, 3, true),
-                GroupCardItemRoomData(5, "abcdef", 18, 25, true, 4, R.drawable.bookcover_sample, 4),
-                GroupCardItemRoomData(6, "abcdefg", 12, 20, true, 1, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData(7, "abcdefgh", 10, 14, true, 6, R.drawable.bookcover_sample, 1)
+                GroupCardItemRoomData(
+                    id = 1,
+                    title = "aaa",
+                    participants = 22,
+                    maxParticipants = 30,
+                    isRecruiting = true,
+                    endDate = 3,
+                    imageUrl = null,
+                    isSecret = false
+                ),
+                GroupCardItemRoomData(
+                    id = 2,
+                    title = "abc",
+                    participants = 15,
+                    maxParticipants = 20,
+                    isRecruiting = true,
+                    endDate = 7,
+                    imageUrl = null,
+                    isSecret = true
+                ),
+                GroupCardItemRoomData(
+                    id = 3,
+                    title = "abcd",
+                    participants = 10,
+                    maxParticipants = 15,
+                    isRecruiting = true,
+                    endDate = 5,
+                    imageUrl = null,
+                    isSecret = true
+                )
             )
         )
     }

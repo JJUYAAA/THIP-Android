@@ -63,7 +63,7 @@ fun SearchBookFilteredResult(
                         title = book.title,
                         author = book.author,
                         publisher = book.publisher,
-                        imageRes = book.imageRes
+                        imageUrl = book.imageUrl
                     )
                     if (index < bookList.size - 1) {
                         Spacer(
