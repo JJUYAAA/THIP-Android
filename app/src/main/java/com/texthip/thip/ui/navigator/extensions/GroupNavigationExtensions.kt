@@ -70,6 +70,18 @@ fun NavHostController.navigateToGroupNote(
 }
 
 // 기록 생성 화면으로 이동
-fun NavHostController.navigateToGroupNoteCreate(roomId: Int) {
-    navigate(GroupRoutes.NoteCreate(roomId))
+fun NavHostController.navigateToGroupNoteCreate(
+    roomId: Int,
+    recentBookPage: Int,
+    totalBookPage: Int,
+    isOverviewPossible: Boolean
+) {
+    navigate(
+        GroupRoutes.NoteCreate(
+            roomId = roomId,
+            recentBookPage = recentBookPage,
+            totalBookPage = totalBookPage,
+            isOverviewPossible = isOverviewPossible
+        )
+    )
 }

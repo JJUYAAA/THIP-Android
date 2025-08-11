@@ -7,6 +7,8 @@ import com.texthip.thip.data.model.rooms.response.PostList
 import com.texthip.thip.data.repository.RoomsRepository
 import com.texthip.thip.utils.type.SortType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -22,6 +24,9 @@ data class GroupNoteUiState(
 
     // 화면 데이터
     val posts: List<PostList> = emptyList(),
+    val recentBookPage: Int = 0,
+    val totalBookPage: Int = 0,
+    val isOverviewPossible: Boolean = false,
 
     // 필터 및 탭 상태
     val selectedTabIndex: Int = 0,
@@ -72,7 +77,32 @@ class GroupNoteViewModel @Inject constructor(
                 )
             }
         }
-        loadPosts(isRefresh = true)
+
+        viewModelScope.launch {
+            val postsJob = async { loadPosts(isRefresh = true) }
+            val bookPageJob = async { loadBookPageInfo() }
+            awaitAll(postsJob, bookPageJob)
+        }
+    }
+
+    private fun loadBookPageInfo() {
+        viewModelScope.launch {
+            roomsRepository.getRoomsBookPage(roomId)
+                .onSuccess { response ->
+                    if (response != null) {
+                        _uiState.update {
+                            it.copy(
+                                recentBookPage = response.recentBookPage,
+                                totalBookPage = response.totalBookPage,
+                                isOverviewPossible = response.isOverviewPossible
+                            )
+                        }
+                    }
+                }
+                .onFailure { throwable ->
+                    _uiState.update { it.copy(error = throwable.message) }
+                }
+        }
     }
 
     fun onEvent(event: GroupNoteEvent) {

@@ -140,8 +140,8 @@ fun GroupNoteContent(
     onEvent: (GroupNoteEvent) -> Unit,
     onBackClick: () -> Unit,
     onCreateNoteClick: () -> Unit,
-    showProgressBar: Boolean, // [추가]
-    progress: Float // [추가]
+    showProgressBar: Boolean,
+    progress: Float
 ) {
     var isCommentBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedPostForComment by remember { mutableStateOf<PostList?>(null) }

@@ -39,14 +39,17 @@ import com.texthip.thip.ui.theme.ThipTheme
 @Composable
 fun GroupNoteCreateScreen(
     roomId: Int,
+    recentPage: Int,
+    totalPage: Int,
+    isOverviewPossible: Boolean,
     onBackClick: () -> Unit,
     onNavigateBackWithResult: () -> Unit,
     viewModel: GroupNoteCreateViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = roomId) {
-        viewModel.initialize(roomId)
+    LaunchedEffect(key1 = Unit) {
+        viewModel.initialize(roomId, recentPage, totalPage, isOverviewPossible)
     }
 
     LaunchedEffect(key1 = uiState.isSuccess) {
@@ -74,8 +77,6 @@ fun GroupNoteCreateContent(
     // Tooltip 위치 측정용 state
     val iconCoordinates = remember { mutableStateOf<LayoutCoordinates?>(null) }
 
-    var isEligible by rememberSaveable { mutableStateOf(true) } // TODO: 서버 데이터?
-
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -97,8 +98,8 @@ fun GroupNoteCreateContent(
                     onPageTextChange = { onEvent(GroupNoteCreateEvent.PageChanged(it)) },
                     isGeneralReview = uiState.isGeneralReview,
                     onGeneralReviewToggle = { onEvent(GroupNoteCreateEvent.GeneralReviewToggled(it)) },
-                    isEligible = isEligible,
-                    bookTotalPage = 600,
+                    isEligible = uiState.isOverviewPossible,
+                    bookTotalPage = uiState.totalPage,
                     onInfoClick = { showTooltip = true },
                     onInfoPositionCaptured = { iconCoordinates.value = it }
                 )
@@ -124,7 +125,7 @@ fun GroupNoteCreateContent(
                 PopupModal(
                     text = stringResource(R.string.condition_of_general_review),
                     arrowPosition = ArrowPosition.RIGHT,
-                    isEligible = isEligible,
+                    isEligible = uiState.isOverviewPossible,
                     onClose = { showTooltip = false }
                 )
             }

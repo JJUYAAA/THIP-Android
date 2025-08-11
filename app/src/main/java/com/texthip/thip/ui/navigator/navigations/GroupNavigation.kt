@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -17,6 +18,7 @@ import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
 import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
 import com.texthip.thip.ui.group.note.screen.GroupNoteCreateScreen
 import com.texthip.thip.ui.group.note.screen.GroupNoteScreen
+import com.texthip.thip.ui.group.note.viewmodel.GroupNoteViewModel
 import com.texthip.thip.ui.group.room.screen.GroupRoomMatesScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
@@ -216,6 +218,9 @@ fun NavGraphBuilder.groupNavigation(
 
         val result = backStackEntry.savedStateHandle.get<Int>("selected_tab_index")
 
+        val viewModel: GroupNoteViewModel = hiltViewModel(backStackEntry)
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
         GroupNoteScreen(
 //            roomId = roomId,
             roomId = 1,
@@ -227,8 +232,14 @@ fun NavGraphBuilder.groupNavigation(
             },
             onBackClick = { navigateBack() },
             onCreateNoteClick = {
-                navController.navigateToGroupNoteCreate(roomId)
+                navController.navigateToGroupNoteCreate(
+                    roomId = roomId,
+                    recentBookPage = uiState.recentBookPage,
+                    totalBookPage = uiState.totalBookPage,
+                    isOverviewPossible = uiState.isOverviewPossible
+                )
             },
+            viewModel = viewModel
         )
     }
 
@@ -239,6 +250,9 @@ fun NavGraphBuilder.groupNavigation(
 
         GroupNoteCreateScreen(
             roomId = 1,
+            recentPage = route.recentBookPage,
+            totalPage = route.totalBookPage,
+            isOverviewPossible = route.isOverviewPossible,
             onBackClick = {
                 navigateBack()
             },

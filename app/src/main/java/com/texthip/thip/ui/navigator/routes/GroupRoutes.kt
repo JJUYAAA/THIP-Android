@@ -30,5 +30,10 @@ sealed class GroupRoutes : Routes() {
         GroupRoutes()
 
     @Serializable
-    data class NoteCreate(val roomId: Int) : GroupRoutes()
+    data class NoteCreate(
+        val roomId: Int,
+        val recentBookPage: Int,
+        val totalBookPage: Int,
+        val isOverviewPossible: Boolean
+    )
 }

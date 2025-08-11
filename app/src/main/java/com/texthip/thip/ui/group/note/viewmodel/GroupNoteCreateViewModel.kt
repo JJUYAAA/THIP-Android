@@ -16,7 +16,9 @@ data class GroupNoteCreateUiState(
     val isGeneralReview: Boolean = false,
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val totalPage: Int = 0,
+    val isOverviewPossible: Boolean = false
 ) {
     // 입력 폼이 모두 채워졌는지 확인
     val isFormFilled: Boolean get() = pageText.isNotBlank() && opinionText.isNotBlank()
@@ -38,20 +40,37 @@ class GroupNoteCreateViewModel @Inject constructor(
 
     private var roomId: Int = -1
 
-    fun initialize(id: Int) {
-        roomId = id
+    fun initialize(
+        roomId: Int,
+        recentPage: Int,
+        totalPage: Int,
+        isOverviewPossible: Boolean
+    ) {
+        this.roomId = roomId
+        _uiState.update {
+            it.copy(
+                pageText = recentPage.toString(),
+                totalPage = totalPage,
+                isOverviewPossible = isOverviewPossible
+            )
+        }
     }
 
     fun onEvent(event: GroupNoteCreateEvent) {
         when (event) {
             is GroupNoteCreateEvent.PageChanged -> {
-                _uiState.update { it.copy(pageText = event.text) }
+                if (!_uiState.value.isGeneralReview) {
+                    _uiState.update { it.copy(pageText = event.text) }
+                }
             }
             is GroupNoteCreateEvent.OpinionChanged -> {
                 _uiState.update { it.copy(opinionText = event.text) }
             }
             is GroupNoteCreateEvent.GeneralReviewToggled -> {
-                _uiState.update { it.copy(isGeneralReview = event.isChecked) }
+                _uiState.update {
+                    val newPageText = if (event.isChecked) "" else it.pageText
+                    it.copy(isGeneralReview = event.isChecked, pageText = newPageText)
+                }
             }
             GroupNoteCreateEvent.CreateRecordClicked -> {
                 createRecord()
@@ -61,7 +80,7 @@ class GroupNoteCreateViewModel @Inject constructor(
 
     private fun createRecord() {
         val currentState = _uiState.value
-        val pageNumber = currentState.pageText.toIntOrNull()
+        val pageNumber = if (currentState.isGeneralReview) 0 else currentState.pageText.toIntOrNull()
         if (pageNumber == null || !currentState.isFormFilled) {
             _uiState.update { it.copy(error = "페이지 번호를 정확히 입력해주세요.") }
             return
