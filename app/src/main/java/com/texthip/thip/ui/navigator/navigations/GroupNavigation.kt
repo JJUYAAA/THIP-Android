@@ -12,7 +12,9 @@ import androidx.navigation.toRoute
 import com.texthip.thip.ui.group.done.screen.GroupDoneScreen
 import com.texthip.thip.ui.group.makeroom.screen.GroupMakeRoomScreen
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
+import com.texthip.thip.ui.group.myroom.mock.RoomType
 import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
+import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
 import com.texthip.thip.ui.group.note.screen.GroupNoteCreateScreen
 import com.texthip.thip.ui.group.note.screen.GroupNoteScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomMatesScreen
@@ -21,13 +23,10 @@ import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
-import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
-import com.texthip.thip.ui.group.myroom.mock.RoomType
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
-import com.texthip.thip.ui.navigator.extensions.navigateToGroupNote
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupNoteCreate
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
@@ -175,19 +174,6 @@ fun NavGraphBuilder.groupNavigation(
         val route = backStackEntry.toRoute<GroupRoutes.Room>()
         val roomId = route.roomId
 
-        val parentEntry = remember(navController) {
-            try {
-                navController.getBackStackEntry(MainTabRoutes.Group)
-            } catch (e: Exception) {
-                null
-            }
-        }
-        val groupViewModel: GroupViewModel = if (parentEntry != null) {
-            viewModel(viewModelStoreOwner = parentEntry)
-        } else {
-            viewModel()
-        }
-
         GroupRoomScreen(
 //            roomId = roomId,
             roomId = 1,
@@ -196,9 +182,6 @@ fun NavGraphBuilder.groupNavigation(
             },
             onNavigateToMates = {
                 navController.navigateToGroupRoomMates(roomId)
-            },
-            onNavigateToNote = { page, isOverview ->
-                navController.navigateToGroupNote(roomId, page, isOverview)
             },
         )
     }
