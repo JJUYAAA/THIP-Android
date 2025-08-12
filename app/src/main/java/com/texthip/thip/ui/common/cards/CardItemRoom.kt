@@ -1,14 +1,11 @@
 package com.texthip.thip.ui.common.cards
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -42,7 +40,7 @@ fun CardItemRoom(
     maxParticipants: Int,
     isRecruiting: Boolean,
     endDate: Int? = null,
-    imageRes: Int? = R.drawable.bookcover_sample,
+    imageUrl: String? = null,
     hasBorder: Boolean = false,
     onClick: () -> Unit = {}
 ) {
@@ -74,19 +72,12 @@ fun CardItemRoom(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // 이미지
-                Box(
-                    modifier = Modifier
-                        .size(width = 80.dp, height = 107.dp)
-                ) {
-                    imageRes?.let {
-                        Image(
-                            painter = painterResource(id = it),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
+                AsyncImage(
+                    model = imageUrl ?: R.drawable.img_book_cover_sample,
+                    contentDescription = "책 이미지",
+                    modifier = Modifier.size(width = 80.dp, height = 107.dp),
+                    contentScale = ContentScale.Crop
+                )
 
                 Spacer(modifier = Modifier.width(12.dp))
 
@@ -190,7 +181,7 @@ fun CardItemRoomPreview() {
                 maxParticipants = 30,
                 isRecruiting = true,
                 endDate = 3,
-                imageRes = R.drawable.bookcover_sample
+                imageUrl = null
             )
             CardItemRoom(
                 title = "모임방 이름입니다. 모임방 이름입니다.",
@@ -198,7 +189,7 @@ fun CardItemRoomPreview() {
                 maxParticipants = 30,
                 isRecruiting = false,
                 endDate = 3,
-                imageRes = R.drawable.bookcover_sample
+                imageUrl = null
             )
             CardItemRoom(
                 title = "모임방 이름입니다. 모임방 이름입니다.",
@@ -206,7 +197,7 @@ fun CardItemRoomPreview() {
                 maxParticipants = 30,
                 isRecruiting = true,
                 endDate = 3,
-                imageRes = R.drawable.bookcover_sample,
+                imageUrl = null,
                 hasBorder = true
             )
             CardItemRoom(
@@ -215,7 +206,7 @@ fun CardItemRoomPreview() {
                 maxParticipants = 30,
                 isRecruiting = false,
                 endDate = 3,
-                imageRes = R.drawable.bookcover_sample,
+                imageUrl = null,
                 hasBorder = true
             )
             CardItemRoom(
@@ -223,7 +214,7 @@ fun CardItemRoomPreview() {
                 participants = 22,
                 maxParticipants = 30,
                 isRecruiting = false,
-                imageRes = R.drawable.bookcover_sample,
+                imageUrl = null,
                 hasBorder = true
             )
         }

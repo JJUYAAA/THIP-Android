@@ -65,8 +65,9 @@ import com.texthip.thip.ui.group.note.mock.ReplyItem as FeedReplyItem
 fun FeedCommentScreen(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
+    bookImage: Painter? = null,
+    profileImage: String,
     feedType: FeedItemType,
-    profileImage: Painter? = null,
     currentUserId: Int,
     currentUserName: String,
     currentUserGenre: String,
@@ -484,9 +485,9 @@ private fun FeedCommentScreenWithMockComments() {
             isSaved = true,
             isLocked = true,
             imageUrls = listOf(
-                R.drawable.bookcover_sample,
-                R.drawable.bookcover_sample,
-                R.drawable.bookcover_sample
+                R.drawable.img_book_cover_sample,
+                R.drawable.img_book_cover_sample,
+                R.drawable.img_book_cover_sample
             ),
             tags = listOf("에세이", "문학", "힐링")
         )
@@ -498,7 +499,7 @@ private fun FeedCommentScreenWithMockComments() {
         FeedCommentScreen(
             feedItem = mockFeedItem,
             feedType = FeedItemType.SAVABLE,
-            profileImage = painterResource(R.drawable.character_literature),
+            profileImage = "https://example.com/image1.jpg",
             currentUserId = 999,
             currentUserName = "나",
             currentUserGenre = "문학",
@@ -527,10 +528,15 @@ private fun FeedCommentScreenPrev() {
             isSaved = true,
             isLocked = false,
             imageUrls = listOf(
-                R.drawable.bookcover_sample,
-                R.drawable.bookcover_sample,
-                R.drawable.bookcover_sample
+                R.drawable.img_book_cover_sample,
+                R.drawable.img_book_cover_sample,
+                R.drawable.img_book_cover_sample
             ),
+//            bookImage = painterResource(R.drawable.img_book_cover_sample),
+//            profileImage = "https://example.com/image1.jpg",
+//            onLikeClick = {},
+//            onCommentInputChange = {},
+//            onSendClick = {},
             tags = listOf("에세이", "문학", "힐링")
         )
         val commentList = remember { mutableStateListOf<FeedCommentItem>() }
@@ -538,7 +544,7 @@ private fun FeedCommentScreenPrev() {
         FeedCommentScreen(
             feedItem = mockFeedItem,
             feedType = FeedItemType.SAVABLE,
-            profileImage = painterResource(R.drawable.character_literature),
+            profileImage = "https://example.com/image1.jpg",
             currentUserId = 999,
             currentUserName = "나",
             currentUserGenre = "문학",

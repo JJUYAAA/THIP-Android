@@ -118,7 +118,7 @@ fun SearchRecentBook(
                         CardBookSearch(
                             number = index + 1,
                             title = book.title,
-                            imageRes = book.imageRes,
+                            imageUrl = book.imageUrl,
                             onClick = { onBookClick(book) }
                         )
                         if (index < popularBooks.size - 1) {
@@ -149,19 +149,19 @@ fun PreviewBookRecentSearch() {
                     title = "이기적 유전자",
                     author = "리처드 도킨스",
                     publisher = "을유문화사",
-                    imageRes = R.drawable.bookcover_sample
+                    imageUrl = null
                 ),
                 BookData(
                     title = "코스모스",
                     author = "칼 세이건",
                     publisher = "사이언스북스",
-                    imageRes = R.drawable.bookcover_sample
+                    imageUrl = null
                 ),
                 BookData(
                     title = "총, 균, 쇠",
                     author = "재레드 다이아몬드",
                     publisher = "문학사상사",
-                    imageRes = R.drawable.bookcover_sample
+                    imageUrl = null
                 )
             ),
             popularBookDate = "01.12",

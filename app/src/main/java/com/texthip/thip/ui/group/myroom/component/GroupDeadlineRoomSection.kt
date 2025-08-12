@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,10 +18,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -34,24 +29,25 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.cards.CardItemRoom
-import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
-import com.texthip.thip.ui.group.myroom.mock.GroupRoomSectionData
+import com.texthip.thip.data.model.group.response.RoomMainList
+import com.texthip.thip.data.manager.Genre
+import com.texthip.thip.data.model.group.response.RoomMainResponse
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.rooms.DateUtils
+import com.texthip.thip.utils.rooms.toDisplayStrings
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun GroupRoomDeadlineSection(
-    roomSections: List<GroupRoomSectionData>,
-    onRoomClick: (GroupCardItemRoomData) -> Unit
+    roomMainList: RoomMainList?,
+    selectedGenreIndex: Int,
+    errorMessage: String? = null,
+    onGenreSelect: (Int) -> Unit,
+    onRoomClick: (RoomMainResponse) -> Unit
 ) {
     val sideMargin = 30.dp
-
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        pageCount = { roomSections.size }
-    )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,20 +62,33 @@ fun GroupRoomDeadlineSection(
             val horizontalPadding = sideMargin
             val cardWidth = maxWidth - (horizontalPadding * 2)
             val scale = 0.94f
-            val desiredGap = 12.dp // TODO: 이 부분을 10dp로 하면 양 옆의 카드에 살짝 다음 내용이 보여서 12정도가 어떤지
+            val desiredGap = 12.dp
 
             val pageSpacing = (-(cardWidth - (cardWidth * scale)) / 2) + desiredGap
 
+            // Genre enum을 현지화된 문자열로 변환
+            val genreStrings = Genre.entries.toDisplayStrings()
+            
+            // 마감 임박 방 목록과 인기 방 목록을 섹션으로 구성
+            val roomSections = listOf(
+                Pair(stringResource(R.string.room_section_deadline), roomMainList?.deadlineRoomList ?: emptyList()),
+                Pair(stringResource(R.string.room_section_popular), roomMainList?.popularRoomList ?: emptyList())
+            )
+
+            val effectivePagerState = rememberPagerState(
+                initialPage = 0,
+                pageCount = { roomSections.size }
+            )
+
             HorizontalPager(
-                state = pagerState,
+                state = effectivePagerState,
                 contentPadding = PaddingValues(horizontal = 30.dp),
                 pageSpacing = pageSpacing,
                 modifier = Modifier.fillMaxWidth()
             ) { page ->
-                val section = roomSections[page]
-                var selectedGenre by remember { mutableIntStateOf(0) }
+                val (sectionTitle, rooms) = roomSections[page]
 
-                val isCurrent = pagerState.currentPage == page
+                val isCurrent = effectivePagerState.currentPage == page
                 val scale = if (isCurrent) 1f else 0.94f
 
                 Box(
@@ -105,72 +114,102 @@ fun GroupRoomDeadlineSection(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = section.title,
+                            text = sectionTitle,
                             style = typography.title_b700_s20_h24,
                             color = colors.White
                         )
                         Spacer(Modifier.height(40.dp))
 
                         GenreChipRow(
-                            genres = section.genres,
-                            selectedIndex = selectedGenre,
-                            onSelect = { idx -> selectedGenre = idx }
+                            genres = genreStrings,
+                            selectedIndex = selectedGenreIndex,
+                            onSelect = onGenreSelect
                         )
                         Spacer(Modifier.height(20.dp))
 
-                        val cards = section.rooms.filter { it.genreIndex == selectedGenre }
                         Column(
                             verticalArrangement = Arrangement.spacedBy(20.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(584.dp)
                         ) {
-                            if (cards.isEmpty()) {
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    Spacer(Modifier.height(40.dp))
-                                    Text(
-                                        text = stringResource(R.string.group_no_room_exist),
-                                        style = typography.smalltitle_sb600_s16_h20,
-                                        color = colors.White,
-                                        textAlign = TextAlign.Center
-                                    )
-                                    Spacer(Modifier.height(8.dp))
-                                    Text(
-                                        text = stringResource(R.string.group_no_room_error_comment),
-                                        style = typography.copy_r400_s14,
-                                        color = colors.Grey,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                            } else {
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    cards.forEach { room ->
-                                        CardItemRoom(
-                                            title = room.title,
-                                            participants = room.participants,
-                                            maxParticipants = room.maxParticipants,
-                                            isRecruiting = room.isRecruiting,
-                                            endDate = room.endDate,
-                                            imageRes = room.imageRes,
-                                            onClick = { onRoomClick(room) },
-                                            hasBorder = true,
+                            when {
+                                // 에러 상태
+                                errorMessage != null -> {
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(top = 30.dp)
+                                            .fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.error_data_load_failed),
+                                            style = typography.smalltitle_sb600_s16_h20,
+                                            color = colors.White,
+                                            textAlign = TextAlign.Center
+                                        )
+                                        Spacer(Modifier.height(8.dp))
+                                        Text(
+                                            text = errorMessage,
+                                            style = typography.copy_r400_s14,
+                                            color = colors.Grey,
+                                            textAlign = TextAlign.Center
                                         )
                                     }
                                 }
-                            }
-
-                            if (cards.size < 4) {
-                                Spacer(
-                                    modifier = Modifier
-                                        .weight(1f, fill = true)
-                                        .fillMaxWidth()
-                                )
+                                // 데이터 없음 상태
+                                rooms.isEmpty() -> {
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(top = 30.dp)
+                                            .fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.group_no_room_exist),
+                                            style = typography.smalltitle_sb600_s16_h20,
+                                            color = colors.White,
+                                            textAlign = TextAlign.Center
+                                        )
+                                        Spacer(Modifier.height(8.dp))
+                                        Text(
+                                            text = stringResource(R.string.group_no_room_error_comment),
+                                            style = typography.copy_r400_s14,
+                                            color = colors.Grey,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
+                                // 정상 데이터 표시
+                                else -> {
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        rooms.forEach { room ->
+                                            // RoomMainResponse를 CardItemRoom에 맞게 변환
+                                            val daysLeft = DateUtils.extractDaysFromDeadline(room.deadlineDate)
+                                            CardItemRoom(
+                                                title = room.roomName,
+                                                participants = room.memberCount,
+                                                maxParticipants = room.recruitCount,
+                                                isRecruiting = true, // RoomMainResponse에는 모집중인 방만 있음
+                                                endDate = daysLeft,
+                                                imageUrl = room.bookImageUrl,
+                                                onClick = { onRoomClick(room) },
+                                                hasBorder = true,
+                                            )
+                                        }
+                                    }
+                                    
+                                    if (rooms.size < 4) {
+                                        Spacer(
+                                            modifier = Modifier
+                                                .weight(1f, fill = true)
+                                                .fillMaxWidth()
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -180,132 +219,52 @@ fun GroupRoomDeadlineSection(
     }
 }
 
-@Preview()
+
+@Preview
 @Composable
 fun PreviewGroupRoomPagerSection() {
     ThipTheme {
-        val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
-
-        // 마감 임박한 독서 모임방
+        // RoomMainResponse 형태의 더미 데이터
         val deadlineRooms = listOf(
-            GroupCardItemRoomData(
-                title = "시집만 읽는 사람들 3월",
-                participants = 22,
-                maxParticipants = 30,
-                isRecruiting = true,
-                endDate = 3,
-                genreIndex = 0
+            RoomMainResponse(
+                roomId = 1,
+                roomName = "시집만 읽는 사람들 3월",
+                memberCount = 22,
+                recruitCount = 30,
+                deadlineDate = "3일 뒤",
+                bookImageUrl = "https://picsum.photos/300/200?1"
             ),
-            GroupCardItemRoomData(
-                title = "일본 소설 좋아하는 사람들",
-                participants = 15,
-                maxParticipants = 20,
-                isRecruiting = true,
-                endDate = 2,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                title = "명작 같이 읽기방",
-                participants = 22,
-                maxParticipants = 30,
-                isRecruiting = true,
-                endDate = 3,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                title = "명작 같이 읽기방",
-                participants = 22,
-                maxParticipants = 30,
-                isRecruiting = true,
-                endDate = 3,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                title = "물리책 읽는 방",
-                participants = 13,
-                maxParticipants = 20,
-                isRecruiting = true,
-                endDate = 1,
-                genreIndex = 1
+            RoomMainResponse(
+                roomId = 2,
+                roomName = "일본 소설 좋아하는 사람들",
+                memberCount = 15,
+                recruitCount = 20,
+                deadlineDate = "2일 뒤",
+                bookImageUrl = "https://picsum.photos/300/200?2"
             )
         )
 
-        // 인기 있는 독서 모임방
         val popularRooms = listOf(
-            GroupCardItemRoomData(
-                title = "베스트셀러 토론방",
-                participants = 28,
-                maxParticipants = 30,
-                isRecruiting = true,
-                endDate = 7,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                title = "인기 소설 완독방",
-                participants = 25,
-                maxParticipants = 25,
-                isRecruiting = false,
-                endDate = 5,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                title = "트렌드 과학서 읽기",
-                participants = 20,
-                maxParticipants = 25,
-                isRecruiting = true,
-                endDate = 10,
-                genreIndex = 1
+            RoomMainResponse(
+                roomId = 6,
+                roomName = "베스트셀러 토론방",
+                memberCount = 28,
+                recruitCount = 30,
+                deadlineDate = "7일 뒤",
+                bookImageUrl = "https://picsum.photos/300/200?6"
             )
         )
 
-        // 인플루언서, 작가 독서 모임방
-        val influencerRooms = listOf(
-            GroupCardItemRoomData(
-                title = "작가와 함께하는 독서방",
-                participants = 30,
-                maxParticipants = 30,
-                isRecruiting = false,
-                endDate = 14,
-                genreIndex = 0
-            ),
-            GroupCardItemRoomData(
-                title = "유명 북튜버와 읽기",
-                participants = 18,
-                maxParticipants = 20,
-                isRecruiting = true,
-                endDate = 8,
-                genreIndex = 2
-            ),
-            GroupCardItemRoomData(
-                title = "작가 초청 인문학방",
-                participants = 15,
-                maxParticipants = 20,
-                isRecruiting = true,
-                endDate = 12,
-                genreIndex = 3
-            )
-        )
-
-        val roomSections = listOf(
-            GroupRoomSectionData(
-                title = stringResource(R.string.deadline_string),
-                rooms = deadlineRooms,
-                genres = genres
-            ),
-            GroupRoomSectionData(
-                title = "인기 있는 독서 모임방",
-                rooms = popularRooms,
-                genres = genres
-            ),
-            GroupRoomSectionData(
-                title = "인플루언서·작가 독서 모임방",
-                rooms = influencerRooms,
-                genres = genres
-            )
+        val roomMainList = RoomMainList(
+            deadlineRoomList = deadlineRooms,
+            popularRoomList = emptyList()
         )
 
         GroupRoomDeadlineSection(
-            roomSections = roomSections,
+            roomMainList = roomMainList,
+            selectedGenreIndex = 0,
+            errorMessage = null,
+            onGenreSelect = {},
             onRoomClick = {}
         )
     }
@@ -315,30 +274,27 @@ fun PreviewGroupRoomPagerSection() {
 @Composable
 fun PreviewGroupRoomPagerSectionEmptyGenre() {
     ThipTheme {
-        val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
-
-        // 특정 장르에만 데이터가 있는 경우 (문학 장르만 데이터 존재)
         val deadlineRooms = listOf(
-            GroupCardItemRoomData(
-                title = "시집만 읽는 사람들 3월",
-                participants = 22,
-                maxParticipants = 30,
-                isRecruiting = true,
-                endDate = 3,
-                genreIndex = 0 // 문학 장르만
+            RoomMainResponse(
+                roomId = 12,
+                roomName = "시집만 읽는 사람들 3월",
+                memberCount = 22,
+                recruitCount = 30,
+                deadlineDate = "3일 뒤",
+                bookImageUrl = "https://picsum.photos/300/200?12"
             )
         )
 
-        val roomSections = listOf(
-            GroupRoomSectionData(
-                title = "마감 임박한 독서 모임방",
-                rooms = deadlineRooms,
-                genres = genres
-            )
+        val roomMainList = RoomMainList(
+            deadlineRoomList = deadlineRooms,
+            popularRoomList = emptyList()
         )
 
         GroupRoomDeadlineSection(
-            roomSections = roomSections,
+            roomMainList = roomMainList,
+            selectedGenreIndex = 0,
+            errorMessage = null,
+            onGenreSelect = {},
             onRoomClick = {}
         )
     }

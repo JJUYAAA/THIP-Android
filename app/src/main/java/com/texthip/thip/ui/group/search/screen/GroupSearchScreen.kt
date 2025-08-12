@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.group.search.screen
 
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,17 +33,47 @@ import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.myroom.component.GroupRecentSearch
 import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.search.component.GroupEmptyResult
-import com.texthip.thip.ui.group.search.component.GroupLiveSearchResult
 import com.texthip.thip.ui.group.search.component.GroupFilteredSearchResult
+import com.texthip.thip.ui.group.search.component.GroupLiveSearchResult
 import com.texthip.thip.ui.theme.ThipTheme
+import kotlinx.serialization.json.Json
+import androidx.core.content.edit
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
 
 @Composable
 fun GroupSearchScreen(
     modifier: Modifier = Modifier,
-    roomList: List<GroupCardItemRoomData>
+    roomList: List<GroupCardItemRoomData>,
+    onNavigateBack: () -> Unit = {},
+    onRoomClick: (GroupCardItemRoomData) -> Unit = {}
 ) {
-    var recentSearches by rememberSaveable {
-        mutableStateOf(listOf("user.02", "ㅇㅇ", "훽후ㅣㅣ", "검색4", "검색5", "검색6"))
+    val context = LocalContext.current
+    val sharedPrefs = remember { 
+        context.getSharedPreferences("group_search_prefs", Context.MODE_PRIVATE) 
+    }
+
+    var recentSearches by remember {
+        mutableStateOf(
+            try {
+                val jsonString = sharedPrefs.getString("recent_searches", "[]") ?: "[]"
+                Json.decodeFromString<List<String>>(jsonString)
+            } catch (e: Exception) {
+                emptyList()
+            }
+        )
+    }
+
+    fun saveRecentSearches(searches: List<String>) {
+        try {
+            val jsonString = Json.encodeToString(ListSerializer(String.serializer()), searches)
+            sharedPrefs.edit {
+                putString("recent_searches", jsonString)
+            }
+            recentSearches = searches
+        } catch (e: Exception) {
+            recentSearches = emptyList()
+        }
     }
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearched by rememberSaveable { mutableStateOf(false) }
@@ -81,8 +113,7 @@ fun GroupSearchScreen(
             if (!isSearched) emptyList()
             else {
                 val filtered = roomList.filter { room ->
-                    (searchText.isBlank() || room.title.contains(searchText, ignoreCase = true)) &&
-                            (selectedGenreIndex == -1 || room.genreIndex == selectedGenreIndex)
+                    (searchText.isBlank() || room.title.contains(searchText, ignoreCase = true))
                 }
                 when (selectedSortOptionIndex) {
                     0 -> filtered.sortedBy { it.endDate }             // 마감임박순
@@ -107,7 +138,7 @@ fun GroupSearchScreen(
         ) {
             DefaultTopAppBar(
                 title = stringResource(R.string.group_room_search_topappbar),
-                onLeftClick = {},
+                onLeftClick = onNavigateBack,
             )
             Column(
                 modifier = Modifier
@@ -128,7 +159,8 @@ fun GroupSearchScreen(
                     },
                     onSearch = { query ->
                         if (query.isNotBlank() && !recentSearches.contains(query)) {
-                            recentSearches = listOf(query) + recentSearches
+                            val newSearches = listOf(query) + recentSearches.take(9) // 최대 10개 유지
+                            saveRecentSearches(newSearches)
                         }
                         isSearched = true
                         selectedGenreIndex = -1
@@ -153,7 +185,8 @@ fun GroupSearchScreen(
                                 isSearched = true
                             },
                             onRemove = { keyword ->
-                                recentSearches = recentSearches.filterNot { it == keyword }
+                                val updatedSearches = recentSearches.filterNot { it == keyword }
+                                saveRecentSearches(updatedSearches)
                             }
                         )
                     }
@@ -166,7 +199,8 @@ fun GroupSearchScreen(
                             )
                         } else {
                             GroupLiveSearchResult(
-                                roomList = liveFilteredRoomList
+                                roomList = liveFilteredRoomList,
+                                onRoomClick = onRoomClick
                             )
                         }
                     }
@@ -178,6 +212,7 @@ fun GroupSearchScreen(
                             onGenreSelect = { selectedGenreIndex = it },
                             resultCount = filteredRoomList.size,
                             roomList = filteredRoomList,
+                            onRoomClick = onRoomClick
                         )
                     }
                 }
@@ -206,13 +241,36 @@ fun PreviewGroupSearchScreen() {
     ThipTheme {
         GroupSearchScreen(
             roomList = listOf(
-                GroupCardItemRoomData("aaa", 22, 30, true, 3, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData("abc", 15, 20, true, 7, R.drawable.bookcover_sample, 1, true),
-                GroupCardItemRoomData("abcd", 10, 15, true, 5, R.drawable.bookcover_sample, 2, true),
-                GroupCardItemRoomData("abcde", 8, 12, false, 2, R.drawable.bookcover_sample, 3, true),
-                GroupCardItemRoomData("abcdef", 18, 25, true, 4, R.drawable.bookcover_sample, 4),
-                GroupCardItemRoomData("abcdefg", 12, 20, true, 1, R.drawable.bookcover_sample, 0),
-                GroupCardItemRoomData("abcdefgh", 10, 14, true, 6, R.drawable.bookcover_sample, 1)
+                GroupCardItemRoomData(
+                    id = 1,
+                    title = "aaa",
+                    participants = 22,
+                    maxParticipants = 30,
+                    isRecruiting = true,
+                    endDate = 3,
+                    imageUrl = null,
+                    isSecret = false
+                ),
+                GroupCardItemRoomData(
+                    id = 2,
+                    title = "abc",
+                    participants = 15,
+                    maxParticipants = 20,
+                    isRecruiting = true,
+                    endDate = 7,
+                    imageUrl = null,
+                    isSecret = true
+                ),
+                GroupCardItemRoomData(
+                    id = 3,
+                    title = "abcd",
+                    participants = 10,
+                    maxParticipants = 15,
+                    isRecruiting = true,
+                    endDate = 5,
+                    imageUrl = null,
+                    isSecret = true
+                )
             )
         )
     }

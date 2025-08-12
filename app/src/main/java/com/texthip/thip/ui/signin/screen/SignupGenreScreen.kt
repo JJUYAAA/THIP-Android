@@ -40,31 +40,31 @@ fun SignupGenreScreen() {
             stringResource(R.string.literature),
             stringResource(R.string.literary_person),
             R.drawable.character_literature,
-            colors.NeonGreen
+            colors.Literature
         ),
         RoleItem(
             stringResource(R.string.science_it),
             stringResource(R.string.scientist),
             R.drawable.character_science,
-            colors.Lavendar
+            colors.ScienceIt
         ),
         RoleItem(
             stringResource(R.string.social_science),
             stringResource(R.string.sociologist),
             R.drawable.character_sociology,
-            colors.Orange
+            colors.SocialScience
         ),
         RoleItem(
             stringResource(R.string.art),
             stringResource(R.string.artist),
             R.drawable.character_art,
-            colors.Pink
+            colors.Art
         ),
         RoleItem(
             stringResource(R.string.humanities),
             stringResource(R.string.philosopher),
             R.drawable.character_humanities,
-            colors.Skyblue
+            colors.Humanities
         )
     )
 

@@ -7,7 +7,7 @@ data class DetailBookData(
     val author: String,
     val publisher: String,
     val description: String,
-    val coverImageRes: Int? = R.drawable.bookcover_sample,
+    val coverImageRes: Int? = R.drawable.img_book_cover_sample,
     val participantsCount: Int = 0,
     val recruitingRoomCount: Int = 0
 )

@@ -13,7 +13,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,7 +48,7 @@ fun TextCommentCard(
     ) {
         ProfileBar(
             modifier = Modifier.padding(0.dp),
-            profileImage = painterResource(R.drawable.character_literature),
+            profileImage = "https://example.com/image1.jpg",
             topText = data.nickName,
             bottomText = data.page.toString() + stringResource(R.string.page),
             bottomTextColor = colors.Purple,

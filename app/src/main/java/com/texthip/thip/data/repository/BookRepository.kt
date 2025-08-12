@@ -1,0 +1,20 @@
+package com.texthip.thip.data.repository
+
+import com.texthip.thip.data.model.base.handleBaseResponse
+import com.texthip.thip.data.service.BookService
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class BookRepository @Inject constructor(
+    private val bookService: BookService
+) {
+
+    /** 저장된 책 또는 모임 책 목록 조회 */
+    suspend fun getBooks(type: String) = runCatching {
+        bookService.getBooks(type)
+            .handleBaseResponse()
+            .getOrThrow()
+            ?.bookList ?: emptyList()
+    }
+}

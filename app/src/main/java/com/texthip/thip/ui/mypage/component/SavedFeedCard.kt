@@ -50,7 +50,7 @@ fun SavedFeedCard(
             .padding(20.dp)
     ) {
         ProfileBar(
-            profileImage = profileImage,
+            profileImage = "https://example.com/image1.jpg",
             topText = feedItem.userName,
             bottomText = feedItem.userRole,
             showSubscriberInfo = false,
@@ -166,7 +166,7 @@ private fun SavedFeedCardPrev() {
         commentCount = 5,
         isLiked = false,
         isSaved = true,
-        imageUrls = listOf(R.drawable.bookcover_sample,R.drawable.bookcover_sample,R.drawable.bookcover_sample)
+        imageUrls = listOf(R.drawable.img_book_cover_sample,R.drawable.img_book_cover_sample,R.drawable.img_book_cover_sample)
     )
     val scrollState = rememberScrollState()
 
