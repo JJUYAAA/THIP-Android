@@ -2,6 +2,7 @@ package com.texthip.thip.ui.feed.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,45 +76,80 @@ fun MySubscribeBarlist(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(58.dp)
-                    .clickable { onClick() },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                subscriptions.take(maxVisibleCount).forEach { profile ->
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.width(36.dp)
-                    ) {
-                        AsyncImage(
-                            model = profile.profileImageUrl,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(Color.LightGray)
-                        )
-                        Text(
-                            text = profile.nickname,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = typography.view_r400_s11_h20,
-                            color = colors.White,
+            if (subscriptions.isEmpty()) {
+                EmptyMySubscriptionBar()
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(58.dp)
+                        .clickable { onClick() },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    subscriptions.take(maxVisibleCount).forEach { profile ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.width(36.dp)
-                        )
+                        ) {
+                            AsyncImage(
+                                model = profile.profileImageUrl,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.LightGray)
+                            )
+                            Text(
+                                text = profile.nickname,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = typography.view_r400_s11_h20,
+                                color = colors.White,
+                                modifier = Modifier.width(36.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
                     }
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.weight(1f))
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_chevron),
+                        contentDescription = null,
+                        tint = colors.Grey
+                    )
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_chevron),
-                    contentDescription = null,
-                    tint = colors.Grey
-                )
             }
         }
+    }
+}
+@Composable
+private fun EmptyMySubscriptionBar() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(42.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(colors.DarkGrey02)
+            .clickable { }
+    ) {
+        Text(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 12.dp),
+            text = stringResource(R.string.find_thip_mate),
+            color = colors.White,
+            style = typography.view_m500_s12_h20
+        )
+
+        Icon(
+            painter = painterResource(id = R.drawable.search_character_image),
+            contentDescription = null,
+            tint = Color.Unspecified,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 12.dp)
+                .width(32.dp)
+                .height(42.dp)
+        )
     }
 }
 
@@ -129,6 +166,22 @@ private fun MySubscribeBarlistPrev() {
                 subscriberCount = 100 + it
             )
         }
+
+        Column {
+            MySubscribeBarlist(
+                subscriptions = previewData,
+                onClick = {}
+            )
+        }
+    }
+
+}
+
+@Preview
+@Composable
+private fun MySubscribeBarlistWithoutDataPrev() {
+    ThipTheme {
+        val previewData = emptyList<MySubscriptionData>()
 
         Column {
             MySubscribeBarlist(
