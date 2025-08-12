@@ -57,7 +57,7 @@ interface RoomsService {
         @Path("roomId") roomId: Int,
     ): BaseResponse<RoomsBookPageResponse>
 
-    @POST("rooms/{roomId}/vote/{voteId}/")
+    @POST("rooms/{roomId}/vote/{voteId}")
     suspend fun postRoomsVote(
         @Path("roomId") roomId: Int,
         @Path("voteId") voteId: Int,
