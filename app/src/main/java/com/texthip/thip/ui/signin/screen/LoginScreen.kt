@@ -34,13 +34,14 @@ import androidx.navigation.NavController
 import com.texthip.thip.R
 import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
+import com.texthip.thip.ui.navigator.routes.CommonRoutes
+import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 import com.texthip.thip.ui.signin.viewmodel.LoginUiState
 import com.texthip.thip.ui.signin.viewmodel.LoginViewModel
 import com.texthip.thip.ui.theme.Purple
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -58,18 +59,18 @@ fun LoginScreen(
     LaunchedEffect(key1 = uiState) {
         when (val state = uiState) {
             is LoginUiState.Success -> {
-                // TODO: TokenManager를 사용해 토큰 저장하는 로직 추가
-                coroutineScope.launch {
+                coroutineScope.launch { //토큰 저장
                     tokenManager.saveToken(state.response.token)
                 }
 
                 val destination = if (state.response.isNewUser) {
-                    // "회원가입 화면으로 이동"
+                    CommonRoutes.Signup
                 } else {
-                    // "홈 화면으로 이동"
+                    MainTabRoutes.Feed
                 }
-                // navController.navigate(destination)
-                Toast.makeText(context, "로그인 성공!", Toast.LENGTH_SHORT).show()
+                navController.navigate(destination) {
+                    popUpTo(CommonRoutes.Login) { inclusive = true }
+                }
                 viewModel.clearLoginState() // 상태 초기화
             }
 
@@ -90,9 +91,8 @@ fun LoginScreen(
         // 로딩 중일 때 화면 전체에 로딩 인디케이터 표시
         if (uiState is LoginUiState.Loading) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.Center)
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
             ) {
                 CircularProgressIndicator()
             }

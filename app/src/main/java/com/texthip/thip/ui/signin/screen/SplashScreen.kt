@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Unspecified
@@ -19,13 +20,30 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.R
+import com.texthip.thip.ui.navigator.routes.CommonRoutes
 import com.texthip.thip.ui.theme.Purple
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen() {
+fun SplashScreen(
+    navController: NavController,
+) {
+    LaunchedEffect(key1 = Unit) {
+        //3초 delay
+        delay(3000L)
+
+        // 로그인 화면으로 이동
+        navController.navigate(CommonRoutes.Login) {
+            popUpTo(CommonRoutes.Splash) {
+                inclusive = true
+            }
+        }
+    }
     Column(
         Modifier
             .background(colors.Black)
@@ -55,5 +73,6 @@ fun SplashScreen() {
 @Preview
 @Composable
 private fun SplashScreenPrev() {
-    SplashScreen()
+    val navController = rememberNavController()
+    SplashScreen(navController)
 }

@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.WarningTextField
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
@@ -29,11 +31,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun SigninNicknameScreen() {
+fun SigninNicknameScreen(
+    navController: NavController,
+) {
     var nickname by rememberSaveable { mutableStateOf("") }
     var showWarning by remember { mutableStateOf(false) }
     var warningMessageResId by remember { mutableStateOf<Int?>(null) }
-    val isRightButtonEnabled by remember {derivedStateOf {nickname.isNotBlank()}} // 닉네임 공백 아닐때 버튼 활성화
+    val isRightButtonEnabled by remember { derivedStateOf { nickname.isNotBlank() } } // 닉네임 공백 아닐때 버튼 활성화
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -97,5 +101,6 @@ fun SigninNicknameScreen() {
 @Preview
 @Composable
 private fun SigninNicknameScreenPrev() {
-    SigninNicknameScreen()
+    val navController = rememberNavController()
+    SigninNicknameScreen(navController)
 }
