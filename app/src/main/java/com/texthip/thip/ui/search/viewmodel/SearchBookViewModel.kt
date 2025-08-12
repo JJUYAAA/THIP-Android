@@ -38,7 +38,7 @@ class SearchBookViewModel @Inject constructor(
         if (query.isNotBlank()) {
             updateState { it.copy(searchMode = SearchMode.LiveSearch) }
             searchJob = viewModelScope.launch {
-                delay(1000) // 디바운싱
+                delay(1000) // Live search에 딜레이 추가
                 performSearch(query, isLiveSearch = true)
             }
         } else {
@@ -78,8 +78,6 @@ class SearchBookViewModel @Inject constructor(
                     currentPage = 1
                 ) 
             }
-
-            delay(if (isLiveSearch) 0 else 1000) // Complete search에만 딜레이
 
             bookRepository.searchBooks(query, 1)
                 .onSuccess { response ->
@@ -130,7 +128,6 @@ class SearchBookViewModel @Inject constructor(
             val nextPage = currentState.currentPage + 1
             
             updateState { it.copy(isLoadingMore = true) }
-            delay(1000) // 로딩 표시를 위한 딜레이
 
             bookRepository.searchBooks(currentState.searchQuery, nextPage)
                 .onSuccess { response ->
