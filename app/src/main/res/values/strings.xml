@@ -125,6 +125,13 @@
     <string name="customer_center_email">texthip2025@gmail.com</string>
     <string name="customer_center_description">이메일로 닉네임과 문의사항을 보내주시면\n빠른 시일 내로 해결해 드릴게요!</string>
 
+    <string name="no_saved_book">아직 저장한 책이 없어요</string>
+    <string name="no_saved_feed">아직 저장한 피드가 없어요</string>
+    <string name="do_thip_book">마음에 드는 책을 THIP 해보세요!</string>
+    <string name="do_thip_feed">마음에 드는 피드를 THIP 해보세요!</string>
+
+    <string name="no_saved_reaction">아직 저장한 반응이 없어요</string>
+    <string name="save_first_reaction">첫 번째 반응을 저장해 보세요!</string>
 
     <!--    my room 컴포넌트    -->
     <string name="on_going">진행중</string>
@@ -293,8 +300,11 @@
     <string name="toast_thip_cancel">%1$s 님을 띱 취소했어요</string>
     <string name="thip">띱 하기</string>
     <string name="thip_cancel">띱 취소</string>
-    <string name="thip_num">%d명이 띱 하는 중</string>
-    <string name="create_feed">피드에 글을 작성해 보세요</string>
+    <string name="thip_num">%1$d명</string>
+    <string name="thip_ing">이 띱 하는 중</string>
+    <string name="create_feed">피드에 글을 작성해보세요</string>
+    <string name="empty_feed">피드에 작성된 글이 없어요</string>
+    <string name="find_thip_mate">관심있는 독서메이트를 찾아보세요!</string>
 
     <string name="group_participant_close_popup">모집을 마감하시겠습니까?</string>
     <string name="group_participant_close_comment">독서메이트 모집을 마감하면\n지금 바로 모임방 활동을 바로 시작할 수 있어요.</string>
@@ -322,6 +332,10 @@
     <string name="delete_feed">삭제하기</string>
     <string name="delete_feed_dialog_title">이 피드를 삭제하시겠어요?</string>
     <string name="delete_feed_dialog_description">삭제 후에는 되돌릴 수 없어요.</string>
+    <string name="no_user_you_look_for">찾는 사용자가 없어요</string>
+    <string name="search_user">사용자 찾기</string>
+    <string name="search_user_you_look_for">내가 찾는 사용자를 검색해보세요.</string>
+
 
     <!--    book search   -->
     <string name="book_popular_search">가장 많이 검색된 책</string>

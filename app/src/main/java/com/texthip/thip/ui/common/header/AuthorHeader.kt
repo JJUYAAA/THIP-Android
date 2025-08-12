@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.common.header
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +42,8 @@ fun AuthorHeader(
     showThipNum: Boolean = false,
     thipNum: Int? = null,
     profileImageSize: Dp = 54.dp,
-    onButtonClick: () -> Unit = {}
+    onButtonClick: () -> Unit = {},
+    onThipNumClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -84,31 +86,31 @@ fun AuthorHeader(
         }
         if (showButton) {
             OutlinedButton(
-            modifier = Modifier
-                .then(
-                    if (buttonWidth != null)
-                        Modifier
-                            .width(buttonWidth)
-                            .height(33.dp)
-                    else Modifier
-                ),
-            text = buttonText,
-            textStyle = typography.view_m500_s14,
-            onClick = onButtonClick
+                modifier = Modifier
+                                .width(buttonWidth)
+                                .height(33.dp),
+                text = buttonText,
+                textStyle = typography.view_m500_s14,
+                onClick = onButtonClick
             )
         }
-        if(showThipNum && thipNum!=null){
-            Text(
-                text = stringResource(R.string.thip_num,thipNum),
-                style = typography.view_r400_s11_h20,
-                color = colors.White
-            )
-            Spacer(modifier = Modifier.width(18.dp))
-            Icon(
-                painter = painterResource(R.drawable.ic_chevron),
-                contentDescription = null,
-                tint = colors.White,
-            )
+        if (showThipNum && thipNum != null) {
+            Row(
+                modifier = Modifier.clickable(onClick = onThipNumClick),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.thip_num, thipNum)+ stringResource(R.string.thip_ing),
+                    style = typography.view_r400_s11_h20,
+                    color = colors.White
+                )
+                Spacer(modifier = Modifier.width(18.dp))
+                Icon(
+                    painter = painterResource(R.drawable.ic_chevron),
+                    contentDescription = null,
+                    tint = colors.White,
+                )
+            }
         }
     }
 }
@@ -131,7 +133,10 @@ fun PreviewAuthorHeader() {
                 badgeText = "칭호칭호칭호",
                 showButton = false,
                 showThipNum = true,
-                thipNum = 10
+                thipNum = 10,
+                onThipNumClick = {
+
+                }
             )
         }
     }

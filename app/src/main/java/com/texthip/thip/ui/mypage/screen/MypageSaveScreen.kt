@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.mypage.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -26,18 +28,31 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.mypage.component.BookContent
+import com.texthip.thip.ui.mypage.component.EmptyBookContent
 import com.texthip.thip.ui.mypage.component.FeedContent
+import com.texthip.thip.ui.mypage.viewmodel.EmptySavedBookViewModel
+import com.texthip.thip.ui.mypage.viewmodel.EmptySavedFeedViewModel
+import com.texthip.thip.ui.mypage.viewmodel.SavedBookViewModel
+import com.texthip.thip.ui.mypage.viewmodel.SavedFeedViewModel
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.ui.theme.White
 
 @Composable
-fun SavedScreen() {
+fun SavedScreen(
+    feedViewModel: SavedFeedViewModel = viewModel(),
+    bookViewModel: SavedBookViewModel = viewModel()
+
+) {
     val tabs = listOf(stringResource(R.string.feed), stringResource(R.string.book))
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
+    val feedList by feedViewModel.feeds.collectAsState()
+    val bookList by bookViewModel.books.collectAsState()
 
     Column(
         Modifier
@@ -52,7 +67,9 @@ fun SavedScreen() {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Box(modifier = Modifier.width(160.dp).padding(start = 20.dp)) {
+            Box(modifier = Modifier
+                .width(160.dp)
+                .padding(start = 20.dp)) {
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
                     containerColor = Color.Transparent,
@@ -93,8 +110,8 @@ fun SavedScreen() {
             }
             Box(modifier = Modifier.fillMaxWidth()) {
                 when (selectedTabIndex) {
-                    0 -> FeedContent()
-                    1 -> BookContent()
+                    0 -> FeedContent(feedList = feedList, viewModel = feedViewModel)
+                    1 -> BookContent(bookList = bookList, viewModel = bookViewModel)
                 }
             }
         }
@@ -102,8 +119,24 @@ fun SavedScreen() {
 }
 
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview
 @Composable
 private fun SavedScreenPrev() {
-    SavedScreen()
+    SavedScreen(
+        feedViewModel = SavedFeedViewModel(),
+        bookViewModel = SavedBookViewModel()
+    )
+}
+
+@SuppressLint("ViewModelConstructorInComposable")
+@Preview
+@Composable
+private fun SavedScreenWithoutFeedPrev() {
+    ThipTheme {
+        SavedScreen(
+            feedViewModel = EmptySavedFeedViewModel(),
+            bookViewModel = EmptySavedBookViewModel()
+        )
+    }
 }
