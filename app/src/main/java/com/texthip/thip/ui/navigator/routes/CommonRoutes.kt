@@ -6,4 +6,13 @@ import kotlinx.serialization.Serializable
 sealed class CommonRoutes : Routes() {
     @Serializable
     data object Alarm : CommonRoutes()
+
+    @Serializable
+    data object Splash : CommonRoutes()
+
+    @Serializable
+    data object Login : CommonRoutes()
+
+    @Serializable
+    data object Signup : CommonRoutes()
 }
