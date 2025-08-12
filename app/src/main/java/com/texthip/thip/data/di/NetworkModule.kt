@@ -68,10 +68,4 @@ object NetworkModule {
             )
             .client(okHttpClient)
             .build()
-
-    @Provides
-    @Singleton
-    fun provideAuthService(retrofit: Retrofit): AuthService {
-        return retrofit.create(AuthService::class.java)
-    }
 }
