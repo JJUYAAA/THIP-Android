@@ -1,8 +1,8 @@
 package com.texthip.thip.data.repository
 
 import com.texthip.thip.data.model.base.handleBaseResponse
+import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
-import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
 import com.texthip.thip.data.model.rooms.request.VoteItem
 import com.texthip.thip.data.service.RoomsService
 import javax.inject.Inject
@@ -66,16 +66,16 @@ class RoomsRepository @Inject constructor(
         ).handleBaseResponse().getOrThrow()
     }
 
-    suspend fun postRoomsVote(
+    suspend fun postRoomsCreateVote(
         roomId: Int,
         page: Int,
         isOverview: Boolean,
         content: String,
         voteItemList: List<VoteItem>
     ) = runCatching {
-        roomsService.postRoomsVote(
+        roomsService.postRoomsCreateVote(
             roomId = roomId,
-            request = RoomsVoteRequest(
+            request = RoomsCreateVoteRequest(
                 page = page,
                 isOverview = isOverview,
                 content = content,

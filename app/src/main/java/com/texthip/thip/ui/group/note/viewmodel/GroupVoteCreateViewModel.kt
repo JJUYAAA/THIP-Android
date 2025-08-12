@@ -125,7 +125,7 @@ class GroupVoteCreateViewModel @Inject constructor(
                 .filter { it.isNotBlank() }
                 .map { VoteItem(itemName = it) }
 
-            roomsRepository.postRoomsVote(
+            roomsRepository.postRoomsCreateVote(
                 roomId = roomId,
                 page = pageNumber,
                 isOverview = currentState.isGeneralReview,

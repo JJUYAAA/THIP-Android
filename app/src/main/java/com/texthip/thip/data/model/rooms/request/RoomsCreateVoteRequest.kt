@@ -3,7 +3,7 @@ package com.texthip.thip.data.model.rooms.request
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RoomsVoteRequest(
+data class RoomsCreateVoteRequest(
     val page: Int,
     val isOverview: Boolean,
     val content: String,

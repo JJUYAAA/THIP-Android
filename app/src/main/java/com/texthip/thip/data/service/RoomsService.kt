@@ -2,13 +2,13 @@ package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
-import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
+import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
 import com.texthip.thip.data.model.rooms.response.RoomsBookPageResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsResponse
 import com.texthip.thip.data.model.rooms.response.RoomsRecordResponse
 import com.texthip.thip.data.model.rooms.response.RoomsUsersResponse
-import com.texthip.thip.data.model.rooms.response.RoomsVoteResponse
+import com.texthip.thip.data.model.rooms.response.RoomsCreateVoteResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -45,10 +45,10 @@ interface RoomsService {
     ): BaseResponse<RoomsRecordResponse>
 
     @POST("rooms/{roomId}/vote")
-    suspend fun postRoomsVote(
+    suspend fun postRoomsCreateVote(
         @Path("roomId") roomId: Int,
-        @Body request: RoomsVoteRequest
-    ): BaseResponse<RoomsVoteResponse>
+        @Body request: RoomsCreateVoteRequest
+    ): BaseResponse<RoomsCreateVoteResponse>
 
     @GET("rooms/{roomId}/book-page")
     suspend fun getRoomsBookPage(
