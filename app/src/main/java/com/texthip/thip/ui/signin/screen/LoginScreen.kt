@@ -1,6 +1,9 @@
 package com.texthip.thip.ui.signin.screen
 
+import android.app.Activity
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.texthip.thip.R
 import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
@@ -54,6 +60,33 @@ fun LoginScreen(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value //by 오류로 인해 변경함
     val coroutineScope = rememberCoroutineScope()
     val tokenManager = remember { TokenManager(context) }
+
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    // 성공 시, ID 토큰을 ViewModel으로 전달
+                    val account = task.getResult(ApiException::class.java)!!
+                    val idToken = account.idToken!!
+                    viewModel.googleLogin(idToken)
+                } catch (e: ApiException) {
+                    // 실패 시 에러 처리
+                    Toast.makeText(context, "구글 로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    )
+
+    //구글 로그인 클라이언트
+    val googleSignInClient = remember {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        GoogleSignIn.getClient(context, gso)
+    }
 
     // uiState가 바뀔 때마다 실행되어 화면 이동이나 토스트 메시지 등을 처리
     LaunchedEffect(key1 = uiState) {
@@ -85,7 +118,7 @@ fun LoginScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         LoginContent(
             onKakaoLoginClick = { viewModel.kakaoLogin(context) },
-            onGoogleLoginClick = { /* TODO: 구글 로그인 로직 연결 */ }
+            onGoogleLoginClick = { googleSignInLauncher.launch(googleSignInClient.signInIntent)}
         )
 
         // 로딩 중일 때 화면 전체에 로딩 인디케이터 표시
