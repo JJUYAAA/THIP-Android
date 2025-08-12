@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -57,14 +58,13 @@ fun FeedSubscribeBarlist(
                         color = colors.White
                     )
                 ) {
-                    append("${followerProfileImageUrls.size}명")
-                }
+                    append(stringResource(R.string.thip_num, followerProfileImageUrls.size))                }
                 withStyle(
                     style = SpanStyle(
                         color = colors.Grey
                     )
                 ) {
-                    append("이 띱 하는중")
+                    append(stringResource(R.string.thip_ing))
                 }
             },
             style = typography.info_r400_s12,
@@ -74,25 +74,28 @@ fun FeedSubscribeBarlist(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            followerProfileImageUrls.take(5).reversed().forEachIndexed { index, imageUrl ->
-                AsyncImage(
-                    model = imageUrl,
+            if (followerProfileImageUrls.isNotEmpty()) {
+                val previewList = followerProfileImageUrls.take(5)
+                previewList.reversed().forEachIndexed { index, imageUrl ->
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(Color.LightGray)
+                    )
+
+                    val isLast = index == previewList.lastIndex
+                    Spacer(modifier = Modifier.width(if (isLast) 15.dp else 4.dp))
+                }
+
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_chevron),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(Color.LightGray)
+                    tint = colors.Grey
                 )
-
-                val isLast = index == followerProfileImageUrls.take(5).lastIndex
-                Spacer(modifier = Modifier.width(if (isLast) 15.dp else 4.dp))
             }
-
-            Icon(
-                painter = painterResource(id = R.drawable.ic_chevron),
-                contentDescription = null,
-                tint = colors.Grey
-            )
         }
     }
 }
