@@ -39,10 +39,36 @@ class BookDetailViewModel @Inject constructor(
                 }
         }
     }
+
+    fun saveBook(isbn: String, type: Boolean) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isSaving = true, error = null)
+            
+            bookRepository.saveBook(isbn, type)
+                .onSuccess { saveResponse ->
+                    saveResponse?.let {
+                        // 책 상세 정보의 isSaved 상태 업데이트
+                        val updatedBookDetail = _uiState.value.bookDetail?.copy(isSaved = it.isSaved)
+                        _uiState.value = _uiState.value.copy(
+                            bookDetail = updatedBookDetail,
+                            isSaving = false,
+                            error = null
+                        )
+                    }
+                }
+                .onFailure { exception ->
+                    _uiState.value = _uiState.value.copy(
+                        isSaving = false,
+                        error = exception.message ?: "책 저장에 실패했습니다."
+                    )
+                }
+        }
+    }
 }
 
 data class BookDetailUiState(
     val bookDetail: BookDetailResponse? = null,
     val isLoading: Boolean = false,
+    val isSaving: Boolean = false,
     val error: String? = null
 )

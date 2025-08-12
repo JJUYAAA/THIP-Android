@@ -269,8 +269,10 @@ fun SearchBookDetailScreen(
                                                 shape = RoundedCornerShape(12.dp)
                                             )
                                             .clickable {
-                                                isBookmarked = !isBookmarked
-                                                onBookMarkClick(isBookmarked)
+                                                val newBookmarkState = !isBookmarked
+                                                isBookmarked = newBookmarkState
+                                                viewModel.saveBook(isbn, newBookmarkState)
+                                                onBookMarkClick(newBookmarkState)
                                             },
                                         contentAlignment = Alignment.Center,
                                     ) {
