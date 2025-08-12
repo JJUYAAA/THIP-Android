@@ -3,6 +3,7 @@ package com.texthip.thip.data.repository
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
+import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
 import com.texthip.thip.data.model.rooms.request.VoteItem
 import com.texthip.thip.data.service.RoomsService
 import javax.inject.Inject
@@ -89,6 +90,22 @@ class RoomsRepository @Inject constructor(
     ) = runCatching {
         roomsService.getRoomsBookPage(
             roomId = roomId
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun postRoomsVote(
+        roomId: Int,
+        voteId: Int,
+        voteItemId: Int,
+        type: Boolean
+    ) = runCatching {
+        roomsService.postRoomsVote(
+            roomId = roomId,
+            voteId = voteId,
+            request = RoomsVoteRequest(
+                voteItemId = voteItemId,
+                type = type
+            )
         ).handleBaseResponse().getOrThrow()
     }
 }
