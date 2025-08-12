@@ -1,6 +1,9 @@
 package com.texthip.thip.data.repository
 
 import android.content.Context
+import com.google.firebase.Firebase
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.auth
 import com.kakao.sdk.user.UserApiClient
 import com.texthip.thip.data.model.auth.request.AuthRequest
 import com.texthip.thip.data.model.auth.response.AuthResponse
@@ -8,6 +11,7 @@ import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.service.AuthService
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
@@ -25,6 +29,20 @@ class AuthRepository @Inject constructor(
 
             //신규/기존 유저인지 확인 요청
              val request = AuthRequest(oauth2Id = "kakao_$kakaoUserId")
+            authService.checkNewUser(request)
+                .handleBaseResponse()
+                .getOrThrow()
+        }
+    }
+    suspend fun loginWithGoogle(idToken: String): Result<AuthResponse?> {
+        return runCatching {
+            //Firebase에 구글 ID 토큰으로 로그인
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val authResult = Firebase.auth.signInWithCredential(credential).await()
+            val googleUid = authResult.user?.uid ?: throw IllegalStateException("Google User UID is null")
+
+            //받아온 UID로 신규/기존 유저인지 확인 요청
+            val request = AuthRequest(oauth2Id = "google_$googleUid")
             authService.checkNewUser(request)
                 .handleBaseResponse()
                 .getOrThrow()
