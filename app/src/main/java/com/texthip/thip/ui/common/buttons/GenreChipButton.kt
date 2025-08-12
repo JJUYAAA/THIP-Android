@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
@@ -45,10 +44,8 @@ fun GenreChipButton(
                 shape = RoundedCornerShape(20.dp)
             )
             .background(color = Color.Transparent, shape = RoundedCornerShape(12.dp))
-            .padding(top = 8.dp, bottom = 8.dp, end = 8.dp, start = 12.dp)
-            .clickable {
-                onClick()
-            },
+            .padding(top = 8.dp, bottom = 8.dp, end = 8.dp, start = 12.dp),
+
         contentAlignment = Alignment.Center,
     ) {
         Row(
@@ -65,10 +62,10 @@ fun GenreChipButton(
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier
-                    .size(20.dp)
                     .clickable {
                         onCloseClick()
                     }
+                    .size(20.dp)
             )
         }
     }
@@ -84,7 +81,7 @@ private fun GenreChipButtonPreview() {
         verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterVertically),
     ) {
         GenreChipButton(
-            text = stringResource(R.string.essay),
+            text = "책",
         )
     }
 }
