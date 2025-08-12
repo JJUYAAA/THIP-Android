@@ -55,10 +55,55 @@ fun SearchBookGroupScreen(
     LaunchedEffect(isbn) {
         viewModel.loadRecruitingRooms(isbn)
     }
+
+    val recruitingList = uiState.recruitingRooms.map { item ->
+        val daysLeft = DateUtils.extractDaysFromDeadline(item.deadlineEndDate)
+
+        GroupCardItemRoomData(
+            id = item.roomId,
+            title = item.roomName,
+            participants = item.memberCount,
+            maxParticipants = item.recruitCount,
+            endDate = daysLeft,
+            imageUrl = item.bookImageUrl,
+            isRecruiting = true
+        )
+    }
+
+    SearchBookGroupScreenContent(
+        isLoading = uiState.isLoading,
+        error = uiState.error,
+        recruitingList = recruitingList,
+        totalCount = uiState.totalCount,
+        isLoadingMore = uiState.isLoadingMore,
+        canLoadMore = uiState.canLoadMore,
+        onLeftClick = onLeftClick,
+        onCardClick = onCardClick,
+        onCreateRoomClick = onCreateRoomClick,
+        onLoadMore = {
+            viewModel.loadMoreRooms()
+        }
+    )
+}
+
+@Composable
+private fun SearchBookGroupScreenContent(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
+    error: String? = null,
+    recruitingList: List<GroupCardItemRoomData> = emptyList(),
+    totalCount: Int = 0,
+    isLoadingMore: Boolean = false,
+    canLoadMore: Boolean = true,
+    onLeftClick: () -> Unit = {},
+    onCardClick: (Int) -> Unit = {},
+    onCreateRoomClick: () -> Unit = {},
+    onLoadMore: () -> Unit = {}
+) {
     when {
-        uiState.isLoading -> {
+        isLoading -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
@@ -66,36 +111,21 @@ fun SearchBookGroupScreen(
                 )
             }
         }
-        uiState.error != null -> {
+        error != null -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = uiState.error!!,
+                    text = error,
                     color = colors.White,
                     style = typography.smalltitle_sb600_s16_h20
                 )
             }
         }
         else -> {
-            val recruitingList = uiState.recruitingRooms.map { item ->
-                val daysLeft = DateUtils.extractDaysFromDeadline(item.deadlineEndDate)
-
-                GroupCardItemRoomData(
-                    id = item.roomId,
-                    title = item.roomName,
-                    participants = item.memberCount,
-                    maxParticipants = item.recruitCount,
-                    endDate = daysLeft,
-                    imageUrl = item.bookImageUrl,
-                    isRecruiting = true
-                )
-            }
-
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier = modifier.fillMaxSize()
             ) {
                 // 기존 콘텐츠 Column
                 Column(
@@ -119,7 +149,7 @@ fun SearchBookGroupScreen(
                             Text(
                                 text = stringResource(
                                     R.string.group_searched_room_size,
-                                    uiState.totalCount
+                                    totalCount
                                 ),
                                 color = colors.Grey,
                                 style = typography.menu_m500_s14_h24
@@ -164,8 +194,8 @@ fun SearchBookGroupScreen(
                                     .collect { lastVisibleIndex ->
                                         if (lastVisibleIndex != null && 
                                             lastVisibleIndex >= recruitingList.size - 3 && 
-                                            uiState.canLoadMore) {
-                                            viewModel.loadMoreRooms()
+                                            canLoadMore) {
+                                            onLoadMore()
                                         }
                                     }
                             }
@@ -189,7 +219,7 @@ fun SearchBookGroupScreen(
                                 }
                                 
                                 // 로딩 인디케이터
-                                if (uiState.isLoadingMore) {
+                                if (isLoadingMore) {
                                     item {
                                         Box(
                                             modifier = Modifier
@@ -230,13 +260,90 @@ fun SearchBookGroupScreen(
     }
 }
 
+// Preview용 Mock 데이터
+private val mockRecruitingList = listOf(
+    GroupCardItemRoomData(
+        id = 1,
+        title = "데미안 함께 읽기 📚",
+        participants = 8,
+        maxParticipants = 12,
+        isRecruiting = true,
+        endDate = 3,
+        imageUrl = "https://example.com/demian.jpg",
+        isSecret = false
+    ),
+    GroupCardItemRoomData(
+        id = 2,
+        title = "헤르만 헤세 작품 토론방",
+        participants = 15,
+        maxParticipants = 20,
+        isRecruiting = true,
+        endDate = 7,
+        imageUrl = "https://example.com/demian.jpg",
+        isSecret = true
+    ),
+    GroupCardItemRoomData(
+        id = 3,
+        title = "클래식 문학 읽기 모임",
+        participants = 5,
+        maxParticipants = 10,
+        isRecruiting = true,
+        endDate = 1,
+        imageUrl = "https://example.com/demian.jpg",
+        isSecret = false
+    )
+)
 
-@Preview()
+@Preview(showBackground = true)
 @Composable
-fun GroupRecruitingScreenPreview() {
+fun SearchBookGroupScreenContentPreview() {
     ThipTheme {
-        SearchBookGroupScreen(
-            isbn = "9788954682152"
+        SearchBookGroupScreenContent(
+            recruitingList = mockRecruitingList,
+            totalCount = 8
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookGroupScreenContentEmptyPreview() {
+    ThipTheme {
+        SearchBookGroupScreenContent(
+            recruitingList = emptyList(),
+            totalCount = 0
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookGroupScreenContentLoadingMorePreview() {
+    ThipTheme {
+        SearchBookGroupScreenContent(
+            recruitingList = mockRecruitingList,
+            totalCount = 15,
+            isLoadingMore = true,
+            canLoadMore = true
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookGroupScreenContentLoadingPreview() {
+    ThipTheme {
+        SearchBookGroupScreenContent(
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookGroupScreenContentErrorPreview() {
+    ThipTheme {
+        SearchBookGroupScreenContent(
+            error = "모집 중인 그룹을 불러오는데 실패했습니다."
         )
     }
 }

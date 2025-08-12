@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.ui.search.viewmodel.BookDetailViewModel
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
 import com.texthip.thip.ui.common.buttons.FilterButton
@@ -63,9 +64,77 @@ fun SearchBookDetailScreen(
     viewModel: BookDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    // ISBN으로 책 상세 정보 로드
+    LaunchedEffect(isbn) {
+        viewModel.loadBookDetail(isbn)
+    }
+
+    when {
+        uiState.isLoading -> {
+            SearchBookDetailScreenContent(
+                modifier = modifier,
+                isLoading = true,
+                error = null,
+                bookDetail = null,
+                feedList = feedList,
+                onLeftClick = onLeftClick,
+                onRightClick = onRightClick,
+                onRecruitingGroupClick = onRecruitingGroupClick,
+                onWriteFeedClick = onWriteFeedClick,
+                onBookmarkClick = { _, _ -> }
+            )
+        }
+        uiState.error != null -> {
+            SearchBookDetailScreenContent(
+                modifier = modifier,
+                isLoading = false,
+                error = uiState.error!!,
+                bookDetail = null,
+                feedList = feedList,
+                onLeftClick = onLeftClick,
+                onRightClick = onRightClick,
+                onRecruitingGroupClick = onRecruitingGroupClick,
+                onWriteFeedClick = onWriteFeedClick,
+                onBookmarkClick = { _, _ -> }
+            )
+        }
+        uiState.bookDetail != null -> {
+            SearchBookDetailScreenContent(
+                modifier = modifier,
+                isLoading = false,
+                error = null,
+                bookDetail = uiState.bookDetail!!,
+                feedList = feedList,
+                onLeftClick = onLeftClick,
+                onRightClick = onRightClick,
+                onRecruitingGroupClick = onRecruitingGroupClick,
+                onWriteFeedClick = onWriteFeedClick,
+                onBookmarkClick = { isbn, newState ->
+                    viewModel.saveBook(isbn, newState)
+                }
+            )
+        }
+        else -> {}
+    }
+}
+
+@Composable
+private fun SearchBookDetailScreenContent(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
+    error: String? = null,
+    bookDetail: BookDetailResponse? = null,
+    feedList: List<String> = emptyList(),
+    onLeftClick: () -> Unit = {},
+    onRightClick: () -> Unit = {},
+    onRecruitingGroupClick: () -> Unit = {},
+    onWriteFeedClick: () -> Unit = {},
+    onBookmarkClick: (String, Boolean) -> Unit = { _, _ -> }
+) {
     var isAlarmVisible by remember { mutableStateOf(true) }
     var isIntroductionPopupVisible by remember { mutableStateOf(false) }
-    var isBookmarked by remember { mutableStateOf(false) }
+    var isBookmarked by remember { mutableStateOf(bookDetail?.isSaved ?: false) }
     var selectedFilterOption by remember { mutableIntStateOf(0) }
 
     val filterOptions = listOf(
@@ -73,20 +142,24 @@ fun SearchBookDetailScreen(
         stringResource(R.string.search_filter_latest)
     )
 
-    // ISBN으로 책 상세 정보 로드
-    LaunchedEffect(isbn) {
-        viewModel.loadBookDetail(isbn)
+    // 알림 5초간 노출 (미리보기에서는 항상 보이도록)
+    LaunchedEffect(Unit) {
+        if (!isLoading && error == null && bookDetail != null) {
+            isAlarmVisible = true
+            delay(5000)
+            isAlarmVisible = false
+        }
     }
 
-    // 알림 5초간 노출
-    LaunchedEffect(Unit) {
-        isAlarmVisible = true
-        delay(5000)
-        isAlarmVisible = false
+    // 북마크 상태 동기화
+    LaunchedEffect(bookDetail?.isSaved) {
+        bookDetail?.let { 
+            isBookmarked = it.isSaved
+        }
     }
 
     when {
-        uiState.isLoading -> {
+        isLoading -> {
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -96,22 +169,19 @@ fun SearchBookDetailScreen(
                 )
             }
         }
-        uiState.error != null -> {
+        error != null -> {
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = uiState.error!!,
+                    text = error,
                     color = colors.White,
                     style = typography.smalltitle_sb600_s16_h20
                 )
             }
         }
-        uiState.bookDetail != null -> {
-            val bookDetail = uiState.bookDetail!!
-            isBookmarked = bookDetail.isSaved
-
+        bookDetail != null -> {
             Box(modifier = modifier.fillMaxSize()) {
                 // 메인 컨텐츠
                 Box(
@@ -270,7 +340,7 @@ fun SearchBookDetailScreen(
                                             .clickable {
                                                 val newBookmarkState = !isBookmarked
                                                 isBookmarked = newBookmarkState
-                                                viewModel.saveBook(isbn, newBookmarkState)
+                                                onBookmarkClick(bookDetail.isbn, newBookmarkState)
                                             },
                                         contentAlignment = Alignment.Center,
                                     ) {
@@ -362,13 +432,60 @@ fun SearchBookDetailScreen(
     }
 }
 
-@Preview
+// Preview용 Mock 데이터
+private val mockBookDetail = BookDetailResponse(
+    title = "데미안",
+    imageUrl = "https://example.com/demian.jpg",
+    authorName = "헤르만 헤세",
+    publisher = "민음사",
+    isbn = "9788954682152",
+    description = "한 소년의 성장 이야기를 통해 인간의 내면 세계를 탐구한 헤르만 헤세의 대표작. 주인공 싱클레어가 겪는 정신적 성장과 자아 발견의 과정을 그린 소설로, 청소년기의 혼란과 성인으로의 성장을 섬세하게 그려낸다. 선악의 이분법을 넘어서서 인간 내면의 복잡성을 인정하고 받아들이는 과정을 통해 진정한 자아를 찾아가는 이야기다.",
+    recruitingRoomCount = 8,
+    readCount = 1250,
+    isSaved = false
+)
+
+private val mockBookDetailSaved = mockBookDetail.copy(isSaved = true)
+
+@Preview(showBackground = true)
 @Composable
-fun PreviewBookDetailScreen() {
+fun SearchBookDetailScreenContentPreview() {
     ThipTheme {
-        SearchBookDetailScreen(
-            isbn = "9788954682152",
+        SearchBookDetailScreenContent(
+            bookDetail = mockBookDetail,
             feedList = emptyList()
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookDetailScreenContentSavedPreview() {
+    ThipTheme {
+        SearchBookDetailScreenContent(
+            bookDetail = mockBookDetailSaved,
+            feedList = emptyList()
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookDetailScreenContentWithFeedsPreview() {
+    ThipTheme {
+        SearchBookDetailScreenContent(
+            bookDetail = mockBookDetail,
+            feedList = listOf("피드 1", "피드 2", "피드 3")
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookDetailScreenContentErrorPreview() {
+    ThipTheme {
+        SearchBookDetailScreenContent(
+            error = "책 정보를 불러오는데 실패했습니다."
         )
     }
 }
