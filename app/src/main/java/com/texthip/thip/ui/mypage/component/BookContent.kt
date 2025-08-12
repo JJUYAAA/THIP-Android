@@ -8,19 +8,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardBookList
 import com.texthip.thip.ui.mypage.mock.BookItem
-import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.mypage.viewmodel.SavedBookViewModel
-import com.texthip.thip.ui.mypage.viewmodel.SavedFeedViewModel
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -38,7 +33,7 @@ fun BookContent(
                 CardBookList(
                     title = book.title,
                     author = book.author,
-                    imageRes = null,
+                    imageUrl = null,
                     publisher = book.publisher,
                     isBookmarked = book.isSaved,
                     onBookmarkClick = { viewModel.toggleBookmark(book.id) }
