@@ -47,6 +47,7 @@ sealed interface GroupNoteEvent {
     data object ApplyPageFilter : GroupNoteEvent
     data object LoadMorePosts : GroupNoteEvent
     data class OnVote(val postId: Int, val voteItemId: Int, val type: Boolean) : GroupNoteEvent
+    data class OnDeleteRecord(val postId: Int) : GroupNoteEvent
 }
 
 
@@ -141,6 +142,21 @@ class GroupNoteViewModel @Inject constructor(
                 voteItemId = event.voteItemId,
                 type = event.type
             )
+
+            is GroupNoteEvent.OnDeleteRecord -> deleteRecord(event.postId)
+        }
+    }
+
+    private fun deleteRecord(postId: Int) {
+        viewModelScope.launch {
+            roomsRepository.deleteRoomsRecord(roomId = roomId, recordId = postId)
+                .onSuccess {
+                    val updatedPosts = _uiState.value.posts.filter { it.postId != postId }
+                    _uiState.update { it.copy(posts = updatedPosts) }
+                }
+                .onFailure { throwable ->
+                    _uiState.update { it.copy(error = throwable.message) }
+                }
         }
     }
 

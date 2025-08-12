@@ -157,6 +157,7 @@ fun GroupNoteContent(
     var isCommentBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedPostForComment by remember { mutableStateOf<PostList?>(null) }
     var selectedPostForMenu by remember { mutableStateOf<PostList?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     var isPinDialogVisible by remember { mutableStateOf(false) }
     var showToast by remember { mutableStateOf(false) }
 
@@ -468,13 +469,7 @@ fun GroupNoteContent(
         )
     }
 
-//    if (isMenuBottomSheetVisible && selectedItemForMenu != null) {
     if (selectedPostForMenu != null) {
-//        val isWriter = when (val item = selectedItemForMenu) {
-//            is GroupNoteRecord -> item.isWriter
-//            is GroupNoteVote -> item.isWriter
-//            else -> false
-//        }
         val isWriter = selectedPostForMenu!!.isWriter
 
         val menuItems = if (isWriter) {
@@ -483,9 +478,8 @@ fun GroupNoteContent(
                     text = stringResource(R.string.delete),
                     color = colors.Red,
                     onClick = {
-                        // TODO: 삭제 처리
-//                        isMenuBottomSheetVisible = false
-//                        selectedItemForMenu = null
+                        onEvent(GroupNoteEvent.OnDeleteRecord(selectedPostForMenu!!.postId))
+                        showDeleteDialog = false
                         selectedPostForMenu = null
                     }
                 )
@@ -497,8 +491,6 @@ fun GroupNoteContent(
                     color = colors.Red,
                     onClick = {
                         // TODO: 신고 처리
-//                        isMenuBottomSheetVisible = false
-//                        selectedItemForMenu = null
                         selectedPostForMenu = null
                     }
                 )
@@ -508,8 +500,6 @@ fun GroupNoteContent(
         MenuBottomSheet(
             items = menuItems,
             onDismiss = {
-//                isMenuBottomSheetVisible = false
-//                selectedItemForMenu = null
                 selectedPostForMenu = null
             }
         )
