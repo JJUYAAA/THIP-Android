@@ -108,4 +108,14 @@ class RoomsRepository @Inject constructor(
             )
         ).handleBaseResponse().getOrThrow()
     }
+
+    suspend fun deleteRoomsRecord(
+        roomId: Int,
+        recordId: Int
+    ) = runCatching {
+        roomsService.deleteRoomsRecord(
+            roomId = roomId,
+            recordId = recordId
+        ).handleBaseResponse().getOrThrow()
+    }
 }
