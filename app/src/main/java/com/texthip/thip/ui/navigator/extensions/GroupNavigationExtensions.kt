@@ -85,3 +85,20 @@ fun NavHostController.navigateToGroupNoteCreate(
         )
     )
 }
+
+// 투표 생성 화면으로 이동
+fun NavHostController.navigateToGroupVoteCreate(
+    roomId: Int,
+    recentPage: Int,
+    totalPage: Int,
+    isOverviewPossible: Boolean
+) {
+    navigate(
+        GroupRoutes.VoteCreate(
+            roomId = roomId,
+            recentPage = recentPage,
+            totalPage = totalPage,
+            isOverviewPossible = isOverviewPossible
+        )
+    )
+}

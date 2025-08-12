@@ -18,6 +18,7 @@ import com.texthip.thip.ui.group.myroom.screen.GroupMyScreen
 import com.texthip.thip.ui.group.myroom.viewmodel.GroupMyViewModel
 import com.texthip.thip.ui.group.note.screen.GroupNoteCreateScreen
 import com.texthip.thip.ui.group.note.screen.GroupNoteScreen
+import com.texthip.thip.ui.group.note.screen.GroupVoteCreateScreen
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteViewModel
 import com.texthip.thip.ui.group.room.screen.GroupRoomMatesScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
@@ -35,6 +36,7 @@ import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomMates
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupVoteCreate
 import com.texthip.thip.ui.navigator.extensions.navigateToRecommendedGroupRecruit
 import com.texthip.thip.ui.navigator.routes.GroupRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
@@ -231,12 +233,21 @@ fun NavGraphBuilder.groupNavigation(
                 backStackEntry.savedStateHandle.remove<Int>("selected_tab_index")
             },
             onBackClick = { navigateBack() },
-            onCreateNoteClick = {
+            onCreateNoteClick = { recentPage, totalPage, isOverviewPossible ->
                 navController.navigateToGroupNoteCreate(
                     roomId = roomId,
-                    recentBookPage = uiState.recentBookPage,
-                    totalBookPage = uiState.totalBookPage,
-                    isOverviewPossible = uiState.isOverviewPossible
+                    recentBookPage = recentPage,
+                    totalBookPage = totalPage,
+                    isOverviewPossible = isOverviewPossible
+                )
+            },
+            // [수정] '투표 생성' 클릭 시 페이지 정보와 함께 내비게이션
+            onCreateVoteClick = { recentPage, totalPage, isOverviewPossible ->
+                navController.navigateToGroupVoteCreate(
+                    roomId = roomId,
+                    recentPage = recentPage,
+                    totalPage = totalPage,
+                    isOverviewPossible = isOverviewPossible
                 )
             },
             viewModel = viewModel
@@ -257,6 +268,27 @@ fun NavGraphBuilder.groupNavigation(
                 navigateBack()
             },
             onNavigateBackWithResult = {
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("selected_tab_index", 1)
+                navigateBack()
+            }
+        )
+    }
+
+    composable<GroupRoutes.VoteCreate> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.VoteCreate>()
+        val roomId = route.roomId
+
+        GroupVoteCreateScreen(
+//            roomId = roomId,
+            roomId = 1,
+            recentPage = route.recentPage,
+            totalPage = route.totalPage,
+            isOverviewPossible = route.isOverviewPossible,
+            onBackClick = { navigateBack() },
+            onNavigateBackWithResult = {
+                // 투표 생성 후 '내 기록' 탭으로 이동
                 navController.previousBackStackEntry
                     ?.savedStateHandle
                     ?.set("selected_tab_index", 1)

@@ -36,4 +36,12 @@ sealed class GroupRoutes : Routes() {
         val totalBookPage: Int,
         val isOverviewPossible: Boolean
     )
+
+    @Serializable
+    data class VoteCreate(
+        val roomId: Int,
+        val recentPage: Int,
+        val totalPage: Int,
+        val isOverviewPossible: Boolean
+    )
 }

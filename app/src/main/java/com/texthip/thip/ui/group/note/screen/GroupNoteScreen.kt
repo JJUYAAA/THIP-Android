@@ -73,7 +73,8 @@ import kotlinx.coroutines.launch
 fun GroupNoteScreen(
     roomId: Int,
     onBackClick: () -> Unit = {},
-    onCreateNoteClick: () -> Unit = {},
+    onCreateNoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
+    onCreateVoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
     resultTabIndex: Int? = null,
     onResultConsumed: () -> Unit = {},
     initialPage: Int? = null,
@@ -128,7 +129,16 @@ fun GroupNoteScreen(
         uiState = uiState,
         onEvent = viewModel::onEvent,
         onBackClick = onBackClick,
-        onCreateNoteClick = onCreateNoteClick,
+        onCreateNoteClick = {
+            uiState.let { s ->
+                onCreateNoteClick(s.recentBookPage, s.totalBookPage, s.isOverviewPossible)
+            }
+        },
+        onCreateVoteClick = {
+            uiState.let { s ->
+                onCreateVoteClick(s.recentBookPage, s.totalBookPage, s.isOverviewPossible)
+            }
+        },
         showProgressBar = showProgressBar,
         progress = progress.value
     )
@@ -140,6 +150,7 @@ fun GroupNoteContent(
     onEvent: (GroupNoteEvent) -> Unit,
     onBackClick: () -> Unit,
     onCreateNoteClick: () -> Unit,
+    onCreateVoteClick: () -> Unit,
     showProgressBar: Boolean,
     progress: Float
 ) {
@@ -162,6 +173,10 @@ fun GroupNoteContent(
         .map { stringResource(it) }
 
     val listState = rememberLazyListState()
+
+    LaunchedEffect(uiState.selectedTabIndex) {
+        listState.scrollToItem(0)
+    }
 
     val isScrolledToEnd by remember {
         derivedStateOf {
@@ -416,7 +431,7 @@ fun GroupNoteContent(
                     FabMenuItem(
                         icon = painterResource(R.drawable.ic_vote),
                         text = stringResource(R.string.create_vote),
-                        onClick = { }
+                        onClick = onCreateVoteClick
                     )
                 )
             )
@@ -543,6 +558,7 @@ private fun GroupNoteScreenPreview() {
             onEvent = {},
             onBackClick = {},
             onCreateNoteClick = {},
+            onCreateVoteClick = {},
             showProgressBar = true,
             progress = 0.5f
         )
