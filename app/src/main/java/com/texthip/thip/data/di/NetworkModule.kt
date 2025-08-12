@@ -2,6 +2,7 @@ package com.texthip.thip.data.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.texthip.thip.BuildConfig
+import com.texthip.thip.data.service.AuthService
 import com.texthip.thip.utils.auth.AuthInterceptor
 import dagger.Module
 import dagger.Provides
