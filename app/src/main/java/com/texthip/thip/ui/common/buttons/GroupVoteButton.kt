@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.data.model.rooms.response.VoteItems
@@ -69,8 +70,9 @@ fun GroupVoteButton(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = backgroundColor, shape = RoundedCornerShape(12.dp))
                     .height(44.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(color = backgroundColor)
                     .clickable {
                         if (isSelected) {
                             onOptionSelected(null)
@@ -84,10 +86,7 @@ fun GroupVoteButton(
                         modifier = Modifier
                             .fillMaxHeight()
                             .fillMaxWidth(animatedPercent)
-                            .background(
-                                color = percentBarColor,
-                                shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
-                            )
+                            .background(color = percentBarColor)
                     )
                 }
 
