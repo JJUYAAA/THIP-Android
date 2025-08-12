@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.auth.response.AuthResponse
 import com.texthip.thip.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
