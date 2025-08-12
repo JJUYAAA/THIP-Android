@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
     implementation(libs.foundation)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -90,6 +91,12 @@ dependencies {
 // OkHttp
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+
+// 카카오 로그인 SDK
+    implementation("com.kakao.sdk:v2-all:2.21.6")
+
+// 토큰 저장을 위한 DataStore
+    implementation ("androidx.datastore:datastore-preferences:1.1.1")
 }
 
 kapt {
