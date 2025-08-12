@@ -7,6 +7,7 @@ data class RoomsPostsResponse(
     val postList: List<PostList>,
     val roomId: Int,
     val isbn: String,
+    val isOverviewEnabled: Boolean,
     val nextCursor: String?,
     val isLast: Boolean,
 )

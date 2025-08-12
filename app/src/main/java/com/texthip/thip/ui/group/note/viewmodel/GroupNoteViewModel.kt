@@ -111,20 +111,28 @@ class GroupNoteViewModel @Inject constructor(
                 _uiState.update { it.copy(selectedTabIndex = event.index) }
                 loadPosts(isRefresh = true)
             }
+
             is GroupNoteEvent.OnSortSelected -> {
                 _uiState.update { it.copy(selectedSort = event.sortType) }
                 loadPosts(isRefresh = true)
             }
+
             is GroupNoteEvent.OnPageStartChanged -> _uiState.update { it.copy(pageStart = event.page) }
             is GroupNoteEvent.OnPageEndChanged -> _uiState.update { it.copy(pageEnd = event.page) }
-            is GroupNoteEvent.OnOverviewToggled -> _uiState.update { it.copy(isOverview = event.isSelected) }
+            is GroupNoteEvent.OnOverviewToggled -> {
+                _uiState.update { it.copy(isOverview = event.isSelected) }
+                loadPosts(isRefresh = true)
+            }
+
             GroupNoteEvent.ApplyPageFilter -> {
                 val currentState = _uiState.value
-                val isFilterActive = currentState.pageStart.isNotBlank() || currentState.pageEnd.isNotBlank()
+                val isFilterActive =
+                    currentState.pageStart.isNotBlank() || currentState.pageEnd.isNotBlank()
 
                 _uiState.update { it.copy(isPageFilter = isFilterActive) }
                 loadPosts(isRefresh = true)
             }
+
             GroupNoteEvent.LoadMorePosts -> loadPosts(isRefresh = false)
         }
     }
@@ -135,7 +143,12 @@ class GroupNoteViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.update {
-                if (isRefresh) it.copy(isLoading = true, posts = emptyList(), error = null, isLastPage = false)
+                if (isRefresh) it.copy(
+                    isLoading = true,
+                    posts = emptyList(),
+                    error = null,
+                    isLastPage = false
+                )
                 else it.copy(isLoadingMore = true, error = null)
             }
 
@@ -175,7 +188,8 @@ class GroupNoteViewModel @Inject constructor(
                             isLoading = false,
                             isLoadingMore = false,
                             posts = if (isRefresh) response.postList else it.posts + response.postList,
-                            isLastPage = response.isLast
+                            isLastPage = response.isLast,
+                            totalEnabled = response.isOverviewEnabled
                         )
                     }
                 }
