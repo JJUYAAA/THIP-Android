@@ -28,7 +28,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
+                <!-- 리다이렉트 URI: "kakao${NATIVE_APP_KEY}://oauth" -->
+                <data android:host="oauth"
+                    android:scheme="kakao${NATIVE_APP_KEY}" />
+
+                <!--<data
                     android:host="oauth"
                     android:scheme="kakao${"NATIVE_APP_KEY"}" />
             </intent-filter>

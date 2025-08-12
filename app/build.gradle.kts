@@ -28,6 +28,9 @@ android {
 
         buildConfigField("String", "BASE_URL", "\"${properties["BASE_URL"]}\"")
         buildConfigField("String", "NATIVE_APP_KEY", "\"${properties["NATIVE_APP_KEY"]}\"")
+        manifestPlaceholders += mapOf(
+            "NATIVE_APP_KEY" to properties["NATIVE_APP_KEY"] as String
+        )
     }
 
     buildTypes {
