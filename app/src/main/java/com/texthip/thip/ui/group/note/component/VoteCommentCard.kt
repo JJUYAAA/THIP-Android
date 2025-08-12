@@ -28,14 +28,14 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun VoteCommentCard(
     modifier: Modifier = Modifier,
     data: PostList,
+    onVote: (postId: Int, voteItemId: Int, type: Boolean) -> Unit = { _, _, _ -> },
     onCommentClick: () -> Unit = {},
     onLongPress: () -> Unit = {},
     onPinClick: () -> Unit = {}
 ) {
     var isLiked by remember { mutableStateOf(data.isLiked) }
-    var selected by remember { mutableStateOf<Int?>(null) }
-    var voteItems by remember { mutableStateOf(data.voteItems) }
-    val hasVoted = voteItems.any { it.isVoted }
+    val selectedIndex = data.voteItems.indexOfFirst { it.isVoted }.takeIf { it != -1 }
+    val hasVoted = selectedIndex != null
 
     val isLocked = data.isLocked
     val isWriter = data.isWriter
@@ -68,19 +68,19 @@ fun VoteCommentCard(
             )
 
             GroupVoteButton(
-                voteItems = voteItems,
-                selectedIndex = selected,
+                voteItems = data.voteItems,
+                selectedIndex = selectedIndex,
                 hasVoted = hasVoted,
-                onOptionSelected = {
+                onOptionSelected = { index ->
                     if (!isLocked) {
-                        if (selected == it) {
-                            selected = null
-                            voteItems = voteItems.map { it.copy(isVoted = false) }
-                        } else {
-                            selected = it
-                            voteItems = voteItems.mapIndexed { index, item ->
-                                item.copy(isVoted = index == it)
+                        if (index == null) {
+                            selectedIndex?.let {
+                                val votedItemId = data.voteItems[it].voteItemId
+                                onVote(data.postId, votedItemId, false) // type: false (취소)
                             }
+                        } else {
+                            val votedItemId = data.voteItems[index].voteItemId
+                            onVote(data.postId, votedItemId, true) // type: true (투표)
                         }
                     }
                 }

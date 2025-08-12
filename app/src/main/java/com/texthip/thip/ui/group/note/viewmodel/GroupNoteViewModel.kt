@@ -46,6 +46,7 @@ sealed interface GroupNoteEvent {
     data class OnOverviewToggled(val isSelected: Boolean) : GroupNoteEvent
     data object ApplyPageFilter : GroupNoteEvent
     data object LoadMorePosts : GroupNoteEvent
+    data class OnVote(val postId: Int, val voteItemId: Int, val type: Boolean) : GroupNoteEvent
 }
 
 
@@ -134,6 +135,27 @@ class GroupNoteViewModel @Inject constructor(
             }
 
             GroupNoteEvent.LoadMorePosts -> loadPosts(isRefresh = false)
+
+            is GroupNoteEvent.OnVote -> vote(
+                postId = event.postId,
+                voteItemId = event.voteItemId,
+                type = event.type
+            )
+        }
+    }
+
+    private fun vote(postId: Int, voteItemId: Int, type: Boolean) {
+        viewModelScope.launch {
+            roomsRepository.postRoomsVote(
+                roomId = roomId,
+                voteId = postId,
+                voteItemId = voteItemId,
+                type = type
+            ).onSuccess {
+                loadPosts(isRefresh = true)
+            }.onFailure { throwable ->
+                _uiState.update { it.copy(error = throwable.message) }
+            }
         }
     }
 

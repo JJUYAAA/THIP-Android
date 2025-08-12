@@ -247,12 +247,13 @@ fun GroupNoteContent(
                     } else {
                         stringResource(R.string.no_records_yet)
                     }
-                    val noRecordTextContent = when(uiState.selectedTabIndex) {
-                        0 ->  if( uiState.isOverview) {
+                    val noRecordTextContent = when (uiState.selectedTabIndex) {
+                        0 -> if (uiState.isOverview) {
                             stringResource(R.string.no_overview_subtext)
                         } else {
                             stringResource(R.string.no_group_record_subtext)
                         }
+
                         1 -> stringResource(R.string.no_my_record_subtext)
                         else -> ""
                     }
@@ -367,7 +368,10 @@ fun GroupNoteContent(
                                     modifier = itemModifier,
                                     onCommentClick = { isCommentBottomSheetVisible = true },
                                     onLongPress = { selectedPostForMenu = post },
-                                    onPinClick = { isPinDialogVisible = true }
+                                    onPinClick = { isPinDialogVisible = true },
+                                    onVote = { postId, voteItemId, type ->
+                                        onEvent(GroupNoteEvent.OnVote(postId, voteItemId, type))
+                                    }
                                 )
                             }
                         }
