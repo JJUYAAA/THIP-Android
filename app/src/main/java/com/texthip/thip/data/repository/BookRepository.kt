@@ -1,7 +1,9 @@
 package com.texthip.thip.data.repository
 
 import com.texthip.thip.data.model.base.handleBaseResponse
+import com.texthip.thip.data.model.book.request.BookSaveRequest
 import com.texthip.thip.data.model.book.response.BookDetailResponse
+import com.texthip.thip.data.model.book.response.BookSaveResponse
 import com.texthip.thip.data.model.book.response.BookSearchResponse
 import com.texthip.thip.data.model.book.response.MostSearchedBooksResponse
 import com.texthip.thip.data.model.book.response.RecentSearchResponse
@@ -53,6 +55,13 @@ class BookRepository @Inject constructor(
     /** 책 상세 조회 */
     suspend fun getBookDetail(isbn: String): Result<BookDetailResponse?> = runCatching {
         bookService.getBookDetail(isbn)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    /** 책 저장/저장취소 */
+    suspend fun saveBook(isbn: String, type: Boolean): Result<BookSaveResponse?> = runCatching {
+        bookService.saveBook(isbn, BookSaveRequest(type))
             .handleBaseResponse()
             .getOrThrow()
     }

@@ -1,13 +1,17 @@
 package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
+import com.texthip.thip.data.model.book.request.BookSaveRequest
 import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.data.model.book.response.BookListResponse
+import com.texthip.thip.data.model.book.response.BookSaveResponse
 import com.texthip.thip.data.model.book.response.BookSearchResponse
 import com.texthip.thip.data.model.book.response.MostSearchedBooksResponse
 import com.texthip.thip.data.model.book.response.RecentSearchResponse
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -47,4 +51,11 @@ interface BookService {
     suspend fun getBookDetail(
         @Path("isbn") isbn: String
     ): BaseResponse<BookDetailResponse>
+
+    /** 책 저장/저장취소 */
+    @POST("books/{isbn}/saved")
+    suspend fun saveBook(
+        @Path("isbn") isbn: String,
+        @Body request: BookSaveRequest
+    ): BaseResponse<BookSaveResponse>
 }
