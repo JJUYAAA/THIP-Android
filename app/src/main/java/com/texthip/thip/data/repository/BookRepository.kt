@@ -1,6 +1,7 @@
 package com.texthip.thip.data.repository
 
 import com.texthip.thip.data.model.base.handleBaseResponse
+import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.data.model.book.response.BookSearchResponse
 import com.texthip.thip.data.model.book.response.MostSearchedBooksResponse
 import com.texthip.thip.data.model.book.response.RecentSearchResponse
@@ -45,6 +46,13 @@ class BookRepository @Inject constructor(
     /** 최근 검색어 삭제 */
     suspend fun deleteRecentSearch(recentSearchId: Int): Result<Unit> = runCatching {
         bookService.deleteRecentSearch(recentSearchId)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    /** 책 상세 조회 */
+    suspend fun getBookDetail(isbn: String): Result<BookDetailResponse?> = runCatching {
+        bookService.getBookDetail(isbn)
             .handleBaseResponse()
             .getOrThrow()
     }

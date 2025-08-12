@@ -1,6 +1,7 @@
 package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
+import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.data.model.book.response.BookListResponse
 import com.texthip.thip.data.model.book.response.BookSearchResponse
 import com.texthip.thip.data.model.book.response.MostSearchedBooksResponse
@@ -40,4 +41,10 @@ interface BookService {
     suspend fun deleteRecentSearch(
         @Path("recentSearchId") recentSearchId: Int
     ): BaseResponse<Unit>
+
+    /** 책 상세 조회 */
+    @GET("books/{isbn}")
+    suspend fun getBookDetail(
+        @Path("isbn") isbn: String
+    ): BaseResponse<BookDetailResponse>
 }
