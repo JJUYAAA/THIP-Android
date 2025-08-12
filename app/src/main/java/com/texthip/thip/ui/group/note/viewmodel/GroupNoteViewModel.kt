@@ -48,6 +48,7 @@ sealed interface GroupNoteEvent {
     data object LoadMorePosts : GroupNoteEvent
     data class OnVote(val postId: Int, val voteItemId: Int, val type: Boolean) : GroupNoteEvent
     data class OnDeleteRecord(val postId: Int) : GroupNoteEvent
+    data class OnLikeRecord(val postId: Int, val postType: String) : GroupNoteEvent
 }
 
 
@@ -144,6 +145,38 @@ class GroupNoteViewModel @Inject constructor(
             )
 
             is GroupNoteEvent.OnDeleteRecord -> deleteRecord(event.postId)
+            is GroupNoteEvent.OnLikeRecord -> likeRecord(event.postId, event.postType)
+        }
+    }
+
+    private fun likeRecord(postId: Int, postType: String) {
+        val currentPosts = _uiState.value.posts
+        val postIndex = currentPosts.indexOfFirst { it.postId == postId }
+        if (postIndex == -1) return
+
+        val oldPost = currentPosts[postIndex]
+
+        val newIsLiked = !oldPost.isLiked
+        val newLikeCount = if (newIsLiked) oldPost.likeCount + 1 else oldPost.likeCount - 1
+
+        val optimisticPost = oldPost.copy(
+            isLiked = newIsLiked,
+            likeCount = newLikeCount.coerceAtLeast(0)
+        )
+
+        val newPosts = currentPosts.toMutableList().apply { this[postIndex] = optimisticPost }
+        _uiState.update { it.copy(posts = newPosts) }
+
+        viewModelScope.launch {
+            roomsRepository.postRoomsPostsLikes(
+                postId = postId,
+                type = newIsLiked,
+                roomPostType = postType
+            )
+                .onFailure {
+                    val rollbackPosts = currentPosts.toMutableList().apply { this[postIndex] = oldPost }
+                    _uiState.update { it.copy(posts = rollbackPosts) }
+                }
         }
     }
 

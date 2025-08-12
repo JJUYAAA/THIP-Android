@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.pointer.pointerInput
@@ -28,12 +24,12 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun VoteCommentCard(
     modifier: Modifier = Modifier,
     data: PostList,
+    onLikeClick: (postId: Int, postType: String) -> Unit = { _, _ -> },
     onVote: (postId: Int, voteItemId: Int, type: Boolean) -> Unit = { _, _, _ -> },
     onCommentClick: () -> Unit = {},
     onLongPress: () -> Unit = {},
     onPinClick: () -> Unit = {}
 ) {
-    var isLiked by remember { mutableStateOf(data.isLiked) }
     val selectedIndex = data.voteItems.indexOfFirst { it.isVoted }.takeIf { it != -1 }
     val hasVoted = selectedIndex != null
 
@@ -88,12 +84,12 @@ fun VoteCommentCard(
         }
 
         ActionBarButton(
-            isLiked = isLiked,
+            isLiked = data.isLiked,
             likeCount = data.likeCount,
             commentCount = data.commentCount,
             isPinVisible = isWriter,
             onLikeClick = {
-                if (!isLocked) isLiked = !isLiked
+                if (!isLocked) onLikeClick(data.postId, data.postType)
             },
             onCommentClick = {
                 if (!isLocked) onCommentClick()

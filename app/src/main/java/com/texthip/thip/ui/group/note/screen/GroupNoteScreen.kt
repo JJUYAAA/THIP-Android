@@ -361,7 +361,10 @@ fun GroupNoteContent(
                                     modifier = itemModifier,
                                     onCommentClick = { isCommentBottomSheetVisible = true },
                                     onLongPress = { selectedPostForMenu = post },
-                                    onPinClick = { isPinDialogVisible = true }
+                                    onPinClick = { isPinDialogVisible = true },
+                                    onLikeClick = { postId, postType ->
+                                        onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
+                                    }
                                 )
 
                                 "VOTE" -> VoteCommentCard(
@@ -372,6 +375,9 @@ fun GroupNoteContent(
                                     onPinClick = { isPinDialogVisible = true },
                                     onVote = { postId, voteItemId, type ->
                                         onEvent(GroupNoteEvent.OnVote(postId, voteItemId, type))
+                                    },
+                                    onLikeClick = { postId, postType ->
+                                        onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
                                     }
                                 )
                             }
