@@ -12,6 +12,10 @@ class ThipApplication : Application(){
         super.onCreate()
 
         // 카카오 SDK 초기화
-        KakaoSdk.init(this, BuildConfig.NATIVE_APP_KEY)
+        try {
+            KakaoSdk.init(this, BuildConfig.NATIVE_APP_KEY)
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
     }
 }
