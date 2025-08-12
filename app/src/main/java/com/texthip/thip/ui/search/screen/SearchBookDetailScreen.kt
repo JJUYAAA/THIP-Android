@@ -59,7 +59,6 @@ fun SearchBookDetailScreen(
     onLeftClick: () -> Unit = {},
     onRightClick: () -> Unit = {},
     onRecruitingGroupClick: () -> Unit = {},
-    onBookMarkClick: (Boolean) -> Unit = {},
     onWriteFeedClick: () -> Unit = {},
     viewModel: BookDetailViewModel = hiltViewModel()
 ) {
@@ -272,7 +271,6 @@ fun SearchBookDetailScreen(
                                                 val newBookmarkState = !isBookmarked
                                                 isBookmarked = newBookmarkState
                                                 viewModel.saveBook(isbn, newBookmarkState)
-                                                onBookMarkClick(newBookmarkState)
                                             },
                                         contentAlignment = Alignment.Center,
                                     ) {
