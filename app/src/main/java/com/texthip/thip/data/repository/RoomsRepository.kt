@@ -2,6 +2,7 @@ package com.texthip.thip.data.repository
 
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
+import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
 import com.texthip.thip.data.model.rooms.request.VoteItem
@@ -116,6 +117,20 @@ class RoomsRepository @Inject constructor(
         roomsService.deleteRoomsRecord(
             roomId = roomId,
             recordId = recordId
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun postRoomsPostsLikes(
+        postId: Int,
+        type: Boolean,
+        roomPostType: String
+    ) = runCatching {
+        roomsService.postRoomsPostsLikes(
+            postId = postId,
+            request = RoomsPostsLikesRequest(
+                type = type,
+                roomPostType = roomPostType
+            )
         ).handleBaseResponse().getOrThrow()
     }
 }
