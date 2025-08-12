@@ -6,12 +6,14 @@ import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
 import com.texthip.thip.data.model.rooms.response.RoomsBookPageResponse
 import com.texthip.thip.data.model.rooms.response.RoomsCreateVoteResponse
+import com.texthip.thip.data.model.rooms.response.RoomsDeleteRecordResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsResponse
 import com.texthip.thip.data.model.rooms.response.RoomsRecordResponse
 import com.texthip.thip.data.model.rooms.response.RoomsUsersResponse
 import com.texthip.thip.data.model.rooms.response.RoomsVoteResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -63,4 +65,10 @@ interface RoomsService {
         @Path("voteId") voteId: Int,
         @Body request: RoomsVoteRequest
     ): BaseResponse<RoomsVoteResponse>
+
+    @DELETE("rooms/{roomId}/record/{recordId}")
+    suspend fun deleteRoomsRecord(
+        @Path("roomId") roomId: Int,
+        @Path("recordId") recordId: Int
+    ): BaseResponse<RoomsDeleteRecordResponse>
 }
