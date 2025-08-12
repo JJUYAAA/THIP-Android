@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
 import com.texthip.thip.ui.navigator.extensions.navigateToBookGroup
+import com.texthip.thip.ui.navigator.extensions.navigateToRegisterBook
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 import com.texthip.thip.ui.navigator.routes.SearchRoutes
 import com.texthip.thip.ui.search.screen.SearchBookScreen
@@ -17,6 +18,9 @@ fun NavGraphBuilder.searchNavigation(navController: NavHostController) {
         SearchBookScreen(
             onBookClick = { isbn ->
                 navController.navigateToBookDetail(isbn)
+            },
+            onRequestBook = {
+                navController.navigateToRegisterBook()
             }
         )
     }

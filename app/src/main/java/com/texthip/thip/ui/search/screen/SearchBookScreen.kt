@@ -42,7 +42,8 @@ import com.texthip.thip.ui.theme.ThipTheme
 fun SearchBookScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchBookViewModel = hiltViewModel(),
-    onBookClick: (String) -> Unit = {}
+    onBookClick: (String) -> Unit = {},
+    onRequestBook: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val focusRequester = remember { FocusRequester() }
@@ -150,7 +151,7 @@ fun SearchBookScreen(
                             SearchEmptyResult(
                                 mainText = stringResource(R.string.book_no_search_result1),
                                 subText = stringResource(R.string.book_no_search_result2),
-                                onRequestBook = { /*책 요청 처리*/ }
+                                onRequestBook = onRequestBook
                             )
                         }
                     }
@@ -181,7 +182,7 @@ fun SearchBookScreen(
                             SearchEmptyResult(
                                 mainText = stringResource(R.string.book_no_search_result1),
                                 subText = stringResource(R.string.book_no_search_result2),
-                                onRequestBook = { /*책 요청 처리*/ }
+                                onRequestBook = onRequestBook
                             )
                         }
                     }
