@@ -9,13 +9,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -24,7 +20,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.LeftNameTopAppBar
@@ -39,20 +37,14 @@ import com.texthip.thip.ui.theme.ThipTheme
 @Composable
 fun SearchBookScreen(
     modifier: Modifier = Modifier,
-    navController: NavHostController? = null,
-    viewModel: SearchBookViewModel = hiltViewModel()
+    viewModel: SearchBookViewModel = hiltViewModel(),
+    onBookClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // 화면 진입 시 무조건 새로고침
-    LaunchedEffect(Unit) {
-        viewModel.refreshData()
-    }
-
-    // 화면 생명주기를 감지하여 새로고침 (뒤로가기 포함)
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -109,7 +101,8 @@ fun SearchBookScreen(
                                     title = item.title,
                                     author = "",
                                     publisher = "",
-                                    imageUrl = item.imageUrl
+                                    imageUrl = item.imageUrl,
+                                    isbn = item.isbn
                                 )
                             },
                             popularBookDate = "01.12", // TODO: 서버로 날짜를 받아 오게 수정
@@ -125,7 +118,7 @@ fun SearchBookScreen(
                                 }
                             },
                             onBookClick = { book ->
-                                // 책 클릭 시 처리 (책 상세 화면으로 이동)
+                                onBookClick(book.isbn)
                             }
                         )
                     }
@@ -139,13 +132,17 @@ fun SearchBookScreen(
                                     title = item.title,
                                     author = item.authorName,
                                     publisher = item.publisher,
-                                    imageUrl = item.imageUrl
+                                    imageUrl = item.imageUrl,
+                                    isbn = item.isbn
                                 )
                             },
                             isLoading = uiState.isSearching || uiState.isLoadingMore,
                             hasMore = uiState.canLoadMore,
                             onLoadMore = {
                                 viewModel.loadMoreBooks()
+                            },
+                            onBookClick = { book ->
+                                onBookClick(book.isbn)
                             }
                         )
                     }
@@ -158,13 +155,17 @@ fun SearchBookScreen(
                                     title = item.title,
                                     author = item.authorName,
                                     publisher = item.publisher,
-                                    imageUrl = item.imageUrl
+                                    imageUrl = item.imageUrl,
+                                    isbn = item.isbn
                                 )
                             },
                             isLoading = uiState.isLiveSearching || uiState.isLiveLoadingMore,
                             hasMore = uiState.canLiveLoadMore,
                             onLoadMore = {
                                 viewModel.loadMoreLiveSearchResults()
+                            },
+                            onBookClick = { book ->
+                                onBookClick(book.isbn)
                             }
                         )
                     }
@@ -186,15 +187,7 @@ fun SearchBookScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewBookSearchScreen_Default() {
-    ThipTheme {
-        SearchBookScreen()
-    }
-}
-
-@Preview
-@Composable
-fun PreviewBookSearchScreen_EmptyPopular() {
+fun PreviewBookSearchScreen() {
     ThipTheme {
         SearchBookScreen()
     }

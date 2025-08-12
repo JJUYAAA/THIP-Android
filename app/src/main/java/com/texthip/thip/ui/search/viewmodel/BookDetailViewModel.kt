@@ -1,0 +1,48 @@
+package com.texthip.thip.ui.search.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.texthip.thip.data.model.book.response.BookDetailResponse
+import com.texthip.thip.data.repository.BookRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class BookDetailViewModel @Inject constructor(
+    private val bookRepository: BookRepository
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(BookDetailUiState())
+    val uiState: StateFlow<BookDetailUiState> = _uiState.asStateFlow()
+
+    fun loadBookDetail(isbn: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            
+            bookRepository.getBookDetail(isbn)
+                .onSuccess { bookDetail ->
+                    _uiState.value = _uiState.value.copy(
+                        bookDetail = bookDetail,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+                .onFailure { exception ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = exception.message ?: "책 정보를 불러오는데 실패했습니다."
+                    )
+                }
+        }
+    }
+}
+
+data class BookDetailUiState(
+    val bookDetail: BookDetailResponse? = null,
+    val isLoading: Boolean = false,
+    val error: String? = null
+)

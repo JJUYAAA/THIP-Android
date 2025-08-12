@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.search.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +31,8 @@ fun SearchActiveField(
     bookList: List<BookData>,
     isLoading: Boolean = false,
     hasMore: Boolean = true,
-    onLoadMore: () -> Unit = {}
+    onLoadMore: () -> Unit = {},
+    onBookClick: (BookData) -> Unit = {}
 ) {
     val listState = rememberLazyListState()
     
@@ -58,6 +60,7 @@ fun SearchActiveField(
         itemsIndexed(bookList) { index, book ->
             Column {
                 CardBookList(
+                    modifier = Modifier.clickable { onBookClick(book) },
                     title = book.title,
                     author = book.author,
                     publisher = book.publisher,
