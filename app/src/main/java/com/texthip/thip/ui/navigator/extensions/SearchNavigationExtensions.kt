@@ -13,3 +13,7 @@ fun NavHostController.navigateToSearch() {
 fun NavHostController.navigateToBookDetail(isbn: String) {
     navigate(SearchRoutes.BookDetail(isbn = isbn))
 }
+
+fun NavHostController.navigateToBookGroup(isbn: String) {
+    navigate(SearchRoutes.BookGroup(isbn = isbn))
+}

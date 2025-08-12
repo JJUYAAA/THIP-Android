@@ -5,10 +5,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
+import com.texthip.thip.ui.navigator.extensions.navigateToBookGroup
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 import com.texthip.thip.ui.navigator.routes.SearchRoutes
 import com.texthip.thip.ui.search.screen.SearchBookScreen
 import com.texthip.thip.ui.search.screen.SearchBookDetailScreen
+import com.texthip.thip.ui.search.screen.SearchBookGroupScreen
 
 fun NavGraphBuilder.searchNavigation(navController: NavHostController) {
     composable<MainTabRoutes.Search> {
@@ -32,13 +34,28 @@ fun NavGraphBuilder.searchNavigation(navController: NavHostController) {
                 // TODO: 우측 버튼 액션 구현
             },
             onRecruitingGroupClick = {
-                // TODO: 모집중인 그룹 화면으로 이동
-            },
-            onBookMarkClick = { isBookmarked ->
-                // TODO: 북마크 액션 구현
+                navController.navigateToBookGroup(isbn)
             },
             onWriteFeedClick = {
                 // TODO: 피드 작성 화면으로 이동
+            }
+        )
+    }
+    
+    composable<SearchRoutes.BookGroup> { backStackEntry ->
+        val route = backStackEntry.toRoute<SearchRoutes.BookGroup>()
+        val isbn = route.isbn
+        
+        SearchBookGroupScreen(
+            isbn = isbn,
+            onLeftClick = {
+                navController.popBackStack()
+            },
+            onCardClick = { roomId ->
+                // TODO: 그룹 상세 화면으로 이동
+            },
+            onCreateRoomClick = {
+                // TODO: 방 생성 화면으로 이동
             }
         )
     }
