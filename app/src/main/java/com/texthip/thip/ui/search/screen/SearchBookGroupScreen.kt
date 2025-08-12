@@ -39,6 +39,7 @@ import com.texthip.thip.ui.search.viewmodel.SearchBookGroupViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.rooms.DateUtils
 
 
 @Composable
@@ -79,12 +80,14 @@ fun SearchBookGroupScreen(
         }
         else -> {
             val recruitingList = uiState.recruitingRooms.map { item ->
+                val daysLeft = DateUtils.extractDaysFromDeadline(item.deadlineEndDate)
+
                 GroupCardItemRoomData(
                     id = item.roomId,
                     title = item.roomName,
                     participants = item.memberCount,
                     maxParticipants = item.recruitCount,
-                    endDate = item.deadlineEndDate.toIntOrNull() ?: 0,
+                    endDate = daysLeft,
                     imageUrl = item.bookImageUrl,
                     isRecruiting = true
                 )

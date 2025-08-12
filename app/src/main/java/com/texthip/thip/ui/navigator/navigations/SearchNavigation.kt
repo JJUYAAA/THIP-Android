@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
 import com.texthip.thip.ui.navigator.extensions.navigateToBookGroup
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToRegisterBook
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 import com.texthip.thip.ui.navigator.routes.SearchRoutes
@@ -56,7 +57,7 @@ fun NavGraphBuilder.searchNavigation(navController: NavHostController) {
                 navController.popBackStack()
             },
             onCardClick = { roomId ->
-                // TODO: 그룹 상세 화면으로 이동
+                navController.navigateToGroupRecruit(roomId)
             },
             onCreateRoomClick = {
                 // TODO: 방 생성 화면으로 이동
