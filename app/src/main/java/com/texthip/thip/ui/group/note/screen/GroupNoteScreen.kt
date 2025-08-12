@@ -242,6 +242,20 @@ fun GroupNoteContent(
                         CircularProgressIndicator()
                     }
                 } else if (uiState.posts.isEmpty()) {
+                    val noRecordTextTitle = if (uiState.isOverview) {
+                        stringResource(R.string.no_overviews_yet)
+                    } else {
+                        stringResource(R.string.no_records_yet)
+                    }
+                    val noRecordTextContent = when(uiState.selectedTabIndex) {
+                        0 ->  if( uiState.isOverview) {
+                            stringResource(R.string.no_overview_subtext)
+                        } else {
+                            stringResource(R.string.no_group_record_subtext)
+                        }
+                        1 -> stringResource(R.string.no_my_record_subtext)
+                        else -> ""
+                    }
                     // 기록이 없을 때 중앙에 메시지
                     Column(
                         modifier = Modifier
@@ -254,16 +268,12 @@ fun GroupNoteContent(
                         )
                     ) {
                         Text(
-                            text = stringResource(R.string.no_records_yet),
+                            text = noRecordTextTitle,
                             style = typography.smalltitle_sb600_s18_h24,
                             color = colors.White
                         )
                         Text(
-                            text = when (uiState.selectedTabIndex) {
-                                0 -> stringResource(R.string.no_group_record_subtext)
-                                1 -> stringResource(R.string.no_my_record_subtext)
-                                else -> ""
-                            },
+                            text = noRecordTextContent,
                             style = typography.copy_r400_s14,
                             color = colors.Grey
                         )

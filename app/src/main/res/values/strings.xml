@@ -216,8 +216,10 @@
     <string name="add_content">항목 추가</string>
     <string name="condition_of_view_general_review">독서 진행도 80% 이상부터 총평을 볼 수 있어요.</string>
     <string name="no_records_yet">아직 기록이 없어요.</string>
+    <string name="no_overviews_yet">아직 총평이 없어요.</string>
     <string name="no_group_record_subtext">우리 모임의 첫번째 기록을 남겨보세요</string>
     <string name="no_my_record_subtext">나의 첫번째 기록을 남겨보세요</string>
+    <string name="no_overview_subtext">책을 끝까지 읽고 든 생각을 남겨보세요</string>
     <string name="no_comments_yet">아직 댓글이 없어요.</string>
     <string name="no_comment_subtext">첫번째 댓글을 남겨보세요</string>
     <string name="pin_modal_title">이 기록을 피드에 핀할까요?</string>
