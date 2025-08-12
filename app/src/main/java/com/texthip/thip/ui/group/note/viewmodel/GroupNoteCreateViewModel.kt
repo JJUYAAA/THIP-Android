@@ -21,7 +21,8 @@ data class GroupNoteCreateUiState(
     val isOverviewPossible: Boolean = false
 ) {
     // 입력 폼이 모두 채워졌는지 확인
-    val isFormFilled: Boolean get() = pageText.isNotBlank() && opinionText.isNotBlank()
+    val isFormFilled: Boolean
+        get() = (pageText.isNotBlank() || isGeneralReview) && opinionText.isNotBlank()
 }
 
 sealed interface GroupNoteCreateEvent {
@@ -63,15 +64,18 @@ class GroupNoteCreateViewModel @Inject constructor(
                     _uiState.update { it.copy(pageText = event.text) }
                 }
             }
+
             is GroupNoteCreateEvent.OpinionChanged -> {
                 _uiState.update { it.copy(opinionText = event.text) }
             }
+
             is GroupNoteCreateEvent.GeneralReviewToggled -> {
                 _uiState.update {
                     val newPageText = if (event.isChecked) "" else it.pageText
                     it.copy(isGeneralReview = event.isChecked, pageText = newPageText)
                 }
             }
+
             GroupNoteCreateEvent.CreateRecordClicked -> {
                 createRecord()
             }
@@ -80,7 +84,11 @@ class GroupNoteCreateViewModel @Inject constructor(
 
     private fun createRecord() {
         val currentState = _uiState.value
-        val pageNumber = if (currentState.isGeneralReview) 0 else currentState.pageText.toIntOrNull()
+        val pageNumber = if (currentState.isGeneralReview) {
+            currentState.totalPage
+        } else {
+            currentState.pageText.toIntOrNull()
+        }
         if (pageNumber == null || !currentState.isFormFilled) {
             _uiState.update { it.copy(error = "페이지 번호를 정확히 입력해주세요.") }
             return

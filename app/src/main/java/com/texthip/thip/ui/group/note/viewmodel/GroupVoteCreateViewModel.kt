@@ -81,12 +81,14 @@ class GroupVoteCreateViewModel @Inject constructor(
             is GroupVoteCreateEvent.PageChanged -> if (!_uiState.value.isGeneralReview) {
                 _uiState.update { it.copy(pageText = event.text) }
             }
+
             is GroupVoteCreateEvent.TitleChanged -> _uiState.update { it.copy(title = event.text) }
             is GroupVoteCreateEvent.OptionChanged -> _uiState.update {
                 val newOptions = it.options.toMutableList()
                 newOptions[event.index] = event.text
                 it.copy(options = newOptions)
             }
+
             is GroupVoteCreateEvent.GeneralReviewToggled -> _uiState.update {
                 if (event.isChecked) {
                     it.copy(isGeneralReview = true, savedPageText = it.pageText, pageText = "")
@@ -94,9 +96,11 @@ class GroupVoteCreateViewModel @Inject constructor(
                     it.copy(isGeneralReview = false, pageText = it.savedPageText)
                 }
             }
+
             GroupVoteCreateEvent.AddOptionClicked -> if (_uiState.value.options.size < 5) {
                 _uiState.update { it.copy(options = it.options + "") }
             }
+
             is GroupVoteCreateEvent.RemoveOptionClicked -> if (_uiState.value.options.size > 2) {
                 _uiState.update {
                     val newOptions = it.options.toMutableList()
@@ -104,6 +108,7 @@ class GroupVoteCreateViewModel @Inject constructor(
                     it.copy(options = newOptions)
                 }
             }
+
             GroupVoteCreateEvent.CreateVoteClicked -> createVote()
         }
     }
@@ -111,8 +116,11 @@ class GroupVoteCreateViewModel @Inject constructor(
     private fun createVote() {
         val currentState = _uiState.value
         if (!currentState.isFormFilled) return
-
-        val pageNumber = if (currentState.isGeneralReview) 0 else currentState.pageText.toIntOrNull()
+        val pageNumber = if (currentState.isGeneralReview) {
+            currentState.bookTotalPage
+        } else {
+            currentState.pageText.toIntOrNull()
+        }
         if (pageNumber == null) {
             _uiState.update { it.copy(error = "페이지 번호를 정확히 입력해주세요.") }
             return
