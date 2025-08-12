@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "353417813537",
+    "project_id": "thip-3a698",
+    "storage_bucket": "thip-3a698.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353417813537:android:69029c2bc957df7fab4d60",
+        "android_client_info": {
+          "package_name": "com.texthip.thip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353417813537-lovs0p2tb9kjnjlp493a7098ov0cb2bu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.texthip.thip",
+            "certificate_hash": "99315de9382f8b2903131eb4ae926a4739803ef1"
+          }
+        },
+        {
+          "client_id": "353417813537-ck9g1v0qprlb5nf4dvasinim403eng0f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFzpbeT-8JQCGxiSKuVXMvcNNYFtl6Fuo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353417813537-ck9g1v0qprlb5nf4dvasinim403eng0f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
