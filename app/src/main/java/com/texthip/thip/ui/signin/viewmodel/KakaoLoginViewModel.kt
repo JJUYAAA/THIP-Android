@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed interface LoginUiState {
-    data object Idle : LoginUiState // 초기 상태
+    data object Idle : LoginUiState
     data object Loading : LoginUiState
     data class Success(val response: AuthResponse) : LoginUiState
     data class Error(val message: String) : LoginUiState
@@ -22,7 +22,7 @@ sealed interface LoginUiState {
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository // 실제로는 AuthRepository를 주입받아야 합니다.
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
@@ -47,10 +47,15 @@ class LoginViewModel @Inject constructor(
                         LoginUiState.Error(throwable.message ?: "알 수 없는 통신 오류가 발생했습니다.")
                     }
                 }
+           /* //신규유저 아닌 경우 피드화면으로 테스트
+            val fakeToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjcsImlhdCI6MTc1NDM4MjY1MiwiZXhwIjoxNzU2OTc0NjUyfQ.5CrcGkff5rcwF25qSsw8BY_GZ4W9w7QMJ6kXlwW4Ub0"
+            val fakeResponse = AuthResponse(token = fakeToken, isNewUser = false)
+            _uiState.update { LoginUiState.Success(fakeResponse) }
+*/
         }
     }
 
-    // 화면 이동 또는 에러 메시지 표시 후, 상태를 다시 초기화하여 이벤트가 중복 실행되는 것을 방지
+    //상태를 다시 초기화-> 이벤트 중복 실행 방지
     fun clearLoginState() {
         _uiState.update { LoginUiState.Idle }
     }
