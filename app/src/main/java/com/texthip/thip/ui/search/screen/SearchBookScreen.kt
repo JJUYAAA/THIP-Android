@@ -23,6 +23,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.LeftNameTopAppBar
@@ -105,7 +108,7 @@ fun SearchBookScreen(
                                     isbn = item.isbn
                                 )
                             },
-                            popularBookDate = "01.12", // TODO: 서버로 날짜를 받아 오게 수정
+                            popularBookDate = SimpleDateFormat("MM.dd", Locale.getDefault()).format(Date()),
                             onSearchClick = { keyword ->
                                 viewModel.updateSearchQuery(keyword)
                                 viewModel.onSearchButtonClick()
