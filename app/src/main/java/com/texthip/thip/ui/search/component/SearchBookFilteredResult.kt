@@ -51,7 +51,7 @@ fun SearchBookFilteredResult(
             val totalItemsCount = layoutInfo.totalItemsCount
             val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
 
-            hasMore && !isLoading && lastVisibleItemIndex >= totalItemsCount - 3
+            hasMore && !isLoading && totalItemsCount > 0 && lastVisibleItemIndex >= totalItemsCount - 3
         }
     }
 
@@ -80,17 +80,10 @@ fun SearchBookFilteredResult(
                 .background(colors.DarkGrey02)
         )
 
-        if (bookList.isEmpty() && !isLoading) {
-            SearchEmptyResult(
-                mainText = stringResource(R.string.book_no_search_result1),
-                subText = stringResource(R.string.book_no_search_result2),
-                onRequestBook = { /*책 요청 처리*/ }
-            )
-        } else {
-            LazyColumn(
-                state = listState,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+        LazyColumn(
+            state = listState,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
                 itemsIndexed(bookList) { index, book ->
                     Column {
                         CardBookList(
@@ -127,12 +120,11 @@ fun SearchBookFilteredResult(
                         }
                     }
                 }
-            }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewBookFilteredSearchResult() {
     ThipTheme {
@@ -155,6 +147,17 @@ fun PreviewBookFilteredSearchResult() {
                     publisher = "사이언스북스"
                 )
             )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewBookFilteredSearchResultEmpty() {
+    ThipTheme {
+        SearchBookFilteredResult(
+            resultCount = 0,
+            bookList = emptyList()
         )
     }
 }

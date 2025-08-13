@@ -201,6 +201,7 @@ private fun SearchBookGroupScreenContent(
                                 snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
                                     .collect { lastVisibleIndex ->
                                         if (lastVisibleIndex != null && 
+                                            recruitingList.isNotEmpty() &&
                                             lastVisibleIndex >= recruitingList.size - 3 && 
                                             canLoadMore) {
                                             onLoadMore()

@@ -43,7 +43,7 @@ fun SearchActiveField(
             val totalItemsCount = layoutInfo.totalItemsCount
             val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
 
-            hasMore && !isLoading && lastVisibleItemIndex >= totalItemsCount - 3
+            hasMore && !isLoading && totalItemsCount > 0 && lastVisibleItemIndex >= totalItemsCount - 3
         }
     }
 
