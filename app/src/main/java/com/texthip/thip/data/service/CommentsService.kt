@@ -1,7 +1,9 @@
 package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
+import com.texthip.thip.data.model.comments.request.CommentsCreateRequest
 import com.texthip.thip.data.model.comments.request.CommentsLikesRequest
+import com.texthip.thip.data.model.comments.response.CommentsCreateResponse
 import com.texthip.thip.data.model.comments.response.CommentsLikesResponse
 import com.texthip.thip.data.model.comments.response.CommentsResponse
 import retrofit2.http.Body
@@ -23,4 +25,10 @@ interface CommentsService {
         @Path("commentId") commentId: Long,
         @Body response: CommentsLikesRequest
     ): BaseResponse<CommentsLikesResponse>
+
+    @POST("comments/{postId}")
+    suspend fun createComment(
+        @Path("postId") postId: Long,
+        @Body request: CommentsCreateRequest
+    ): BaseResponse<CommentsCreateResponse>
 }
