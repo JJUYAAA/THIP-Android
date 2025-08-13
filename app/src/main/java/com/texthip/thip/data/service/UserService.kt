@@ -2,6 +2,7 @@ package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
 import com.texthip.thip.data.model.users.MyFollowingsResponse
+import com.texthip.thip.data.model.users.MyPageInfoResponse
 import com.texthip.thip.data.model.users.OthersFollowersResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -20,4 +21,7 @@ interface UserService {
         @Query("size") size: Int = 10,
         @Query("cursor") cursor: String? = null
     ): BaseResponse<OthersFollowersResponse>
+
+    @GET("users/my-page")
+    suspend fun getMyPage(): BaseResponse<MyPageInfoResponse>
 }
