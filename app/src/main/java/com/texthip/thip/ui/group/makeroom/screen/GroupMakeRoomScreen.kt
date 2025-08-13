@@ -87,6 +87,7 @@ fun GroupMakeRoomScreen(
         onSetMemberLimit = viewModel::setMemberLimit,
         onTogglePrivate = viewModel::togglePrivate,
         onUpdatePassword = viewModel::updatePassword,
+        onSearchBooks = viewModel::searchBooks,
         modifier = modifier
     )
 }
@@ -106,7 +107,8 @@ fun GroupMakeRoomContent(
     onSetDateRange: (java.time.LocalDate, java.time.LocalDate) -> Unit = { _, _ -> },
     onSetMemberLimit: (Int) -> Unit = {},
     onTogglePrivate: (Boolean) -> Unit = {},
-    onUpdatePassword: (String) -> Unit = {}
+    onUpdatePassword: (String) -> Unit = {},
+    onSearchBooks: (String) -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
@@ -257,7 +259,10 @@ fun GroupMakeRoomContent(
                 },
                 savedBooks = uiState.savedBooks,
                 groupBooks = uiState.groupBooks,
-                isLoading = uiState.isLoadingBooks
+                searchResults = uiState.searchResults,
+                isLoading = uiState.isLoadingBooks,
+                isSearching = uiState.isSearching,
+                onSearch = onSearchBooks
             )
         }
 

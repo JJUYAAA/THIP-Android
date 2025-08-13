@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
 import com.texthip.thip.data.model.book.response.BookSavedResponse
+import com.texthip.thip.data.model.book.response.BookSearchItem
 import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.data.repository.BookRepository
@@ -12,6 +13,8 @@ import com.texthip.thip.data.repository.RoomsRepository
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +32,8 @@ class GroupMakeRoomViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(GroupMakeRoomUiState())
     val uiState: StateFlow<GroupMakeRoomUiState> = _uiState.asStateFlow()
+    
+    private var searchJob: Job? = null
     
     companion object {
         private val DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd")
@@ -81,14 +86,14 @@ class GroupMakeRoomViewModel @Inject constructor(
         viewModelScope.launch {
             updateState { it.copy(isLoadingBooks = true) }
             try {
-                val savedBooksResult = bookRepository.getBooks("saved")
+                val savedBooksResult = bookRepository.getBooks("SAVED")
                 savedBooksResult.onSuccess { response ->
                     updateState { it.copy(savedBooks = response?.bookList?.map { dto -> dto.toBookData() } ?: emptyList()) }
                 }.onFailure {
                     updateState { it.copy(savedBooks = emptyList()) }
                 }
-                
-                val groupBooksResult = bookRepository.getBooks("joining")
+
+                val groupBooksResult = bookRepository.getBooks("JOINING")
                 groupBooksResult.onSuccess { response ->
                     updateState { it.copy(groupBooks = response?.bookList?.map { dto -> dto.toBookData() } ?: emptyList()) }
                 }.onFailure {
@@ -105,10 +110,45 @@ class GroupMakeRoomViewModel @Inject constructor(
     private fun BookSavedResponse.toBookData(): BookData {
         return BookData(
             title = this.bookTitle,
+            imageUrl = this.bookImageUrl,
+            author = this.authorName,
+            isbn = this.isbn
+        )
+    }
+    
+    private fun BookSearchItem.toBookData(): BookData {
+        return BookData(
+            title = this.title,
             imageUrl = this.imageUrl,
             author = this.authorName,
             isbn = this.isbn
         )
+    }
+    
+    fun searchBooks(query: String) {
+        searchJob?.cancel()
+        
+        if (query.isBlank()) {
+            updateState { it.copy(searchResults = emptyList(), isSearching = false) }
+            return
+        }
+        
+        searchJob = viewModelScope.launch {
+            delay(300) // 디바운싱
+            updateState { it.copy(isSearching = true) }
+            
+            try {
+                val result = bookRepository.searchBooks(query, page = 1, isFinalized = false)
+                result.onSuccess { response ->
+                    val searchResults = response?.searchResult?.map { it.toBookData() } ?: emptyList()
+                    updateState { it.copy(searchResults = searchResults, isSearching = false) }
+                }.onFailure {
+                    updateState { it.copy(searchResults = emptyList(), isSearching = false) }
+                }
+            } catch (e: Exception) {
+                updateState { it.copy(searchResults = emptyList(), isSearching = false) }
+            }
+        }
     }
 
     fun selectGenre(index: Int) {
