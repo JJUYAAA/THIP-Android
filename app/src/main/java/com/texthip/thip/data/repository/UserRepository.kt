@@ -2,6 +2,7 @@ package com.texthip.thip.data.repository
 
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.users.MyFollowingsResponse
+import com.texthip.thip.data.model.users.OthersFollowersResponse
 import com.texthip.thip.data.service.UserService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,6 +16,16 @@ class UserRepository@Inject constructor(
         size: Int = 10
     ): Result<MyFollowingsResponse?> = runCatching {
         userService.getMyFollowings(cursor = cursor, size = size)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    suspend fun getOthersFollowers(
+        userId: Long,
+        cursor: String?,
+        size: Int = 10
+    ): Result<OthersFollowersResponse?> = runCatching {
+        userService.getUserFollowers(userId = userId, cursor = cursor, size = size)
             .handleBaseResponse()
             .getOrThrow()
     }
