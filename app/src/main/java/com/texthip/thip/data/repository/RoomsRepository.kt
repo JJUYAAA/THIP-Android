@@ -1,6 +1,11 @@
 package com.texthip.thip.data.repository
 
 import com.texthip.thip.data.model.base.handleBaseResponse
+import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
+import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
+import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
+import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
+import com.texthip.thip.data.model.rooms.request.VoteItem
 import com.texthip.thip.data.service.RoomsService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,6 +27,110 @@ class RoomsRepository @Inject constructor(
     ) = runCatching {
         roomsService.getRoomsUsers(
             roomId = roomId
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun getRoomsPosts(
+        roomId: Int,
+        type: String = "group",
+        sort: String? = "latest",
+        pageStart: Int? = null,
+        pageEnd: Int? = null,
+        isOverview: Boolean? = false,
+        isPageFilter: Boolean? = false,
+        cursor: String? = null,
+    ) = runCatching {
+        roomsService.getRoomsPosts(
+            roomId = roomId,
+            type = type,
+            sort = sort,
+            pageStart = pageStart,
+            pageEnd = pageEnd,
+            isOverview = isOverview,
+            isPageFilter = isPageFilter,
+            cursor = cursor
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun postRoomsRecord(
+        roomId: Int,
+        content: String,
+        isOverview: Boolean = false,
+        page: Int = 0
+    ) = runCatching {
+        roomsService.postRoomsRecord(
+            roomId = roomId,
+            request = RoomsRecordRequest(
+                page = page,
+                isOverview = isOverview,
+                content = content
+            )
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun postRoomsCreateVote(
+        roomId: Int,
+        page: Int,
+        isOverview: Boolean,
+        content: String,
+        voteItemList: List<VoteItem>
+    ) = runCatching {
+        roomsService.postRoomsCreateVote(
+            roomId = roomId,
+            request = RoomsCreateVoteRequest(
+                page = page,
+                isOverview = isOverview,
+                content = content,
+                voteItemList = voteItemList
+            )
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun getRoomsBookPage(
+        roomId: Int,
+    ) = runCatching {
+        roomsService.getRoomsBookPage(
+            roomId = roomId
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun postRoomsVote(
+        roomId: Int,
+        voteId: Int,
+        voteItemId: Int,
+        type: Boolean
+    ) = runCatching {
+        roomsService.postRoomsVote(
+            roomId = roomId,
+            voteId = voteId,
+            request = RoomsVoteRequest(
+                voteItemId = voteItemId,
+                type = type
+            )
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun deleteRoomsRecord(
+        roomId: Int,
+        recordId: Int
+    ) = runCatching {
+        roomsService.deleteRoomsRecord(
+            roomId = roomId,
+            recordId = recordId
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun postRoomsPostsLikes(
+        postId: Int,
+        type: Boolean,
+        roomPostType: String
+    ) = runCatching {
+        roomsService.postRoomsPostsLikes(
+            postId = postId,
+            request = RoomsPostsLikesRequest(
+                type = type,
+                roomPostType = roomPostType
+            )
         ).handleBaseResponse().getOrThrow()
     }
 }

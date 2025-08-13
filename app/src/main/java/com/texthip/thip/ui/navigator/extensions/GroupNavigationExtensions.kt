@@ -16,6 +16,21 @@ fun NavHostController.navigateToGroupMakeRoom() {
     navigate(GroupRoutes.MakeRoom)
 }
 
+// 책 정보가 미리 선택된 모임방 만들기 화면으로 이동
+fun NavHostController.navigateToGroupMakeRoomWithBook(
+    isbn: String,
+    title: String,
+    imageUrl: String,
+    author: String
+) {
+    navigate(GroupRoutes.MakeRoomWithBook(
+        isbn = isbn,
+        title = title,
+        imageUrl = imageUrl,
+        author = author
+    ))
+}
+
 // 완료된 모임방 목록으로 이동
 fun NavHostController.navigateToGroupDone() {
     navigate(GroupRoutes.Done)
@@ -58,4 +73,47 @@ fun NavHostController.navigateToGroupRoom(roomId: Int) {
 // 독서메이트 화면으로 이동
 fun NavHostController.navigateToGroupRoomMates(roomId: Int) {
     navigate(GroupRoutes.RoomMates(roomId))
+}
+
+// 기록장 화면으로 이동
+fun NavHostController.navigateToGroupNote(
+    roomId: Int,
+    page: Int? = null,
+    isOverview: Boolean? = null
+) {
+    navigate(GroupRoutes.Note(roomId = roomId, page = page, isOverview = isOverview))
+}
+
+// 기록 생성 화면으로 이동
+fun NavHostController.navigateToGroupNoteCreate(
+    roomId: Int,
+    recentBookPage: Int,
+    totalBookPage: Int,
+    isOverviewPossible: Boolean
+) {
+    navigate(
+        GroupRoutes.NoteCreate(
+            roomId = roomId,
+            recentBookPage = recentBookPage,
+            totalBookPage = totalBookPage,
+            isOverviewPossible = isOverviewPossible
+        )
+    )
+}
+
+// 투표 생성 화면으로 이동
+fun NavHostController.navigateToGroupVoteCreate(
+    roomId: Int,
+    recentPage: Int,
+    totalPage: Int,
+    isOverviewPossible: Boolean
+) {
+    navigate(
+        GroupRoutes.VoteCreate(
+            roomId = roomId,
+            recentPage = recentPage,
+            totalPage = totalPage,
+            isOverviewPossible = isOverviewPossible
+        )
+    )
 }

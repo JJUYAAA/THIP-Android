@@ -48,6 +48,8 @@ import com.texthip.thip.ui.common.forms.CommentTextField
 import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.group.note.component.CommentItem
+import com.texthip.thip.ui.group.note.component.ReplyItem
 import com.texthip.thip.ui.feed.component.ImageViewerModal
 import com.texthip.thip.ui.feed.mock.FeedItemType
 import com.texthip.thip.ui.group.note.component.CommentItem

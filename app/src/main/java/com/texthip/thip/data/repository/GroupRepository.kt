@@ -65,23 +65,26 @@ class GroupRepository @Inject constructor(
     suspend fun getRoomRecruiting(roomId: Int): Result<RoomRecruitingResponse> = runCatching {
         groupService.getRoomRecruiting(roomId)
             .handleBaseResponse()
-            .getOrThrow()!!
+            .getOrThrow()
+            ?: throw NoSuchElementException("모집중인 모임방 정보를 찾을 수 없습니다.")
     }
 
     /** 새 모임방 생성 */
     suspend fun createRoom(request: CreateRoomRequest): Result<Int> = runCatching {
-        groupService.createRoom(request)
+        val response = groupService.createRoom(request)
             .handleBaseResponse()
-            .getOrThrow()!!
-            .roomId
+            .getOrThrow()
+            ?: throw NoSuchElementException("모임방 생성 응답을 받을 수 없습니다.")
+        response.roomId
     }
 
     /** 모임방 참여 또는 취소 */
     suspend fun joinOrCancelRoom(roomId: Int, type: String): Result<String> = runCatching {
         val request = RoomJoinRequest(type = type)
-        groupService.joinOrCancelRoom(roomId, request)
+        val response = groupService.joinOrCancelRoom(roomId, request)
             .handleBaseResponse()
-            .getOrThrow()!!
-            .type
+            .getOrThrow()
+            ?: throw NoSuchElementException("모임방 참여/취소 응답을 받을 수 없습니다.")
+        response.type
     }
 }

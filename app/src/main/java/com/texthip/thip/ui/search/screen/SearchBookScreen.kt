@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.search.screen
 
-import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,22 +8,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.LeftNameTopAppBar
@@ -33,81 +34,113 @@ import com.texthip.thip.ui.search.component.SearchBookFilteredResult
 import com.texthip.thip.ui.search.component.SearchEmptyResult
 import com.texthip.thip.ui.search.component.SearchRecentBook
 import com.texthip.thip.ui.search.mock.BookData
+import com.texthip.thip.ui.search.viewmodel.SearchBookViewModel
 import com.texthip.thip.ui.theme.ThipTheme
-import kotlinx.serialization.json.Json
-import androidx.core.content.edit
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
 
 @Composable
 fun SearchBookScreen(
     modifier: Modifier = Modifier,
-    navController: NavHostController? = null,
-    bookList: List<BookData> = emptyList(),
-    popularBooks: List<BookData> = emptyList()
+    viewModel: SearchBookViewModel = hiltViewModel(),
+    onBookClick: (String) -> Unit = {},
+    onRequestBook: () -> Unit = {}
 ) {
-    val context = LocalContext.current
-    val sharedPrefs = remember { 
-        context.getSharedPreferences("book_search_prefs", Context.MODE_PRIVATE) 
-    }
+    val uiState by viewModel.uiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    var recentSearches by remember {
-        mutableStateOf(
-            try {
-                val jsonString = sharedPrefs.getString("recent_book_searches", "[]") ?: "[]"
-                Json.decodeFromString<List<String>>(jsonString)
-            } catch (e: Exception) {
-                emptyList()
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshData()
             }
-        )
-    }
-
-    fun saveRecentSearches(searches: List<String>) {
-        try {
-            val jsonString = Json.encodeToString(ListSerializer(String.serializer()), searches)
-            sharedPrefs.edit {
-                putString("recent_book_searches", jsonString)
-            }
-            recentSearches = searches
-        } catch (e: Exception) {
-            recentSearches = emptyList()
+        }
+        
+        lifecycleOwner.lifecycle.addObserver(observer)
+        
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-    var searchText by rememberSaveable { mutableStateOf("") }
-    var isSearched by rememberSaveable { mutableStateOf(false) }
+
+    SearchBookScreenContent(
+        modifier = modifier,
+        searchQuery = uiState.searchQuery,
+        isInitial = uiState.isInitial,
+        isLiveSearching = uiState.isLiveSearching,
+        isCompleteSearching = uiState.isCompleteSearching,
+        searchResults = uiState.searchResults.map { item ->
+            BookData(
+                title = item.title,
+                author = item.authorName,
+                publisher = item.publisher,
+                imageUrl = item.imageUrl,
+                isbn = item.isbn
+            )
+        },
+        popularBooks = uiState.popularBooks.map { item ->
+            BookData(
+                title = item.title,
+                author = "",
+                publisher = "",
+                imageUrl = item.imageUrl,
+                isbn = item.isbn
+            )
+        },
+        recentSearches = uiState.recentSearches.map { it.searchTerm },
+        totalElements = uiState.totalElements,
+        isSearching = uiState.isSearching,
+        isLoadingMore = uiState.isLoadingMore,
+        canLoadMore = uiState.canLoadMore,
+        hasResults = uiState.hasResults,
+        showEmptyState = uiState.showEmptyState,
+        onSearchQueryChange = { query ->
+            viewModel.updateSearchQuery(query)
+        },
+        onSearchClick = {
+            viewModel.onSearchButtonClick()
+        },
+        onRecentSearchClick = { keyword ->
+            viewModel.updateSearchQuery(keyword)
+            viewModel.onSearchButtonClick()
+        },
+        onRemoveRecentSearch = { keyword ->
+            viewModel.deleteRecentSearchByKeyword(keyword)
+        },
+        onBookClick = { book ->
+            onBookClick(book.isbn)
+        },
+        onLoadMore = {
+            viewModel.loadMoreBooks()
+        },
+        onRequestBook = onRequestBook
+    )
+}
+
+@Composable
+private fun SearchBookScreenContent(
+    modifier: Modifier = Modifier,
+    searchQuery: String = "",
+    isInitial: Boolean = true,
+    isLiveSearching: Boolean = false,
+    isCompleteSearching: Boolean = false,
+    searchResults: List<BookData> = emptyList(),
+    popularBooks: List<BookData> = emptyList(),
+    recentSearches: List<String> = emptyList(),
+    totalElements: Int = 0,
+    isSearching: Boolean = false,
+    isLoadingMore: Boolean = false,
+    canLoadMore: Boolean = true,
+    hasResults: Boolean = false,
+    showEmptyState: Boolean = false,
+    onSearchQueryChange: (String) -> Unit = {},
+    onSearchClick: () -> Unit = {},
+    onRecentSearchClick: (String) -> Unit = {},
+    onRemoveRecentSearch: (String) -> Unit = {},
+    onBookClick: (BookData) -> Unit = {},
+    onLoadMore: () -> Unit = {},
+    onRequestBook: () -> Unit = {}
+) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-
-    val liveFilteredBookList by remember(searchText) {
-        derivedStateOf {
-            if (searchText.isBlank()) emptyList() else
-                bookList.filter { book ->
-                    book.title.contains(searchText, ignoreCase = true) ||
-                            book.author.contains(searchText, ignoreCase = true) ||
-                            book.publisher.contains(searchText, ignoreCase = true)
-                }
-        }
-    }
-
-    val filteredBookList by remember(searchText, isSearched) {
-        derivedStateOf {
-            if (!isSearched) emptyList()
-            else {
-                bookList.filter { book ->
-                    searchText.isBlank() ||
-                            book.title.contains(searchText, ignoreCase = true) ||
-                            book.author.contains(searchText, ignoreCase = true) ||
-                            book.publisher.contains(searchText, ignoreCase = true)
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(isSearched) {
-        if (isSearched) {
-            focusManager.clearFocus()
-        }
-    }
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -130,59 +163,55 @@ fun SearchBookScreen(
                         .fillMaxWidth()
                         .focusRequester(focusRequester),
                     hint = stringResource(R.string.book_search_hint),
-                    text = searchText,
-                    onValueChange = {
-                        searchText = it
-                        isSearched = false
-                    },
-                    onSearch = { query ->
-                        if (query.isNotBlank() && !recentSearches.contains(query)) {
-                            val newSearches = listOf(query) + recentSearches.take(9) // 최대 10개 유지
-                            saveRecentSearches(newSearches)
-                        }
-                        isSearched = true
+                    text = searchQuery,
+                    onValueChange = onSearchQueryChange,
+                    onSearch = { 
+                        onSearchClick()
+                        focusManager.clearFocus()
                     }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                when {
-                    searchText.isBlank() && !isSearched -> {
-                        SearchRecentBook(
-                            recentSearches = recentSearches,
-                            popularBooks = popularBooks,
-                            popularBookDate = "01.12", // TODO: 서버로 날짜를 받아 오게 수정
-                            onSearchClick = { keyword ->
-                                searchText = keyword
-                                isSearched = true
-                            },
-                            onRemove = { keyword ->
-                                val updatedSearches = recentSearches.filterNot { it == keyword }
-                                saveRecentSearches(updatedSearches)
-                            },
-                            onBookClick = { book ->
-                                // 책 클릭 시 처리
-                            }
+                if (isInitial) {
+                    SearchRecentBook(
+                        recentSearches = recentSearches,
+                        popularBooks = popularBooks,
+                        popularBookDate = SimpleDateFormat("MM.dd", Locale.getDefault()).format(Date()),
+                        onSearchClick = onRecentSearchClick,
+                        onRemove = onRemoveRecentSearch,
+                        onBookClick = onBookClick
+                    )
+                } else if (isLiveSearching) {
+                    if (hasResults) {
+                        SearchActiveField(
+                            bookList = searchResults,
+                            isLoading = isSearching || isLoadingMore,
+                            hasMore = canLoadMore,
+                            onLoadMore = onLoadMore,
+                            onBookClick = onBookClick
+                        )
+                    } else if (showEmptyState) {
+                        SearchEmptyResult(
+                            mainText = stringResource(R.string.book_no_search_result1),
+                            subText = stringResource(R.string.book_no_search_result2),
+                            onRequestBook = onRequestBook
                         )
                     }
-
-                    searchText.isNotBlank() && !isSearched -> {
-                        if (liveFilteredBookList.isEmpty()) {
-                            SearchEmptyResult(
-                                mainText = stringResource(R.string.book_no_search_result1),
-                                subText = stringResource(R.string.book_no_search_result2),
-                                onRequestBook = { /*책 요청 처리*/ }
-                            )
-                        } else {
-                            SearchActiveField(
-                                bookList = liveFilteredBookList
-                            )
-                        }
-                    }
-
-                    isSearched -> {
+                } else if (isCompleteSearching) {
+                    if (hasResults) {
                         SearchBookFilteredResult(
-                            resultCount = filteredBookList.size,
-                            bookList = filteredBookList,
+                            resultCount = totalElements,
+                            bookList = searchResults,
+                            isLoading = isSearching || isLoadingMore,
+                            hasMore = canLoadMore,
+                            onLoadMore = onLoadMore,
+                            onBookClick = onBookClick
+                        )
+                    } else if (showEmptyState) {
+                        SearchEmptyResult(
+                            mainText = stringResource(R.string.book_no_search_result1),
+                            subText = stringResource(R.string.book_no_search_result2),
+                            onRequestBook = onRequestBook
                         )
                     }
                 }
@@ -192,46 +221,129 @@ fun SearchBookScreen(
 }
 
 
+// Preview용 Mock 데이터
+private val mockPopularBooks = listOf(
+    BookData(
+        title = "데미안",
+        author = "헤르만 헤세",
+        publisher = "민음사",
+        imageUrl = "https://example.com/demian.jpg",
+        isbn = "9788954682152"
+    ),
+    BookData(
+        title = "1984",
+        author = "조지 오웰", 
+        publisher = "민음사",
+        imageUrl = "https://example.com/1984.jpg",
+        isbn = "9788954682153"
+    ),
+    BookData(
+        title = "어린왕자",
+        author = "생텍쥐페리",
+        publisher = "문예출판사",
+        imageUrl = "https://example.com/prince.jpg",
+        isbn = "9788954682154"
+    )
+)
+
+private val mockSearchResults = listOf(
+    BookData(
+        title = "데미안",
+        author = "헤르만 헤세",
+        publisher = "민음사",
+        imageUrl = "https://example.com/demian.jpg",
+        isbn = "9788954682152"
+    ),
+    BookData(
+        title = "데미안 읽기의 즐거움",
+        author = "김철수",
+        publisher = "문학동네",
+        imageUrl = "https://example.com/demian2.jpg",
+        isbn = "9788954682155"
+    ),
+    BookData(
+        title = "헤르만 헤세의 데미안 해설서",
+        author = "이영희",
+        publisher = "해냄출판사",
+        imageUrl = "https://example.com/demian3.jpg",
+        isbn = "9788954682156"
+    )
+)
+
+private val mockRecentSearches = listOf("데미안", "1984", "어린왕자", "카프카", "괴테")
+
 @Preview(showBackground = true)
 @Composable
-fun PreviewBookSearchScreen_Default() {
+fun SearchBookScreenContentInitialPreview() {
     ThipTheme {
-        SearchBookScreen(
-            bookList = listOf(
-                BookData(title = "aaa", author = "리처드 도킨스", publisher = "을유문화사", imageUrl = null),
-                BookData(title = "abc", author = "마틴 셀리그만", publisher = "물푸레", imageUrl = null),
-                BookData(title = "abcd", author = "빅터 프랭클", publisher = "청림출판", imageUrl = null),
-                BookData(title = "abcde", author = "칼 융", publisher = "문학과지성사", imageUrl = null),
-                BookData(title = "abcdef", author = "에릭 프롬", publisher = "까치글방", imageUrl = null),
-                BookData(title = "abcedfg", author = "알베르 카뮈", publisher = "민음사", imageUrl = null),
-                BookData(title = "abcdefgh", author = "장 폴 사르트르", publisher = "문학동네", imageUrl = null),
-            ),
-            popularBooks = listOf(
-                BookData(title = "단 한번의 삶", author = "리처드 도킨스", publisher = "을유문화사", imageUrl = null),
-                BookData(title = "사랑", author = "마틴 셀리그만", publisher = "물푸레", imageUrl = null),
-                BookData(title = "호모 사피엔스", author = "빅터 프랭클", publisher = "청림출판", imageUrl = null),
-                BookData(title = "코스모스 실버", author = "칼 융", publisher = "문학과지성사", imageUrl = null),
-                BookData(title = "오만과 편견", author = "에릭 프롬", publisher = "까치글방", imageUrl = null),
-            )
+        SearchBookScreenContent(
+            isInitial = true,
+            popularBooks = mockPopularBooks,
+            recentSearches = mockRecentSearches
         )
     }
 }
 
-@Preview
+@Preview(showBackground = true) 
 @Composable
-fun PreviewBookSearchScreen_EmptyPopular() {
+fun SearchBookScreenContentLiveSearchPreview() {
     ThipTheme {
-        SearchBookScreen(
-            bookList = listOf(
-                BookData(title = "aaa", author = "리처드 도킨스", publisher = "을유문화사", imageUrl = null),
-                BookData(title = "abc", author = "마틴 셀리그만", publisher = "물푸레", imageUrl = null),
-                BookData(title = "abcd", author = "빅터 프랭클", publisher = "청림출판", imageUrl = null),
-                BookData(title = "abcde", author = "칼 융", publisher = "문학과지성사", imageUrl = null),
-                BookData(title = "abcdef", author = "에릭 프롬", publisher = "까치글방", imageUrl = null),
-                BookData(title = "abcedfg", author = "알베르 카뮈", publisher = "민음사", imageUrl = null),
-                BookData(title = "abcdefgh", author = "장 폴 사르트르", publisher = "문학동네", imageUrl = null),
-            ),
-            popularBooks = emptyList()
+        SearchBookScreenContent(
+            searchQuery = "데미안",
+            isInitial = false,
+            isLiveSearching = true,
+            searchResults = mockSearchResults,
+            hasResults = true,
+            isSearching = false
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookScreenContentCompleteSearchPreview() {
+    ThipTheme {
+        SearchBookScreenContent(
+            searchQuery = "데미안",
+            isInitial = false,
+            isCompleteSearching = true,
+            searchResults = mockSearchResults,
+            totalElements = 15,
+            hasResults = true,
+            isSearching = false
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookScreenContentEmptyPreview() {
+    ThipTheme {
+        SearchBookScreenContent(
+            searchQuery = "없는책제목",
+            isInitial = false,
+            isCompleteSearching = true,
+            searchResults = emptyList(),
+            hasResults = false,
+            showEmptyState = true
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookScreenContentLoadingPreview() {
+    ThipTheme {
+        SearchBookScreenContent(
+            searchQuery = "데미안",
+            isInitial = false,
+            isCompleteSearching = true,
+            searchResults = mockSearchResults.take(2),
+            totalElements = 15,
+            hasResults = true,
+            isSearching = false,
+            isLoadingMore = true,
+            canLoadMore = true
         )
     }
 }

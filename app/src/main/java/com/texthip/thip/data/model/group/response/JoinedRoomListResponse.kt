@@ -18,7 +18,7 @@ data class JoinedRoomListResponse(
 data class JoinedRoomResponse(
     @SerialName("roomId") val roomId: Int,
     @SerialName("bookImageUrl") val bookImageUrl: String?,
-    @SerialName("bookTitle") val bookTitle: String,
+    @SerialName("roomTitle") val roomTitle: String,
     @SerialName("memberCount") val memberCount: Int,
     @SerialName("userPercentage") val userPercentage: Int
 )

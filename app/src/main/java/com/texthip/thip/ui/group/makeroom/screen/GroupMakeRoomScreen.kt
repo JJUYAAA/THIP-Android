@@ -137,7 +137,8 @@ fun GroupMakeRoomContent(
                 GroupSelectBook(
                     selectedBook = uiState.selectedBook,
                     onChangeBookClick = { onToggleBookSearchSheet(true) },
-                    onSelectBookClick = { onToggleBookSearchSheet(true) }
+                    onSelectBookClick = { onToggleBookSearchSheet(true) },
+                    isBookPreselected = uiState.isBookPreselected
                 )
 
                 SectionDivider()

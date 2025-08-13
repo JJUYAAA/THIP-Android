@@ -23,9 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.texthip.thip.ui.group.note.mock.VoteItem
+import com.texthip.thip.data.model.rooms.response.VoteItems
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -33,7 +34,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun GroupVoteButton(
     modifier: Modifier = Modifier,
-    voteItems: List<VoteItem>,
+    voteItems: List<VoteItems>,
     selectedIndex: Int?, // 선택한 인덱스
     hasVoted: Boolean = false, // 투표 여부
     onOptionSelected: (Int?) -> Unit
@@ -69,8 +70,9 @@ fun GroupVoteButton(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = backgroundColor, shape = RoundedCornerShape(12.dp))
                     .height(44.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(color = backgroundColor)
                     .clickable {
                         if (isSelected) {
                             onOptionSelected(null)
@@ -84,10 +86,7 @@ fun GroupVoteButton(
                         modifier = Modifier
                             .fillMaxHeight()
                             .fillMaxWidth(animatedPercent)
-                            .background(
-                                color = percentBarColor,
-                                shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
-                            )
+                            .background(color = percentBarColor)
                     )
                 }
 
@@ -123,9 +122,9 @@ private fun GroupVoteButtonPreview() {
     var voteItems by remember {
         mutableStateOf(
             listOf(
-                VoteItem(1, "밥", 25, false),
-                VoteItem(2, "국수", 35, false),
-                VoteItem(3, "고기", 40, false)
+                VoteItems(1, "밥", 25, false),
+                VoteItems(2, "국수", 35, false),
+                VoteItems(3, "고기", 40, false)
             )
         )
     }
