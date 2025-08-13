@@ -56,6 +56,7 @@ import com.texthip.thip.ui.group.note.component.CommentBottomSheet
 import com.texthip.thip.ui.group.note.component.FilterHeaderSection
 import com.texthip.thip.ui.group.note.component.TextCommentCard
 import com.texthip.thip.ui.group.note.component.VoteCommentCard
+import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
 import com.texthip.thip.ui.group.note.viewmodel.CommentsViewModel
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteEvent
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteUiState
@@ -470,7 +471,10 @@ fun GroupNoteContent(
 
     if (isCommentBottomSheetVisible && selectedPostForComment != null) {
         LaunchedEffect(selectedPostForComment) {
-            commentsViewModel.initialize(postId = selectedPostForComment!!.postId.toLong())
+            commentsViewModel.initialize(
+                postId = selectedPostForComment!!.postId.toLong(),
+                postType = selectedPostForComment!!.postType
+            )
         }
 
         CommentBottomSheet(
@@ -480,8 +484,15 @@ fun GroupNoteContent(
                 isCommentBottomSheetVisible = false
                 selectedPostForComment = null
             },
-            onSendReply = { replyText, commentId, replyTo ->
-                // TODO: 댓글 전송 로직 구현
+            onSendReply = { text, parentId, _ ->
+                if (text.isNotBlank()) {
+                    commentsViewModel.onEvent(
+                        CommentsEvent.CreateComment(
+                            content = text,
+                            parentId = parentId
+                        )
+                    )
+                }
             }
         )
     }

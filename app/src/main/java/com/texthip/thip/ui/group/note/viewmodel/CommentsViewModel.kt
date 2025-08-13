@@ -23,6 +23,7 @@ sealed interface CommentsEvent {
     data object LoadMoreComments : CommentsEvent
     data class LikeComment(val commentId: Int) : CommentsEvent // 댓글 좋아요 이벤트
     data class LikeReply(val parentCommentId: Int, val replyId: Int) : CommentsEvent // 대댓글 좋아요 이벤트
+    data class CreateComment(val content: String, val parentId: Int?) : CommentsEvent
 }
 
 @HiltViewModel
@@ -35,10 +36,12 @@ class CommentsViewModel @Inject constructor(
 
     private var nextCursor: String? = null
     private var currentPostId: Long = -1L
+    private var currentPostType: String = "RECORD"
 
-    fun initialize(postId: Long) {
+    fun initialize(postId: Long, postType: String) {
         if (currentPostId == postId) return
         this.currentPostId = postId
+        this.currentPostType = postType
         fetchComments(isRefresh = true)
     }
 
@@ -47,6 +50,30 @@ class CommentsViewModel @Inject constructor(
             is CommentsEvent.LoadMoreComments -> fetchComments(isRefresh = false)
             is CommentsEvent.LikeComment -> toggleCommentLike(event.commentId)
             is CommentsEvent.LikeReply -> toggleReplyLike(event.parentCommentId, event.replyId)
+            is CommentsEvent.CreateComment -> createComment(
+                content = event.content,
+                parentId = event.parentId
+            )
+        }
+    }
+
+    private fun createComment(content: String, parentId: Int?) {
+        if (content.isBlank()) return
+
+        viewModelScope.launch {
+            val isReply = parentId != null
+
+            commentsRepository.createComment(
+                postId = currentPostId,
+                content = content,
+                isReplyRequest = isReply,
+                parentId = parentId,
+                postType = currentPostType
+            ).onSuccess {
+                fetchComments(isRefresh = true)
+            }.onFailure { throwable ->
+                _uiState.update { it.copy(error = "댓글 작성 실패: ${throwable.message}") }
+            }
         }
     }
 
