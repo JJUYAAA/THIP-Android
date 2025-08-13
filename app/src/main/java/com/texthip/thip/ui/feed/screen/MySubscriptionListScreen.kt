@@ -42,17 +42,9 @@ import com.texthip.thip.ui.feed.viewmodel.MyFollowingUiModel
 import com.texthip.thip.ui.feed.viewmodel.MySubscriptionUiState
 import com.texthip.thip.ui.feed.viewmodel.MySubscriptionViewModel
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.utils.color.hexToColor
 import kotlinx.coroutines.delay
 
-//TODO util 함수로 빼기
-fun hexToColor(hex: String): Color {
-    return try {
-        Color(android.graphics.Color.parseColor(hex))
-    } catch (e: IllegalArgumentException) {
-        //잘못된 형식이면 기본 색
-        Color.White
-    }
-}
 @Composable
 fun MySubscriptionScreen(
     navController: NavController,
