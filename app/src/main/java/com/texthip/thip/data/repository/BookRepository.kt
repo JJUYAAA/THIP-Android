@@ -4,6 +4,7 @@ import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.book.request.BookSaveRequest
 import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.data.model.book.response.BookSaveResponse
+import com.texthip.thip.data.model.book.response.BookSavedResponse
 import com.texthip.thip.data.model.book.response.BookSearchResponse
 import com.texthip.thip.data.model.book.response.MostSearchedBooksResponse
 import com.texthip.thip.data.model.book.response.RecentSearchResponse
@@ -18,7 +19,7 @@ class BookRepository @Inject constructor(
 ) {
 
     /** 저장된 책 또는 모임 책 목록 조회 */
-    suspend fun getBooks(type: String) = runCatching {
+    suspend fun getBooks(type: String): Result<List<BookSavedResponse>> = runCatching {
         bookService.getBooks(type)
             .handleBaseResponse()
             .getOrThrow()
