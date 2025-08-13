@@ -6,13 +6,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.positionInRoot
@@ -21,44 +23,65 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.modal.ArrowPosition
 import com.texthip.thip.ui.common.modal.PopupModal
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.group.note.component.PageInputSection
 import com.texthip.thip.ui.group.note.component.VoteInputSection
+import com.texthip.thip.ui.group.note.viewmodel.GroupVoteCreateEvent
+import com.texthip.thip.ui.group.note.viewmodel.GroupVoteCreateUiState
+import com.texthip.thip.ui.group.note.viewmodel.GroupVoteCreateViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
-fun GroupVoteCreateScreen() {
-    var pageText by rememberSaveable { mutableStateOf("") }
-    var isGeneralReview by rememberSaveable { mutableStateOf(false) }
+fun GroupVoteCreateScreen(
+    roomId: Int,
+    recentPage: Int,
+    totalPage: Int,
+    isOverviewPossible: Boolean,
+    onBackClick: () -> Unit,
+    onNavigateBackWithResult: () -> Unit,
+    viewModel: GroupVoteCreateViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    var title by rememberSaveable { mutableStateOf("") }
-    val options = remember { mutableStateListOf("", "") }
+    LaunchedEffect(Unit) {
+        viewModel.initialize(roomId, recentPage, totalPage, isOverviewPossible)
+    }
 
+    LaunchedEffect(uiState.isSuccess) {
+        if (uiState.isSuccess) {
+            onNavigateBackWithResult()
+        }
+    }
+
+    GroupVoteCreateContent(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        onBackClick = onBackClick
+    )
+}
+
+@Composable
+fun GroupVoteCreateContent(
+    uiState: GroupVoteCreateUiState,
+    onEvent: (GroupVoteCreateEvent) -> Unit,
+    onBackClick: () -> Unit,
+) {
     val density = LocalDensity.current
     var showTooltip by rememberSaveable { mutableStateOf(false) }
-
-    // Tooltip 위치 측정용 state
     val iconCoordinates = remember { mutableStateOf<LayoutCoordinates?>(null) }
-
-    var isEligible by rememberSaveable { mutableStateOf(false) } // TODO: 서버 데이터?
-
-    // 완료 버튼 활성화 조건
-    val filledOptionsCount = options.count { it.isNotBlank() }
-    val isRightButtonEnabled =
-        (isGeneralReview || pageText.isNotBlank()) &&
-                title.isNotBlank() &&
-                filledOptionsCount >= 2
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             InputTopAppBar(
                 title = stringResource(R.string.create_vote),
-                isRightButtonEnabled = isRightButtonEnabled,
-                onLeftClick = { /* 뒤로가기 동작 */ },
-                onRightClick = { /* 완료 동작 */ }
+                isRightButtonEnabled = uiState.isFormFilled,
+                onLeftClick = onBackClick,
+                onRightClick = { onEvent(GroupVoteCreateEvent.CreateVoteClicked) }
             )
 
             Column(
@@ -67,35 +90,39 @@ fun GroupVoteCreateScreen() {
                 verticalArrangement = Arrangement.spacedBy(32.dp),
             ) {
                 PageInputSection(
-                    pageText = pageText,
-                    onPageTextChange = { pageText = it },
-                    isGeneralReview = isGeneralReview,
-                    onGeneralReviewToggle = { isGeneralReview = it },
-                    isEligible = isEligible,
-                    bookTotalPage = 600,
+                    pageText = uiState.pageText,
+                    onPageTextChange = { onEvent(GroupVoteCreateEvent.PageChanged(it)) },
+                    isGeneralReview = uiState.isGeneralReview,
+                    onGeneralReviewToggle = { onEvent(GroupVoteCreateEvent.GeneralReviewToggled(it)) },
+                    isEligible = uiState.isGeneralReviewEnabled,
+                    bookTotalPage = uiState.bookTotalPage,
                     onInfoClick = { showTooltip = true },
                     onInfoPositionCaptured = { iconCoordinates.value = it }
                 )
 
                 VoteInputSection(
-                    title = title,
-                    onTitleChange = { title = it },
-                    options = options,
+                    title = uiState.title,
+                    onTitleChange = { onEvent(GroupVoteCreateEvent.TitleChanged(it)) },
+                    options = uiState.options,
                     onOptionChange = { index, newText ->
-                        options[index] = newText
+                        onEvent(GroupVoteCreateEvent.OptionChanged(index, newText))
                     },
-                    onAddOption = {
-                        if (options.size < 5) {
-                            options.add("")
-                        }
-                    },
+                    onAddOption = { onEvent(GroupVoteCreateEvent.AddOptionClicked) },
                     onRemoveOption = { index ->
-                        options.removeAt(index)
+                        onEvent(GroupVoteCreateEvent.RemoveOptionClicked(index))
                     }
                 )
             }
         }
 
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
 
         if (showTooltip && iconCoordinates.value != null) {
             val yOffsetDp = with(density) {
@@ -111,7 +138,7 @@ fun GroupVoteCreateScreen() {
                 PopupModal(
                     text = stringResource(R.string.condition_of_general_review),
                     arrowPosition = ArrowPosition.RIGHT,
-                    isEligible = isEligible,
+                    isEligible = uiState.isGeneralReviewEnabled,
                     onClose = { showTooltip = false }
                 )
             }
@@ -123,6 +150,16 @@ fun GroupVoteCreateScreen() {
 @Composable
 private fun GroupVoteCreateScreenPreview() {
     ThipTheme {
-        GroupVoteCreateScreen()
+        GroupVoteCreateContent(
+            uiState = GroupVoteCreateUiState(
+                pageText = "123",
+                title = "가장 인상깊은 구절은?",
+                options = listOf("1연 1행", "2연 3행", ""),
+                bookTotalPage = 600,
+                isGeneralReviewEnabled = true
+            ),
+            onEvent = {},
+            onBackClick = {}
+        )
     }
 }

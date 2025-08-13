@@ -12,6 +12,6 @@ data class UserList(
     val userId: Int,
     val nickname: String,
     val imageUrl: String,
-    val alias: String,
+    val aliasName: String,
     val followerCount: Int,
 )

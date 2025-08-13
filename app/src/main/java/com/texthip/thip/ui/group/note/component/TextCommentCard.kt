@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.pointer.pointerInput
@@ -17,21 +13,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.data.model.rooms.response.PostList
 import com.texthip.thip.ui.common.buttons.ActionBarButton
 import com.texthip.thip.ui.common.header.ProfileBar
-import com.texthip.thip.ui.group.note.mock.GroupNoteRecord
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun TextCommentCard(
     modifier: Modifier = Modifier,
-    data: GroupNoteRecord,
+    data: PostList,
+    onLikeClick: (postId: Int, postType: String) -> Unit = { _, _ -> },
     onCommentClick: () -> Unit = {},
     onLongPress: () -> Unit = {},
     onPinClick: () -> Unit = {}
 ) {
-    var isLiked by remember { mutableStateOf(data.isLiked) }
     val isLocked = data.isLocked
     val isWriter = data.isWriter
 
@@ -63,12 +59,12 @@ fun TextCommentCard(
         )
 
         ActionBarButton(
-            isLiked = isLiked,
+            isLiked = data.isLiked,
             likeCount = data.likeCount,
             commentCount = data.commentCount,
             isPinVisible = isWriter,
             onLikeClick = {
-                if (!isLocked) isLiked = !isLiked
+                if (!isLocked) onLikeClick(data.postId, data.postType)
             },
             onCommentClick = {
                 if (!isLocked) onCommentClick()
@@ -84,7 +80,9 @@ fun TextCommentCard(
 @Composable
 fun TextCommentCardPreview() {
     TextCommentCard(
-        data = GroupNoteRecord(
+        data = PostList(
+            postId = 1,
+            postType = "group",
             page = 132,
             postDate = "12시간 전",
             userId = 1,
@@ -96,7 +94,7 @@ fun TextCommentCardPreview() {
             isLiked = true,
             isWriter = false,
             isLocked = false,
-            recordId = 1
+            voteItems = emptyList()
         )
     )
 }
