@@ -25,7 +25,7 @@ import com.texthip.thip.ui.common.header.ProfileBarFeed
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.utils.toComposeColor
+import com.texthip.thip.utils.color.hexToColor
 
 @Composable
 fun CommentItem(
@@ -43,7 +43,7 @@ fun CommentItem(
             profileImage = data.creatorProfileImageUrl,
             nickname = data.creatorNickname,
             genreName = data.aliasName,
-            genreColor = data.aliasColor.toComposeColor(), // todo: 추후 다른 함수로 바꾸기
+            genreColor = hexToColor(data.aliasColor),
             date = data.postDate
         )
 

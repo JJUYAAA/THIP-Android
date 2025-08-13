@@ -27,7 +27,7 @@ import com.texthip.thip.ui.common.header.ProfileBarFeed
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.utils.toComposeColor
+import com.texthip.thip.utils.color.hexToColor
 
 @Composable
 fun ReplyItem(
@@ -51,12 +51,12 @@ fun ReplyItem(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ProfileBarFeed(
-            profileImage = data.creatorProfileImageUrl,
-            nickname = data.creatorNickname,
-            genreName = data.aliasName,
-            genreColor = data.aliasColor.toComposeColor(), // todo: 추후 다른 함수로 바꾸기
-            date = data.postDate
-        )
+                profileImage = data.creatorProfileImageUrl,
+                nickname = data.creatorNickname,
+                genreName = data.aliasName,
+                genreColor = hexToColor(data.aliasColor),
+                date = data.postDate
+            )
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
@@ -72,7 +72,11 @@ fun ReplyItem(
                                 style = typography.copy_m500_s14_h20.copy(color = colors.White)
                                     .toSpanStyle()
                             ) {
-                                append(stringResource(R.string.annotation) + data.parentCommentCreatorNickname + stringResource(R.string.space_bar))
+                                append(
+                                    stringResource(R.string.annotation) + data.parentCommentCreatorNickname + stringResource(
+                                        R.string.space_bar
+                                    )
+                                )
                             }
                             append(data.content)
                         },
@@ -125,7 +129,7 @@ private fun ReplyItemPreview() {
                     parentCommentCreatorNickname = "User1",
                     creatorId = 2,
                     creatorNickname = "User1",
-                    aliasName= "칭호칭호",
+                    aliasName = "칭호칭호",
                     aliasColor = "#FF5733",
                     creatorProfileImageUrl = "https://example.com/image2.jpg",
                     content = "This is a reply.",
