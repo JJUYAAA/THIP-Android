@@ -27,6 +27,7 @@ import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
+import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
@@ -196,6 +197,9 @@ fun NavGraphBuilder.groupNavigation(
             },
             onBackClick = {
                 navigateBack()
+            },
+            onBookDetailClick = { isbn ->
+                navController.navigateToBookDetail(isbn)
             }
         )
     }

@@ -61,6 +61,7 @@ fun GroupRoomRecruitScreen(
     onRecommendationClick: (RecommendRoomResponse) -> Unit = {},
     onNavigateToGroupScreen: (String) -> Unit = {}, // GroupScreen으로 네비게이션 + 토스트 메시지
     onBackClick: () -> Unit = {}, // 뒤로가기
+    onBookDetailClick: (String) -> Unit = {}, // 책 상세 화면으로 이동
     viewModel: GroupRoomRecruitViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -82,6 +83,7 @@ fun GroupRoomRecruitScreen(
         uiState = uiState,
         onRecommendationClick = onRecommendationClick,
         onBackClick = onBackClick,
+        onBookDetailClick = onBookDetailClick,
         onParticipationClick = { viewModel.onParticipationClick() },
         onCancelParticipationClick = { title, description -> viewModel.onCancelParticipationClick(title, description) },
         onCloseRecruitmentClick = { title, description -> viewModel.onCloseRecruitmentClick(title, description) },
@@ -96,6 +98,7 @@ fun GroupRoomRecruitContent(
     uiState: GroupRoomRecruitUiState,
     onRecommendationClick: (RecommendRoomResponse) -> Unit = {},
     onBackClick: () -> Unit = {},
+    onBookDetailClick: (String) -> Unit = {},
     onParticipationClick: () -> Unit = {},
     onCancelParticipationClick: (String, String) -> Unit = { _, _ -> },
     onCloseRecruitmentClick: (String, String) -> Unit = { _, _ -> },
@@ -345,7 +348,8 @@ fun GroupRoomRecruitContent(
                         author = detail.authorName,
                         publisher = detail.publisher,
                         description = detail.bookDescription,
-                        imageUrl = detail.bookImageUrl
+                        imageUrl = detail.bookImageUrl,
+                        onClick = { onBookDetailClick(detail.isbn) }
                     )
 
                     // 추천 모임방이 있을 때만 표시
