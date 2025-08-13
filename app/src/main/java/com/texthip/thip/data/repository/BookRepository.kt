@@ -26,8 +26,8 @@ class BookRepository @Inject constructor(
     }
 
     /** 책 검색 */
-    suspend fun searchBooks(keyword: String, page: Int = 1): Result<BookSearchResponse?> = runCatching {
-        bookService.searchBooks(keyword, page)
+    suspend fun searchBooks(keyword: String, page: Int = 1, isFinalized: Boolean = false): Result<BookSearchResponse?> = runCatching {
+        bookService.searchBooks(keyword, page, isFinalized)
             .handleBaseResponse()
             .getOrThrow()
     }

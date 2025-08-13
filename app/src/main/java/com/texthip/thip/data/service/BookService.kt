@@ -28,7 +28,8 @@ interface BookService {
     @GET("books")
     suspend fun searchBooks(
         @Query("keyword") keyword: String,
-        @Query("page") page: Int = 1
+        @Query("page") page: Int = 1,
+        @Query("isFinalized") isFinalized: Boolean = false
     ): BaseResponse<BookSearchResponse>
 
     /** 인기 책 조회 */

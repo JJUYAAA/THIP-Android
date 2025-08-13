@@ -78,7 +78,7 @@ class SearchBookViewModel @Inject constructor(
             ) 
         }
 
-        bookRepository.searchBooks(query, 1)
+        bookRepository.searchBooks(query, 1, isFinalized = !isLiveSearch)
             .onSuccess { response ->
                 response?.let { searchResponse ->
                     updateState {
@@ -118,7 +118,7 @@ class SearchBookViewModel @Inject constructor(
         
         updateState { it.copy(isLoadingMore = true) }
 
-        bookRepository.searchBooks(currentState.searchQuery, nextPage)
+        bookRepository.searchBooks(currentState.searchQuery, nextPage, isFinalized = true)
             .onSuccess { response ->
                 response?.let { searchResponse ->
                     updateState {
