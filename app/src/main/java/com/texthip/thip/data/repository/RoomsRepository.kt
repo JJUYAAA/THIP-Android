@@ -1,11 +1,13 @@
 package com.texthip.thip.data.repository
 
+import android.R.attr.type
 import com.texthip.thip.data.manager.GenreManager
 import com.texthip.thip.data.manager.UserDataManager
 import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomJoinRequest
+import com.texthip.thip.data.model.rooms.request.RoomSecreteRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
@@ -15,6 +17,7 @@ import com.texthip.thip.data.model.rooms.response.JoinedRoomListResponse
 import com.texthip.thip.data.model.rooms.response.MyRoomListResponse
 import com.texthip.thip.data.model.rooms.response.RoomMainList
 import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
+import com.texthip.thip.data.model.rooms.response.RoomSecreteRoomResponse
 import com.texthip.thip.data.service.RoomsService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -211,5 +214,15 @@ class RoomsRepository @Inject constructor(
                 roomPostType = roomPostType
             )
         ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun postParticipateSecreteRoom(roomId: Int, password: String): Result<RoomSecreteRoomResponse> = runCatching {
+        val request = RoomSecreteRoomRequest(password = password)
+        val response = roomsService.postParticipateSecreteRoom(roomId, request)
+            .handleBaseResponse()
+            .getOrThrow()
+            ?: throw NoSuchElementException("모임방 참여/취소 응답을 받을 수 없습니다.")
+
+        response
     }
 }
