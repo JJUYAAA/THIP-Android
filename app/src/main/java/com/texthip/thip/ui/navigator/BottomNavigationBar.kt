@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -27,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.texthip.thip.ui.navigator.data.NavBarItems
-import com.texthip.thip.ui.navigator.extensions.navigateToTab
 import com.texthip.thip.ui.navigator.extensions.isRoute
+import com.texthip.thip.ui.navigator.extensions.navigateToTab
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -40,6 +41,7 @@ fun BottomNavigationBar(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .navigationBarsPadding()
             .height(73.dp)
             .clip(
                 RoundedCornerShape(
