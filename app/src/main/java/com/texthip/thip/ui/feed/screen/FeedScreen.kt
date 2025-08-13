@@ -48,6 +48,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun FeedScreen(
     navController: NavController? = null,
+    onNavigateToMySubscription: () -> Unit = {},
     nickname: String = "",
     userRole: String = "",
     feeds: List<FeedItem> = emptyList(),
@@ -225,9 +226,7 @@ fun FeedScreen(
                         MySubscribeBarlist(
                             modifier = Modifier.padding(horizontal = 20.dp),
                             subscriptions = subscriptionsForBar,
-                            onClick = {
-                                navController?.navigate(FeedRoutes.MySubscription)
-                            }
+                            onClick = onNavigateToMySubscription
                         )
                     }
                     itemsIndexed(feedStateList, key = { _, item -> item.id }) { index, feed ->
