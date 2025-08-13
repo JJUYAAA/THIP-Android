@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.group.note.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import com.texthip.thip.ui.group.note.viewmodel.CommentsUiState
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.rooms.advancedImePadding
 
 @Composable
 fun CommentBottomSheet(
@@ -50,6 +52,7 @@ fun CommentBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(600.dp)
+                .advancedImePadding()
         ) {
             Column(
                 modifier = Modifier
@@ -63,27 +66,29 @@ fun CommentBottomSheet(
                     modifier = Modifier.padding(start = 20.dp, top = 20.dp, end = 20.dp)
                 )
 
-                if (uiState.isLoading) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                } else if (uiState.comments.isEmpty()) {
-                    EmptyCommentView()
-                } else {
-                    CommentLazyList(
-                        commentList = uiState.comments,
-                        isLoadingMore = uiState.isLoadingMore,
-                        isLastPage = uiState.isLast,
-                        onLoadMore = { onEvent(CommentsEvent.LoadMoreComments) },
-                        onReplyClick = { commentId, nickname ->
-                            replyingToCommentId = commentId
-                            replyingToNickname = nickname
+                Box(modifier = Modifier.weight(1f)) {
+                    if (uiState.isLoading) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator()
                         }
-                    )
+                    } else if (uiState.comments.isEmpty()) {
+                        EmptyCommentView()
+                    } else {
+                        CommentLazyList(
+                            commentList = uiState.comments,
+                            isLoadingMore = uiState.isLoadingMore,
+                            isLastPage = uiState.isLast,
+                            onLoadMore = { onEvent(CommentsEvent.LoadMoreComments) },
+                            onReplyClick = { commentId, nickname ->
+                                replyingToCommentId = commentId
+                                replyingToNickname = nickname
+                            }
+                        )
+                    }
                 }
             }
 
