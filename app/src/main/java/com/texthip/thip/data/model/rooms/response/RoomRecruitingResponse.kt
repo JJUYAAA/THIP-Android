@@ -1,4 +1,4 @@
-package com.texthip.thip.data.model.group.response
+package com.texthip.thip.data.model.rooms.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

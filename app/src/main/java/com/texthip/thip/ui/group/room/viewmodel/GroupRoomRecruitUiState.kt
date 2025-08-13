@@ -1,7 +1,7 @@
 package com.texthip.thip.ui.group.room.viewmodel
 
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
-import com.texthip.thip.data.model.group.response.RoomRecruitingResponse
+import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
 
 data class GroupRoomRecruitUiState(
     val roomDetail: RoomRecruitingResponse? = null,

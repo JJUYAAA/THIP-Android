@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
 import com.texthip.thip.data.model.book.response.BookSavedResponse
-import com.texthip.thip.data.model.group.request.CreateRoomRequest
+import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.data.repository.BookRepository
-import com.texthip.thip.data.repository.GroupRepository
+import com.texthip.thip.data.repository.RoomsRepository
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GroupMakeRoomViewModel @Inject constructor(
-    private val groupRepository: GroupRepository,
+    private val roomsRepository: RoomsRepository,
     private val bookRepository: BookRepository,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -44,7 +44,7 @@ class GroupMakeRoomViewModel @Inject constructor(
     
     private fun loadGenres() {
         viewModelScope.launch {
-            groupRepository.getGenres()
+            roomsRepository.getGenres()
                 .onSuccess { genresList ->
                     updateState { it.copy(genres = genresList) }
                 }
@@ -179,7 +179,7 @@ class GroupMakeRoomViewModel @Inject constructor(
                     isPublic = !currentState.isPrivate
                 )
 
-                val result = groupRepository.createRoom(request)
+                val result = roomsRepository.createRoom(request)
                 result.onSuccess { roomId ->
                     onSuccess(roomId)
                 }.onFailure { exception ->

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
-import com.texthip.thip.data.repository.GroupRepository
+import com.texthip.thip.data.repository.RoomsRepository
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.room.mock.RoomAction
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GroupRoomRecruitViewModel @Inject constructor(
-    private val repository: GroupRepository,
+    private val repository: RoomsRepository,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 

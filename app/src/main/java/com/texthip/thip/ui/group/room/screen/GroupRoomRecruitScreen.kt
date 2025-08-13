@@ -38,7 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
-import com.texthip.thip.data.model.group.response.RecommendRoomResponse
+import com.texthip.thip.data.model.rooms.response.RecommendRoomResponse
+import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.common.cards.CardRoomBook
 import com.texthip.thip.ui.common.modal.DialogPopup
@@ -473,7 +474,7 @@ fun GroupRoomRecruitScreenPreview() {
         GroupRoomRecruitContent(
             uiState = GroupRoomRecruitUiState(
                 isLoading = false,
-                roomDetail = com.texthip.thip.data.model.group.response.RoomRecruitingResponse(
+                roomDetail = RoomRecruitingResponse(
                     isHost = false,
                     isJoining = false,
                     roomId = 1,
@@ -504,7 +505,7 @@ fun GroupRoomRecruitScreenPreview() {
                         ),
                         RecommendRoomResponse(
                             roomId = 3,
-                            roomImageUrl = "https://picsum.photos/300/400?rec2", 
+                            roomImageUrl = "https://picsum.photos/300/400?rec2",
                             roomName = "✨ 철학 소설로 삶을 되돌아보기",
                             memberCount = 8,
                             recruitCount = 12,

@@ -24,7 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
-import com.texthip.thip.data.model.group.response.RoomMainList
+import com.texthip.thip.data.model.rooms.response.JoinedRoomResponse
+import com.texthip.thip.data.model.rooms.response.RoomMainList
+import com.texthip.thip.data.model.rooms.response.RoomMainResponse
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
@@ -190,21 +192,21 @@ fun PreviewGroupScreen() {
             uiState = GroupUiState(
                 userName = "김독서",
                 myJoinedRooms = listOf(
-                    com.texthip.thip.data.model.group.response.JoinedRoomResponse(
+                    JoinedRoomResponse(
                         roomId = 1,
                         bookImageUrl = "https://picsum.photos/300/400?joined1",
                         roomTitle = "미드나이트 라이브러리",
                         memberCount = 18,
                         userPercentage = 75
                     ),
-                    com.texthip.thip.data.model.group.response.JoinedRoomResponse(
+                    JoinedRoomResponse(
                         roomId = 2,
                         bookImageUrl = "https://picsum.photos/300/400?joined2",
                         roomTitle = "코스모스",
                         memberCount = 25,
                         userPercentage = 42
                     ),
-                    com.texthip.thip.data.model.group.response.JoinedRoomResponse(
+                    JoinedRoomResponse(
                         roomId = 3,
                         bookImageUrl = "https://picsum.photos/300/400?joined3",
                         roomTitle = "사피엔스",
@@ -214,7 +216,7 @@ fun PreviewGroupScreen() {
                 ),
                 roomMainList = RoomMainList(
                     deadlineRoomList = listOf(
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 4,
                             bookImageUrl = "https://picsum.photos/300/400?deadline1",
                             roomName = "🌙 미드나이트 라이브러리 함께읽기",
@@ -222,7 +224,7 @@ fun PreviewGroupScreen() {
                             memberCount = 18,
                             deadlineDate = "D-2"
                         ),
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 5,
                             bookImageUrl = "https://picsum.photos/300/400?deadline2",
                             roomName = "📚 현대문학 깊이 탐구하기",
@@ -230,7 +232,7 @@ fun PreviewGroupScreen() {
                             memberCount = 12,
                             deadlineDate = "D-3"
                         ),
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 6,
                             bookImageUrl = "https://picsum.photos/300/400?deadline3",
                             roomName = "🔬 과학책으로 세상 이해하기",
@@ -240,7 +242,7 @@ fun PreviewGroupScreen() {
                         )
                     ),
                     popularRoomList = listOf(
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 7,
                             bookImageUrl = "https://picsum.photos/300/400?popular1",
                             roomName = "✨ 철학 고전 함께 읽기",
@@ -248,7 +250,7 @@ fun PreviewGroupScreen() {
                             memberCount = 10,
                             deadlineDate = "D-7"
                         ),
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 8,
                             bookImageUrl = "https://picsum.photos/300/400?popular2",
                             roomName = "🎨 예술과 문학의 만남",
@@ -256,7 +258,7 @@ fun PreviewGroupScreen() {
                             memberCount = 16,
                             deadlineDate = "D-10"
                         ),
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 9,
                             bookImageUrl = "https://picsum.photos/300/400?popular3",
                             roomName = "💭 심리학 도서 탐험대",
