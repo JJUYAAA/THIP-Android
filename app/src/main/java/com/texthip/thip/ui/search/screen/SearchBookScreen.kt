@@ -35,7 +35,6 @@ import com.texthip.thip.ui.search.component.SearchEmptyResult
 import com.texthip.thip.ui.search.component.SearchRecentBook
 import com.texthip.thip.ui.search.mock.BookData
 import com.texthip.thip.ui.search.viewmodel.SearchBookViewModel
-import com.texthip.thip.ui.search.viewmodel.SearchMode
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
@@ -65,7 +64,9 @@ fun SearchBookScreen(
     SearchBookScreenContent(
         modifier = modifier,
         searchQuery = uiState.searchQuery,
-        searchMode = uiState.searchMode,
+        isInitial = uiState.isInitial,
+        isLiveSearching = uiState.isLiveSearching,
+        isCompleteSearching = uiState.isCompleteSearching,
         searchResults = uiState.searchResults.map { item ->
             BookData(
                 title = item.title,
@@ -102,10 +103,7 @@ fun SearchBookScreen(
             viewModel.onSearchButtonClick()
         },
         onRemoveRecentSearch = { keyword ->
-            val recentSearchItem = uiState.recentSearches.find { it.searchTerm == keyword }
-            recentSearchItem?.let {
-                viewModel.deleteRecentSearch(it.recentSearchId)
-            }
+            viewModel.deleteRecentSearchByKeyword(keyword)
         },
         onBookClick = { book ->
             onBookClick(book.isbn)
@@ -121,7 +119,9 @@ fun SearchBookScreen(
 private fun SearchBookScreenContent(
     modifier: Modifier = Modifier,
     searchQuery: String = "",
-    searchMode: SearchMode = SearchMode.Initial,
+    isInitial: Boolean = true,
+    isLiveSearching: Boolean = false,
+    isCompleteSearching: Boolean = false,
     searchResults: List<BookData> = emptyList(),
     popularBooks: List<BookData> = emptyList(),
     recentSearches: List<String> = emptyList(),
@@ -172,53 +172,47 @@ private fun SearchBookScreenContent(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                when (searchMode) {
-                    SearchMode.Initial -> {
-                        SearchRecentBook(
-                            recentSearches = recentSearches,
-                            popularBooks = popularBooks,
-                            popularBookDate = SimpleDateFormat("MM.dd", Locale.getDefault()).format(Date()),
-                            onSearchClick = onRecentSearchClick,
-                            onRemove = onRemoveRecentSearch,
+                if (isInitial) {
+                    SearchRecentBook(
+                        recentSearches = recentSearches,
+                        popularBooks = popularBooks,
+                        popularBookDate = SimpleDateFormat("MM.dd", Locale.getDefault()).format(Date()),
+                        onSearchClick = onRecentSearchClick,
+                        onRemove = onRemoveRecentSearch,
+                        onBookClick = onBookClick
+                    )
+                } else if (isLiveSearching) {
+                    if (hasResults) {
+                        SearchActiveField(
+                            bookList = searchResults,
+                            isLoading = isSearching || isLoadingMore,
+                            hasMore = canLoadMore,
+                            onLoadMore = onLoadMore,
                             onBookClick = onBookClick
                         )
+                    } else if (showEmptyState) {
+                        SearchEmptyResult(
+                            mainText = stringResource(R.string.book_no_search_result1),
+                            subText = stringResource(R.string.book_no_search_result2),
+                            onRequestBook = onRequestBook
+                        )
                     }
-
-                    SearchMode.LiveSearch -> {
-                        if (hasResults) {
-                            SearchActiveField(
-                                bookList = searchResults,
-                                isLoading = isSearching || isLoadingMore,
-                                hasMore = canLoadMore,
-                                onLoadMore = onLoadMore,
-                                onBookClick = onBookClick
-                            )
-                        } else if (showEmptyState) {
-                            SearchEmptyResult(
-                                mainText = stringResource(R.string.book_no_search_result1),
-                                subText = stringResource(R.string.book_no_search_result2),
-                                onRequestBook = onRequestBook
-                            )
-                        }
-                    }
-
-                    SearchMode.CompleteSearch -> {
-                        if (hasResults) {
-                            SearchBookFilteredResult(
-                                resultCount = totalElements,
-                                bookList = searchResults,
-                                isLoading = isSearching || isLoadingMore,
-                                hasMore = canLoadMore,
-                                onLoadMore = onLoadMore,
-                                onBookClick = onBookClick
-                            )
-                        } else if (showEmptyState) {
-                            SearchEmptyResult(
-                                mainText = stringResource(R.string.book_no_search_result1),
-                                subText = stringResource(R.string.book_no_search_result2),
-                                onRequestBook = onRequestBook
-                            )
-                        }
+                } else if (isCompleteSearching) {
+                    if (hasResults) {
+                        SearchBookFilteredResult(
+                            resultCount = totalElements,
+                            bookList = searchResults,
+                            isLoading = isSearching || isLoadingMore,
+                            hasMore = canLoadMore,
+                            onLoadMore = onLoadMore,
+                            onBookClick = onBookClick
+                        )
+                    } else if (showEmptyState) {
+                        SearchEmptyResult(
+                            mainText = stringResource(R.string.book_no_search_result1),
+                            subText = stringResource(R.string.book_no_search_result2),
+                            onRequestBook = onRequestBook
+                        )
                     }
                 }
             }
@@ -283,7 +277,7 @@ private val mockRecentSearches = listOf("데미안", "1984", "어린왕자", "�
 fun SearchBookScreenContentInitialPreview() {
     ThipTheme {
         SearchBookScreenContent(
-            searchMode = SearchMode.Initial,
+            isInitial = true,
             popularBooks = mockPopularBooks,
             recentSearches = mockRecentSearches
         )
@@ -296,7 +290,8 @@ fun SearchBookScreenContentLiveSearchPreview() {
     ThipTheme {
         SearchBookScreenContent(
             searchQuery = "데미안",
-            searchMode = SearchMode.LiveSearch,
+            isInitial = false,
+            isLiveSearching = true,
             searchResults = mockSearchResults,
             hasResults = true,
             isSearching = false
@@ -310,7 +305,8 @@ fun SearchBookScreenContentCompleteSearchPreview() {
     ThipTheme {
         SearchBookScreenContent(
             searchQuery = "데미안",
-            searchMode = SearchMode.CompleteSearch,
+            isInitial = false,
+            isCompleteSearching = true,
             searchResults = mockSearchResults,
             totalElements = 15,
             hasResults = true,
@@ -325,7 +321,8 @@ fun SearchBookScreenContentEmptyPreview() {
     ThipTheme {
         SearchBookScreenContent(
             searchQuery = "없는책제목",
-            searchMode = SearchMode.CompleteSearch,
+            isInitial = false,
+            isCompleteSearching = true,
             searchResults = emptyList(),
             hasResults = false,
             showEmptyState = true
@@ -339,7 +336,8 @@ fun SearchBookScreenContentLoadingPreview() {
     ThipTheme {
         SearchBookScreenContent(
             searchQuery = "데미안",
-            searchMode = SearchMode.CompleteSearch,
+            isInitial = false,
+            isCompleteSearching = true,
             searchResults = mockSearchResults.take(2),
             totalElements = 15,
             hasResults = true,

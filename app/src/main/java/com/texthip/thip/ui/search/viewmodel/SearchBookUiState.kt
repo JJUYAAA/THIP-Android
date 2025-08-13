@@ -4,15 +4,13 @@ import com.texthip.thip.data.model.book.response.BookSearchItem
 import com.texthip.thip.data.model.book.response.PopularBookItem
 import com.texthip.thip.data.model.book.response.RecentSearchItem
 
-sealed class SearchMode {
-    object Initial : SearchMode()
-    object LiveSearch : SearchMode()
-    object CompleteSearch : SearchMode()
-}
-
 data class SearchBookUiState(
     val searchQuery: String = "",
-    val searchMode: SearchMode = SearchMode.Initial,
+    
+    // 상태 관리 단순화 - boolean 필드 사용
+    val isInitial: Boolean = true,
+    val isLiveSearching: Boolean = false,
+    val isCompleteSearching: Boolean = false,
     
     // 통합된 검색 결과 (Live/Complete 구분 없이)
     val searchResults: List<BookSearchItem> = emptyList(),
@@ -36,5 +34,6 @@ data class SearchBookUiState(
     val hasResults: Boolean get() = searchResults.isNotEmpty()
     val canLoadMore: Boolean get() = hasMorePages && !isSearching && !isLoadingMore
     val showEmptyState: Boolean get() = searchQuery.isNotBlank() && searchResults.isEmpty() && !isSearching
-    val showInitialScreen: Boolean get() = searchMode == SearchMode.Initial && searchQuery.isBlank()
+    val showInitialScreen: Boolean get() = isInitial && searchQuery.isBlank()
+    val isAnySearching: Boolean get() = isLiveSearching || isCompleteSearching
 }

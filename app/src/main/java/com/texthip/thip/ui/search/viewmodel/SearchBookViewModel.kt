@@ -2,6 +2,7 @@ package com.texthip.thip.ui.search.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.texthip.thip.data.model.book.response.RecentSearchItem
 import com.texthip.thip.data.repository.BookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -22,6 +23,9 @@ class SearchBookViewModel @Inject constructor(
     
     private var searchJob: Job? = null
     private var loadMoreJob: Job? = null
+    
+    // Map 기반 빠른 최근 검색어 관리
+    private val recentSearchMap = mutableMapOf<String, RecentSearchItem>()
 
     init {
         loadInitialData()
@@ -36,7 +40,13 @@ class SearchBookViewModel @Inject constructor(
 
         searchJob?.cancel()
         if (query.isNotBlank()) {
-            updateState { it.copy(searchMode = SearchMode.LiveSearch) }
+            updateState { 
+                it.copy(
+                    isInitial = false,
+                    isLiveSearching = true,
+                    isCompleteSearching = false
+                ) 
+            }
             searchJob = viewModelScope.launch {
                 delay(1000) // Live search에 딜레이 추가
                 performSearch(query, isLiveSearch = true)
@@ -50,7 +60,13 @@ class SearchBookViewModel @Inject constructor(
         val query = uiState.value.searchQuery.trim()
         if (query.isNotBlank()) {
             searchJob?.cancel()
-            updateState { it.copy(searchMode = SearchMode.CompleteSearch) }
+            updateState { 
+                it.copy(
+                    isInitial = false,
+                    isLiveSearching = false,
+                    isCompleteSearching = true
+                ) 
+            }
             viewModelScope.launch {
                 performSearch(query, isLiveSearch = false)
                 loadRecentSearches()
@@ -177,6 +193,12 @@ class SearchBookViewModel @Inject constructor(
             bookRepository.getRecentSearches()
                 .onSuccess { response ->
                     response?.let { recentSearchResponse ->
+                        // Map에 최근 검색어 저장 (빠른 검색을 위해)
+                        recentSearchMap.clear()
+                        recentSearchResponse.recentSearchList.forEach { item ->
+                            recentSearchMap[item.searchTerm] = item
+                        }
+                        
                         updateState {
                             it.copy(recentSearches = recentSearchResponse.recentSearchList)
                         }
@@ -199,6 +221,13 @@ class SearchBookViewModel @Inject constructor(
                 }
         }
     }
+    
+    /** 키워드로 빠른 최근 검색어 삭제 (Map 기반) */
+    fun deleteRecentSearchByKeyword(keyword: String) {
+        recentSearchMap[keyword]?.let { recentSearchItem ->
+            deleteRecentSearch(recentSearchItem.recentSearchId)
+        }
+    }
 
     private fun clearSearchResults() {
         searchJob?.cancel()
@@ -206,7 +235,9 @@ class SearchBookViewModel @Inject constructor(
         updateState {
             it.copy(
                 searchQuery = "",
-                searchMode = SearchMode.Initial,
+                isInitial = true,
+                isLiveSearching = false,
+                isCompleteSearching = false,
                 searchResults = emptyList(),
                 currentPage = 1,
                 hasMorePages = true,
