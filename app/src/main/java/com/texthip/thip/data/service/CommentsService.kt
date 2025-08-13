@@ -1,8 +1,12 @@
 package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
+import com.texthip.thip.data.model.comments.request.CommentsLikesRequest
+import com.texthip.thip.data.model.comments.response.CommentsLikesResponse
 import com.texthip.thip.data.model.comments.response.CommentsResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -13,4 +17,10 @@ interface CommentsService {
         @Query("postType") postType: String = "RECORD",
         @Query("cursor") cursor: String? = null,
     ): BaseResponse<CommentsResponse>
+
+    @POST("comments/{commentId}/likes")
+    suspend fun likeComment(
+        @Path("commentId") commentId: Long,
+        @Body response: CommentsLikesRequest
+    ): BaseResponse<CommentsLikesResponse>
 }
