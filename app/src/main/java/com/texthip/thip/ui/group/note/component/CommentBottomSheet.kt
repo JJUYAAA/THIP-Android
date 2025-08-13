@@ -3,11 +3,18 @@ package com.texthip.thip.ui.group.note.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,23 +25,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.data.model.comments.response.CommentList
 import com.texthip.thip.ui.common.bottomsheet.CustomBottomSheet
 import com.texthip.thip.ui.common.forms.CommentTextField
-import com.texthip.thip.ui.group.note.mock.CommentItem
-import com.texthip.thip.ui.group.note.mock.ReplyItem
-import com.texthip.thip.ui.group.note.mock.mockComment
+import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
+import com.texthip.thip.ui.group.note.viewmodel.CommentsUiState
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun CommentBottomSheet(
-    commentResponse: List<CommentItem>,
+    uiState: CommentsUiState,
+    onEvent: (CommentsEvent) -> Unit,
     onDismiss: () -> Unit,
-    onSendReply: (String, Int?, String?) -> Unit
+    onSendReply: (text: String, parentCommentId: Int?, replyToNickname: String?) -> Unit
 ) {
     var inputText by remember { mutableStateOf("") }
-    var replyingTo by remember { mutableStateOf<ReplyItem?>(null) }
+    var replyingToCommentId by remember { mutableStateOf<Int?>(null) }
+    var replyingToNickname by remember { mutableStateOf<String?>(null) }
 
     CustomBottomSheet(onDismiss = onDismiss) {
         Column(
@@ -54,35 +63,25 @@ fun CommentBottomSheet(
                     modifier = Modifier.padding(start = 20.dp, top = 20.dp, end = 20.dp)
                 )
 
-                if (commentResponse.isEmpty()) {
+                if (uiState.isLoading) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 210.dp), // TODO: 유동적으로 수정 가능할수도
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = stringResource(R.string.no_comments_yet),
-                            style = typography.smalltitle_sb600_s18_h24,
-                            color = colors.White
-                        )
-                        Text(
-                            text = stringResource(R.string.no_comment_subtext),
-                            style = typography.copy_r400_s14,
-                            color = colors.Grey,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
+                        CircularProgressIndicator()
                     }
+                } else if (uiState.comments.isEmpty()) {
+                    EmptyCommentView()
                 } else {
-                    CommentList(
-                        commentList = commentResponse,
-                        onSendReply = { replyText, commentId, replyTo ->
-                            onSendReply(replyText, commentId, replyTo)
-                            inputText = ""
-                        },
-                        onReplyClick = { replyItem ->
-                            replyingTo = replyItem
+                    CommentLazyList(
+                        commentList = uiState.comments,
+                        isLoadingMore = uiState.isLoadingMore,
+                        isLastPage = uiState.isLast,
+                        onLoadMore = { onEvent(CommentsEvent.LoadMoreComments) },
+                        onReplyClick = { commentId, nickname ->
+                            replyingToCommentId = commentId
+                            replyingToNickname = nickname
                         }
                     )
                 }
@@ -96,16 +95,95 @@ fun CommentBottomSheet(
                 onSendClick = {
                     onSendReply(
                         inputText,
-                        replyingTo?.replyId,
-                        replyingTo?.nickName
+                        replyingToCommentId,
+                        replyingToNickname
                     )
                     inputText = ""
-                    replyingTo = null
+                    replyingToCommentId = null
+                    replyingToNickname = null
                 },
-                replyTo = replyingTo?.nickName,
-                onCancelReply = { replyingTo = null }
+                replyTo = replyingToNickname,
+                onCancelReply = {
+                    replyingToCommentId = null
+                    replyingToNickname = null
+                }
             )
         }
+    }
+}
+
+@Composable
+private fun CommentLazyList(
+    commentList: List<CommentList>,
+    isLoadingMore: Boolean,
+    isLastPage: Boolean,
+    onLoadMore: () -> Unit,
+    onReplyClick: (commentId: Int, nickname: String) -> Unit
+) {
+    val lazyListState = rememberLazyListState()
+
+    val isScrolledToEnd by remember {
+        derivedStateOf {
+            val layoutInfo = lazyListState.layoutInfo
+            if (layoutInfo.totalItemsCount == 0) return@derivedStateOf false
+            val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            lastVisibleItemIndex >= layoutInfo.totalItemsCount - 1
+        }
+    }
+
+    LaunchedEffect(isScrolledToEnd) {
+        if (isScrolledToEnd && !isLoadingMore && !isLastPage) {
+            onLoadMore()
+        }
+    }
+
+    LazyColumn(state = lazyListState) {
+        items(
+            items = commentList,
+            key = { it.commentId }
+        ) { comment ->
+            CommentSection(
+                commentItem = comment,
+                onReplyClick = onReplyClick
+            )
+        }
+
+        if (isLoadingMore) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun EmptyCommentView() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = stringResource(R.string.no_comments_yet),
+            style = typography.smalltitle_sb600_s18_h24,
+            color = colors.White
+        )
+        Text(
+            text = stringResource(R.string.no_comment_subtext),
+            style = typography.copy_r400_s14,
+            color = colors.Grey,
+            modifier = Modifier.padding(top = 4.dp)
+        )
     }
 }
 
@@ -116,7 +194,28 @@ private fun CommentBottomSheetPreview() {
         var showSheet by remember { mutableStateOf(true) }
         if (showSheet) {
             CommentBottomSheet(
-                commentResponse = listOf(mockComment, mockComment, mockComment),
+                uiState = CommentsUiState(
+                    comments = listOf(
+                        CommentList(
+                            commentId = 1,
+                            creatorId = 1,
+                            creatorNickname = "User1",
+                            content = "This is a comment.",
+                            postDate = "2023-10-01",
+                            likeCount = 5,
+                            creatorProfileImageUrl = "https://example.com/image1.jpg",
+                            aliasName = "칭호칭호",
+                            aliasColor = "#A0F8E8",
+                            isDeleted = false,
+                            isLike = false,
+                            replyList = emptyList()
+                        )
+                    ),
+                    isLoading = false,
+                    isLoadingMore = false,
+                    isLast = false
+                ),
+                onEvent = {},
                 onDismiss = { showSheet = false },
                 onSendReply = { _, _, _ -> }
             )

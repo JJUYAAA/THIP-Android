@@ -14,18 +14,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.data.model.comments.response.CommentList
 import com.texthip.thip.ui.common.modal.drawVerticalScrollbar
-import com.texthip.thip.ui.group.note.mock.CommentItem
-import com.texthip.thip.ui.group.note.mock.ReplyItem
-import com.texthip.thip.ui.group.note.mock.mockComment
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
 fun CommentList(
     modifier: Modifier = Modifier,
-    commentList: List<CommentItem>,
+    commentList: List<CommentList>,
     onSendReply: (String, Int?, String?) -> Unit,
-    onReplyClick: (ReplyItem) -> Unit
+    onReplyClick: (commentId: Int, nickname: String) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -53,9 +51,9 @@ fun CommentList(
 
 @Composable
 fun CommentSection(
-    commentItem: CommentItem,
-    onSendReply: (String, Int?, String?) -> Unit,
-    onReplyClick: (ReplyItem) -> Unit
+    commentItem: CommentList,
+    onSendReply: (String, Int?, String?) -> Unit = { _, _, _ -> },
+    onReplyClick: (commentId: Int, nickname: String) -> Unit
 ) {
     Box {
         Column(
@@ -67,31 +65,13 @@ fun CommentSection(
         ) {
             CommentItem(
                 data = commentItem,
-                onReplyClick = {
-                    onReplyClick(
-                        ReplyItem(
-                            replyId = commentItem.commentId,
-                            userId = commentItem.userId,
-                            nickName = commentItem.nickName,
-                            parentNickname = "", // 댓글에는 parentNickname이 필요 없음
-                            genreName = commentItem.genreName,
-                            profileImageUrl = commentItem.profileImageUrl,
-                            content = commentItem.content,
-                            postDate = commentItem.postDate,
-                            isWriter = commentItem.isWriter,
-                            isLiked = commentItem.isLiked,
-                            likeCount = commentItem.likeCount
-                        )
-                    )
-                }
+                onReplyClick = { onReplyClick(commentItem.commentId, commentItem.creatorNickname) }
             )
 
             commentItem.replyList.forEach { reply ->
                 ReplyItem(
                     data = reply,
-                    onReplyClick = {
-                        onReplyClick(reply)
-                    }
+                    onReplyClick = { onReplyClick(commentItem.commentId, reply.creatorNickname) }
                 )
             }
         }
@@ -105,10 +85,23 @@ fun CommentSectionPreview() {
         Column {
             CommentList(
                 commentList = listOf(
-                    mockComment, mockComment, mockComment
+                    CommentList(
+                        commentId = 1,
+                        creatorId = 1,
+                        creatorNickname = "User1",
+                        creatorProfileImageUrl = "https://example.com/image1.jpg",
+                        aliasName= "칭호칭호",
+                        aliasColor = "#A0F8E8",
+                        content = "This is a comment.",
+                        postDate = "2023-10-01",
+                        isLike = false,
+                        likeCount = 10,
+                        isDeleted = false,
+                        replyList = emptyList()
+                    )
                 ),
                 onSendReply = { _, _, _ -> },
-                onReplyClick = { replyItem ->
+                onReplyClick = { commentId, nickname ->
                     // Handle reply click
                 }
             )

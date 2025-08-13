@@ -56,7 +56,7 @@ import com.texthip.thip.ui.group.note.component.CommentBottomSheet
 import com.texthip.thip.ui.group.note.component.FilterHeaderSection
 import com.texthip.thip.ui.group.note.component.TextCommentCard
 import com.texthip.thip.ui.group.note.component.VoteCommentCard
-import com.texthip.thip.ui.group.note.mock.mockComment
+import com.texthip.thip.ui.group.note.viewmodel.CommentsViewModel
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteEvent
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteUiState
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteViewModel
@@ -160,6 +160,9 @@ fun GroupNoteContent(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var isPinDialogVisible by remember { mutableStateOf(false) }
     var showToast by remember { mutableStateOf(false) }
+
+    val commentsViewModel: CommentsViewModel = hiltViewModel()
+    val commentsUiState by commentsViewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(showToast) {
         if (showToast) {
@@ -359,7 +362,10 @@ fun GroupNoteContent(
                                 "RECORD" -> TextCommentCard(
                                     data = post,
                                     modifier = itemModifier,
-                                    onCommentClick = { isCommentBottomSheetVisible = true },
+                                    onCommentClick = {
+                                        selectedPostForComment = post
+                                        isCommentBottomSheetVisible = true
+                                    },
                                     onLongPress = { selectedPostForMenu = post },
                                     onPinClick = { isPinDialogVisible = true },
                                     onLikeClick = { postId, postType ->
@@ -370,7 +376,10 @@ fun GroupNoteContent(
                                 "VOTE" -> VoteCommentCard(
                                     data = post,
                                     modifier = itemModifier,
-                                    onCommentClick = { isCommentBottomSheetVisible = true },
+                                    onCommentClick = {
+                                        selectedPostForComment = post
+                                        isCommentBottomSheetVisible = true
+                                    },
                                     onLongPress = { selectedPostForMenu = post },
                                     onPinClick = { isPinDialogVisible = true },
                                     onVote = { postId, voteItemId, type ->
@@ -460,17 +469,19 @@ fun GroupNoteContent(
     }
 
     if (isCommentBottomSheetVisible && selectedPostForComment != null) {
+        LaunchedEffect(selectedPostForComment) {
+            commentsViewModel.initialize(postId = selectedPostForComment!!.postId.toLong())
+        }
+
         CommentBottomSheet(
-            commentResponse = listOf(mockComment, mockComment, mockComment),
-//            commentResponse = emptyList(),
+            uiState = commentsUiState,
+            onEvent = commentsViewModel::onEvent,
             onDismiss = {
                 isCommentBottomSheetVisible = false
-//                selectedNoteRecord = null
-//                selectedNoteVote = null
                 selectedPostForComment = null
             },
             onSendReply = { replyText, commentId, replyTo ->
-                // 댓글 전송 로직 구현
+                // TODO: 댓글 전송 로직 구현
             }
         )
     }
