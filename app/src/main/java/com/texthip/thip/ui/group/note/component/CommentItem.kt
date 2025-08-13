@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,10 +27,9 @@ import com.texthip.thip.utils.color.hexToColor
 fun CommentItem(
     modifier: Modifier = Modifier,
     data: CommentList,
-    onReplyClick: (String) -> Unit = { }
+    onReplyClick: (String) -> Unit = { },
+    onLikeClick: () -> Unit = {}
 ) {
-    var isLiked by remember { mutableStateOf(data.isLike) }
-
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -69,12 +64,12 @@ fun CommentItem(
             }
 
             Column(
-                modifier = Modifier.clickable(onClick = { isLiked = !isLiked }),
+                modifier = Modifier.clickable(onClick = onLikeClick),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Icon(
-                    painter = painterResource(if (isLiked) R.drawable.ic_heart_center_filled else R.drawable.ic_heart_center),
+                    painter = painterResource(if (data.isLike) R.drawable.ic_heart_center_filled else R.drawable.ic_heart_center),
                     contentDescription = null,
                     tint = Color.Unspecified
                 )

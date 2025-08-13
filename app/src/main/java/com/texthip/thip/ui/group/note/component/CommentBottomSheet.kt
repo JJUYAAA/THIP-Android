@@ -86,7 +86,8 @@ fun CommentBottomSheet(
                             onReplyClick = { commentId, nickname ->
                                 replyingToCommentId = commentId
                                 replyingToNickname = nickname
-                            }
+                            },
+                            onEvent = onEvent
                         )
                     }
                 }
@@ -123,7 +124,8 @@ private fun CommentLazyList(
     isLoadingMore: Boolean,
     isLastPage: Boolean,
     onLoadMore: () -> Unit,
-    onReplyClick: (commentId: Int, nickname: String) -> Unit
+    onReplyClick: (commentId: Int, nickname: String) -> Unit,
+    onEvent: (CommentsEvent) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -149,7 +151,8 @@ private fun CommentLazyList(
         ) { comment ->
             CommentSection(
                 commentItem = comment,
-                onReplyClick = onReplyClick
+                onReplyClick = onReplyClick,
+                onEvent = onEvent
             )
         }
 
