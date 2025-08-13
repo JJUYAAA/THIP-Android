@@ -69,104 +69,85 @@ class SearchBookViewModel @Inject constructor(
     }
 
     private suspend fun performSearch(query: String, isLiveSearch: Boolean) {
-        try {
-            updateState { 
-                it.copy(
-                    isSearching = true,
-                    error = null,
-                    searchResults = emptyList(),
-                    currentPage = 1
-                ) 
-            }
+        updateState { 
+            it.copy(
+                isSearching = true,
+                error = null,
+                searchResults = emptyList(),
+                currentPage = 1
+            ) 
+        }
 
-            bookRepository.searchBooks(query, 1)
-                .onSuccess { response ->
-                    response?.let { searchResponse ->
-                        updateState {
-                            it.copy(
-                                searchResults = searchResponse.searchResult,
-                                currentPage = searchResponse.page,
-                                totalElements = searchResponse.totalElements,
-                                hasMorePages = !searchResponse.last,
-                                isSearching = false,
-                                error = null
-                            )
-                        }
-                    } ?: run {
-                        updateState {
-                            it.copy(
-                                searchResults = emptyList(),
-                                isSearching = false,
-                                error = if (isLiveSearch) null else "검색 결과를 불러올 수 없습니다."
-                            )
-                        }
+        bookRepository.searchBooks(query, 1)
+            .onSuccess { response ->
+                response?.let { searchResponse ->
+                    updateState {
+                        it.copy(
+                            searchResults = searchResponse.searchResult,
+                            currentPage = searchResponse.page,
+                            totalElements = searchResponse.totalElements,
+                            hasMorePages = !searchResponse.last,
+                            isSearching = false,
+                            error = null
+                        )
                     }
-                }
-                .onFailure { throwable ->
+                } ?: run {
                     updateState {
                         it.copy(
                             searchResults = emptyList(),
                             isSearching = false,
-                            error = if (isLiveSearch) null else (throwable.message ?: "검색 중 오류가 발생했습니다.")
+                            error = if (isLiveSearch) null else "검색 결과를 불러올 수 없습니다."
                         )
                     }
                 }
-        } catch (e: Exception) {
-            updateState {
-                it.copy(
-                    searchResults = emptyList(),
-                    isSearching = false,
-                    error = if (isLiveSearch) null else (e.message ?: "검색 중 오류가 발생했습니다.")
-                )
             }
-        }
+            .onFailure { throwable ->
+                updateState {
+                    it.copy(
+                        searchResults = emptyList(),
+                        isSearching = false,
+                        error = if (isLiveSearch) null else (throwable.message ?: "검색 중 오류가 발생했습니다.")
+                    )
+                }
+            }
     }
 
     private suspend fun performLoadMore() {
-        try {
-            val currentState = uiState.value
-            val nextPage = currentState.currentPage + 1
-            
-            updateState { it.copy(isLoadingMore = true) }
+        val currentState = uiState.value
+        val nextPage = currentState.currentPage + 1
+        
+        updateState { it.copy(isLoadingMore = true) }
 
-            bookRepository.searchBooks(currentState.searchQuery, nextPage)
-                .onSuccess { response ->
-                    response?.let { searchResponse ->
-                        updateState {
-                            it.copy(
-                                searchResults = it.searchResults + searchResponse.searchResult,
-                                currentPage = searchResponse.page,
-                                totalElements = searchResponse.totalElements,
-                                hasMorePages = !searchResponse.last,
-                                isLoadingMore = false,
-                                error = null
-                            )
-                        }
-                    } ?: run {
-                        updateState {
-                            it.copy(
-                                isLoadingMore = false,
-                                error = "추가 결과를 불러올 수 없습니다."
-                            )
-                        }
+        bookRepository.searchBooks(currentState.searchQuery, nextPage)
+            .onSuccess { response ->
+                response?.let { searchResponse ->
+                    updateState {
+                        it.copy(
+                            searchResults = it.searchResults + searchResponse.searchResult,
+                            currentPage = searchResponse.page,
+                            totalElements = searchResponse.totalElements,
+                            hasMorePages = !searchResponse.last,
+                            isLoadingMore = false,
+                            error = null
+                        )
                     }
-                }
-                .onFailure { throwable ->
+                } ?: run {
                     updateState {
                         it.copy(
                             isLoadingMore = false,
-                            error = throwable.message ?: "추가 결과를 불러오는 중 오류가 발생했습니다."
+                            error = "추가 결과를 불러올 수 없습니다."
                         )
                     }
                 }
-        } catch (e: Exception) {
-            updateState {
-                it.copy(
-                    isLoadingMore = false,
-                    error = e.message ?: "추가 결과를 불러오는 중 오류가 발생했습니다."
-                )
             }
-        }
+            .onFailure { throwable ->
+                updateState {
+                    it.copy(
+                        isLoadingMore = false,
+                        error = throwable.message ?: "추가 결과를 불러오는 중 오류가 발생했습니다."
+                    )
+                }
+            }
     }
 
     private fun loadInitialData() {
@@ -176,57 +157,45 @@ class SearchBookViewModel @Inject constructor(
 
     private fun loadPopularBooks() {
         viewModelScope.launch {
-            try {
-                bookRepository.getMostSearchedBooks()
-                    .onSuccess { response ->
-                        response?.let { mostSearchedBooks ->
-                            updateState {
-                                it.copy(popularBooks = mostSearchedBooks.bookList)
-                            }
+            bookRepository.getMostSearchedBooks()
+                .onSuccess { response ->
+                    response?.let { mostSearchedBooks ->
+                        updateState {
+                            it.copy(popularBooks = mostSearchedBooks.bookList)
                         }
                     }
-                    .onFailure {
-                        // 인기 책 로딩 실패는 조용히 처리
-                    }
-            } catch (e: Exception) {
-                // 예외 처리 - 조용히 처리
-            }
+                }
+                .onFailure {
+                    // 인기 책 로딩 실패는 조용히 처리
+                }
         }
     }
 
     private fun loadRecentSearches() {
         viewModelScope.launch {
-            try {
-                bookRepository.getRecentSearches()
-                    .onSuccess { response ->
-                        response?.let { recentSearchResponse ->
-                            updateState {
-                                it.copy(recentSearches = recentSearchResponse.recentSearchList)
-                            }
+            bookRepository.getRecentSearches()
+                .onSuccess { response ->
+                    response?.let { recentSearchResponse ->
+                        updateState {
+                            it.copy(recentSearches = recentSearchResponse.recentSearchList)
                         }
                     }
-                    .onFailure {
-                        // 최근 검색어 로딩 실패는 조용히 처리
-                    }
-            } catch (e: Exception) {
-                // 예외 처리 - 조용히 처리
-            }
+                }
+                .onFailure {
+                    // 최근 검색어 로딩 실패는 조용히 처리
+                }
         }
     }
 
     fun deleteRecentSearch(recentSearchId: Int) {
         viewModelScope.launch {
-            try {
-                bookRepository.deleteRecentSearch(recentSearchId)
-                    .onSuccess {
-                        loadRecentSearches() // 삭제 성공 시 목록 새로고침
-                    }
-                    .onFailure {
-                        // 삭제 실패는 조용히 처리
-                    }
-            } catch (e: Exception) {
-                // 예외 처리
-            }
+            bookRepository.deleteRecentSearch(recentSearchId)
+                .onSuccess {
+                    loadRecentSearches() // 삭제 성공 시 목록 새로고침
+                }
+                .onFailure {
+                    // 삭제 실패는 조용히 처리
+                }
         }
     }
 
