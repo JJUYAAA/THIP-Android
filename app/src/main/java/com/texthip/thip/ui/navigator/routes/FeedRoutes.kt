@@ -7,4 +7,6 @@ sealed class FeedRoutes : Routes() {
     // 향후 추가될 Feed 관련 화면들
     // @Serializable data object SubscriptionList : FeedRoutes
     // @Serializable data object Detail : FeedRoutes
+
+    @Serializable data object MySubscription : FeedRoutes()
 }

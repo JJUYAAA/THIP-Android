@@ -4,6 +4,7 @@ import com.texthip.thip.data.service.BookService
 import com.texthip.thip.data.service.CommentsService
 import com.texthip.thip.data.service.GroupService
 import com.texthip.thip.data.service.RoomsService
+import com.texthip.thip.data.service.UserService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +31,12 @@ object ServiceModule {
     @Singleton
     fun providesRoomsService(retrofit: Retrofit): RoomsService =
         retrofit.create(RoomsService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideUserService(retrofit: Retrofit): UserService {
+        return retrofit.create(UserService::class.java)
+    }
 
     @Provides
     @Singleton
