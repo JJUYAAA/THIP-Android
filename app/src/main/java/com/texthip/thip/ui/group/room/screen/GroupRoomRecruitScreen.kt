@@ -62,6 +62,7 @@ fun GroupRoomRecruitScreen(
     onNavigateToGroupScreen: (String) -> Unit = {}, // GroupScreen으로 네비게이션 + 토스트 메시지
     onBackClick: () -> Unit = {}, // 뒤로가기
     onBookDetailClick: (String) -> Unit = {}, // 책 상세 화면으로 이동
+    onNavigateToPasswordScreen: (Int) -> Unit = {}, // 비밀번호 입력 화면으로 이동
     viewModel: GroupRoomRecruitViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -84,7 +85,15 @@ fun GroupRoomRecruitScreen(
         onRecommendationClick = onRecommendationClick,
         onBackClick = onBackClick,
         onBookDetailClick = onBookDetailClick,
-        onParticipationClick = { viewModel.onParticipationClick() },
+        onParticipationClick = { 
+            // 비밀방이면 비밀번호 화면으로, 공개방이면 바로 참여
+            val detail = uiState.roomDetail
+            if (detail != null && !detail.isPublic) {
+                onNavigateToPasswordScreen(roomId)
+            } else {
+                viewModel.onParticipationClick()
+            }
+        },
         onCancelParticipationClick = { title, description -> viewModel.onCancelParticipationClick(title, description) },
         onCloseRecruitmentClick = { title, description -> viewModel.onCloseRecruitmentClick(title, description) },
         onDialogConfirm = { viewModel.onDialogConfirm() },

@@ -23,6 +23,7 @@ import com.texthip.thip.ui.group.note.viewmodel.GroupNoteViewModel
 import com.texthip.thip.ui.group.room.screen.GroupRoomMatesScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
+import com.texthip.thip.ui.group.room.screen.GroupRoomUnlockScreen
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
@@ -36,6 +37,7 @@ import com.texthip.thip.ui.navigator.extensions.navigateToGroupNoteCreate
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomMates
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomUnlock
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupVoteCreate
 import com.texthip.thip.ui.navigator.extensions.navigateToRecommendedGroupRecruit
@@ -216,6 +218,22 @@ fun NavGraphBuilder.groupNavigation(
             },
             onBookDetailClick = { isbn ->
                 navController.navigateToBookDetail(isbn)
+            },
+            onNavigateToPasswordScreen = { roomId ->
+                navController.navigateToGroupRoomUnlock(roomId)
+            }
+        )
+    }
+    
+    // Group Room Unlock 화면 (비밀번호 입력)
+    composable<GroupRoutes.RoomUnlock> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.RoomUnlock>()
+        val roomId = route.roomId
+        
+        GroupRoomUnlockScreen(
+            roomId = roomId,
+            onBackClick = {
+                navigateBack()
             }
         )
     }

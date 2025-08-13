@@ -36,6 +36,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun GroupRoomUnlockScreen(
+    roomId: Int = 0,
     onBackClick: () -> Unit = {},
     onPasswordComplete: (String) -> Unit = {},
     correctPassword: String = "1234" // 실제로는 외부에서 받아올 값
@@ -123,7 +124,6 @@ fun GroupRoomUnlockScreen(
                                     focusRequesters[index - 1].requestFocus()
                                 }
                             },
-                            containerColor = colors.DarkGrey50,
                             borderColor = if (showError) colors.Red else Color.Transparent,
                             modifier = Modifier
                                 .size(44.dp)
