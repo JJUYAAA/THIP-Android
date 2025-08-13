@@ -13,16 +13,19 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FloatingButton
@@ -33,21 +36,26 @@ import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
 import com.texthip.thip.ui.feed.mock.MySubscriptionData
+import com.texthip.thip.ui.feed.viewmodel.MySubscriptionViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
+import com.texthip.thip.ui.navigator.routes.FeedRoutes
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
+
 @Composable
 fun FeedScreen(
     navController: NavController? = null,
+    onNavigateToMySubscription: () -> Unit = {},
     nickname: String = "",
     userRole: String = "",
     feeds: List<FeedItem> = emptyList(),
     totalFeedCount: Int = 0,
     selectedTabIndex: Int = 0,
-    followerProfileImageUrls: List<String> = emptyList()
+    followerProfileImageUrls: List<String> = emptyList(),
+    viewModel: MySubscriptionViewModel = hiltViewModel()
 ) {
     val selectedIndex = rememberSaveable { mutableIntStateOf(selectedTabIndex) }
     val feedStateList = remember {
@@ -105,6 +113,7 @@ fun FeedScreen(
             roleColor = colors.SocialScience
         )
     )
+    val subscriptionUiState by viewModel.uiState.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -121,7 +130,8 @@ fun FeedScreen(
                 selectedTabIndex = selectedIndex.value,
                 onTabSelected = { selectedIndex.value = it }
             )
-            // 스크롤 영역
+
+            // 스크롤 영역 전체
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -203,11 +213,20 @@ fun FeedScreen(
                     //피드
                     item {
                         Spacer(modifier = Modifier.height(20.dp))
+                        val subscriptionsForBar = subscriptionUiState.followings.map { user ->
+                            MySubscriptionData(
+                                profileImageUrl = user.profileImageUrl,
+                                nickname = user.nickname,
+                                role = user.aliasName,
+                                roleColor = colors.White,
+                                subscriberCount = 0,
+                                isSubscribed = user.isFollowing
+                            )
+                        }
                         MySubscribeBarlist(
                             modifier = Modifier.padding(horizontal = 20.dp),
-                            subscriptions = mySubscriptions,
-                            onClick = {
-                            }
+                            subscriptions = subscriptionsForBar,
+                            onClick = onNavigateToMySubscription
                         )
                     }
                     itemsIndexed(feedStateList, key = { _, item -> item.id }) { index, feed ->
@@ -300,7 +319,7 @@ private fun FeedScreenWithoutDataPreview() {
             FeedScreen(
                 nickname = "ThipUser01",
                 userRole = "문학 칭호",
-                selectedTabIndex = 1,
+                selectedTabIndex = 0,
                 feeds = mockFeeds,
                 totalFeedCount = mockFeeds.size,
                 followerProfileImageUrls = mockFollowerImages
