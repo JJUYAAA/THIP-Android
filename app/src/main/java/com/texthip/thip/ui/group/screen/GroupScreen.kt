@@ -193,21 +193,21 @@ fun PreviewGroupScreen() {
                     com.texthip.thip.data.model.group.response.JoinedRoomResponse(
                         roomId = 1,
                         bookImageUrl = "https://picsum.photos/300/400?joined1",
-                        bookTitle = "미드나이트 라이브러리",
+                        roomTitle = "미드나이트 라이브러리",
                         memberCount = 18,
                         userPercentage = 75
                     ),
                     com.texthip.thip.data.model.group.response.JoinedRoomResponse(
                         roomId = 2,
                         bookImageUrl = "https://picsum.photos/300/400?joined2",
-                        bookTitle = "코스모스",
+                        roomTitle = "코스모스",
                         memberCount = 25,
                         userPercentage = 42
                     ),
                     com.texthip.thip.data.model.group.response.JoinedRoomResponse(
                         roomId = 3,
                         bookImageUrl = "https://picsum.photos/300/400?joined3",
-                        bookTitle = "사피엔스",
+                        roomTitle = "사피엔스",
                         memberCount = 15,
                         userPercentage = 88
                     )
