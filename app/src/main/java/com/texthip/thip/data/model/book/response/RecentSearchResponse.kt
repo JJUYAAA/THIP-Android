@@ -5,11 +5,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RecentSearchResponse(
-    @SerialName("recentSearchList") val recentSearchList: List<RecentSearchItem>
+    @SerialName("recentSearchList") val recentSearchList: List<RecentSearchItem> = emptyList()
 )
 
 @Serializable
 data class RecentSearchItem(
-    @SerialName("recentSearchId") val recentSearchId: Int,
-    @SerialName("searchTerm") val searchTerm: String
+    @SerialName("recentSearchId") val recentSearchId: Int = 0,
+    @SerialName("searchTerm") val searchTerm: String = ""
 )

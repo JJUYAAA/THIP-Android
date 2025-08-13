@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BookSaveResponse(
-    @SerialName("isbn") val isbn: String,
-    @SerialName("isSaved") val isSaved: Boolean
+    @SerialName("isbn") val isbn: String = "",
+    @SerialName("isSaved") val isSaved: Boolean = false
 )

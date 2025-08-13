@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BookSaveRequest(
-    @SerialName("type") val type: Boolean
+    @SerialName("type") val type: Boolean = false
 )

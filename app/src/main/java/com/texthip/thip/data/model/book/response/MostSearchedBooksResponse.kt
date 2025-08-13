@@ -5,13 +5,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MostSearchedBooksResponse(
-    @SerialName("bookList") val bookList: List<PopularBookItem>
+    @SerialName("bookList") val bookList: List<PopularBookItem> = emptyList()
 )
 
 @Serializable
 data class PopularBookItem(
-    @SerialName("rank") val rank: Int,
-    @SerialName("title") val title: String,
-    @SerialName("imageUrl") val imageUrl: String,
-    @SerialName("isbn") val isbn: String
+    @SerialName("rank") val rank: Int = 0,
+    @SerialName("title") val title: String = "",
+    @SerialName("imageUrl") val imageUrl: String? = null,
+    @SerialName("isbn") val isbn: String = ""
 )
