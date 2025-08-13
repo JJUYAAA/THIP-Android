@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import android.util.Log
 import com.texthip.thip.R
 import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.ui.common.buttons.GenreChipRow
@@ -49,7 +50,7 @@ import com.texthip.thip.utils.rooms.toDisplayStrings
 @Composable
 fun GroupMakeRoomScreen(
     onNavigateBack: () -> Unit,
-    onGroupCreated: () -> Unit,
+    onGroupCreated: (Int) -> Unit, // roomId 전달
     modifier: Modifier = Modifier,
     viewModel: GroupMakeRoomViewModel = hiltViewModel()
 ) {
@@ -65,16 +66,15 @@ fun GroupMakeRoomScreen(
     GroupMakeRoomContent(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
-        onGroupCreated = onGroupCreated,
-        onCreateGroup = {
+        onCreateGroup = { 
             viewModel.createGroup(
                 onSuccess = { roomId ->
-                    // TODO: 생성된 roomId를 사용하여 해당 방으로 이동할 수 있음
-                    onGroupCreated()
+                    println("DEBUG: Room created successfully with ID: $roomId")
+                    onGroupCreated(roomId)
                 },
                 onError = { errorMessage ->
-                    // TODO: 에러 메시지 표시 (토스트 메시지 등)
-                    // 현재는 uiState.errorMessage를 통해 처리
+                    println("DEBUG: Room creation failed: $errorMessage")
+                    // TODO: 에러 메시지 표시
                 }
             )
         },
@@ -97,7 +97,6 @@ fun GroupMakeRoomContent(
     modifier: Modifier = Modifier,
     uiState: GroupMakeRoomUiState,
     onNavigateBack: () -> Unit = {},
-    onGroupCreated: () -> Unit = {},    // 그룹이 만들어졌을때 로직
     onCreateGroup: () -> Unit = {},
     onSelectBook: (BookData) -> Unit = {},
     onToggleBookSearchSheet: (Boolean) -> Unit = {},

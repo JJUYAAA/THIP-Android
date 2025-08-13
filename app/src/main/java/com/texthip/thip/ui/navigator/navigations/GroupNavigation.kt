@@ -96,8 +96,14 @@ fun NavGraphBuilder.groupNavigation(
             onNavigateBack = {
                 navigateBack()
             },
-            onGroupCreated = {
-                navigateBack()
+            onGroupCreated = { roomId ->
+                println("DEBUG: Navigation received roomId: $roomId, navigating to GroupRecruit")
+                // 생성된 방의 모집 화면으로 이동 (백스택 정리와 함께)
+                navController.navigate(GroupRoutes.Recruit(roomId)) {
+                    // MakeRoom 화면을 백스택에서 제거
+                    popUpTo<GroupRoutes.MakeRoom> { inclusive = true }
+                }
+                println("DEBUG: Navigation completed")
             }
         )
     }
@@ -122,8 +128,11 @@ fun NavGraphBuilder.groupNavigation(
             onNavigateBack = {
                 navigateBack()
             },
-            onGroupCreated = {
-                navigateBack()
+            onGroupCreated = { roomId ->
+                // 생성된 방의 모집 화면으로 이동하고 백스택 제거
+                navController.navigateToGroupRecruit(roomId)
+                // 백스택에서 MakeRoomWithBook 화면 제거
+                navController.popBackStack<GroupRoutes.MakeRoomWithBook>(inclusive = true)
             }
         )
     }
@@ -196,7 +205,14 @@ fun NavGraphBuilder.groupNavigation(
                 navController.popBackStack(MainTabRoutes.Group, false)
             },
             onBackClick = {
-                navigateBack()
+                // MakeRoom에서 바로 온 경우를 확인하여 Group 홈으로 이동
+                val canGoBack = navController.previousBackStackEntry != null
+                if (canGoBack) {
+                    navigateBack()
+                } else {
+                    // 백스택이 비어있으면 Group 홈으로 이동 (방금 생성된 방의 경우)
+                    navController.popBackStack(MainTabRoutes.Group, false)
+                }
             },
             onBookDetailClick = { isbn ->
                 navController.navigateToBookDetail(isbn)
