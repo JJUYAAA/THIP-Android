@@ -82,15 +82,15 @@ class GroupMakeRoomViewModel @Inject constructor(
             updateState { it.copy(isLoadingBooks = true) }
             try {
                 val savedBooksResult = bookRepository.getBooks("saved")
-                savedBooksResult.onSuccess { bookDtos ->
-                    updateState { it.copy(savedBooks = bookDtos.map { dto -> dto.toBookData() }) }
+                savedBooksResult.onSuccess { response ->
+                    updateState { it.copy(savedBooks = response?.bookList?.map { dto -> dto.toBookData() } ?: emptyList()) }
                 }.onFailure {
                     updateState { it.copy(savedBooks = emptyList()) }
                 }
                 
                 val groupBooksResult = bookRepository.getBooks("joining")
-                groupBooksResult.onSuccess { bookDtos ->
-                    updateState { it.copy(groupBooks = bookDtos.map { dto -> dto.toBookData() }) }
+                groupBooksResult.onSuccess { response ->
+                    updateState { it.copy(groupBooks = response?.bookList?.map { dto -> dto.toBookData() } ?: emptyList()) }
                 }.onFailure {
                     updateState { it.copy(groupBooks = emptyList()) }
                 }
