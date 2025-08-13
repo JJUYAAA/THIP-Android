@@ -47,7 +47,7 @@ fun SearchBookGroupScreen(
     isbn: String,
     onLeftClick: () -> Unit = {},
     onCardClick: (Int) -> Unit = {},
-    onCreateRoomClick: () -> Unit = {},
+    onCreateRoomClick: (isbn: String, title: String, imageUrl: String, author: String) -> Unit = { _, _, _, _ -> },
     viewModel: SearchBookGroupViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -77,6 +77,10 @@ fun SearchBookGroupScreen(
         totalCount = uiState.totalCount,
         isLoadingMore = uiState.isLoadingMore,
         canLoadMore = uiState.canLoadMore,
+        isbn = isbn,
+        bookTitle = uiState.bookDetail?.title ?: "",
+        bookImageUrl = uiState.bookDetail?.imageUrl ?: "",
+        bookAuthor = uiState.bookDetail?.authorName ?: "",
         onLeftClick = onLeftClick,
         onCardClick = onCardClick,
         onCreateRoomClick = onCreateRoomClick,
@@ -95,9 +99,13 @@ private fun SearchBookGroupScreenContent(
     totalCount: Int = 0,
     isLoadingMore: Boolean = false,
     canLoadMore: Boolean = true,
+    isbn: String = "",
+    bookTitle: String = "",
+    bookImageUrl: String = "",
+    bookAuthor: String = "",
     onLeftClick: () -> Unit = {},
     onCardClick: (Int) -> Unit = {},
-    onCreateRoomClick: () -> Unit = {},
+    onCreateRoomClick: (isbn: String, title: String, imageUrl: String, author: String) -> Unit = { _, _, _, _ -> },
     onLoadMore: () -> Unit = {}
 ) {
     when {
@@ -247,7 +255,9 @@ private fun SearchBookGroupScreenContent(
                         .fillMaxWidth()
                         .height(50.dp),
                     shape = RoundedCornerShape(0.dp),
-                    onClick = onCreateRoomClick
+                    onClick = { 
+                        onCreateRoomClick(isbn, bookTitle, bookImageUrl, bookAuthor)
+                    }
                 ) {
                     Text(
                         text = stringResource(R.string.group_recruiting_create_button),

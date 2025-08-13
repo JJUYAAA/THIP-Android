@@ -2,6 +2,7 @@ package com.texthip.thip.ui.search.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.data.model.book.response.RecruitingRoomItem
 import com.texthip.thip.data.repository.BookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,11 +33,24 @@ class SearchBookGroupViewModel @Inject constructor(
                 recruitingRooms = emptyList(),
                 nextCursor = null,
                 hasMore = true,
-                totalCount = 0
+                totalCount = 0,
+                bookDetail = null
             )
             
+            // 책 정보와 모집중인 방 정보 동시 로드
+            loadBookDetail(isbn)
             loadRooms(isbn, null)
         }
+    }
+
+    private suspend fun loadBookDetail(isbn: String) {
+        bookRepository.getBookDetail(isbn)
+            .onSuccess { bookDetail ->
+                _uiState.value = _uiState.value.copy(bookDetail = bookDetail)
+            }
+            .onFailure { 
+                // 책 정보 로드 실패는 무시 (방 정보가 더 중요)
+            }
     }
 
     fun loadMoreRooms() {
@@ -94,7 +108,8 @@ data class SearchBookGroupUiState(
     val hasMore: Boolean = true,
     val isLoading: Boolean = false,
     val isLoadingMore: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val bookDetail: BookDetailResponse? = null
 ) {
     val canLoadMore: Boolean get() = hasMore && !isLoading && !isLoadingMore
 }

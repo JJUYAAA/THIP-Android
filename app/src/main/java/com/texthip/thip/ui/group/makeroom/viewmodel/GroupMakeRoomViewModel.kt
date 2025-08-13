@@ -54,6 +54,21 @@ class GroupMakeRoomViewModel @Inject constructor(
     fun selectBook(book: BookData) {
         updateState { it.copy(selectedBook = book) }
     }
+    
+    fun setPreselectedBook(isbn: String, title: String, imageUrl: String, author: String) {
+        val preselectedBook = BookData(
+            title = title,
+            imageUrl = imageUrl,
+            author = author,
+            isbn = isbn
+        )
+        updateState { 
+            it.copy(
+                selectedBook = preselectedBook,
+                isBookPreselected = true
+            ) 
+        }
+    }
 
     fun toggleBookSearchSheet(show: Boolean) {
         updateState { it.copy(showBookSearchSheet = show) }
