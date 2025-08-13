@@ -71,16 +71,16 @@ fun GroupMyContent(
     val listState = rememberLazyListState()
     
     // 무한 스크롤 로직
-    val shouldLoadMore by remember {
+    val shouldLoadMore by remember(uiState.canLoadMore, uiState.isLoadingMore) {
         derivedStateOf {
             val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
             val totalItems = listState.layoutInfo.totalItemsCount
-            lastVisibleIndex >= totalItems - 3
+            uiState.canLoadMore && !uiState.isLoadingMore && totalItems > 0 && lastVisibleIndex >= totalItems - 3
         }
     }
     
     LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore && uiState.canLoadMore) {
+        if (shouldLoadMore) {
             onLoadMore()
         }
     }

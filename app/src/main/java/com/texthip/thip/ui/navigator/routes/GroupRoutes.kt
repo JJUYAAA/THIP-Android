@@ -8,6 +8,14 @@ sealed class GroupRoutes : Routes() {
     data object MakeRoom : GroupRoutes()
 
     @Serializable
+    data class MakeRoomWithBook(
+        val isbn: String,
+        val title: String,
+        val imageUrl: String,
+        val author: String
+    ) : GroupRoutes()
+    
+    @Serializable
     data object Done : GroupRoutes()
 
     @Serializable

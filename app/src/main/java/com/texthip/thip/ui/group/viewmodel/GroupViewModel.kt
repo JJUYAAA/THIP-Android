@@ -89,6 +89,9 @@ class GroupViewModel @Inject constructor(
                             }
                             loadedPagesCount++
                             currentMyGroupsPage = page + 1
+                        } ?: run {
+                            // null 응답 시 더 이상 로드할 수 없음을 명시
+                            updateState { it.copy(hasMoreMyGroups = false) }
                         }
                     }
                     .onFailure {

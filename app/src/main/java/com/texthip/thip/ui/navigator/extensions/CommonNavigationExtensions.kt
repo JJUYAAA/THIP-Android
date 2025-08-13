@@ -2,6 +2,7 @@ package com.texthip.thip.ui.navigator.extensions
 
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
+import com.texthip.thip.ui.navigator.routes.CommonRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
 
@@ -35,4 +36,8 @@ fun NavDestination.isRoute(targetRoute: MainTabRoutes): Boolean {
     return route == targetRoute::class.qualifiedName
 }
 
+// 공통 화면 네비게이션
+fun NavHostController.navigateToRegisterBook() {
+    navigate(CommonRoutes.RegisterBook)
+}
 

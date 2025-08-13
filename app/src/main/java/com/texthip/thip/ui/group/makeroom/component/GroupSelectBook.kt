@@ -37,6 +37,7 @@ fun GroupSelectBook(
     onChangeBookClick: () -> Unit,
     onSelectBookClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isBookPreselected: Boolean = false
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -117,11 +118,13 @@ fun GroupSelectBook(
                         )
                     }
                 }
-                OptionChipButton(
-                    text = stringResource(R.string.change),
-                    onClick = onChangeBookClick,
-                    isSelected = false
-                )
+                if (!isBookPreselected) {
+                    OptionChipButton(
+                        text = stringResource(R.string.change),
+                        onClick = onChangeBookClick,
+                        isSelected = false
+                    )
+                }
             }
         }
     }
@@ -154,6 +157,19 @@ fun GroupSelectBookPreview_Selected() {
             selectedBook = dummyBook,
             onChangeBookClick = {},
             onSelectBookClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GroupSelectBookPreview_Preselected() {
+    ThipTheme {
+        GroupSelectBook(
+            selectedBook = dummyBook,
+            onChangeBookClick = {},
+            onSelectBookClick = {},
+            isBookPreselected = true
         )
     }
 }

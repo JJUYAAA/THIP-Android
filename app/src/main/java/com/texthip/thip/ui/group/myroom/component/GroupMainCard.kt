@@ -90,7 +90,7 @@ fun GroupMainCard(
                     Spacer(Modifier.height(2.dp))
                     // 제목
                     Text(
-                        text = data.bookTitle,
+                        text = data.roomTitle,
                         style = typography.smalltitle_sb600_s18_h24,
                         color = colors.Black,
                         maxLines = 1
@@ -171,7 +171,7 @@ fun PreviewMyGroupMainCard() {
         GroupMainCard(
             data = JoinedRoomResponse(
                 roomId = 1,
-                bookTitle = "호르몬 체인지 완독하는 방",
+                roomTitle = "호르몬 체인지 완독하는 방",
                 memberCount = 22,
                 bookImageUrl = "https://picsum.photos/300/200?1",
                 userPercentage = 40

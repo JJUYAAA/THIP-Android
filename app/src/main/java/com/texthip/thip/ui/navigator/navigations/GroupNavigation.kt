@@ -101,6 +101,32 @@ fun NavGraphBuilder.groupNavigation(
         )
     }
     
+    // Group MakeRoom 화면 (책 정보 미리 선택됨)
+    composable<GroupRoutes.MakeRoomWithBook> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.MakeRoomWithBook>()
+        val viewModel: GroupMakeRoomViewModel = hiltViewModel()
+        
+        // 책 정보를 ViewModel에 미리 설정
+        LaunchedEffect(route) {
+            viewModel.setPreselectedBook(
+                isbn = route.isbn,
+                title = route.title,
+                imageUrl = route.imageUrl,
+                author = route.author
+            )
+        }
+        
+        GroupMakeRoomScreen(
+            viewModel = viewModel,
+            onNavigateBack = {
+                navigateBack()
+            },
+            onGroupCreated = {
+                navigateBack()
+            }
+        )
+    }
+    
     // Group Done 화면
     composable<GroupRoutes.Done> {
         GroupDoneScreen(
