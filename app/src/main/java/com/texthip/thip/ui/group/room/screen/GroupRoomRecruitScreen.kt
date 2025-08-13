@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -332,7 +333,7 @@ fun GroupRoomRecruitContent(
                                 Text(
                                     text = detail.category,
                                     style = typography.info_m500_s12,
-                                    color = colors.SocialScience
+                                    color = Color(detail.categoryColor.removePrefix("#").toLong(16) or 0xFF000000)
                                 )
                             }
                         }
@@ -364,7 +365,6 @@ fun GroupRoomRecruitContent(
                             horizontalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
                             items(detail.recommendRooms) { rec ->
-                                // RecommendRoomResponse에서 데이터 추출
                                 val daysLeft = DateUtils.extractDaysFromDeadline(rec.recruitEndDate)
                                 CardItemRoomSmall(
                                     title = rec.roomName,
@@ -485,6 +485,7 @@ fun GroupRoomRecruitScreenPreview() {
                     progressEndDate = "2025.02.28",
                     recruitEndDate = "D-5",
                     category = "문학",
+                    categoryColor = "#8B7CF6",
                     roomDescription = "매트 헤이그의 미드나이트 라이브러리를 함께 읽으며 인생의 가능성과 선택에 대해 이야기해요. 각자의 삶에서 후회했던 순간들을 공유하고, 서로 위로하며 성장하는 시간을 가져보아요. 따뜻한 마음으로 서로의 이야기를 들어주실 분들과 함께하고 싶습니다.",
                     memberCount = 18,
                     recruitCount = 20,

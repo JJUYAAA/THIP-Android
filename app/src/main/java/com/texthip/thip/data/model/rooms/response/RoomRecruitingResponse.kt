@@ -15,6 +15,7 @@ data class RoomRecruitingResponse(
     @SerialName("progressEndDate") val progressEndDate: String,
     @SerialName("recruitEndDate") val recruitEndDate: String,
     @SerialName("category") val category: String,
+    @SerialName("categoryColor") val categoryColor: String,
     @SerialName("roomDescription") val roomDescription: String,
     @SerialName("memberCount") val memberCount: Int,
     @SerialName("recruitCount") val recruitCount: Int,
