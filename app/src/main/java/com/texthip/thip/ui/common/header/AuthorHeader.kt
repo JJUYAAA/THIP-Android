@@ -29,6 +29,7 @@ import com.texthip.thip.ui.common.buttons.OutlinedButton
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun AuthorHeader(
@@ -36,6 +37,7 @@ fun AuthorHeader(
     profileImage: String?,
     nickname: String,
     badgeText: String,
+    badgeTextColor: Color  = colors.NeonGreen,
     buttonText: String = "",
     buttonWidth: Dp = 60.dp,
     showButton: Boolean = true,
@@ -80,7 +82,7 @@ fun AuthorHeader(
             Text(
                 text = badgeText,
                 style = typography.feedcopy_r400_s14_h20,
-                color = colors.NeonGreen,
+                color = badgeTextColor,
                 maxLines = 1
             )
         }
@@ -131,6 +133,7 @@ fun PreviewAuthorHeader() {
                 profileImage = null,
                 nickname = "열자자제한열열자제한",
                 badgeText = "칭호칭호칭호",
+                badgeTextColor = colors.Yellow,
                 showButton = false,
                 showThipNum = true,
                 thipNum = 10,
