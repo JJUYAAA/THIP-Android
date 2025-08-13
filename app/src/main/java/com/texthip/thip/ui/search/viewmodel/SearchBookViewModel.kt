@@ -112,6 +112,8 @@ class SearchBookViewModel @Inject constructor(
                         it.copy(
                             searchResults = emptyList(),
                             isSearching = false,
+                            isLiveSearching = false,
+                            isCompleteSearching = false,
                             error = if (isLiveSearch) null else "검색 결과를 불러올 수 없습니다."
                         )
                     }
@@ -122,6 +124,8 @@ class SearchBookViewModel @Inject constructor(
                     it.copy(
                         searchResults = emptyList(),
                         isSearching = false,
+                        isLiveSearching = false,
+                        isCompleteSearching = false,
                         error = if (isLiveSearch) null else (throwable.message ?: "검색 중 오류가 발생했습니다.")
                     )
                 }

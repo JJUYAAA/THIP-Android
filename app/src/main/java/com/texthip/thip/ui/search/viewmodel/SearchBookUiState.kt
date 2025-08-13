@@ -34,6 +34,4 @@ data class SearchBookUiState(
     val hasResults: Boolean get() = searchResults.isNotEmpty()
     val canLoadMore: Boolean get() = hasMorePages && !isSearching && !isLoadingMore
     val showEmptyState: Boolean get() = searchQuery.isNotBlank() && searchResults.isEmpty() && !isSearching
-    val showInitialScreen: Boolean get() = isInitial && searchQuery.isBlank()
-    val isAnySearching: Boolean get() = isLiveSearching || isCompleteSearching
 }

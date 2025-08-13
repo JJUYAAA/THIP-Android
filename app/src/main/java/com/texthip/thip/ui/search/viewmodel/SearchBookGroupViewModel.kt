@@ -25,6 +25,7 @@ class SearchBookGroupViewModel @Inject constructor(
     private var currentIsbn: String = ""
 
     fun loadRecruitingRooms(isbn: String) {
+        loadMoreJob?.cancel() // 신규 검색 시 이전 로드 작업 취소
         currentIsbn = isbn
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
@@ -48,9 +49,7 @@ class SearchBookGroupViewModel @Inject constructor(
             .onSuccess { bookDetail ->
                 _uiState.value = _uiState.value.copy(bookDetail = bookDetail)
             }
-            .onFailure { 
-                // 책 정보 로드 실패는 무시 (방 정보가 더 중요)
-            }
+            .onFailure { }
     }
 
     fun loadMoreRooms() {
