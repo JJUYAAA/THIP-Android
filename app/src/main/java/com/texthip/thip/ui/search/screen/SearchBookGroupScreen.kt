@@ -197,11 +197,12 @@ private fun SearchBookGroupScreenContent(
                             val listState = rememberLazyListState()
                             
                             // 무한 스크롤 로직
-                            LaunchedEffect(listState) {
+                            LaunchedEffect(listState, canLoadMore, isLoadingMore) {
                                 snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
                                     .collect { lastVisibleIndex ->
                                         if (lastVisibleIndex != null && 
                                             recruitingList.isNotEmpty() &&
+                                            !isLoadingMore &&
                                             lastVisibleIndex >= recruitingList.size - 3 && 
                                             canLoadMore) {
                                             onLoadMore()

@@ -37,7 +37,7 @@ fun SearchActiveField(
     val listState = rememberLazyListState()
     
     // 무한 스크롤을 위한 로직
-    val shouldLoadMore by remember {
+    val shouldLoadMore by remember(hasMore, isLoading) {
         derivedStateOf {
             val layoutInfo = listState.layoutInfo
             val totalItemsCount = layoutInfo.totalItemsCount
