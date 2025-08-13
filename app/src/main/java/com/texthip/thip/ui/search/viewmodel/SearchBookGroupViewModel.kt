@@ -82,6 +82,7 @@ class SearchBookGroupViewModel @Inject constructor(
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isLoadingMore = false,
+                        hasMore = false, // null 응답 시 더 이상 로드할 수 없음을 명시
                         error = if (cursor == null) "모집중인 방 정보를 찾을 수 없습니다." else null
                     )
                 }

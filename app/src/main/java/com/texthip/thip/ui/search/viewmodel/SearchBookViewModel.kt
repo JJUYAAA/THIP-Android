@@ -135,6 +135,7 @@ class SearchBookViewModel @Inject constructor(
                     updateState {
                         it.copy(
                             isLoadingMore = false,
+                            hasMorePages = false, // null 응답 시 더 이상 페이지가 없음을 명시
                             error = "추가 결과를 불러올 수 없습니다."
                         )
                     }

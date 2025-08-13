@@ -60,6 +60,10 @@ class GroupMyViewModel @Inject constructor(
                             }
                             nextCursor = response.nextCursor
                             isLastPage = response.isLast
+                        } ?: run {
+                            // null 응답 시 더 이상 로드할 수 없음을 명시
+                            updateState { it.copy(hasMore = false) }
+                            isLastPage = true
                         }
                     }
                     .onFailure { exception ->
