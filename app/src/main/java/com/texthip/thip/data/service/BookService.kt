@@ -19,7 +19,7 @@ import retrofit2.http.Query
 interface BookService {
 
     /** 저장된 책 또는 모임 책 목록 조회 */
-    @GET("books")
+    @GET("books/selectable-list")
     suspend fun getBooks(
         @Query("type") type: String
     ): BaseResponse<BookListResponse>
