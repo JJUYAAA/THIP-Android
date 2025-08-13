@@ -1,14 +1,15 @@
 package com.texthip.thip.data.model.book.response
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class RecentSearchResponse(
-    val recentSearchList: List<RecentSearchItem>
+    @SerialName("recentSearchList") val recentSearchList: List<RecentSearchItem>
 )
 
 @Serializable
 data class RecentSearchItem(
-    val recentSearchId: Int,
-    val searchTerm: String
+    @SerialName("recentSearchId") val recentSearchId: Int,
+    @SerialName("searchTerm") val searchTerm: String
 )
