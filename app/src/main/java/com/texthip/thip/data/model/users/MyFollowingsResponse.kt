@@ -5,14 +5,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MyFollowingsResponse(
-    @SerializedName("followings") val followings: List<FollowingDto>,
+    @SerializedName("followings") val followings: List<FollowingList>,
     @SerializedName("totalFollowingCount") val totalFollowingCount: Int,
     @SerializedName("nextCursor") val nextCursor: String?,
     @SerializedName("isLast") val isLast: Boolean
 )
 
 @Serializable
-data class FollowingDto(
+data class FollowingList(
     @SerializedName("userId") val userId: Int,
     @SerializedName("nickname") val nickname: String,
     @SerializedName("profileImageUrl") val profileImageUrl: String?,

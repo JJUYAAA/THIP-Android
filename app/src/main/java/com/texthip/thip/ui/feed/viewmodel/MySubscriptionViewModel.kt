@@ -2,7 +2,7 @@ package com.texthip.thip.ui.feed.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.texthip.thip.data.model.users.FollowingDto
+import com.texthip.thip.data.model.users.FollowingList
 import com.texthip.thip.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 data class MySubscriptionUiState(
     val isLoading: Boolean = false,
-    val followings: List<FollowingDto> = emptyList(),
+    val followings: List<FollowingList> = emptyList(),
     val totalCount: Int = 0,
     val isLastPage: Boolean = false,
     val errorMessage: String? = null,

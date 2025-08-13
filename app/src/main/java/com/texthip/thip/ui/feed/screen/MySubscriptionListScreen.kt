@@ -34,7 +34,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.texthip.thip.R
-import com.texthip.thip.data.model.users.FollowingDto
+import com.texthip.thip.data.model.users.FollowingList
 import com.texthip.thip.ui.common.header.AuthorHeader
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
@@ -193,7 +193,7 @@ fun MySubscriptionContent(
 @Composable
 private fun MySubscriptionListScreenPrev() {
     val mockUsers = (1..10).map {
-        FollowingDto(
+        FollowingList(
             userId = it,
             profileImageUrl = null,
             nickname = "문학소년 $it",
