@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,13 +33,14 @@ class SearchBookViewModel @Inject constructor(
     }
     
     private fun updateState(update: (SearchBookUiState) -> SearchBookUiState) {
-        _uiState.value = update(_uiState.value)
+        _uiState.update(update)
     }
 
     fun updateSearchQuery(query: String) {
         updateState { it.copy(searchQuery = query) }
-
         searchJob?.cancel()
+        loadMoreJob?.cancel()
+
         if (query.isNotBlank()) {
             updateState { 
                 it.copy(
@@ -60,6 +62,8 @@ class SearchBookViewModel @Inject constructor(
         val query = uiState.value.searchQuery.trim()
         if (query.isNotBlank()) {
             searchJob?.cancel()
+            loadMoreJob?.cancel()
+
             updateState { 
                 it.copy(
                     isInitial = false,
@@ -114,6 +118,7 @@ class SearchBookViewModel @Inject constructor(
                             isSearching = false,
                             isLiveSearching = false,
                             isCompleteSearching = false,
+                            hasMorePages = false,
                             error = if (isLiveSearch) null else "검색 결과를 불러올 수 없습니다."
                         )
                     }
