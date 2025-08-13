@@ -16,6 +16,21 @@ fun NavHostController.navigateToGroupMakeRoom() {
     navigate(GroupRoutes.MakeRoom)
 }
 
+// 책 정보가 미리 선택된 모임방 만들기 화면으로 이동
+fun NavHostController.navigateToGroupMakeRoomWithBook(
+    isbn: String,
+    title: String,
+    imageUrl: String,
+    author: String
+) {
+    navigate(GroupRoutes.MakeRoomWithBook(
+        isbn = isbn,
+        title = title,
+        imageUrl = imageUrl,
+        author = author
+    ))
+}
+
 // 완료된 모임방 목록으로 이동
 fun NavHostController.navigateToGroupDone() {
     navigate(GroupRoutes.Done)
