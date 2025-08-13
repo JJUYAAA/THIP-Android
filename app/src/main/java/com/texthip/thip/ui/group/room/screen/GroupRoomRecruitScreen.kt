@@ -1,7 +1,7 @@
 package com.texthip.thip.ui.group.room.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import coil.compose.AsyncImage
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -124,9 +124,9 @@ fun GroupRoomRecruitContent(
         // 데이터가 없는 경우
         val detail = uiState.roomDetail ?: return@Box
         
-        Image(
-            painter = painterResource(id = R.drawable.group_room_recruiting),
-            contentDescription = "배경 이미지",
+        AsyncImage(
+            model = detail.roomImageUrl,
+            contentDescription = "모임방 배경 이미지",
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .fillMaxWidth(),
