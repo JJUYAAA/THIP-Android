@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -105,7 +106,8 @@ fun MySubscribeBarlist(
                                 overflow = TextOverflow.Ellipsis,
                                 style = typography.view_r400_s11_h20,
                                 color = colors.White,
-                                modifier = Modifier.width(36.dp)
+                                modifier = Modifier.width(36.dp),
+                                textAlign = TextAlign.Center
                             )
                         }
                         Spacer(modifier = Modifier.width(12.dp))
@@ -160,7 +162,7 @@ private fun MySubscribeBarlistPrev() {
         val previewData = List(10) {
             MySubscriptionData(
                 profileImageUrl = "https://example.com/profile$it.jpg",
-                nickname = "닉네임$it",
+                nickname = "닉네임임$it",
                 role = "문학가",
                 roleColor = colors.Red,
                 subscriberCount = 100 + it
