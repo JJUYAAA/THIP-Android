@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,13 +34,15 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.texthip.thip.R
+import com.texthip.thip.data.model.users.FollowingDto
 import com.texthip.thip.ui.common.header.AuthorHeader
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.feed.viewmodel.MyFollowingUiModel
 import com.texthip.thip.ui.feed.viewmodel.MySubscriptionUiState
 import com.texthip.thip.ui.feed.viewmodel.MySubscriptionViewModel
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.color.hexToColor
 import kotlinx.coroutines.delay
 
@@ -114,7 +115,7 @@ fun MySubscriptionContent(
 
         Column(
             Modifier
-                .background(ThipTheme.colors.Black)
+                .background(colors.Black)
                 .fillMaxSize()
         ) {
             DefaultTopAppBar(
@@ -125,15 +126,15 @@ fun MySubscriptionContent(
                 Spacer(modifier = Modifier.height(40.dp))
                 Text(
                     text = stringResource(R.string.whole_num, uiState.totalCount),
-                    style = ThipTheme.typography.menu_m500_s14_h24,
-                    color = ThipTheme.colors.Grey,
+                    style = typography.menu_m500_s14_h24,
+                    color = colors.Grey,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, bottom = 4.dp)
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    color = ThipTheme.colors.DarkGrey02,
+                    color = colors.DarkGrey02,
                     thickness = 1.dp
                 )
 
@@ -161,7 +162,7 @@ fun MySubscriptionContent(
                             if (index < uiState.followings.lastIndex) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 HorizontalDivider(
-                                    color = ThipTheme.colors.DarkGrey02,
+                                    color = colors.DarkGrey02,
                                     thickness = 1.dp
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
@@ -192,7 +193,7 @@ fun MySubscriptionContent(
 @Composable
 private fun MySubscriptionListScreenPrev() {
     val mockUsers = (1..10).map {
-        MyFollowingUiModel(
+        FollowingDto(
             userId = it,
             profileImageUrl = null,
             nickname = "문학소년 $it",
