@@ -108,7 +108,7 @@ fun SavedScreen(
                     }
                 }
             }
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Box(modifier = Modifier .weight(1f) .fillMaxWidth()) {
                 when (selectedTabIndex) {
                     0 -> FeedContent(feedList = feedList, viewModel = feedViewModel)
                     1 -> BookContent(bookList = bookList, viewModel = bookViewModel)
