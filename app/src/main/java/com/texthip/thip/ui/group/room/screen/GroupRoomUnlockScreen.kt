@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,9 +28,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.SingleDigitBox
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.group.room.viewmodel.GroupRoomUnlockViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -37,10 +41,11 @@ import kotlinx.coroutines.delay
 @Composable
 fun GroupRoomUnlockScreen(
     roomId: Int = 0,
+    viewModel: GroupRoomUnlockViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onPasswordComplete: (String) -> Unit = {},
-    correctPassword: String = "1234" // 실제로는 외부에서 받아올 값
+    onSuccessNavigation: () -> Unit = {}
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     var password by remember { mutableStateOf(arrayOf("", "", "", "")) }
     var showError by remember { mutableStateOf(false) }
     val focusRequesters = remember { List(4) { FocusRequester() } }
@@ -49,24 +54,42 @@ fun GroupRoomUnlockScreen(
     LaunchedEffect(password.toList()) {
         val fullPassword = password.joinToString("")
         if (fullPassword.length == 4 && password.all { it.length == 1 }) {
-            if (fullPassword == correctPassword) {
-                showError = false
-                onPasswordComplete(fullPassword)
-            } else {
-                showError = true
-                delay(1000)
-                password = arrayOf("", "", "", "")
-                showError = false
-                focusRequesters[0].requestFocus()
-            }
-        } else {
-            showError = false
+            viewModel.checkPassword(roomId, fullPassword)
         }
     }
 
+    LaunchedEffect(uiState.passwordMatched) {
+        when (uiState.passwordMatched) {
+            true -> {
+                // 비밀번호 일치: 성공 콜백 호출하여 네비게이션 처리
+                onSuccessNavigation()
+            }
+            false -> {
+                showError = true
+                delay(1000) // 사용자에게 에러 메시지를 보여줄 시간
+                password = arrayOf("", "", "", "")
+                showError = false
+                focusRequesters[0].requestFocus()
+                viewModel.resetPasswordState() // ViewModel 상태 초기화
+            }
+            null -> { }
+        }
+    }
+
+    // 화면 진입 시 상태 초기화 및 키보드 자동 표시
     LaunchedEffect(Unit) {
+        viewModel.initializeState() // 상태 완전 초기화
+        delay(300) // 화면 전환 애니메이션 후 키보드 표시
         focusRequesters[0].requestFocus()
         keyboardController?.show()
+    }
+    
+    // 화면 종료 시 리소스 정리
+    DisposableEffect(Unit) {
+        onDispose {
+            // 키보드 숨기기
+            keyboardController?.hide()
+        }
     }
 
     Box(
@@ -158,9 +181,7 @@ fun GroupRoomUnlockScreenPreview() {
     ThipTheme {
         GroupRoomUnlockScreen(
             onBackClick = {},
-            onPasswordComplete = { password ->
-            },
-            correctPassword = "1234"
+            onSuccessNavigation = {}
         )
     }
 }

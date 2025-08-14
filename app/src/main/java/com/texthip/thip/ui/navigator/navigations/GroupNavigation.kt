@@ -24,6 +24,7 @@ import com.texthip.thip.ui.group.room.screen.GroupRoomMatesScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomUnlockScreen
+import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitViewModel
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
@@ -44,7 +45,8 @@ import com.texthip.thip.ui.navigator.extensions.navigateToRecommendedGroupRecrui
 import com.texthip.thip.ui.navigator.routes.GroupRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
-// Group
+private const val PARTICIPATION_APPROVED_KEY = "participation_approved_key"
+
 @SuppressLint("UnrememberedGetBackStackEntry")
 fun NavGraphBuilder.groupNavigation(
     navController: NavHostController,
@@ -99,13 +101,9 @@ fun NavGraphBuilder.groupNavigation(
                 navigateBack()
             },
             onGroupCreated = { roomId ->
-                println("DEBUG: Navigation received roomId: $roomId, navigating to GroupRecruit")
-                // 생성된 방의 모집 화면으로 이동 (백스택 정리와 함께)
                 navController.navigate(GroupRoutes.Recruit(roomId)) {
-                    // MakeRoom 화면을 백스택에서 제거
                     popUpTo<GroupRoutes.MakeRoom> { inclusive = true }
                 }
-                println("DEBUG: Navigation completed")
             }
         )
     }
@@ -194,7 +192,19 @@ fun NavGraphBuilder.groupNavigation(
     composable<GroupRoutes.Recruit> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Recruit>()
         val roomId = route.roomId
-        
+        val viewModel: GroupRoomRecruitViewModel = hiltViewModel()
+
+        val participationApproved by backStackEntry.savedStateHandle
+            .getStateFlow(PARTICIPATION_APPROVED_KEY, false)
+            .collectAsState()
+
+        LaunchedEffect(participationApproved) {
+            if (participationApproved) {
+                viewModel.onParticipationClick()
+                backStackEntry.savedStateHandle[PARTICIPATION_APPROVED_KEY] = false
+            }
+        }
+
         GroupRoomRecruitScreen(
             roomId = roomId,
             onRecommendationClick = { recommendation ->
@@ -233,6 +243,13 @@ fun NavGraphBuilder.groupNavigation(
         GroupRoomUnlockScreen(
             roomId = roomId,
             onBackClick = {
+                navigateBack()
+            },
+            onSuccessNavigation = {
+                // 비밀번호가 맞았다는 '신호'만 이전 화면에 전달
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set(PARTICIPATION_APPROVED_KEY, true)
                 navigateBack()
             }
         )

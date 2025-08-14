@@ -69,11 +69,9 @@ fun GroupMakeRoomScreen(
         onCreateGroup = { 
             viewModel.createGroup(
                 onSuccess = { roomId ->
-                    println("DEBUG: Room created successfully with ID: $roomId")
                     onGroupCreated(roomId)
                 },
                 onError = { errorMessage ->
-                    println("DEBUG: Room creation failed: $errorMessage")
                     // TODO: 에러 메시지 표시
                 }
             )
@@ -264,18 +262,6 @@ fun GroupMakeRoomContent(
                 onSearch = onSearchBooks
             )
         }
-
-        // 로딩 인디케이터
-        /*if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(colors.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = colors.NeonGreen)
-            }
-        }*/
     }
 }
 
