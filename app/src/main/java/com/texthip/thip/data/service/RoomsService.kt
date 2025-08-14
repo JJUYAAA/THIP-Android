@@ -15,6 +15,7 @@ import com.texthip.thip.data.model.rooms.response.RoomJoinResponse
 import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
 import com.texthip.thip.data.model.rooms.response.RoomMainList
 import com.texthip.thip.data.model.rooms.response.RoomSecreteRoomResponse
+import com.texthip.thip.data.model.rooms.response.RoomCloseResponse
 import com.texthip.thip.data.model.rooms.response.RoomsBookPageResponse
 import com.texthip.thip.data.model.rooms.response.RoomsCreateVoteResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteRecordResponse
@@ -69,6 +70,22 @@ interface RoomsService {
         @Body request: RoomJoinRequest
     ): BaseResponse<RoomJoinResponse>
 
+    /** 비밀번호 입력 */
+    @POST("/rooms/{roomId}/password")
+    suspend fun postParticipateSecreteRoom(
+        @Path("roomId") roomId: Int,
+        @Body request: RoomSecreteRoomRequest
+    ): BaseResponse<RoomSecreteRoomResponse>
+
+    /** 모집 마감 */
+    @POST("rooms/{roomId}/close")
+    suspend fun closeRoom(
+        @Path("roomId") roomId: Int
+    ): BaseResponse<RoomCloseResponse>
+
+
+
+    /** 기록장 API들 */
     @GET("rooms/{roomId}/playing")
     suspend fun getRoomsPlaying(
         @Path("roomId") roomId: Int
@@ -126,10 +143,4 @@ interface RoomsService {
         @Path("postId") postId: Int,
         @Body request: RoomsPostsLikesRequest
     ): BaseResponse<RoomsPostsLikesResponse>
-
-    @POST("/rooms/{roomId}/password")
-    suspend fun postParticipateSecreteRoom(
-        @Path("roomId") roomId: Int,
-        @Body request: RoomSecreteRoomRequest
-    ): BaseResponse<RoomSecreteRoomResponse>
 }

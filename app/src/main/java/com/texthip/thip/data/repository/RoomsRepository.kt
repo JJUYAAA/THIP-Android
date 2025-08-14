@@ -18,6 +18,7 @@ import com.texthip.thip.data.model.rooms.response.MyRoomListResponse
 import com.texthip.thip.data.model.rooms.response.RoomMainList
 import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
 import com.texthip.thip.data.model.rooms.response.RoomSecreteRoomResponse
+import com.texthip.thip.data.model.rooms.response.RoomCloseResponse
 import com.texthip.thip.data.service.RoomsService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -48,7 +49,6 @@ class RoomsRepository @Inject constructor(
         response?.let { joinedRoomsDto ->
             userDataManager.cacheUserName(joinedRoomsDto.nickname)
         }
-        
         response
     }
 
@@ -96,6 +96,29 @@ class RoomsRepository @Inject constructor(
         response.type
     }
 
+    /** 비밀번호 입력 */
+    suspend fun postParticipateSecreteRoom(roomId: Int, password: String): Result<RoomSecreteRoomResponse> = runCatching {
+        val request = RoomSecreteRoomRequest(password = password)
+        val response = roomsService.postParticipateSecreteRoom(roomId, request)
+            .handleBaseResponse()
+            .getOrThrow()
+            ?: throw NoSuchElementException("비밀번호 입력 응답을 받을 수 없습니다.")
+
+        response
+    }
+
+    /** 모집 마감 */
+    suspend fun closeRoom(roomId: Int): Result<RoomCloseResponse> = runCatching {
+        val response = roomsService.closeRoom(roomId)
+            .handleBaseResponse()
+            .getOrThrow()
+            ?: throw NoSuchElementException("모집 마감 응답을 받을 수 없습니다.")
+        response
+    }
+
+
+
+    /** 기록장 API들 */
     suspend fun getRoomsPlaying(
         roomId: Int
     ) = runCatching {
@@ -214,15 +237,5 @@ class RoomsRepository @Inject constructor(
                 roomPostType = roomPostType
             )
         ).handleBaseResponse().getOrThrow()
-    }
-
-    suspend fun postParticipateSecreteRoom(roomId: Int, password: String): Result<RoomSecreteRoomResponse> = runCatching {
-        val request = RoomSecreteRoomRequest(password = password)
-        val response = roomsService.postParticipateSecreteRoom(roomId, request)
-            .handleBaseResponse()
-            .getOrThrow()
-            ?: throw NoSuchElementException("모임방 참여/취소 응답을 받을 수 없습니다.")
-
-        response
     }
 }
