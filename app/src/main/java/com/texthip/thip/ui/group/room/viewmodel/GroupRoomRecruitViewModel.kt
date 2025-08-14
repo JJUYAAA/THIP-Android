@@ -1,14 +1,13 @@
 package com.texthip.thip.ui.group.room.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
+import com.texthip.thip.data.provider.StringResourceProvider
 import com.texthip.thip.data.repository.RoomsRepository
 import com.texthip.thip.ui.group.myroom.mock.GroupBottomButtonType
 import com.texthip.thip.ui.group.room.mock.RoomAction
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class GroupRoomRecruitViewModel @Inject constructor(
     private val repository: RoomsRepository,
-    @param:ApplicationContext private val context: Context
+    private val stringResourceProvider: StringResourceProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GroupRoomRecruitUiState())
@@ -36,18 +35,25 @@ class GroupRoomRecruitViewModel @Inject constructor(
             
             repository.getRoomRecruiting(roomId)
                 .onSuccess { data ->
-                    // RoomRecruitingResponse에서 buttonType 결정
-                    val buttonType = when {
-                        data.isHost -> GroupBottomButtonType.CLOSE
-                        data.isJoining -> GroupBottomButtonType.CANCEL
-                        else -> GroupBottomButtonType.JOIN
-                    }
-                    updateState { 
-                        it.copy(
-                            roomDetail = data,
-                            currentButtonType = buttonType,
-                            isLoading = false
-                        )
+                    if (data != null) {
+                        val buttonType = when {
+                            data.isHost -> GroupBottomButtonType.CLOSE
+                            data.isJoining -> GroupBottomButtonType.CANCEL
+                            else -> GroupBottomButtonType.JOIN
+                        }
+                        updateState { 
+                            it.copy(
+                                roomDetail = data,
+                                currentButtonType = buttonType,
+                                isLoading = false
+                            )
+                        }
+                    } else {
+                        updateState { 
+                            it.copy(
+                                isLoading = false
+                            )
+                        }
                     }
                 }
                 .onFailure { error ->
@@ -63,10 +69,10 @@ class GroupRoomRecruitViewModel @Inject constructor(
             repository.joinOrCancelRoom(roomId, RoomAction.JOIN.value)
                 .onSuccess {
                     updateState { it.copy(currentButtonType = GroupBottomButtonType.CANCEL) }
-                    showToastMessage(context.getString(R.string.success_participation_complete))
+                    showToastMessage(stringResourceProvider.getString(R.string.success_participation_complete))
                 }
                 .onFailure { error ->
-                    showToastMessage(context.getString(R.string.error_participation_failed, error.message ?: ""))
+                    showToastMessage(stringResourceProvider.getString(R.string.error_participation_failed, error.message ?: ""))
                 }
         }
     }
@@ -88,14 +94,14 @@ class GroupRoomRecruitViewModel @Inject constructor(
                         updateState { 
                             it.copy(
                                 currentButtonType = GroupBottomButtonType.JOIN,
-                                toastMessage = context.getString(R.string.success_participation_cancelled),
+                                toastMessage = stringResourceProvider.getString(R.string.success_participation_cancelled),
                                 showToast = true,
                                 shouldNavigateToGroupScreen = true
                             )
                         }
                     }
                     .onFailure { error ->
-                        showToastMessage(context.getString(R.string.error_participation_cancel_failed))
+                        showToastMessage(stringResourceProvider.getString(R.string.error_participation_cancel_failed))
                     }
             }
         }
@@ -115,7 +121,7 @@ class GroupRoomRecruitViewModel @Inject constructor(
                 if (currentRoomId != null) {
                     repository.closeRoom(currentRoomId)
                         .onSuccess { response ->
-                            showToastMessage(context.getString(R.string.success_recruitment_closed))
+                            showToastMessage(stringResourceProvider.getString(R.string.success_recruitment_closed))
                             // 마감 성공 시 기록장 화면으로 이동
                             updateState { 
                                 it.copy(
@@ -127,14 +133,14 @@ class GroupRoomRecruitViewModel @Inject constructor(
                         .onFailure { throwable ->
                             // 에러 처리
                             val errorMessage = when {
-                                throwable.message?.contains("140008") == true -> "방 모집 마감 권한이 없습니다."
-                                throwable.message?.contains("100004") == true -> "이미 모집기간이 만료된 방입니다."
-                                else -> throwable.message ?: "모집 마감 중 오류가 발생했습니다."
+                                throwable.message?.contains("140008") == true -> stringResourceProvider.getString(R.string.error_room_close_permission)
+                                throwable.message?.contains("100004") == true -> stringResourceProvider.getString(R.string.error_room_expired)
+                                else -> throwable.message ?: stringResourceProvider.getString(R.string.error_room_close_failed)
                             }
                             showToastMessage(errorMessage)
                         }
                 } else {
-                    showToastMessage("방 정보를 찾을 수 없습니다.")
+                    showToastMessage(stringResourceProvider.getString(R.string.error_room_info_not_found))
                 }
             }
         }

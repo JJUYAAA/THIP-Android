@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.group.makeroom.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
@@ -8,11 +7,11 @@ import com.texthip.thip.data.model.book.response.BookSavedResponse
 import com.texthip.thip.data.model.book.response.BookSearchItem
 import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.manager.Genre
+import com.texthip.thip.data.provider.StringResourceProvider
 import com.texthip.thip.data.repository.BookRepository
 import com.texthip.thip.data.repository.RoomsRepository
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +26,7 @@ import javax.inject.Inject
 class GroupMakeRoomViewModel @Inject constructor(
     private val roomsRepository: RoomsRepository,
     private val bookRepository: BookRepository,
-    @param:ApplicationContext private val context: Context
+    private val stringResourceProvider: StringResourceProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GroupMakeRoomUiState())
@@ -193,13 +192,13 @@ class GroupMakeRoomViewModel @Inject constructor(
         val currentState = _uiState.value
 
         if (!currentState.isFormValid) {
-            onError(context.getString(R.string.error_form_validation))
+            onError(stringResourceProvider.getString(R.string.error_form_validation))
             return
         }
 
         val selectedBook = currentState.selectedBook
         if (selectedBook?.isbn == null) {
-            onError(context.getString(R.string.error_book_info_invalid))
+            onError(stringResourceProvider.getString(R.string.error_book_info_invalid))
             return
         }
 
@@ -223,10 +222,10 @@ class GroupMakeRoomViewModel @Inject constructor(
                 result.onSuccess { roomId ->
                     onSuccess(roomId)
                 }.onFailure { exception ->
-                    onError(context.getString(R.string.error_room_creation_failed, exception.message ?: ""))
+                    onError(stringResourceProvider.getString(R.string.error_room_creation_failed, exception.message ?: ""))
                 }
             } catch (e: Exception) {
-                onError(context.getString(R.string.error_network_error, e.message ?: ""))
+                onError(stringResourceProvider.getString(R.string.error_network_error, e.message ?: ""))
             } finally {
                 updateState { it.copy(isLoading = false) }
             }

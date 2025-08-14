@@ -71,7 +71,7 @@ interface RoomsService {
     ): BaseResponse<RoomJoinResponse>
 
     /** 비밀번호 입력 */
-    @POST("/rooms/{roomId}/password")
+    @POST("rooms/{roomId}/password")
     suspend fun postParticipateSecreteRoom(
         @Path("roomId") roomId: Int,
         @Body request: RoomSecreteRoomRequest

@@ -70,11 +70,10 @@ class RoomsRepository @Inject constructor(
     }
     
     /** 모집중인 모임방 상세 정보 조회 */
-    suspend fun getRoomRecruiting(roomId: Int): Result<RoomRecruitingResponse> = runCatching {
+    suspend fun getRoomRecruiting(roomId: Int): Result<RoomRecruitingResponse?> = runCatching {
         roomsService.getRoomRecruiting(roomId)
             .handleBaseResponse()
             .getOrThrow()
-            ?: throw NoSuchElementException("모집중인 모임방 정보를 찾을 수 없습니다.")
     }
 
     /** 새 모임방 생성 */
