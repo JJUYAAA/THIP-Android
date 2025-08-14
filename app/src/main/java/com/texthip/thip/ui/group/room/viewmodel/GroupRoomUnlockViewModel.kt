@@ -31,8 +31,10 @@ class GroupRoomUnlockViewModel @Inject constructor(
         // 이전 요청이 있다면 취소
         passwordCheckJob?.cancel()
         
-        // 이미 요청 중이면 중복 실행 방지
-        if (_uiState.value.isLoading) return
+        // job 취소 후 isLoading 상태 리셋 
+        if (_uiState.value.isLoading) {
+            _uiState.update { it.copy(isLoading = false) }
+        }
 
         passwordCheckJob = viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }

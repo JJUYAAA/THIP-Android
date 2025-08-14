@@ -70,9 +70,7 @@ fun GroupMakeRoomScreen(
                 onSuccess = { roomId ->
                     onGroupCreated(roomId)
                 },
-                onError = { errorMessage ->
-                    // TODO: 에러 메시지 표시
-                }
+                onError = { }
             )
         },
         onSelectBook = viewModel::selectBook,

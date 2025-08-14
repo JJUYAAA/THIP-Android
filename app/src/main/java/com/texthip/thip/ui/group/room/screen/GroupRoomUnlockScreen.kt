@@ -140,8 +140,13 @@ fun GroupRoomUnlockScreen(
                                 }
                             },
                             onBackspace = {
-                                if (password[index].isEmpty() && index > 0) {
-                                    val newPassword = password.copyOf()
+                                val newPassword = password.copyOf()
+                                if (password[index].isNotEmpty()) {
+                                    // 현재 박스에 값이 있으면 현재 박스 지우기
+                                    newPassword[index] = ""
+                                    password = newPassword
+                                } else if (index > 0) {
+                                    // 현재 박스가 비어있으면 이전 박스로 이동하면서 지우기
                                     newPassword[index - 1] = ""
                                     password = newPassword
                                     focusRequesters[index - 1].requestFocus()
