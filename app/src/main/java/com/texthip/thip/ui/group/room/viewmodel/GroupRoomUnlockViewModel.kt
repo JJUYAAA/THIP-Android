@@ -37,7 +37,7 @@ class GroupRoomUnlockViewModel @Inject constructor(
         passwordCheckJob = viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            roomsRepository.postParticipateSecreteRoom(roomId, password)
+            roomsRepository.postParticipateSecretRoom(roomId, password)
                 .onSuccess { response ->
                     // API 호출은 성공했고, 응답 바디의 matched 값으로 상태 업데이트
                     _uiState.update {

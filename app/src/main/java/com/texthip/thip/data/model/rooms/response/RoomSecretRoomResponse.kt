@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class RoomSecreteRoomResponse(
+data class RoomSecretRoomResponse(
     @SerialName("matched") val matched: Boolean = false,
     @SerialName("roomId") val roomId: Int = 0
 )

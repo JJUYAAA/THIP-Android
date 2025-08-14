@@ -6,7 +6,7 @@ import com.texthip.thip.data.manager.UserDataManager
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomJoinRequest
-import com.texthip.thip.data.model.rooms.request.RoomSecreteRoomRequest
+import com.texthip.thip.data.model.rooms.request.RoomSecretRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
@@ -17,7 +17,7 @@ import com.texthip.thip.data.model.rooms.response.MyRoomListResponse
 import com.texthip.thip.data.model.rooms.response.RoomCloseResponse
 import com.texthip.thip.data.model.rooms.response.RoomMainList
 import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
-import com.texthip.thip.data.model.rooms.response.RoomSecreteRoomResponse
+import com.texthip.thip.data.model.rooms.response.RoomSecretRoomResponse
 import com.texthip.thip.data.service.RoomsService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,13 +30,13 @@ class RoomsRepository @Inject constructor(
 ) {
     
     /** 장르 목록 조회 */
-    fun getGenres(): Result<List<Genre>> {
-        return Result.success(genreManager.getGenres())
+    fun getGenres(): Result<List<Genre>> = runCatching {
+        genreManager.getGenres()
     }
     
     /** 사용자 이름 조회(캐싱 데이터 사용)*/
-    fun getUserName(): Result<String> {
-        return Result.success(userDataManager.getUserName())
+    fun getUserName(): Result<String> = runCatching {
+        userDataManager.getUserName()
     }
     
     /** 내가 참여 중인 모임방 목록 조회 */
@@ -95,9 +95,9 @@ class RoomsRepository @Inject constructor(
     }
 
     /** 비밀번호 입력 */
-    suspend fun postParticipateSecreteRoom(roomId: Int, password: String): Result<RoomSecreteRoomResponse> = runCatching {
-        val request = RoomSecreteRoomRequest(password = password)
-        val response = roomsService.postParticipateSecreteRoom(roomId, request)
+    suspend fun postParticipateSecretRoom(roomId: Int, password: String): Result<RoomSecretRoomResponse> = runCatching {
+        val request = RoomSecretRoomRequest(password = password)
+        val response = roomsService.postParticipateSecretRoom(roomId, request)
             .handleBaseResponse()
             .getOrThrow()
             ?: throw NoSuchElementException("비밀번호 입력 응답을 받을 수 없습니다.")

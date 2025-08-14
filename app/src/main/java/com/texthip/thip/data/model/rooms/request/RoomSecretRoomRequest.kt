@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class RoomSecreteRoomRequest(
+data class RoomSecretRoomRequest(
     @SerialName("password") val password: String
 )

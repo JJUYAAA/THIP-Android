@@ -3,7 +3,7 @@ package com.texthip.thip.data.service
 import com.texthip.thip.data.model.base.BaseResponse
 import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomJoinRequest
-import com.texthip.thip.data.model.rooms.request.RoomSecreteRoomRequest
+import com.texthip.thip.data.model.rooms.request.RoomSecretRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
@@ -14,7 +14,7 @@ import com.texthip.thip.data.model.rooms.response.MyRoomListResponse
 import com.texthip.thip.data.model.rooms.response.RoomJoinResponse
 import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
 import com.texthip.thip.data.model.rooms.response.RoomMainList
-import com.texthip.thip.data.model.rooms.response.RoomSecreteRoomResponse
+import com.texthip.thip.data.model.rooms.response.RoomSecretRoomResponse
 import com.texthip.thip.data.model.rooms.response.RoomCloseResponse
 import com.texthip.thip.data.model.rooms.response.RoomsBookPageResponse
 import com.texthip.thip.data.model.rooms.response.RoomsCreateVoteResponse
@@ -72,10 +72,10 @@ interface RoomsService {
 
     /** 비밀번호 입력 */
     @POST("rooms/{roomId}/password")
-    suspend fun postParticipateSecreteRoom(
+    suspend fun postParticipateSecretRoom(
         @Path("roomId") roomId: Int,
-        @Body request: RoomSecreteRoomRequest
-    ): BaseResponse<RoomSecreteRoomResponse>
+        @Body request: RoomSecretRoomRequest
+    ): BaseResponse<RoomSecretRoomResponse>
 
     /** 모집 마감 */
     @POST("rooms/{roomId}/close")
