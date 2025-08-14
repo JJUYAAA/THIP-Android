@@ -43,4 +43,10 @@ interface UserService {
 
     @GET("users/alias")
     suspend fun getAliasChoices(): BaseResponse<AliasChoiceResponse>
+
+    @POST("users/following/{followingUserId}")
+    suspend fun toggleFollow(
+        @Path("followingUserId") followingUserId: Long,
+        @Body request: FollowRequest
+    ): BaseResponse<FollowResponse>
 }

@@ -63,4 +63,14 @@ class UserRepository @Inject constructor(
             .handleBaseResponse()
             .getOrThrow()
     }
+
+    suspend fun toggleFollow(
+        followingUserId: Long,
+        isFollowing: Boolean
+    ): Result<FollowResponse?> = runCatching {
+        val request = FollowRequest(type = isFollowing)
+        userService.toggleFollow(followingUserId, request)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
 }
