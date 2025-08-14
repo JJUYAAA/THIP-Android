@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.group.search.screen
 
-import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -21,11 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.forms.SearchBookTextField
@@ -35,46 +35,18 @@ import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.search.component.GroupEmptyResult
 import com.texthip.thip.ui.group.search.component.GroupFilteredSearchResult
 import com.texthip.thip.ui.group.search.component.GroupLiveSearchResult
+import com.texthip.thip.ui.group.search.viewmodel.GroupSearchViewModel
 import com.texthip.thip.ui.theme.ThipTheme
-import kotlinx.serialization.json.Json
-import androidx.core.content.edit
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
 
 @Composable
 fun GroupSearchScreen(
     modifier: Modifier = Modifier,
     roomList: List<GroupCardItemRoomData>,
     onNavigateBack: () -> Unit = {},
-    onRoomClick: (GroupCardItemRoomData) -> Unit = {}
+    onRoomClick: (GroupCardItemRoomData) -> Unit = {},
+    viewModel: GroupSearchViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val sharedPrefs = remember { 
-        context.getSharedPreferences("group_search_prefs", Context.MODE_PRIVATE) 
-    }
-
-    var recentSearches by remember {
-        mutableStateOf(
-            try {
-                val jsonString = sharedPrefs.getString("recent_searches", "[]") ?: "[]"
-                Json.decodeFromString<List<String>>(jsonString)
-            } catch (e: Exception) {
-                emptyList()
-            }
-        )
-    }
-
-    fun saveRecentSearches(searches: List<String>) {
-        try {
-            val jsonString = Json.encodeToString(ListSerializer(String.serializer()), searches)
-            sharedPrefs.edit {
-                putString("recent_searches", jsonString)
-            }
-            recentSearches = searches
-        } catch (e: Exception) {
-            recentSearches = emptyList()
-        }
-    }
+    val uiState by viewModel.uiState.collectAsState()
     var searchText by rememberSaveable { mutableStateOf("") }
     var isSearched by rememberSaveable { mutableStateOf(false) }
     var selectedGenreIndex by rememberSaveable { mutableIntStateOf(-1) }
@@ -158,18 +130,17 @@ fun GroupSearchScreen(
                         isSearched = false
                     },
                     onSearch = { query ->
-                        if (query.isNotBlank() && !recentSearches.contains(query)) {
-                            val newSearches = listOf(query) + recentSearches.take(9) // 최대 10개 유지
-                            saveRecentSearches(newSearches)
-                        }
+                        // 검색 실행
                         isSearched = true
                         selectedGenreIndex = -1
+                        // 최근 검색어 새로고침 (서버에서 자동으로 추가됨)
+                        viewModel.refreshData()
                     }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
                 when {
-                    searchText.isBlank() && !isSearched && recentSearches.isEmpty() -> {
+                    searchText.isBlank() && !isSearched && uiState.recentSearches.isEmpty() -> {
                         GroupRecentSearch(
                             recentSearches = emptyList(),
                             onSearchClick = {},
@@ -177,16 +148,15 @@ fun GroupSearchScreen(
                         )
                     }
 
-                    searchText.isBlank() && !isSearched && recentSearches.isNotEmpty() -> {
+                    searchText.isBlank() && !isSearched && uiState.recentSearches.isNotEmpty() -> {
                         GroupRecentSearch(
-                            recentSearches = recentSearches,
+                            recentSearches = uiState.recentSearches.map { it.searchTerm },
                             onSearchClick = { keyword ->
                                 searchText = keyword
                                 isSearched = true
                             },
                             onRemove = { keyword ->
-                                val updatedSearches = recentSearches.filterNot { it == keyword }
-                                saveRecentSearches(updatedSearches)
+                                viewModel.deleteRecentSearchByKeyword(keyword)
                             }
                         )
                     }
