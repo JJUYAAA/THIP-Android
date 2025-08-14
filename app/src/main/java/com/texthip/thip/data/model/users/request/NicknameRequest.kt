@@ -1,4 +1,4 @@
-package com.texthip.thip.data.model.users
+package com.texthip.thip.data.model.users.request
 
 import kotlinx.serialization.Serializable
 
