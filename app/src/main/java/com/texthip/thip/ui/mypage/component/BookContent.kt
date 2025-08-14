@@ -2,10 +2,15 @@ package com.texthip.thip.ui.mypage.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,16 +33,34 @@ fun BookContent(
     if (bookList.isEmpty()) {
         EmptyBookContent()
     } else {
-        LazyColumn {
-            items(bookList, key = { it.id }) { book ->
+        LazyColumn (
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+        ){
+            itemsIndexed(bookList, key = { _, book -> book.id }) { index, book ->
+                if (index == 0) {
+                    Spacer(Modifier.height(32.dp))
+                }
+
                 CardBookList(
                     title = book.title,
                     author = book.author,
                     imageUrl = null,
                     publisher = book.publisher,
+                    showBookmark = true,
                     isBookmarked = book.isSaved,
                     onBookmarkClick = { viewModel.toggleBookmark(book.id) }
                 )
+
+                if (index != bookList.lastIndex) {
+                    Spacer(Modifier.height(20.dp))
+                    HorizontalDivider(
+                        color = colors.DarkGrey02,
+                        thickness = 1.dp
+                    )
+                    Spacer(Modifier.height(20.dp))
+                }
             }
         }
     }
