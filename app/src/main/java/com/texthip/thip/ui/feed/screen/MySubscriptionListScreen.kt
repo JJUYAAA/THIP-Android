@@ -87,7 +87,7 @@ fun MySubscriptionContent(
     uiState: MySubscriptionUiState,
     lazyListState: LazyListState,
     onNavigateBack: () -> Unit,
-    onToggleFollow: (userId: Int, nickname: String) -> Unit,
+    onToggleFollow: (userId: Long, nickname: String) -> Unit,
     onHideToast: () -> Unit
 ) {
     LaunchedEffect(uiState.showToast) {
@@ -194,7 +194,7 @@ fun MySubscriptionContent(
 private fun MySubscriptionListScreenPrev() {
     val mockUsers = (1..10).map {
         FollowingList(
-            userId = it,
+            userId = it.toLong(),
             profileImageUrl = null,
             nickname = "문학소년 $it",
             aliasName = if (it % 3 == 0) "공식 인플루언서" else "글쓰는 탐험가",

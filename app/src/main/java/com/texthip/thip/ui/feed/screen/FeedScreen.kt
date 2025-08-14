@@ -14,11 +14,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,10 +36,9 @@ import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
 import com.texthip.thip.ui.feed.mock.MySubscriptionData
-import com.texthip.thip.ui.feed.viewmodel.MySubscriptionViewModel
+import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
-import com.texthip.thip.ui.navigator.routes.FeedRoutes
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -55,8 +54,9 @@ fun FeedScreen(
     totalFeedCount: Int = 0,
     selectedTabIndex: Int = 0,
     followerProfileImageUrls: List<String> = emptyList(),
-    viewModel: MySubscriptionViewModel = hiltViewModel()
+    viewModel: FeedViewModel = hiltViewModel()
 ) {
+    val feedUiState by viewModel.uiState.collectAsState()
     val selectedIndex = rememberSaveable { mutableIntStateOf(selectedTabIndex) }
     val feedStateList = remember {
         mutableStateListOf<FeedItem>().apply {
@@ -213,14 +213,14 @@ fun FeedScreen(
                     //피드
                     item {
                         Spacer(modifier = Modifier.height(20.dp))
-                        val subscriptionsForBar = subscriptionUiState.followings.map { user ->
+                        val subscriptionsForBar = feedUiState.recentWriters.map { user ->
                             MySubscriptionData(
                                 profileImageUrl = user.profileImageUrl,
                                 nickname = user.nickname,
-                                role = user.aliasName,
+                                role = "",
                                 roleColor = colors.White,
                                 subscriberCount = 0,
-                                isSubscribed = user.isFollowing
+                                isSubscribed = true
                             )
                         }
                         MySubscribeBarlist(
