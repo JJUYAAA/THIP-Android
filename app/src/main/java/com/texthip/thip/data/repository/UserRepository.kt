@@ -4,13 +4,14 @@ import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.users.MyFollowingsResponse
 import com.texthip.thip.data.model.users.MyPageInfoResponse
 import com.texthip.thip.data.model.users.NicknameRequest
+import com.texthip.thip.data.model.users.NicknameResponse
 import com.texthip.thip.data.model.users.OthersFollowersResponse
 import com.texthip.thip.data.service.UserService
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepository@Inject constructor(
+class UserRepository @Inject constructor(
     private val userService: UserService
 ) {
     //내 팔로잉 목록 조회
@@ -41,6 +42,9 @@ class UserRepository@Inject constructor(
             .getOrThrow()
     }
 
-    suspend fun checkNickname(nickname: String) =
+    suspend fun checkNickname(nickname: String): Result<NicknameResponse?> = runCatching {
         userService.checkNickname(NicknameRequest(nickname))
+            .handleBaseResponse()
+            .getOrThrow()
+    }
 }
