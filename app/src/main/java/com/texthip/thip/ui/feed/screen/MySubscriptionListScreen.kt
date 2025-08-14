@@ -48,7 +48,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MySubscriptionScreen(
-    navController: NavController,
+    navController: NavController?= null,
     viewModel: MySubscriptionViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -73,7 +73,7 @@ fun MySubscriptionScreen(
     MySubscriptionContent(
         uiState = uiState,
         lazyListState = lazyListState,
-        onNavigateBack = { navController.popBackStack() },
+        onNavigateBack = { navController?.popBackStack() },
         onToggleFollow = { userId, nickname ->
             val followedMessage = context.getString(R.string.toast_thip, nickname)
             val unfollowedMessage = context.getString(R.string.toast_thip_cancel, nickname)

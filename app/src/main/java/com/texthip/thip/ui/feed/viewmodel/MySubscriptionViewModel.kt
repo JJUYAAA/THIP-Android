@@ -71,23 +71,53 @@ class MySubscriptionViewModel @Inject constructor(
     }
 
 
-    fun toggleFollow(userId: Int, followedMessage: String, unfollowedMessage: String) {
-        var toastMsg = ""
-        _uiState.update { currentState ->
-            val updatedList = currentState.followings.map { user ->
-                if (user.userId == userId) {
-                    val isNowFollowing = !user.isFollowing
-                    toastMsg = if (isNowFollowing) followedMessage else unfollowedMessage
-                    user.copy(isFollowing = isNowFollowing)
-                } else {
-                    user
-                }
+    fun toggleFollow(userId: Long, followedMessage: String, unfollowedMessage: String) {
+        val currentState = _uiState.value
+        val userToUpdate = currentState.followings.find { it.userId == userId } ?: return
+        val currentIsFollowing = userToUpdate.isFollowing
+        //낙관적 업데이트 -> ui 먼저 변경
+        val newOptimisticList = currentState.followings.map { user ->
+            if (user.userId == userId) {
+                user.copy(isFollowing = !currentIsFollowing)
+            } else {
+                user
             }
-            currentState.copy(
-                followings = updatedList,
+        }
+
+        _uiState.update {
+            it.copy(
+                followings = newOptimisticList,
                 showToast = true,
-                toastMessage = toastMsg
+                toastMessage = if (!currentIsFollowing) followedMessage else unfollowedMessage
             )
+        }
+        viewModelScope.launch {
+            val requestType = !currentIsFollowing
+
+            userRepository.toggleFollow(followingUserId = userId, isFollowing = requestType)
+                .onSuccess { response ->
+                    val serverState = response?.isFollowing ?: requestType
+                    _uiState.update { state ->
+                        state.copy(followings = state.followings.map { user ->
+                            if (user.userId == userId) {
+                                user.copy(isFollowing = serverState)
+                            } else {
+                                user
+                            }
+                        })
+                    }
+                }
+                .onFailure {
+                    _uiState.update { state ->
+                        state.copy(followings = state.followings.map { user ->
+                            if (user.userId == userId) {
+                                user.copy(isFollowing = currentIsFollowing) // 원래 상태로 복원
+                            } else {
+                                user
+                            }
+                        })
+                    }
+                }
         }
     }
     fun hideToast() {
