@@ -34,7 +34,6 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun SavedFeedCard(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
-    profileImage: Painter? = null,
     onBookmarkClick: () -> Unit = {},
     onLikeClick: () -> Unit = {},
     onContentClick: () -> Unit = {}
@@ -47,10 +46,10 @@ fun SavedFeedCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(horizontal = 20.dp)
     ) {
         ProfileBar(
-            profileImage = "https://example.com/image1.jpg",
+            profileImage = feedItem.userProfileImage.toString(),
             topText = feedItem.userName,
             bottomText = feedItem.userRole,
             showSubscriberInfo = false,
@@ -166,7 +165,11 @@ private fun SavedFeedCardPrev() {
         commentCount = 5,
         isLiked = false,
         isSaved = true,
-        imageUrls = listOf(R.drawable.img_book_cover_sample,R.drawable.img_book_cover_sample,R.drawable.img_book_cover_sample)
+        imageUrls = listOf(
+            R.drawable.img_book_cover_sample,
+            R.drawable.img_book_cover_sample,
+            R.drawable.img_book_cover_sample
+        )
     )
     val scrollState = rememberScrollState()
 
@@ -177,12 +180,10 @@ private fun SavedFeedCardPrev() {
                 .verticalScroll(scrollState)
         ) {
             SavedFeedCard(
-                feedItem = feed1,
-                profileImage = painterResource(feed1.userProfileImage!!)
+                feedItem = feed1
             )
             SavedFeedCard(
-                feedItem = feed2,
-                profileImage = painterResource(feed2.userProfileImage!!)
+                feedItem = feed2
             )
         }
     }

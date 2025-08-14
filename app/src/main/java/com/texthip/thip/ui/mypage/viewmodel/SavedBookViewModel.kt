@@ -2,7 +2,6 @@ package com.texthip.thip.ui.mypage.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.texthip.thip.ui.mypage.mock.BookItem
-import com.texthip.thip.ui.mypage.mock.FeedItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
