@@ -234,7 +234,6 @@ fun FeedScreen(
 
                         SavedFeedCard(
                             feedItem = feed,
-                            profileImage = profileImage,
                             onBookmarkClick = {
                                 val updated = feed.copy(isSaved = !feed.isSaved)
                                 feedStateList[index] = updated
