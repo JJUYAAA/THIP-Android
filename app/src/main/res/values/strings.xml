@@ -394,7 +394,8 @@
     <string name="error_room_close_failed">모집 마감 중 오류가 발생했습니다.</string>
     <string name="error_room_info_not_found">방 정보를 찾을 수 없습니다.</string>
     
-    <!-- SearchBookGroupViewModel -->\n    <string name="error_recruiting_rooms_not_found">모집중인 방 정보를 찾을 수 없습니다.</string>
+    <!-- SearchBookGroupViewModel -->
+    <string name="error_recruiting_rooms_not_found">모집중인 방 정보를 찾을 수 없습니다.</string>
     <string name="error_recruiting_rooms_load_failed">모집중인 방을 불러오는데 실패했습니다.</string>
     
     <!-- BookDetailViewModel -->

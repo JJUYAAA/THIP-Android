@@ -53,7 +53,7 @@ fun GroupRoomUnlockScreen(
 
     LaunchedEffect(password.toList()) {
         val fullPassword = password.joinToString("")
-        if (fullPassword.length == 4 && password.all { it.length == 1 }) {
+        if (!uiState.isLoading && fullPassword.length == 4 && password.all { it.length == 1 }) {
             viewModel.checkPassword(roomId, fullPassword)
         }
     }
@@ -62,6 +62,8 @@ fun GroupRoomUnlockScreen(
         when (uiState.passwordMatched) {
             true -> {
                 // 비밀번호 일치: 성공 콜백 호출하여 네비게이션 처리
+                keyboardController?.hide()
+                viewModel.resetPasswordState()
                 onSuccessNavigation()
             }
             false -> {

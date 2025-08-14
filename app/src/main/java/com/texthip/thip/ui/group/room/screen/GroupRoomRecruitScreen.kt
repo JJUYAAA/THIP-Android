@@ -102,7 +102,7 @@ fun GroupRoomRecruitScreen(
             // 비밀방이면 비밀번호 화면으로, 공개방이면 바로 참여
             val detail = uiState.roomDetail
             if (detail != null && !detail.isPublic) {
-                onNavigateToPasswordScreen(roomId)
+                onNavigateToPasswordScreen(detail.roomId)
             } else {
                 viewModel.onParticipationClick()
             }

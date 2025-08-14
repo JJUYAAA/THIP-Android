@@ -71,7 +71,7 @@ fun GroupBookSearchBottomSheet(
                 SearchBookTextField(
                     hint = stringResource(R.string.group_book_search_hint),
                     text = searchText,
-                    onValueChange = { 
+                    onValueChange = {
                         searchText = it
                         onSearch(it)
                     },
@@ -97,10 +97,16 @@ fun GroupBookSearchBottomSheet(
 
                 when {
                     isLoading -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
+                        ) {
                             CircularProgressIndicator()
                         }
                     }
+
                     else -> {
                         Column(Modifier.padding(horizontal = 20.dp)) {
                             GroupBookListWithScrollbar(
