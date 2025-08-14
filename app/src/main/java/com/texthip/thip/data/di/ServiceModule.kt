@@ -1,6 +1,7 @@
 package com.texthip.thip.data.di
 
 import com.texthip.thip.data.service.BookService
+import com.texthip.thip.data.service.RecentSearchService
 import com.texthip.thip.data.service.RoomsService
 import com.texthip.thip.data.service.UserService
 import dagger.Module
@@ -28,5 +29,11 @@ object ServiceModule {
     @Singleton
     fun provideUserService(retrofit: Retrofit): UserService {
         return retrofit.create(UserService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecentSearchService(retrofit: Retrofit): RecentSearchService {
+        return retrofit.create(RecentSearchService::class.java)
     }
 }

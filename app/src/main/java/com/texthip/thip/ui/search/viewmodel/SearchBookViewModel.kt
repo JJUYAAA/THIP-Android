@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.book.response.RecentSearchItem
 import com.texthip.thip.data.repository.BookRepository
+import com.texthip.thip.data.repository.RecentSearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchBookViewModel @Inject constructor(
-    private val bookRepository: BookRepository
+    private val bookRepository: BookRepository,
+    private val recentSearchRepository: RecentSearchRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchBookUiState())
@@ -199,7 +201,7 @@ class SearchBookViewModel @Inject constructor(
 
     private fun loadRecentSearches() {
         viewModelScope.launch {
-            bookRepository.getRecentSearches()
+            recentSearchRepository.getRecentSearches("BOOK")
                 .onSuccess { response ->
                     response?.let { recentSearchResponse ->
                         // Map에 최근 검색어 저장 (빠른 검색을 위해)
@@ -221,7 +223,7 @@ class SearchBookViewModel @Inject constructor(
 
     fun deleteRecentSearch(recentSearchId: Int) {
         viewModelScope.launch {
-            bookRepository.deleteRecentSearch(recentSearchId)
+            recentSearchRepository.deleteRecentSearch(recentSearchId)
                 .onSuccess {
                     loadRecentSearches() // 삭제 성공 시 목록 새로고침
                 }
