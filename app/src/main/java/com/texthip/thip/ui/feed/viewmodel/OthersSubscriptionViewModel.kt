@@ -3,7 +3,7 @@ package com.texthip.thip.ui.feed.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.texthip.thip.data.model.users.FollowerList
+import com.texthip.thip.data.model.users.response.FollowerList
 import com.texthip.thip.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

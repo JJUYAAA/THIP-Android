@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.texthip.thip.R
-import com.texthip.thip.data.model.users.FollowerList
+import com.texthip.thip.data.model.users.response.FollowerList
 import com.texthip.thip.ui.common.header.AuthorHeader
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.feed.viewmodel.OthersSubscriptionUiState

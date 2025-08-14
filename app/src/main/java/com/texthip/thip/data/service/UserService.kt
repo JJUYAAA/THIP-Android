@@ -1,13 +1,12 @@
 package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
-import com.texthip.thip.data.model.group.request.RoomJoinRequest
-import com.texthip.thip.data.model.group.response.RoomJoinResponse
-import com.texthip.thip.data.model.users.MyFollowingsResponse
-import com.texthip.thip.data.model.users.MyPageInfoResponse
-import com.texthip.thip.data.model.users.NicknameRequest
-import com.texthip.thip.data.model.users.NicknameResponse
-import com.texthip.thip.data.model.users.OthersFollowersResponse
+import com.texthip.thip.data.model.users.response.MyFollowingsResponse
+import com.texthip.thip.data.model.users.response.MyPageInfoResponse
+import com.texthip.thip.data.model.users.request.NicknameRequest
+import com.texthip.thip.data.model.users.response.AliasChoiceResponse
+import com.texthip.thip.data.model.users.response.NicknameResponse
+import com.texthip.thip.data.model.users.response.OthersFollowersResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -35,4 +34,7 @@ interface UserService {
     suspend fun checkNickname(
         @Body request: NicknameRequest
     ): BaseResponse<NicknameResponse>
+
+    @GET("users/alias") // 실제 API 경로로 수정해주세요.
+    suspend fun getAliasChoices(): BaseResponse<AliasChoiceResponse>
 }

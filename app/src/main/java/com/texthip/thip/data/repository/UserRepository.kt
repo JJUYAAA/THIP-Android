@@ -1,11 +1,12 @@
 package com.texthip.thip.data.repository
 
 import com.texthip.thip.data.model.base.handleBaseResponse
-import com.texthip.thip.data.model.users.MyFollowingsResponse
-import com.texthip.thip.data.model.users.MyPageInfoResponse
-import com.texthip.thip.data.model.users.NicknameRequest
-import com.texthip.thip.data.model.users.NicknameResponse
-import com.texthip.thip.data.model.users.OthersFollowersResponse
+import com.texthip.thip.data.model.users.response.MyFollowingsResponse
+import com.texthip.thip.data.model.users.response.MyPageInfoResponse
+import com.texthip.thip.data.model.users.request.NicknameRequest
+import com.texthip.thip.data.model.users.response.AliasChoiceResponse
+import com.texthip.thip.data.model.users.response.NicknameResponse
+import com.texthip.thip.data.model.users.response.OthersFollowersResponse
 import com.texthip.thip.data.service.UserService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,6 +45,12 @@ class UserRepository @Inject constructor(
 
     suspend fun checkNickname(nickname: String): Result<NicknameResponse?> = runCatching {
         userService.checkNickname(NicknameRequest(nickname))
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    suspend fun getAliasChoices(): Result<AliasChoiceResponse?> = runCatching {
+        userService.getAliasChoices()
             .handleBaseResponse()
             .getOrThrow()
     }
