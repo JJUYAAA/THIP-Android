@@ -3,6 +3,7 @@ package com.texthip.thip.data.repository
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.users.MyFollowingsResponse
 import com.texthip.thip.data.model.users.MyPageInfoResponse
+import com.texthip.thip.data.model.users.NicknameRequest
 import com.texthip.thip.data.model.users.OthersFollowersResponse
 import com.texthip.thip.data.service.UserService
 import javax.inject.Inject
@@ -39,4 +40,7 @@ class UserRepository@Inject constructor(
             .handleBaseResponse()
             .getOrThrow()
     }
+
+    suspend fun checkNickname(nickname: String) =
+        userService.checkNickname(NicknameRequest(nickname))
 }
