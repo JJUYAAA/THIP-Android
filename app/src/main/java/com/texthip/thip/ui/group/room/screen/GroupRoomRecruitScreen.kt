@@ -52,6 +52,7 @@ import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.color.hexToColor
 import com.texthip.thip.utils.rooms.DateUtils
 import kotlinx.coroutines.delay
 
@@ -357,7 +358,7 @@ fun GroupRoomRecruitContent(
                                 Text(
                                     text = detail.category,
                                     style = typography.info_m500_s12,
-                                    color = Color(detail.categoryColor.removePrefix("#").toLong(16) or 0xFF000000)
+                                    color = hexToColor(detail.categoryColor)
                                 )
                             }
                         }

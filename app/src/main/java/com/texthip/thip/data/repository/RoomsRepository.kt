@@ -1,9 +1,8 @@
 package com.texthip.thip.data.repository
 
-import android.R.attr.type
+import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.data.manager.GenreManager
 import com.texthip.thip.data.manager.UserDataManager
-import com.texthip.thip.data.manager.Genre
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomJoinRequest
@@ -15,10 +14,10 @@ import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
 import com.texthip.thip.data.model.rooms.request.VoteItem
 import com.texthip.thip.data.model.rooms.response.JoinedRoomListResponse
 import com.texthip.thip.data.model.rooms.response.MyRoomListResponse
+import com.texthip.thip.data.model.rooms.response.RoomCloseResponse
 import com.texthip.thip.data.model.rooms.response.RoomMainList
 import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
 import com.texthip.thip.data.model.rooms.response.RoomSecreteRoomResponse
-import com.texthip.thip.data.model.rooms.response.RoomCloseResponse
 import com.texthip.thip.data.service.RoomsService
 import javax.inject.Inject
 import javax.inject.Singleton
