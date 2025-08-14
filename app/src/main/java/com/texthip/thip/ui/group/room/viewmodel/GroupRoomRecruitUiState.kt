@@ -12,7 +12,9 @@ data class GroupRoomRecruitUiState(
     val showDialog: Boolean = false,
     val dialogTitle: String = "",
     val dialogDescription: String = "",
-    val shouldNavigateToGroupScreen: Boolean = false
+    val shouldNavigateToGroupScreen: Boolean = false,
+    val shouldNavigateToRoomPlayingScreen: Boolean = false,
+    val roomId: Int? = null
 ) {
     val hasRoomDetail: Boolean get() = roomDetail != null
 }

@@ -231,6 +231,9 @@ fun NavGraphBuilder.groupNavigation(
             },
             onNavigateToPasswordScreen = { roomId ->
                 navController.navigateToGroupRoomUnlock(roomId)
+            },
+            onNavigateToRoomPlayingScreen = { roomId ->
+                navController.navigateToGroupRoom(roomId)
             }
         )
     }
@@ -261,8 +264,7 @@ fun NavGraphBuilder.groupNavigation(
         val roomId = route.roomId
 
         GroupRoomScreen(
-//            roomId = roomId,
-            roomId = 1,
+            roomId = roomId,
             onBackClick = {
                 navigateBack()
             },

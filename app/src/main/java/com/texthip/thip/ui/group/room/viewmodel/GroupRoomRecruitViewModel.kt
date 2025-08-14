@@ -111,8 +111,31 @@ class GroupRoomRecruitViewModel @Inject constructor(
         }
         pendingAction = {
             viewModelScope.launch {
-                // TODO: 실제 모집 마감 API 호출
-                showToastMessage(context.getString(R.string.success_recruitment_closed))
+                val currentRoomId = _uiState.value.roomDetail?.roomId
+                if (currentRoomId != null) {
+                    repository.closeRoom(currentRoomId)
+                        .onSuccess { response ->
+                            showToastMessage(context.getString(R.string.success_recruitment_closed))
+                            // 마감 성공 시 기록장 화면으로 이동
+                            updateState { 
+                                it.copy(
+                                    shouldNavigateToRoomPlayingScreen = true,
+                                    roomId = response.roomId
+                                ) 
+                            }
+                        }
+                        .onFailure { throwable ->
+                            // 에러 처리
+                            val errorMessage = when {
+                                throwable.message?.contains("140008") == true -> "방 모집 마감 권한이 없습니다."
+                                throwable.message?.contains("100004") == true -> "이미 모집기간이 만료된 방입니다."
+                                else -> throwable.message ?: "모집 마감 중 오류가 발생했습니다."
+                            }
+                            showToastMessage(errorMessage)
+                        }
+                } else {
+                    showToastMessage("방 정보를 찾을 수 없습니다.")
+                }
             }
         }
     }
@@ -134,6 +157,15 @@ class GroupRoomRecruitViewModel @Inject constructor(
     
     fun onNavigatedToGroupScreen() {
         updateState { it.copy(shouldNavigateToGroupScreen = false) }
+    }
+    
+    fun onNavigatedToRoomPlayingScreen() {
+        updateState { 
+            it.copy(
+                shouldNavigateToRoomPlayingScreen = false,
+                roomId = null
+            ) 
+        }
     }
     
     private fun showToastMessage(message: String) {

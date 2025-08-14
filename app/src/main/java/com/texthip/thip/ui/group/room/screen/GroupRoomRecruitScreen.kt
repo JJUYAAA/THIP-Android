@@ -63,6 +63,7 @@ fun GroupRoomRecruitScreen(
     onBackClick: () -> Unit = {}, // 뒤로가기
     onBookDetailClick: (String) -> Unit = {}, // 책 상세 화면으로 이동
     onNavigateToPasswordScreen: (Int) -> Unit = {}, // 비밀번호 입력 화면으로 이동
+    onNavigateToRoomPlayingScreen: (Int) -> Unit = {}, // 기록장 화면으로 이동
     viewModel: GroupRoomRecruitViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -77,6 +78,17 @@ fun GroupRoomRecruitScreen(
         if (uiState.shouldNavigateToGroupScreen) {
             onNavigateToGroupScreen(uiState.toastMessage)
             viewModel.onNavigatedToGroupScreen()
+        }
+    }
+    
+    // 기록장 화면으로 네비게이션
+    LaunchedEffect(uiState.shouldNavigateToRoomPlayingScreen, uiState.roomId) {
+        if (uiState.shouldNavigateToRoomPlayingScreen) {
+            val roomIdValue = uiState.roomId
+            if (roomIdValue != null) {
+                onNavigateToRoomPlayingScreen(roomIdValue)
+                viewModel.onNavigatedToRoomPlayingScreen()
+            }
         }
     }
     
