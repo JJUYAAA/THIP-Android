@@ -11,14 +11,15 @@ import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
 import com.texthip.thip.data.model.rooms.response.CreateRoomResponse
 import com.texthip.thip.data.model.rooms.response.JoinedRoomListResponse
 import com.texthip.thip.data.model.rooms.response.MyRoomListResponse
-import com.texthip.thip.data.model.rooms.response.RoomJoinResponse
-import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
-import com.texthip.thip.data.model.rooms.response.RoomMainList
-import com.texthip.thip.data.model.rooms.response.RoomSecretRoomResponse
 import com.texthip.thip.data.model.rooms.response.RoomCloseResponse
+import com.texthip.thip.data.model.rooms.response.RoomJoinResponse
+import com.texthip.thip.data.model.rooms.response.RoomMainList
+import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
+import com.texthip.thip.data.model.rooms.response.RoomSecretRoomResponse
 import com.texthip.thip.data.model.rooms.response.RoomsBookPageResponse
 import com.texthip.thip.data.model.rooms.response.RoomsCreateVoteResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteRecordResponse
+import com.texthip.thip.data.model.rooms.response.RoomsDeleteVoteResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsLikesResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsResponse
@@ -137,6 +138,12 @@ interface RoomsService {
         @Path("roomId") roomId: Int,
         @Path("recordId") recordId: Int
     ): BaseResponse<RoomsDeleteRecordResponse>
+
+    @DELETE("rooms/{roomId}/vote/{voteId}")
+    suspend fun deleteRoomsVote(
+        @Path("roomId") roomId: Int,
+        @Path("voteId") voteId: Int
+    ): BaseResponse<RoomsDeleteVoteResponse>
 
     @POST("room-posts/{postId}/likes")
     suspend fun postRoomsPostsLikes(
