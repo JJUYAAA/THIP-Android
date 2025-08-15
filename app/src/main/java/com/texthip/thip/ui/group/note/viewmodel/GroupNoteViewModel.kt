@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.group.note.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.rooms.request.RoomsPostsRequestParams
@@ -148,6 +149,9 @@ class GroupNoteViewModel @Inject constructor(
             is GroupNoteEvent.OnDeleteRecord -> deletePost(event.postId, event.postType)
             is GroupNoteEvent.OnLikeRecord -> likeRecord(event.postId, event.postType)
             is GroupNoteEvent.RefreshPosts -> loadPosts(isRefresh = true)
+            else -> {
+                Log.w("GroupNoteViewModel", "Unhandled event received: $event")
+            }
         }
     }
 

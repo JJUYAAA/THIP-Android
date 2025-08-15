@@ -33,7 +33,6 @@ import com.texthip.thip.data.model.comments.response.ReplyList
 import com.texthip.thip.ui.common.bottomsheet.CustomBottomSheet
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.forms.CommentTextField
-import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
 import com.texthip.thip.ui.group.note.viewmodel.CommentsUiState
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
@@ -55,17 +54,14 @@ fun CommentBottomSheet(
 
     var selectedCommentForMenu by remember { mutableStateOf<CommentList?>(null) }
     var selectedReplyForMenu by remember { mutableStateOf<ReplyList?>(null) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var itemToDelete by remember { mutableStateOf<Any?>(null) } // 삭제할 댓글/답글 임시 저장
 
-    val isOverlayVisible =
-        selectedCommentForMenu != null || selectedReplyForMenu != null || showDeleteDialog
+    val isOverlayVisible = selectedCommentForMenu != null || selectedReplyForMenu != null
 
     Box(
         if (isOverlayVisible) {
             Modifier
                 .fillMaxSize()
-                .background(color = colors.Black.copy(alpha = 0.8f),)
+                .background(color = colors.Black.copy(alpha = 0.8f))
                 .blur(5.dp)
         } else {
             Modifier.fillMaxSize()
@@ -161,8 +157,13 @@ fun CommentBottomSheet(
                         text = stringResource(R.string.delete),
                         color = colors.Red,
                         onClick = {
-                            itemToDelete = itemForMenu
-                            showDeleteDialog = true
+                            val commentId = when (val item = itemForMenu) {
+                                is CommentList -> item.commentId
+                                is ReplyList -> item.commentId
+                                else -> null
+                            }
+                            commentId?.let { onEvent(CommentsEvent.DeleteComment(it)) }
+
                             selectedCommentForMenu = null
                             selectedReplyForMenu = null
                         }
@@ -187,34 +188,6 @@ fun CommentBottomSheet(
             }
         )
     }
-
-    if (showDeleteDialog) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            DialogPopup(
-                title = stringResource(R.string.delete_comment_title), // todo: 댓글 삭제 모달 임의로 설정
-                description = stringResource(R.string.delete_post_content),
-                onConfirm = {
-                    val commentId = when (val item = itemToDelete) {
-                        is CommentList -> item.commentId
-                        is ReplyList -> item.commentId
-                        else -> null
-                    }
-                    commentId?.let { onEvent(CommentsEvent.DeleteComment(it)) }
-                    showDeleteDialog = false
-                    itemToDelete = null
-                },
-                onCancel = {
-                    showDeleteDialog = false
-                    itemToDelete = null
-                }
-            )
-        }
-    }
-
 }
 
 @Composable
@@ -249,7 +222,12 @@ private fun CommentLazyList(
         items(
             items = commentList,
             key = { comment ->
-                comment.commentId ?: comment.replyList.first().commentId
+                // commentId가 있으면 사용
+                comment.commentId
+                // 없다면(삭제된 댓글), replyList의 첫 번째 항목 ID를 사용
+                    ?: comment.replyList.firstOrNull()?.commentId
+                    // 그것마저 없다면(마지막 답글까지 삭제된 경우), 객체 자체의 hashCode를 사용
+                    ?: comment.hashCode()
             }
         ) { comment ->
             CommentSection(

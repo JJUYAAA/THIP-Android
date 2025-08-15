@@ -41,7 +41,6 @@ class CommentsViewModel @Inject constructor(
     private var currentPostType: String = "RECORD"
 
     fun initialize(postId: Long, postType: String) {
-        if (currentPostId == postId) return
         this.currentPostId = postId
         this.currentPostType = postType
         fetchComments(isRefresh = true)
@@ -64,23 +63,30 @@ class CommentsViewModel @Inject constructor(
     private fun deleteComment(commentId: Int) {
         val originalComments = _uiState.value.comments
 
-        val newComments = originalComments.map { comment ->
-            if (comment.commentId == commentId) {
-                comment.copy(isDeleted = true)
+        // 삭제하려는 대상이 부모 댓글인지 먼저 확인
+        val parentCommentToDelete = originalComments.firstOrNull { it.commentId == commentId }
+
+        val newComments = if (parentCommentToDelete != null) {
+            // 부모 댓글을 삭제하는 경우
+            if (parentCommentToDelete.replyList.isEmpty()) {
+                // 답글이 없으면 목록에서 완전히 제거
+                originalComments.filterNot { it.commentId == commentId }
             } else {
-                comment.copy(
-                    replyList = comment.replyList.map { reply ->
-                        if (reply.commentId == commentId) {
-                            reply
-                        } else {
-                            reply
-                        }
-                    }.filterNot { reply ->
-                        reply.commentId == commentId
-                    }
+                // 답글이 있으면 "삭제됨" 상태로 변경
+                originalComments.map {
+                    if (it.commentId == commentId) it.copy(isDeleted = true) else it
+                }
+            }
+        } else {
+            // 답글을 삭제하는 경우
+            // 모든 부모 댓글을 순회하며, 해당하는 답글만 목록에서 제거
+            originalComments.map { parentComment ->
+                parentComment.copy(
+                    replyList = parentComment.replyList.filterNot { reply -> reply.commentId == commentId }
                 )
             }
         }
+
         _uiState.update { it.copy(comments = newComments) }
 
         viewModelScope.launch {
