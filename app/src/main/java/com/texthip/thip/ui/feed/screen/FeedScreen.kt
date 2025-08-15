@@ -1,32 +1,43 @@
 package com.texthip.thip.ui.feed.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.header.AuthorHeader
@@ -36,31 +47,59 @@ import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
 import com.texthip.thip.ui.feed.mock.MySubscriptionData
-import com.texthip.thip.ui.feed.viewmodel.MySubscriptionViewModel
+import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
-import com.texthip.thip.ui.navigator.routes.FeedRoutes
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun FeedScreen(
-    navController: NavController? = null,
     onNavigateToMySubscription: () -> Unit = {},
+    onNavigateToFeedWrite: () -> Unit = {},
     nickname: String = "",
     userRole: String = "",
     feeds: List<FeedItem> = emptyList(),
     totalFeedCount: Int = 0,
     selectedTabIndex: Int = 0,
     followerProfileImageUrls: List<String> = emptyList(),
-    viewModel: MySubscriptionViewModel = hiltViewModel()
+    feedViewModel: FeedViewModel = hiltViewModel()
+    resultFeedId: Int? = null,
+    onResultConsumed: () -> Unit = {},
+    mySubscriptionViewModel: MySubscriptionViewModel = hiltViewModel()
 ) {
+    val feedUiState by feedViewModel.uiState.collectAsState()
     val selectedIndex = rememberSaveable { mutableIntStateOf(selectedTabIndex) }
     val feedStateList = remember {
         mutableStateListOf<FeedItem>().apply {
             addAll(feeds)
+        }
+    }
+    val scope = rememberCoroutineScope()
+    
+    var showProgressBar by remember { mutableStateOf(false) }
+    val progress = remember { Animatable(0f) }
+    
+    LaunchedEffect(resultFeedId) {
+        if (resultFeedId != null) {
+            onResultConsumed()
+            
+            showProgressBar = true
+            progress.snapTo(0f)
+            scope.launch {
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
+                )
+                delay(500)
+                if (showProgressBar) {
+                    showProgressBar = false
+                }
+            }
         }
     }
     val mySubscriptions = listOf(
@@ -136,6 +175,44 @@ fun FeedScreen(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                item {
+                    AnimatedVisibility(visible = showProgressBar) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 20.dp, end = 20.dp, top = 32.dp),
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(bottom = 12.dp),
+                                text = if (progress.value < 1.0f) {
+                                    stringResource(R.string.posting_in_progress_feed)
+                                } else {
+                                    stringResource(R.string.posting_complete_feed)
+                                },
+                                style = typography.view_m500_s14,
+                                color = colors.NeonGreen
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(8.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(color = colors.Grey02) // 트랙(배경) 색상
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth(fraction = progress.value)
+                                        .fillMaxHeight()
+                                        .background(
+                                            color = colors.NeonGreen,
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                )
+                            }
+                        }
+                    }
+                }
                 if (selectedIndex.value == 1) {
                     // 내 피드
                     item {
@@ -213,14 +290,14 @@ fun FeedScreen(
                     //피드
                     item {
                         Spacer(modifier = Modifier.height(20.dp))
-                        val subscriptionsForBar = subscriptionUiState.followings.map { user ->
+                        val subscriptionsForBar = feedUiState.recentWriters.map { user ->
                             MySubscriptionData(
                                 profileImageUrl = user.profileImageUrl,
                                 nickname = user.nickname,
-                                role = user.aliasName,
+                                role = "",
                                 roleColor = colors.White,
                                 subscriberCount = 0,
-                                isSubscribed = user.isFollowing
+                                isSubscribed = true
                             )
                         }
                         MySubscribeBarlist(
@@ -234,7 +311,6 @@ fun FeedScreen(
 
                         SavedFeedCard(
                             feedItem = feed,
-                            profileImage = profileImage,
                             onBookmarkClick = {
                                 val updated = feed.copy(isSaved = !feed.isSaved)
                                 feedStateList[index] = updated
@@ -261,7 +337,7 @@ fun FeedScreen(
         }
         FloatingButton(
             icon = painterResource(id = R.drawable.ic_write),
-            onClick = { }
+            onClick = onNavigateToFeedWrite
         )
     }
 }
@@ -302,7 +378,8 @@ private fun FeedScreenPreview() {
                 selectedTabIndex = 1,
                 feeds = mockFeeds,
                 totalFeedCount = mockFeeds.size,
-                followerProfileImageUrls = mockFollowerImages
+                followerProfileImageUrls = mockFollowerImages,
+                onNavigateToFeedWrite = { }
             )
         }
     }
@@ -322,7 +399,8 @@ private fun FeedScreenWithoutDataPreview() {
                 selectedTabIndex = 0,
                 feeds = mockFeeds,
                 totalFeedCount = mockFeeds.size,
-                followerProfileImageUrls = mockFollowerImages
+                followerProfileImageUrls = mockFollowerImages,
+                onNavigateToFeedWrite = { }
             )
         }
     }

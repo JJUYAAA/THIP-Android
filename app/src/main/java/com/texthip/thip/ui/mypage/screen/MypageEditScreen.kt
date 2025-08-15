@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,32 +38,32 @@ fun EditProfileScreen() {
         RoleItem(
             stringResource(R.string.literature),
             stringResource(R.string.literary_person),
-            R.drawable.character_literature,
-            colors.Literature
+            "https://photos/1111",
+            "#FF6B6B"
         ),
         RoleItem(
             stringResource(R.string.science_it),
             stringResource(R.string.scientist),
-            R.drawable.character_science,
-            colors.ScienceIt
+            "https://photos/1111",
+            "#FF6B6B"
         ),
         RoleItem(
             stringResource(R.string.social_science),
             stringResource(R.string.sociologist),
-            R.drawable.character_sociology,
-            colors.SocialScience
+            "https://photos/1111",
+            "#FF6B6B"
         ),
         RoleItem(
             stringResource(R.string.art),
             stringResource(R.string.artist),
-            R.drawable.character_art,
-            colors.Art
+            "https://photos/1111",
+            "#FF6B6B"
         ),
         RoleItem(
             stringResource(R.string.humanities),
             stringResource(R.string.philosopher),
-            R.drawable.character_humanities,
-            colors.Humanities
+            "https://photos/1111",
+            "#FF6B6B"
         )
     )
     Column(
@@ -134,13 +135,12 @@ fun EditProfileScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 userScrollEnabled = false,
             ) {
-                items(roleCards.size) { index ->
+                itemsIndexed(roleCards) { index, roleItem ->
                     RoleCard(
-                        genre = roleCards[index].genre,
-                        role = roleCards[index].role,
-                        imageResId = roleCards[index].imageResId,
-                        genreColor = colors.White,
-                        roleColor = roleCards[index].roleColor,
+                        genre = roleItem.genre,
+                        role = roleItem.role,
+                        imageUrl = roleItem.imageUrl,
+                        roleColor = roleItem.roleColor,
                         selected = selectedIndex == index,
                         onClick = { selectedIndex = index }
                     )
