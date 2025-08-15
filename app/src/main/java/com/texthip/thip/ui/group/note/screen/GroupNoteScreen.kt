@@ -487,6 +487,7 @@ fun GroupNoteContent(
             onDismiss = {
                 isCommentBottomSheetVisible = false
                 selectedPostForComment = null
+                onEvent(GroupNoteEvent.RefreshPosts)
             },
             onSendReply = { text, parentId, _ ->
                 if (text.isNotBlank()) {

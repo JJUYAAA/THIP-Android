@@ -49,6 +49,7 @@ sealed interface GroupNoteEvent {
     data class OnVote(val postId: Int, val voteItemId: Int, val type: Boolean) : GroupNoteEvent
     data class OnDeleteRecord(val postId: Int, val postType: String) : GroupNoteEvent
     data class OnLikeRecord(val postId: Int, val postType: String) : GroupNoteEvent
+    data object RefreshPosts : GroupNoteEvent
 }
 
 
@@ -146,6 +147,7 @@ class GroupNoteViewModel @Inject constructor(
 
             is GroupNoteEvent.OnDeleteRecord -> deletePost(event.postId, event.postType)
             is GroupNoteEvent.OnLikeRecord -> likeRecord(event.postId, event.postType)
+            is GroupNoteEvent.RefreshPosts -> loadPosts(isRefresh = true)
         }
     }
 
