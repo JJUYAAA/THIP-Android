@@ -7,10 +7,8 @@ import com.texthip.thip.data.model.book.response.BookListResponse
 import com.texthip.thip.data.model.book.response.BookSaveResponse
 import com.texthip.thip.data.model.book.response.BookSearchResponse
 import com.texthip.thip.data.model.book.response.MostSearchedBooksResponse
-import com.texthip.thip.data.model.book.response.RecentSearchResponse
 import com.texthip.thip.data.model.book.response.RecruitingRoomsResponse
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -19,7 +17,7 @@ import retrofit2.http.Query
 interface BookService {
 
     /** 저장된 책 또는 모임 책 목록 조회 */
-    @GET("books")
+    @GET("books/selectable-list")
     suspend fun getBooks(
         @Query("type") type: String
     ): BaseResponse<BookListResponse>
@@ -35,18 +33,6 @@ interface BookService {
     /** 인기 책 조회 */
     @GET("books/most-searched")
     suspend fun getMostSearchedBooks(): BaseResponse<MostSearchedBooksResponse>
-
-    /** 최근 검색어 조회 */
-    @GET("recent-searches")
-    suspend fun getRecentSearches(
-        @Query("type") type: String
-    ): BaseResponse<RecentSearchResponse>
-
-    /** 최근 검색어 삭제 */
-    @DELETE("recent-searches/{recentSearchId}")
-    suspend fun deleteRecentSearch(
-        @Path("recentSearchId") recentSearchId: Int
-    ): BaseResponse<Unit>
 
     /** 책 상세 조회 */
     @GET("books/{isbn}")

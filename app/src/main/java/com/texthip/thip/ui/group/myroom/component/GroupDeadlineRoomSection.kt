@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.cards.CardItemRoom
-import com.texthip.thip.data.model.group.response.RoomMainList
+import com.texthip.thip.data.model.rooms.response.RoomMainList
 import com.texthip.thip.data.manager.Genre
-import com.texthip.thip.data.model.group.response.RoomMainResponse
+import com.texthip.thip.data.model.rooms.response.RoomMainResponse
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography

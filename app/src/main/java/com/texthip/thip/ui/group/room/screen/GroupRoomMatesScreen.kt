@@ -104,6 +104,7 @@ private fun GroupRoomMatesScreenPreview() {
                         userId = 1,
                         nickname = "김희용",
                         aliasName = "문학가",
+                        aliasColor = "#A0F8E8",
                         imageUrl = "https://example.com/image1.jpg",
                         followerCount = 100
                     ),
@@ -111,6 +112,7 @@ private fun GroupRoomMatesScreenPreview() {
                         userId = 2,
                         nickname = "노성준",
                         aliasName = "문학가",
+                        aliasColor = "#A0F8E8",
                         imageUrl = "https://example.com/image1.jpg",
                         followerCount = 100
                     ),

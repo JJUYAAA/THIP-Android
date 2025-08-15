@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
-import com.texthip.thip.data.model.group.response.MyRoomResponse
+import com.texthip.thip.data.model.rooms.response.MyRoomResponse
 import com.texthip.thip.ui.common.cards.CardItemRoom
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.done.viewmodel.GroupDoneUiState

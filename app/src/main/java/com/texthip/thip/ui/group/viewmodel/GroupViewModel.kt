@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.manager.Genre
-import com.texthip.thip.data.repository.GroupRepository
+import com.texthip.thip.data.repository.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GroupViewModel @Inject constructor(
-    private val repository: GroupRepository,
+    private val repository: RoomsRepository,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 

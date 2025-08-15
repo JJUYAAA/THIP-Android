@@ -1,6 +1,6 @@
 package com.texthip.thip.ui.group.myroom.viewmodel
 
-import com.texthip.thip.data.model.group.response.MyRoomResponse
+import com.texthip.thip.data.model.rooms.response.MyRoomResponse
 import com.texthip.thip.ui.group.myroom.mock.RoomType
 
 data class GroupMyUiState(

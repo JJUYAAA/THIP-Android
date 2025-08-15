@@ -2,7 +2,9 @@ package com.texthip.thip.ui.search.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.texthip.thip.R
 import com.texthip.thip.data.model.book.response.BookDetailResponse
+import com.texthip.thip.data.provider.StringResourceProvider
 import com.texthip.thip.data.repository.BookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookDetailViewModel @Inject constructor(
-    private val bookRepository: BookRepository
+    private val bookRepository: BookRepository,
+    private val stringResourceProvider: StringResourceProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BookDetailUiState())
@@ -34,7 +37,7 @@ class BookDetailViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message ?: "책 정보를 불러오는데 실패했습니다."
+                        error = exception.message ?: stringResourceProvider.getString(R.string.error_book_detail_load_failed)
                     )
                 }
         }
@@ -59,7 +62,7 @@ class BookDetailViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isSaving = false,
-                        error = exception.message ?: "책 저장에 실패했습니다."
+                        error = exception.message ?: stringResourceProvider.getString(R.string.error_book_save_failed)
                     )
                 }
         }
