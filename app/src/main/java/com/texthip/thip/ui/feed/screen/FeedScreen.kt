@@ -47,7 +47,7 @@ import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
 import com.texthip.thip.ui.feed.mock.MySubscriptionData
-import com.texthip.thip.ui.feed.viewmodel.MySubscriptionViewModel
+import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme
@@ -67,10 +67,12 @@ fun FeedScreen(
     totalFeedCount: Int = 0,
     selectedTabIndex: Int = 0,
     followerProfileImageUrls: List<String> = emptyList(),
+    feedViewModel: FeedViewModel = hiltViewModel()
     resultFeedId: Int? = null,
     onResultConsumed: () -> Unit = {},
-    viewModel: MySubscriptionViewModel = hiltViewModel()
+    mySubscriptionViewModel: MySubscriptionViewModel = hiltViewModel()
 ) {
+    val feedUiState by feedViewModel.uiState.collectAsState()
     val selectedIndex = rememberSaveable { mutableIntStateOf(selectedTabIndex) }
     val feedStateList = remember {
         mutableStateListOf<FeedItem>().apply {
@@ -288,14 +290,14 @@ fun FeedScreen(
                     //피드
                     item {
                         Spacer(modifier = Modifier.height(20.dp))
-                        val subscriptionsForBar = subscriptionUiState.followings.map { user ->
+                        val subscriptionsForBar = feedUiState.recentWriters.map { user ->
                             MySubscriptionData(
                                 profileImageUrl = user.profileImageUrl,
                                 nickname = user.nickname,
-                                role = user.aliasName,
+                                role = "",
                                 roleColor = colors.White,
                                 subscriberCount = 0,
-                                isSubscribed = user.isFollowing
+                                isSubscribed = true
                             )
                         }
                         MySubscribeBarlist(
@@ -309,7 +311,6 @@ fun FeedScreen(
 
                         SavedFeedCard(
                             feedItem = feed,
-                            profileImage = profileImage,
                             onBookmarkClick = {
                                 val updated = feed.copy(isSaved = !feed.isSaved)
                                 feedStateList[index] = updated

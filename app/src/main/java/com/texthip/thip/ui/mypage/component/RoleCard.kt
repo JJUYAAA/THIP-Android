@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.mypage.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -22,30 +20,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.texthip.thip.R
+import coil.compose.AsyncImage
 import com.texthip.thip.ui.theme.DarkGrey
-import com.texthip.thip.ui.theme.NeonGreen
-import com.texthip.thip.ui.theme.Art
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.ui.theme.White
+import com.texthip.thip.utils.color.hexToColor
 
 @Composable
 fun RoleCard(
     modifier: Modifier = Modifier,
     genre: String,
     role: String,
-    imageResId: Int,
-    genreColor: Color,
-    roleColor: Color,
+    imageUrl: String,
+    roleColor: String,
     selected: Boolean,
     onClick: () -> Unit
 ) {
@@ -56,7 +48,7 @@ fun RoleCard(
     } else {
         colors.Black700
     }
-    val actualGenreColor = if (selected) genreColor else colors.Grey01
+    val actualGenreColor = if (selected) colors.White else colors.Grey01
     Box(
         modifier = modifier
             .width(162.dp)
@@ -70,12 +62,11 @@ fun RoleCard(
             )
             .clickable { onClick() }
     ) {
-        Image(
-            painter = painterResource(id = imageResId),
+        AsyncImage(
+            model = imageUrl,
             contentDescription = null,
             modifier = Modifier
-                .align(Alignment.BottomStart)
-                .size(80.dp),
+                .align(Alignment.BottomStart),
             contentScale = ContentScale.Fit,
             alpha = bgAlpha
         )
@@ -93,7 +84,7 @@ fun RoleCard(
             Text(
                 text = role,
                 style = typography.info_r400_s12,
-                color = roleColor
+                color = hexToColor(roleColor)
             )
         }
     }
@@ -113,9 +104,8 @@ fun RoleCardPreview() {
             RoleCard(
                 genre = "문학",
                 role = "문학가",
-                imageResId = R.drawable.character_literature,
-                genreColor = White,
-                roleColor = NeonGreen,
+                imageUrl = "https://picsum.photos/200",
+                roleColor = "#A0E931",
                 selected = selected1,
                 onClick = { selected1 = !selected1 }
             )
@@ -123,9 +113,8 @@ fun RoleCardPreview() {
             RoleCard(
                 genre = "예술",
                 role = "예술가",
-                imageResId = R.drawable.character_art,
-                genreColor = White,
-                roleColor = Art,
+                imageUrl = "https://picsum.photos/200",
+                roleColor = "#A00000",
                 selected = selected2,
                 onClick = { selected2 = !selected2 }
             )
