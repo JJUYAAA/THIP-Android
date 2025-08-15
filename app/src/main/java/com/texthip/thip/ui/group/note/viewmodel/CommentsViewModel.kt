@@ -24,6 +24,7 @@ sealed interface CommentsEvent {
     data class LikeComment(val commentId: Int) : CommentsEvent // 댓글 좋아요 이벤트
     data class LikeReply(val parentCommentId: Int, val replyId: Int) : CommentsEvent // 대댓글 좋아요 이벤트
     data class CreateComment(val content: String, val parentId: Int?) : CommentsEvent
+    data class DeleteComment(val commentId: Int) : CommentsEvent
 }
 
 @HiltViewModel
@@ -54,6 +55,39 @@ class CommentsViewModel @Inject constructor(
                 content = event.content,
                 parentId = event.parentId
             )
+
+            is CommentsEvent.DeleteComment -> deleteComment(event.commentId)
+        }
+    }
+
+    private fun deleteComment(commentId: Int) {
+        val originalComments = _uiState.value.comments
+        var targetPostId: Long? = null // 삭제 성공 시 postId를 저장할 변수
+
+        val newComments = originalComments.map { comment ->
+            // 부모 댓글이 삭제 대상인 경우
+            if (comment.commentId == commentId) {
+                targetPostId = currentPostId // postId 저장
+                comment.copy(isDeleted = true)
+            } else {
+                // 답글이 삭제 대상인 경우
+                comment.copy(
+                    replyList = comment.replyList.map { reply ->
+                        reply
+                    }
+                )
+            }
+        }
+        _uiState.update { it.copy(comments = newComments) }
+
+        viewModelScope.launch {
+            commentsRepository.deleteComment(commentId.toLong())
+                .onSuccess { response ->
+                    // 성공 시 별도 처리 필요 없음
+                }
+                .onFailure {
+                    _uiState.update { it.copy(comments = originalComments, error = "삭제 실패") }
+                }
         }
     }
 

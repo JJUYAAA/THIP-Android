@@ -236,6 +236,8 @@
     <string name="sort_comment">댓글 많은 순</string>
     <string name="posting_in_progress">기록을 게시 중입니다...</string>
     <string name="posting_complete">기록이 게시되었습니다!</string>
+    <string name="delete_comment_title">이 댓글을 삭제하시겠어요?</string>
+    <string name="comment_deleted">삭제된 댓글이에요.</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>

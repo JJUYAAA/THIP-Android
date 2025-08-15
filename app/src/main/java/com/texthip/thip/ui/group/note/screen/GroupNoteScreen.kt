@@ -176,7 +176,6 @@ fun GroupNoteContent(
     }
 
     val tabs = listOf(stringResource(R.string.group_record), stringResource(R.string.my_record))
-    val sortOptions = remember { SortType.entries.map { it.displayNameRes } }
     val sortDisplayStrings = remember { SortType.entries.map { it.displayNameRes } }
         .map { stringResource(it) }
 

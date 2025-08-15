@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.group.note.component
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,56 +30,67 @@ fun CommentItem(
     modifier: Modifier = Modifier,
     data: CommentList,
     onReplyClick: (String) -> Unit = { },
-    onLikeClick: () -> Unit = {}
+    onLikeClick: () -> Unit = {},
+    onLongPress: () -> Unit = {}
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        ProfileBarFeed(
-            profileImage = data.creatorProfileImageUrl,
-            nickname = data.creatorNickname,
-            genreName = data.aliasName,
-            genreColor = hexToColor(data.aliasColor),
-            date = data.postDate
+    if (data.isDeleted) {
+        Text(
+            text = stringResource(R.string.comment_deleted),
+            style = typography.feedcopy_r400_s14_h20,
+            color = colors.Grey02,
         )
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
+    } else {
+        Column(
+            modifier = modifier.pointerInput(Unit) {
+                detectTapGestures(onLongPress = { onLongPress() })
+            },
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = data.content,
-                    color = colors.Grey,
-                    style = typography.feedcopy_r400_s14_h20,
-                )
-                Text(
-                    modifier = Modifier.clickable(onClick = { onReplyClick(data.creatorNickname) }),
-                    text = stringResource(R.string.write_reply),
-                    style = typography.menu_sb600_s12,
-                    color = colors.Grey02,
-                )
-            }
+            ProfileBarFeed(
+                profileImage = data.creatorProfileImageUrl,
+                nickname = data.creatorNickname,
+                genreName = data.aliasName,
+                genreColor = hexToColor(data.aliasColor),
+                date = data.postDate
+            )
 
-            Column(
-                modifier = Modifier.clickable(onClick = onLikeClick),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                Icon(
-                    painter = painterResource(if (data.isLike) R.drawable.ic_heart_center_filled else R.drawable.ic_heart_center),
-                    contentDescription = null,
-                    tint = Color.Unspecified
-                )
-                Text(
-                    text = data.likeCount.toString(),
-                    style = typography.navi_m500_s10,
-                    color = colors.White,
-                )
+                Column(
+                    modifier = Modifier
+                        .weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = data.content,
+                        color = colors.Grey,
+                        style = typography.feedcopy_r400_s14_h20,
+                    )
+                    Text(
+                        modifier = Modifier.clickable(onClick = { onReplyClick(data.creatorNickname) }),
+                        text = stringResource(R.string.write_reply),
+                        style = typography.menu_sb600_s12,
+                        color = colors.Grey02,
+                    )
+                }
+
+                Column(
+                    modifier = Modifier.clickable(onClick = onLikeClick),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(if (data.isLike) R.drawable.ic_heart_center_filled else R.drawable.ic_heart_center),
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
+                    Text(
+                        text = data.likeCount.toString(),
+                        style = typography.navi_m500_s10,
+                        color = colors.White,
+                    )
+                }
             }
         }
     }
@@ -100,13 +113,14 @@ private fun CommentItemPreview() {
                     creatorId = 1,
                     creatorNickname = "User1",
                     creatorProfileImageUrl = "https://example.com/image1.jpg",
-                    aliasName= "칭호칭호",
+                    aliasName = "칭호칭호",
                     aliasColor = "#FF5733",
                     content = "This is a comment.",
                     postDate = "2023-10-01T12:00:00Z",
                     isLike = false,
                     likeCount = 10,
                     isDeleted = false,
+                    isWriter = false,
                     replyList = emptyList()
                 )
             )
@@ -117,13 +131,14 @@ private fun CommentItemPreview() {
                     creatorId = 1,
                     creatorNickname = "User1",
                     creatorProfileImageUrl = "https://example.com/image1.jpg",
-                    aliasName= "칭호칭호",
+                    aliasName = "칭호칭호",
                     aliasColor = "#FF5733",
                     content = "This is a comment.",
                     postDate = "2023-10-01T12:00:00Z",
                     isLike = false,
                     likeCount = 10,
                     isDeleted = false,
+                    isWriter = false,
                     replyList = emptyList()
                 )
             )
@@ -134,13 +149,14 @@ private fun CommentItemPreview() {
                     creatorId = 1,
                     creatorNickname = "User1",
                     creatorProfileImageUrl = "https://example.com/image1.jpg",
-                    aliasName= "칭호칭호",
+                    aliasName = "칭호칭호",
                     aliasColor = "#FF5733",
                     content = "This is a comment.",
                     postDate = "2023-10-01T12:00:00Z",
                     isLike = false,
                     likeCount = 10,
                     isDeleted = false,
+                    isWriter = false,
                     replyList = emptyList()
                 )
             )

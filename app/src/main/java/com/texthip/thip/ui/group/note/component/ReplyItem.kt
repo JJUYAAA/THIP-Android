@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.group.note.component
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -30,7 +32,8 @@ fun ReplyItem(
     modifier: Modifier = Modifier,
     data: ReplyList,
     onReplyClick: () -> Unit = { },
-    onLikeClick: () -> Unit = {}
+    onLikeClick: () -> Unit = {},
+    onLongPress: () -> Unit = {}
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -42,7 +45,9 @@ fun ReplyItem(
         )
 
         Column(
-            modifier = modifier,
+            modifier = modifier.pointerInput(Unit) {
+                detectTapGestures(onLongPress = { onLongPress() })
+            },
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ProfileBarFeed(
@@ -130,6 +135,7 @@ private fun ReplyItemPreview() {
                     content = "This is a reply.",
                     postDate = "2023-10-01T12:05:00Z",
                     isLike = false,
+                    isWriter = false,
                     likeCount = 5
                 )
             )
