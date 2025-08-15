@@ -48,6 +48,7 @@ import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
 import com.texthip.thip.ui.feed.mock.MySubscriptionData
 import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
+import com.texthip.thip.ui.feed.viewmodel.MySubscriptionViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme
@@ -67,7 +68,7 @@ fun FeedScreen(
     totalFeedCount: Int = 0,
     selectedTabIndex: Int = 0,
     followerProfileImageUrls: List<String> = emptyList(),
-    feedViewModel: FeedViewModel = hiltViewModel()
+    feedViewModel: FeedViewModel = hiltViewModel(),
     resultFeedId: Int? = null,
     onResultConsumed: () -> Unit = {},
     mySubscriptionViewModel: MySubscriptionViewModel = hiltViewModel()
@@ -152,7 +153,7 @@ fun FeedScreen(
             roleColor = colors.SocialScience
         )
     )
-    val subscriptionUiState by viewModel.uiState.collectAsState()
+    val subscriptionUiState by mySubscriptionViewModel.uiState.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize()
