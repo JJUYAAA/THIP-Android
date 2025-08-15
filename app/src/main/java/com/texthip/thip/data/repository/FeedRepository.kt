@@ -1,14 +1,27 @@
 package com.texthip.thip.data.repository
 
+import android.content.Context
+import android.net.Uri
 import com.texthip.thip.data.model.base.handleBaseResponse
+import com.texthip.thip.data.model.feed.request.CreateFeedRequest
+import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
 import com.texthip.thip.data.service.FeedService
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FeedRepository @Inject constructor(
-    private val feedService: FeedService
+    private val feedService: FeedService,
+    @param:ApplicationContext private val context: Context
 ) {
 
     /** 피드 작성에 필요한 카테고리 및 태그 목록 조회 */
@@ -30,5 +43,73 @@ class FeedRepository @Inject constructor(
         } ?: emptyList()
         
         response?.copy(categoryList = orderedCategories)
+    }
+
+    /** 피드 생성 */
+    suspend fun createFeed(
+        isbn: String,
+        contentBody: String,
+        isPublic: Boolean,
+        tagList: List<String>,
+        imageUris: List<Uri>
+    ): Result<CreateFeedResponse?> = runCatching {
+        val request = CreateFeedRequest(
+            isbn = isbn,
+            contentBody = contentBody,
+            isPublic = isPublic,
+            tagList = tagList
+        )
+
+        // JSON 요청 부분을 RequestBody로 변환
+        val requestJson = Json.encodeToString(request)
+        val requestBody = requestJson.toRequestBody("application/json".toMediaType())
+
+        // 이미지 파일들을 MultipartBody.Part로 변환
+        val imageParts = if (imageUris.isNotEmpty()) {
+            imageUris.mapNotNull { uri ->
+                try {
+                    uriToMultipartBodyPart(uri, "images")
+                } catch (e: Exception) {
+                    null
+                }
+            }
+        } else {
+            null
+        }
+
+        feedService.createFeed(requestBody, imageParts)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    private fun uriToMultipartBodyPart(uri: Uri, paramName: String): MultipartBody.Part? {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+            
+            // MIME 타입 확인
+            val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
+            val extension = when (mimeType) {
+                "image/png" -> "png"
+                "image/gif" -> "gif"
+                "image/jpeg", "image/jpg" -> "jpg"
+                else -> "jpg" // 기본값
+            }
+            
+            // 파일명 생성
+            val fileName = "feed_image_${System.currentTimeMillis()}.$extension"
+            val tempFile = File(context.cacheDir, fileName)
+            
+            // 임시 파일로 복사
+            FileOutputStream(tempFile).use { output ->
+                inputStream.copyTo(output)
+            }
+            
+            // MultipartBody.Part 생성
+            val requestFile = tempFile.asRequestBody(mimeType.toMediaType())
+            MultipartBody.Part.createFormData(paramName, fileName, requestFile)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 }
