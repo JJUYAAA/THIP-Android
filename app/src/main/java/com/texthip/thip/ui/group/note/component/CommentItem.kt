@@ -29,7 +29,7 @@ import com.texthip.thip.utils.color.hexToColor
 fun CommentItem(
     modifier: Modifier = Modifier,
     data: CommentList,
-    onReplyClick: (String) -> Unit = { },
+    onReplyClick: (String?) -> Unit = { },
     onLikeClick: () -> Unit = {},
     onLongPress: () -> Unit = {}
 ) {
@@ -46,12 +46,13 @@ fun CommentItem(
             },
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            data
             ProfileBarFeed(
                 profileImage = data.creatorProfileImageUrl,
-                nickname = data.creatorNickname,
-                genreName = data.aliasName,
-                genreColor = hexToColor(data.aliasColor),
-                date = data.postDate
+                nickname = data.creatorNickname ?: "",
+                genreName = data.aliasName ?: "",
+                genreColor = hexToColor(data.aliasColor ?: "#FFFFFF"),
+                date = data.postDate ?: ""
             )
 
             Row(
@@ -62,11 +63,13 @@ fun CommentItem(
                         .weight(1f),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = data.content,
-                        color = colors.Grey,
-                        style = typography.feedcopy_r400_s14_h20,
-                    )
+                    data.content?.let {
+                        Text(
+                            text = it,
+                            color = colors.Grey,
+                            style = typography.feedcopy_r400_s14_h20,
+                        )
+                    }
                     Text(
                         modifier = Modifier.clickable(onClick = { onReplyClick(data.creatorNickname) }),
                         text = stringResource(R.string.write_reply),

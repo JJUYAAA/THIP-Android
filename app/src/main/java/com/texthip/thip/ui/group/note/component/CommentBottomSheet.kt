@@ -223,7 +223,7 @@ private fun CommentLazyList(
     isLoadingMore: Boolean,
     isLastPage: Boolean,
     onLoadMore: () -> Unit,
-    onReplyClick: (commentId: Int, nickname: String) -> Unit,
+    onReplyClick: (commentId: Int, nickname: String?) -> Unit,
     onEvent: (CommentsEvent) -> Unit,
     onCommentLongPress: (CommentList) -> Unit,
     onReplyLongPress: (ReplyList) -> Unit
@@ -248,7 +248,9 @@ private fun CommentLazyList(
     LazyColumn(state = lazyListState) {
         items(
             items = commentList,
-            key = { it.commentId }
+            key = { comment ->
+                comment.commentId ?: comment.replyList.first().commentId
+            }
         ) { comment ->
             CommentSection(
                 commentItem = comment,

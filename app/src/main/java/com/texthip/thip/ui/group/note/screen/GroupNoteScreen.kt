@@ -472,11 +472,13 @@ fun GroupNoteContent(
     }
 
     if (isCommentBottomSheetVisible && selectedPostForComment != null) {
-        LaunchedEffect(selectedPostForComment) {
-            commentsViewModel.initialize(
-                postId = selectedPostForComment!!.postId.toLong(),
-                postType = selectedPostForComment!!.postType
-            )
+        LaunchedEffect(selectedPostForComment?.postId) {
+            selectedPostForComment?.let { post ->
+                commentsViewModel.initialize(
+                    postId = post.postId.toLong(),
+                    postType = post.postType
+                )
+            }
         }
 
         CommentBottomSheet(

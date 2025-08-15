@@ -11,14 +11,14 @@ data class CommentsResponse(
 
 @Serializable
 data class CommentList(
-    val commentId: Int,
-    val creatorId: Int,
-    val creatorProfileImageUrl: String,
-    val creatorNickname: String,
-    val aliasName: String,
-    val aliasColor: String,
-    val postDate: String,
-    val content: String,
+    val commentId: Int?,
+    val creatorId: Int?,
+    val creatorProfileImageUrl: String?,
+    val creatorNickname: String?,
+    val aliasName: String?,
+    val aliasColor: String?,
+    val postDate: String?,
+    val content: String?,
     val likeCount: Int,
     val isDeleted: Boolean,
     val isWriter: Boolean,

@@ -62,18 +62,20 @@ class CommentsViewModel @Inject constructor(
 
     private fun deleteComment(commentId: Int) {
         val originalComments = _uiState.value.comments
-        var targetPostId: Long? = null // 삭제 성공 시 postId를 저장할 변수
 
         val newComments = originalComments.map { comment ->
-            // 부모 댓글이 삭제 대상인 경우
             if (comment.commentId == commentId) {
-                targetPostId = currentPostId // postId 저장
                 comment.copy(isDeleted = true)
             } else {
-                // 답글이 삭제 대상인 경우
                 comment.copy(
                     replyList = comment.replyList.map { reply ->
-                        reply
+                        if (reply.commentId == commentId) {
+                            reply
+                        } else {
+                            reply
+                        }
+                    }.filterNot { reply ->
+                        reply.commentId == commentId
                     }
                 )
             }

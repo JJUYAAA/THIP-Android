@@ -18,7 +18,7 @@ import com.texthip.thip.ui.theme.ThipTheme
 @Composable
 fun CommentSection(
     commentItem: CommentList,
-    onReplyClick: (commentId: Int, nickname: String) -> Unit,
+    onReplyClick: (commentId: Int, nickname: String?) -> Unit,
     onEvent: (CommentsEvent) -> Unit = { _ -> },
     onCommentLongPress: (CommentList) -> Unit = { _ -> },
     onReplyLongPress: (ReplyList) -> Unit = { _ -> },
@@ -33,22 +33,40 @@ fun CommentSection(
         ) {
             CommentItem(
                 data = commentItem,
-                onReplyClick = { onReplyClick(commentItem.commentId, commentItem.creatorNickname) },
-                onLikeClick = { onEvent(CommentsEvent.LikeComment(commentItem.commentId)) },
+                onReplyClick = {
+                    // commentId가 null이 아닐 때만 답글 달기 가능
+                    // todo: 수정 가능
+                    commentItem.commentId?.let { id ->
+                        onReplyClick(id, commentItem.creatorNickname)
+                    }
+                },
+                onLikeClick = {
+                    // commentId가 null이 아닐 때만 좋아요 가능
+                    // todo: 수정 가능
+                    commentItem.commentId?.let { id ->
+                        onEvent(CommentsEvent.LikeComment(id))
+                    }
+                },
                 onLongPress = { onCommentLongPress(commentItem) }
             )
 
             commentItem.replyList.forEach { reply ->
                 ReplyItem(
                     data = reply,
-                    onReplyClick = { onReplyClick(commentItem.commentId, reply.creatorNickname) },
+                    onReplyClick = {
+                        commentItem.commentId?.let { parentId ->
+                            onReplyClick(parentId, reply.creatorNickname)
+                        }
+                    },
                     onLikeClick = {
-                        onEvent(
-                            CommentsEvent.LikeReply(
-                                commentItem.commentId,
-                                reply.commentId
+                        commentItem.commentId?.let { parentId ->
+                            onEvent(
+                                CommentsEvent.LikeReply(
+                                    parentId,
+                                    reply.commentId
+                                )
                             )
-                        )
+                        }
                     },
                     onLongPress = { onReplyLongPress(reply) }
                 )
