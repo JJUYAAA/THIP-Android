@@ -26,7 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -61,19 +60,12 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun FeedWriteScreen(
+    modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit,
     onFeedCreated: (Int) -> Unit = {},
-    modifier: Modifier = Modifier,
     viewModel: FeedWriteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    
-    // 에러 메시지 표시
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let { message ->
-            viewModel.clearError()
-        }
-    }
 
     FeedWriteContent(
         uiState = uiState,
@@ -83,7 +75,8 @@ fun FeedWriteScreen(
                 onSuccess = { feedId ->
                     onFeedCreated(feedId)
                 },
-                onError = { }
+                onError = { errorMessage ->
+                }
             )
         },
         onSelectBook = viewModel::selectBook,

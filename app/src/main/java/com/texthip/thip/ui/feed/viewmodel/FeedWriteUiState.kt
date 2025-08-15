@@ -27,17 +27,14 @@ data class FeedWriteUiState(
     val isContentValid: Boolean
         get() = feedContent.isNotBlank() && feedContent.length <= 2000
 
-    val isCategoryValid: Boolean
-        get() = selectedCategoryIndex >= 0 && selectedTags.isNotEmpty()
-
     val isImageCountValid: Boolean
         get() = imageUris.size <= 3
 
     val isFormValid: Boolean
         get() = selectedBook != null &&
                 isContentValid &&
-                isCategoryValid &&
-                isImageCountValid
+                isImageCountValid &&
+                selectedTags.size <= 5  // 태그는 최대 5개까지만
 
     // 태그 개수 제한 (최대 5개)
     val canAddMoreTags: Boolean
