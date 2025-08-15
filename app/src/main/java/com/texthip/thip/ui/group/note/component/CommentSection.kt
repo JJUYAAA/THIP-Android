@@ -59,14 +59,7 @@ fun CommentSection(
                         }
                     },
                     onLikeClick = {
-                        commentItem.commentId?.let { parentId ->
-                            onEvent(
-                                CommentsEvent.LikeReply(
-                                    parentId,
-                                    reply.commentId
-                                )
-                            )
-                        }
+                        onEvent(CommentsEvent.LikeReply(reply.commentId))
                     },
                     onLongPress = { onReplyLongPress(reply) }
                 )
