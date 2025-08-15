@@ -36,6 +36,12 @@ fun VoteCommentCard(
     val isLocked = data.isLocked
     val isWriter = data.isWriter
 
+    val pageText = if (data.isOverview) {
+        stringResource(id = R.string.general_review)
+    } else {
+        data.page.toString() + stringResource(R.string.page)
+    }
+
     Column(
         modifier = modifier
             .blur(if (isLocked) 5.dp else 0.dp)
@@ -50,7 +56,7 @@ fun VoteCommentCard(
         ProfileBar(
             profileImage = "https://example.com/image1.jpg",
             topText = data.nickName,
-            bottomText = data.page.toString() + stringResource(R.string.page),
+            bottomText = pageText,
             bottomTextColor = colors.Purple,
             showSubscriberInfo = false,
             hoursAgo = data.postDate
@@ -119,6 +125,7 @@ private fun VoteCommentCardPreview() {
             isLiked = true,
             isWriter = false,
             isLocked = false,
+            isOverview = false,
             voteItems = emptyList()
         )
     )
