@@ -31,21 +31,21 @@ class GroupMakeRoomViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(GroupMakeRoomUiState())
     val uiState: StateFlow<GroupMakeRoomUiState> = _uiState.asStateFlow()
-    
+
     private var searchJob: Job? = null
-    
+
     companion object {
         private val DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd")
     }
-    
+
     private fun updateState(update: (GroupMakeRoomUiState) -> GroupMakeRoomUiState) {
         _uiState.value = update(_uiState.value)
     }
-    
+
     init {
         loadGenres()
     }
-    
+
     private fun loadGenres() {
         viewModelScope.launch {
             roomsRepository.getGenres()
@@ -58,7 +58,7 @@ class GroupMakeRoomViewModel @Inject constructor(
     fun selectBook(book: BookData) {
         updateState { it.copy(selectedBook = book) }
     }
-    
+
     fun setPreselectedBook(isbn: String, title: String, imageUrl: String, author: String) {
         val preselectedBook = BookData(
             title = title,
@@ -66,11 +66,11 @@ class GroupMakeRoomViewModel @Inject constructor(
             author = author,
             isbn = isbn
         )
-        updateState { 
+        updateState {
             it.copy(
                 selectedBook = preselectedBook,
                 isBookPreselected = true
-            ) 
+            )
         }
     }
 
@@ -80,21 +80,27 @@ class GroupMakeRoomViewModel @Inject constructor(
             loadBooks()
         }
     }
-    
+
     private fun loadBooks() {
         viewModelScope.launch {
             updateState { it.copy(isLoadingBooks = true) }
             try {
                 val savedBooksResult = bookRepository.getBooks("SAVED")
                 savedBooksResult.onSuccess { response ->
-                    updateState { it.copy(savedBooks = response?.bookList?.map { dto -> dto.toBookData() } ?: emptyList()) }
+                    updateState {
+                        it.copy(savedBooks = response?.bookList?.map { dto -> dto.toBookData() }
+                            ?: emptyList())
+                    }
                 }.onFailure {
                     updateState { it.copy(savedBooks = emptyList()) }
                 }
 
                 val groupBooksResult = bookRepository.getBooks("JOINING")
                 groupBooksResult.onSuccess { response ->
-                    updateState { it.copy(groupBooks = response?.bookList?.map { dto -> dto.toBookData() } ?: emptyList()) }
+                    updateState {
+                        it.copy(groupBooks = response?.bookList?.map { dto -> dto.toBookData() }
+                            ?: emptyList())
+                    }
                 }.onFailure {
                     updateState { it.copy(groupBooks = emptyList()) }
                 }
@@ -105,7 +111,7 @@ class GroupMakeRoomViewModel @Inject constructor(
             }
         }
     }
-    
+
     private fun BookSavedResponse.toBookData(): BookData {
         return BookData(
             title = this.bookTitle,
@@ -114,7 +120,7 @@ class GroupMakeRoomViewModel @Inject constructor(
             isbn = this.isbn
         )
     }
-    
+
     private fun BookSearchItem.toBookData(): BookData {
         return BookData(
             title = this.title,
@@ -123,29 +129,47 @@ class GroupMakeRoomViewModel @Inject constructor(
             isbn = this.isbn
         )
     }
-    
+
     fun searchBooks(query: String) {
         searchJob?.cancel()
-        
+
         if (query.isBlank()) {
             updateState { it.copy(searchResults = emptyList(), isSearching = false) }
             return
         }
-        
+
         searchJob = viewModelScope.launch {
             delay(300) // 디바운싱
             updateState { it.copy(isSearching = true) }
-            
+
             try {
                 val result = bookRepository.searchBooks(query, page = 1, isFinalized = false)
                 result.onSuccess { response ->
-                    val searchResults = response?.searchResult?.map { it.toBookData() } ?: emptyList()
-                    updateState { it.copy(searchResults = searchResults, isSearching = false) }
+                    val searchResults =
+                        response?.searchResult?.map {
+                            it.toBookData()
+                        } ?: emptyList()
+                    updateState {
+                        it.copy(
+                            searchResults = searchResults,
+                            isSearching = false
+                        )
+                    }
                 }.onFailure {
-                    updateState { it.copy(searchResults = emptyList(), isSearching = false) }
+                    updateState {
+                        it.copy(
+                            searchResults = emptyList(),
+                            isSearching = false
+                        )
+                    }
                 }
             } catch (e: Exception) {
-                updateState { it.copy(searchResults = emptyList(), isSearching = false) }
+                updateState {
+                    it.copy(
+                        searchResults = emptyList(),
+                        isSearching = false
+                    )
+                }
             }
         }
     }
@@ -163,7 +187,7 @@ class GroupMakeRoomViewModel @Inject constructor(
     }
 
     fun setDateRange(startDate: LocalDate, endDate: LocalDate) {
-        updateState { 
+        updateState {
             it.copy(
                 meetingStartDate = startDate,
                 meetingEndDate = endDate
@@ -176,7 +200,7 @@ class GroupMakeRoomViewModel @Inject constructor(
     }
 
     fun togglePrivate(isPrivate: Boolean) {
-        updateState { 
+        updateState {
             it.copy(
                 isPrivate = isPrivate,
                 password = if (!isPrivate) "" else it.password
@@ -222,16 +246,26 @@ class GroupMakeRoomViewModel @Inject constructor(
                 result.onSuccess { roomId ->
                     onSuccess(roomId)
                 }.onFailure { exception ->
-                    onError(stringResourceProvider.getString(R.string.error_room_creation_failed, exception.message ?: ""))
+                    onError(
+                        stringResourceProvider.getString(
+                            R.string.error_room_creation_failed,
+                            exception.message ?: ""
+                        )
+                    )
                 }
             } catch (e: Exception) {
-                onError(stringResourceProvider.getString(R.string.error_network_error, e.message ?: ""))
+                onError(
+                    stringResourceProvider.getString(
+                        R.string.error_network_error,
+                        e.message ?: ""
+                    )
+                )
             } finally {
                 updateState { it.copy(isLoading = false) }
             }
         }
     }
-    
+
     private fun getApiCategoryName(genreIndex: Int): String {
         val currentGenres = uiState.value.genres
         if (genreIndex >= 0 && genreIndex < currentGenres.size) {
