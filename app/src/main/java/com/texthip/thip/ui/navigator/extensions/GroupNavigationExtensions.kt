@@ -56,6 +56,11 @@ fun NavHostController.navigateToGroupRecruit(roomId: Int) {
     navigate(GroupRoutes.Recruit(roomId))
 }
 
+// 비밀번호 입력 화면으로 이동
+fun NavHostController.navigateToGroupRoomUnlock(roomId: Int) {
+    navigate(GroupRoutes.RoomUnlock(roomId))
+}
+
 // 추천 모임방으로 이동 (현재 화면을 대체)
 fun NavHostController.navigateToRecommendedGroupRecruit(roomId: Int) {
     navigate(GroupRoutes.Recruit(roomId)) {

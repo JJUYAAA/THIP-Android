@@ -1,7 +1,7 @@
 package com.texthip.thip.ui.group.room.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import coil.compose.AsyncImage
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -38,7 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
-import com.texthip.thip.data.model.group.response.RecommendRoomResponse
+import com.texthip.thip.data.model.rooms.response.RecommendRoomResponse
+import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.common.cards.CardRoomBook
 import com.texthip.thip.ui.common.modal.DialogPopup
@@ -50,6 +52,7 @@ import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.color.hexToColor
 import com.texthip.thip.utils.rooms.DateUtils
 import kotlinx.coroutines.delay
 
@@ -59,6 +62,9 @@ fun GroupRoomRecruitScreen(
     onRecommendationClick: (RecommendRoomResponse) -> Unit = {},
     onNavigateToGroupScreen: (String) -> Unit = {}, // GroupScreen으로 네비게이션 + 토스트 메시지
     onBackClick: () -> Unit = {}, // 뒤로가기
+    onBookDetailClick: (String) -> Unit = {}, // 책 상세 화면으로 이동
+    onNavigateToPasswordScreen: (Int) -> Unit = {}, // 비밀번호 입력 화면으로 이동
+    onNavigateToRoomPlayingScreen: (Int) -> Unit = {}, // 기록장 화면으로 이동
     viewModel: GroupRoomRecruitViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -76,11 +82,31 @@ fun GroupRoomRecruitScreen(
         }
     }
     
+    // 기록장 화면으로 네비게이션
+    LaunchedEffect(uiState.shouldNavigateToRoomPlayingScreen, uiState.roomId) {
+        if (uiState.shouldNavigateToRoomPlayingScreen) {
+            val roomIdValue = uiState.roomId
+            if (roomIdValue != null) {
+                onNavigateToRoomPlayingScreen(roomIdValue)
+                viewModel.onNavigatedToRoomPlayingScreen()
+            }
+        }
+    }
+    
     GroupRoomRecruitContent(
         uiState = uiState,
         onRecommendationClick = onRecommendationClick,
         onBackClick = onBackClick,
-        onParticipationClick = { viewModel.onParticipationClick() },
+        onBookDetailClick = onBookDetailClick,
+        onParticipationClick = { 
+            // 비밀방이면 비밀번호 화면으로, 공개방이면 바로 참여
+            val detail = uiState.roomDetail
+            if (detail != null && !detail.isPublic) {
+                onNavigateToPasswordScreen(detail.roomId)
+            } else {
+                viewModel.onParticipationClick()
+            }
+        },
         onCancelParticipationClick = { title, description -> viewModel.onCancelParticipationClick(title, description) },
         onCloseRecruitmentClick = { title, description -> viewModel.onCloseRecruitmentClick(title, description) },
         onDialogConfirm = { viewModel.onDialogConfirm() },
@@ -94,6 +120,7 @@ fun GroupRoomRecruitContent(
     uiState: GroupRoomRecruitUiState,
     onRecommendationClick: (RecommendRoomResponse) -> Unit = {},
     onBackClick: () -> Unit = {},
+    onBookDetailClick: (String) -> Unit = {},
     onParticipationClick: () -> Unit = {},
     onCancelParticipationClick: (String, String) -> Unit = { _, _ -> },
     onCloseRecruitmentClick: (String, String) -> Unit = { _, _ -> },
@@ -119,9 +146,9 @@ fun GroupRoomRecruitContent(
         // 데이터가 없는 경우
         val detail = uiState.roomDetail ?: return@Box
         
-        Image(
-            painter = painterResource(id = R.drawable.group_room_recruiting),
-            contentDescription = "배경 이미지",
+        AsyncImage(
+            model = detail.roomImageUrl,
+            contentDescription = "모임방 배경 이미지",
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .fillMaxWidth(),
@@ -331,7 +358,7 @@ fun GroupRoomRecruitContent(
                                 Text(
                                     text = detail.category,
                                     style = typography.info_m500_s12,
-                                    color = colors.SocialScience
+                                    color = hexToColor(detail.categoryColor)
                                 )
                             }
                         }
@@ -343,7 +370,8 @@ fun GroupRoomRecruitContent(
                         author = detail.authorName,
                         publisher = detail.publisher,
                         description = detail.bookDescription,
-                        imageUrl = detail.bookImageUrl
+                        imageUrl = detail.bookImageUrl,
+                        onClick = { onBookDetailClick(detail.isbn) }
                     )
 
                     // 추천 모임방이 있을 때만 표시
@@ -363,7 +391,6 @@ fun GroupRoomRecruitContent(
                             horizontalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
                             items(detail.recommendRooms) { rec ->
-                                // RecommendRoomResponse에서 데이터 추출
                                 val daysLeft = DateUtils.extractDaysFromDeadline(rec.recruitEndDate)
                                 CardItemRoomSmall(
                                     title = rec.roomName,
@@ -473,7 +500,7 @@ fun GroupRoomRecruitScreenPreview() {
         GroupRoomRecruitContent(
             uiState = GroupRoomRecruitUiState(
                 isLoading = false,
-                roomDetail = com.texthip.thip.data.model.group.response.RoomRecruitingResponse(
+                roomDetail = RoomRecruitingResponse(
                     isHost = false,
                     isJoining = false,
                     roomId = 1,
@@ -484,6 +511,7 @@ fun GroupRoomRecruitScreenPreview() {
                     progressEndDate = "2025.02.28",
                     recruitEndDate = "D-5",
                     category = "문학",
+                    categoryColor = "#8B7CF6",
                     roomDescription = "매트 헤이그의 미드나이트 라이브러리를 함께 읽으며 인생의 가능성과 선택에 대해 이야기해요. 각자의 삶에서 후회했던 순간들을 공유하고, 서로 위로하며 성장하는 시간을 가져보아요. 따뜻한 마음으로 서로의 이야기를 들어주실 분들과 함께하고 싶습니다.",
                     memberCount = 18,
                     recruitCount = 20,
@@ -504,7 +532,7 @@ fun GroupRoomRecruitScreenPreview() {
                         ),
                         RecommendRoomResponse(
                             roomId = 3,
-                            roomImageUrl = "https://picsum.photos/300/400?rec2", 
+                            roomImageUrl = "https://picsum.photos/300/400?rec2",
                             roomName = "✨ 철학 소설로 삶을 되돌아보기",
                             memberCount = 8,
                             recruitCount = 12,

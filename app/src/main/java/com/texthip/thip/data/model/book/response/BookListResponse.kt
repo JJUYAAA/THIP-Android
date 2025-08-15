@@ -11,9 +11,10 @@ data class BookListResponse(
 
 @Serializable
 data class BookSavedResponse(
-    @SerialName("isbn") val isbn: String = "",
+    @SerialName("bookId") val bookId: Int = 0,
     @SerialName("bookTitle") val bookTitle: String = "",
     @SerialName("authorName") val authorName: String = "",
     @SerialName("publisher") val publisher: String = "",
-    @SerialName("imageUrl") val imageUrl: String? = null
+    @SerialName("bookImageUrl") val bookImageUrl: String? = null,
+    @SerialName("isbn") val isbn: String = "",
 )

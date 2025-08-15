@@ -23,10 +23,13 @@ import com.texthip.thip.ui.group.note.viewmodel.GroupNoteViewModel
 import com.texthip.thip.ui.group.room.screen.GroupRoomMatesScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
+import com.texthip.thip.ui.group.room.screen.GroupRoomUnlockScreen
+import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitViewModel
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
+import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
@@ -35,13 +38,15 @@ import com.texthip.thip.ui.navigator.extensions.navigateToGroupNoteCreate
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomMates
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomUnlock
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupVoteCreate
 import com.texthip.thip.ui.navigator.extensions.navigateToRecommendedGroupRecruit
 import com.texthip.thip.ui.navigator.routes.GroupRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
-// Group
+private const val PARTICIPATION_APPROVED_KEY = "participation_approved_key"
+
 @SuppressLint("UnrememberedGetBackStackEntry")
 fun NavGraphBuilder.groupNavigation(
     navController: NavHostController,
@@ -95,8 +100,10 @@ fun NavGraphBuilder.groupNavigation(
             onNavigateBack = {
                 navigateBack()
             },
-            onGroupCreated = {
-                navigateBack()
+            onGroupCreated = { roomId ->
+                navController.navigate(GroupRoutes.Recruit(roomId)) {
+                    popUpTo<GroupRoutes.MakeRoom> { inclusive = true }
+                }
             }
         )
     }
@@ -121,8 +128,11 @@ fun NavGraphBuilder.groupNavigation(
             onNavigateBack = {
                 navigateBack()
             },
-            onGroupCreated = {
-                navigateBack()
+            onGroupCreated = { roomId ->
+                // 생성된 방의 모집 화면으로 이동하고 백스택 제거
+                navController.navigateToGroupRecruit(roomId)
+                // 백스택에서 MakeRoomWithBook 화면 제거
+                navController.popBackStack<GroupRoutes.MakeRoomWithBook>(inclusive = true)
             }
         )
     }
@@ -182,7 +192,19 @@ fun NavGraphBuilder.groupNavigation(
     composable<GroupRoutes.Recruit> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Recruit>()
         val roomId = route.roomId
-        
+        val viewModel: GroupRoomRecruitViewModel = hiltViewModel()
+
+        val participationApproved by backStackEntry.savedStateHandle
+            .getStateFlow(PARTICIPATION_APPROVED_KEY, false)
+            .collectAsState()
+
+        LaunchedEffect(participationApproved) {
+            if (participationApproved) {
+                viewModel.onParticipationClick()
+                backStackEntry.savedStateHandle[PARTICIPATION_APPROVED_KEY] = false
+            }
+        }
+
         GroupRoomRecruitScreen(
             roomId = roomId,
             onRecommendationClick = { recommendation ->
@@ -195,6 +217,42 @@ fun NavGraphBuilder.groupNavigation(
                 navController.popBackStack(MainTabRoutes.Group, false)
             },
             onBackClick = {
+                // MakeRoom에서 바로 온 경우를 확인하여 Group 홈으로 이동
+                val canGoBack = navController.previousBackStackEntry != null
+                if (canGoBack) {
+                    navigateBack()
+                } else {
+                    // 백스택이 비어있으면 Group 홈으로 이동 (방금 생성된 방의 경우)
+                    navController.popBackStack(MainTabRoutes.Group, false)
+                }
+            },
+            onBookDetailClick = { isbn ->
+                navController.navigateToBookDetail(isbn)
+            },
+            onNavigateToPasswordScreen = { roomId ->
+                navController.navigateToGroupRoomUnlock(roomId)
+            },
+            onNavigateToRoomPlayingScreen = { roomId ->
+                navController.navigateToGroupRoom(roomId)
+            }
+        )
+    }
+    
+    // Group Room Unlock 화면 (비밀번호 입력)
+    composable<GroupRoutes.RoomUnlock> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.RoomUnlock>()
+        val roomId = route.roomId
+        
+        GroupRoomUnlockScreen(
+            roomId = roomId,
+            onBackClick = {
+                navigateBack()
+            },
+            onSuccessNavigation = {
+                // 비밀번호가 맞았다는 '신호'만 이전 화면에 전달
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set(PARTICIPATION_APPROVED_KEY, true)
                 navigateBack()
             }
         )

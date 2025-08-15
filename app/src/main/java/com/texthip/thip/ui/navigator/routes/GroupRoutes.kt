@@ -28,6 +28,9 @@ sealed class GroupRoutes : Routes() {
     data class Recruit(val roomId: Int) : GroupRoutes()
 
     @Serializable
+    data class RoomUnlock(val roomId: Int) : GroupRoutes()
+
+    @Serializable
     data class Room(val roomId: Int) : GroupRoutes()
 
     @Serializable
