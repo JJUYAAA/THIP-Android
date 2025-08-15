@@ -26,10 +26,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -40,20 +39,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.texthip.thip.R
+import com.texthip.thip.data.model.feed.response.FeedCategory
 import com.texthip.thip.ui.common.buttons.GenreChipButton
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.buttons.SubGenreChipGrid
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
-import com.texthip.thip.ui.feed.mock.FeedData
+import com.texthip.thip.ui.feed.viewmodel.FeedWriteUiState
+import com.texthip.thip.ui.feed.viewmodel.FeedWriteViewModel
 import com.texthip.thip.ui.group.makeroom.component.GroupBookSearchBottomSheet
 import com.texthip.thip.ui.group.makeroom.component.GroupInputField
 import com.texthip.thip.ui.group.makeroom.component.GroupSelectBook
 import com.texthip.thip.ui.group.makeroom.component.SectionDivider
-import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
-import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
+import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -61,45 +62,84 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun FeedWriteScreen(
     onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    onFeedCreated: (Int) -> Unit = {},
+    modifier: Modifier = Modifier,
+    viewModel: FeedWriteViewModel = hiltViewModel()
 ) {
-    var feedData by remember { mutableStateOf(FeedData()) }
-    val scrollState = rememberScrollState()
-    val genres = listOf("문학", "과학·IT", "사회과학", "인문학", "예술")
-    val subGenreMap = mapOf(
-        0 to listOf("소설", "에세이", "시", "고전", "추리", "판타지", "로맨스", "SF", "공포", "역사"),
-        1 to listOf("AI", "프로그래밍", "로봇", "IT 일반", "수학", "물리", "화학"),
-        2 to listOf("정치", "경제", "법", "사회", "교육"),
-        3 to listOf("철학", "역사", "심리", "종교", "윤리"),
-        4 to listOf("음악", "미술", "공예", "무용", "연극")
+    val uiState by viewModel.uiState.collectAsState()
+    
+    // 에러 메시지 표시
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { message ->
+            viewModel.clearError()
+        }
+    }
+
+    FeedWriteContent(
+        uiState = uiState,
+        onNavigateBack = onNavigateBack,
+        onCreateFeed = { 
+            viewModel.createFeed(
+                onSuccess = { feedId ->
+                    onFeedCreated(feedId)
+                },
+                onError = { }
+            )
+        },
+        onSelectBook = viewModel::selectBook,
+        onToggleBookSearchSheet = viewModel::toggleBookSearchSheet,
+        onUpdateFeedContent = viewModel::updateFeedContent,
+        onAddImages = viewModel::addImages,
+        onRemoveImage = viewModel::removeImage,
+        onTogglePrivate = viewModel::togglePrivate,
+        onSelectCategory = viewModel::selectCategory,
+        onToggleTag = viewModel::toggleTag,
+        onRemoveTag = viewModel::removeTag,
+        onSearchBooks = viewModel::searchBooks,
+        modifier = modifier
     )
-    val showBookSearchSheet = remember { mutableStateOf(false) }
+}
+
+@Composable
+fun FeedWriteContent(
+    modifier: Modifier = Modifier,
+    uiState: FeedWriteUiState,
+    onNavigateBack: () -> Unit = {},
+    onCreateFeed: () -> Unit = {},
+    onSelectBook: (BookData) -> Unit = {},
+    onToggleBookSearchSheet: (Boolean) -> Unit = {},
+    onUpdateFeedContent: (String) -> Unit = {},
+    onAddImages: (List<Uri>) -> Unit = {},
+    onRemoveImage: (Int) -> Unit = {},
+    onTogglePrivate: (Boolean) -> Unit = {},
+    onSelectCategory: (Int) -> Unit = {},
+    onToggleTag: (String) -> Unit = {},
+    onRemoveTag: (String) -> Unit = {},
+    onSearchBooks: (String) -> Unit = {}
+) {
+    val scrollState = rememberScrollState()
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
     ) { uris: List<Uri> ->
         if (uris.isNotEmpty()) {
-            val availableSlots = 3 - feedData.imageUris.size
-            val imagesToAdd = uris.take(availableSlots) // 3장까지만 유지
-            feedData.imageUris.addAll(imagesToAdd)
+            onAddImages(uris)
         }
     }
-    val isImageLimitReached = feedData.imageUris.size >= 3
     val focusManager = LocalFocusManager.current
 
     Box {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .then(if (showBookSearchSheet.value) Modifier.blur(5.dp) else Modifier),
+                .then(if (uiState.showBookSearchSheet) Modifier.blur(5.dp) else Modifier),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val isRightButtonEnabled = feedData.selectedBook != null && feedData.feedContent.isNotBlank() && feedData.selectedGenreIndex != -1 && feedData.selectedSubGenres.isNotEmpty()
             InputTopAppBar(
                 title = stringResource(R.string.new_feed),
                 rightButtonName = stringResource(R.string.registration),
-                isRightButtonEnabled = isRightButtonEnabled,
+                isRightButtonEnabled = uiState.isFormValid && !uiState.isLoading,
                 onLeftClick = onNavigateBack,
-                onRightClick = {}
+                onRightClick = onCreateFeed
             )
             Column(
                 modifier = Modifier
@@ -116,9 +156,10 @@ fun FeedWriteScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 GroupSelectBook(
-                    selectedBook = feedData.selectedBook,
-                    onChangeBookClick = { showBookSearchSheet.value = true },
-                    onSelectBookClick = { showBookSearchSheet.value = true }
+                    selectedBook = uiState.selectedBook,
+                    onChangeBookClick = { onToggleBookSearchSheet(true) },
+                    onSelectBookClick = { onToggleBookSearchSheet(true) },
+                    isBookPreselected = uiState.isBookPreselected
                 )
 
                 SectionDivider()
@@ -126,11 +167,9 @@ fun FeedWriteScreen(
                 GroupInputField(
                     title = stringResource(R.string.write_feed),
                     hint = stringResource(R.string.write_feed_hint),
-                    value = feedData.feedContent,
+                    value = uiState.feedContent,
                     maxLength = 2000,
-                    onValueChange = { newText ->
-                        feedData = feedData.copy(feedContent = newText)
-                        }
+                    onValueChange = onUpdateFeedContent
                 )
 
                 SectionDivider()
@@ -151,10 +190,10 @@ fun FeedWriteScreen(
                             modifier = Modifier
                                 .size(80.dp)
                                 .background(color = colors.DarkGrey02)
-                                .border(width = 1.dp, color = if (isImageLimitReached) colors.DarkGrey else colors.Grey02,
+                                .border(width = 1.dp, color = if (!uiState.canAddMoreImages) colors.DarkGrey else colors.Grey02,
                                 )
                                 .let {
-                                    if (!isImageLimitReached) it.clickable {
+                                    if (uiState.canAddMoreImages) it.clickable {
                                         imagePickerLauncher.launch("image/*")
                                     } else it // 클릭 비활성화
                                 },
@@ -164,20 +203,20 @@ fun FeedWriteScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_plus),
                                 contentDescription = null,
-                                tint = if (isImageLimitReached) colors.DarkGrey else colors.White
+                                tint = if (!uiState.canAddMoreImages) colors.DarkGrey else colors.White
                             )
                         }
                     }
-                    items(feedData.imageUris.size) { index ->
+                    items(uiState.imageUris.size) { index ->
                         Box(modifier = Modifier.size(80.dp)) {
                             AsyncImage(
-                                model = feedData.imageUris[index],
+                                model = uiState.imageUris[index],
                                 contentDescription = null,
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
                             IconButton(
-                                onClick = { feedData.imageUris.removeAt(index) },
+                                onClick = { onRemoveImage(index) },
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
                                     .size(24.dp)
@@ -196,7 +235,7 @@ fun FeedWriteScreen(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
-                        text = stringResource(id = R.string.photo_count, feedData.imageUris.size, 3),
+                        text = stringResource(id = R.string.photo_count, uiState.imageUris.size, 3),
                         style = typography.info_r400_s12,
                         color = colors.NeonGreen,
                     )
@@ -219,10 +258,8 @@ fun FeedWriteScreen(
                         color = colors.White
                     )
                     ToggleSwitchButton(
-                        isChecked = feedData.isPrivate,
-                        onToggleChange = { isChecked ->
-                            feedData = feedData.copy(isPrivate = isChecked)
-                        }
+                        isChecked = uiState.isPrivate,
+                        onToggleChange = onTogglePrivate
                     )
                 }
                 SectionDivider()
@@ -235,43 +272,29 @@ fun FeedWriteScreen(
                 Spacer(modifier = Modifier.padding(top = 12.dp))
                 GenreChipRow(
                     modifier = Modifier.width(18.dp),
-                    genres = genres,
-                    selectedIndex = feedData.selectedGenreIndex,
-                    onSelect = {
-                        feedData = feedData.copy(selectedGenreIndex = it, selectedSubGenres = emptyList())
-                    }
+                    genres = uiState.categories.map { it.category },
+                    selectedIndex = uiState.selectedCategoryIndex,
+                    onSelect = onSelectCategory
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                if (feedData.selectedGenreIndex != -1) {
-                    val subGenres = subGenreMap[feedData.selectedGenreIndex].orEmpty()
+                if (uiState.selectedCategoryIndex != -1) {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     SubGenreChipGrid(
-                        subGenres = subGenres,
-                        selectedGenres = feedData.selectedSubGenres,
-                        onGenreToggle = { genre ->
-                            val newSelected = if (feedData.selectedSubGenres.contains(genre)) {
-                                feedData.selectedSubGenres - genre
-                            } else {
-                                if (feedData.selectedSubGenres.size < 5) {
-                                    feedData.selectedSubGenres + genre
-                                } else {
-                                    feedData.selectedSubGenres
-                                }
-                            }
-
-                            feedData = feedData.copy(selectedSubGenres = newSelected)
-                        }
+                        subGenres = uiState.availableTags,
+                        selectedGenres = uiState.selectedTags,
+                        onGenreToggle = onToggleTag
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
                         Text(
-                            text = stringResource(id = R.string.tag_count, feedData.selectedSubGenres.size, 5),
+                            modifier = Modifier.padding(top = 12.dp),
+                            text = stringResource(id = R.string.tag_count, uiState.selectedTags.size, 5),
                             style = typography.info_r400_s12,
-                            color = colors.NeonGreen,
-                            )
+                            color = colors.NeonGreen
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
@@ -281,25 +304,21 @@ fun FeedWriteScreen(
                     color = colors.White
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                if (feedData.selectedSubGenres.isNotEmpty()) {
+                if (uiState.selectedTags.isNotEmpty()) {
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(feedData.selectedSubGenres) { subGenre ->
+                        items(uiState.selectedTags) { tag ->
                             GenreChipButton(
-                                text = subGenre,
+                                text = tag,
                                 onClick = {
-                                    //해당 칩 눌렀을 때도 서브장르 삭제
-                                    feedData = feedData.copy(
-                                        selectedSubGenres =feedData.selectedSubGenres - subGenre
-                                    )
+                                    //해당 칩 눌렀을 때도 태그 삭제
+                                    onRemoveTag(tag)
                                 },
                                 onCloseClick = {
-                                    //x버튼 누르면 서브장르 삭제
-                                    feedData = feedData.copy(
-                                        selectedSubGenres = feedData.selectedSubGenres - subGenre
-                                    )
+                                    //x버튼 누르면 태그 삭제
+                                    onRemoveTag(tag)
                                 }
                             )
                         }
@@ -309,18 +328,22 @@ fun FeedWriteScreen(
             }
         }
 
-        if (showBookSearchSheet.value) {
+        if (uiState.showBookSearchSheet) {
             GroupBookSearchBottomSheet(
-                onDismiss = { showBookSearchSheet.value = false },
+                onDismiss = { onToggleBookSearchSheet(false) },
                 onBookSelect = { book ->
-                    feedData = feedData.copy(selectedBook= book)
-                    showBookSearchSheet.value = false
+                    onSelectBook(book)
+                    onToggleBookSearchSheet(false)
                 },
                 onRequestBook = {
-                    showBookSearchSheet.value = false
+                    onToggleBookSearchSheet(false)
                 },
-                savedBooks = dummySavedBooks,
-                groupBooks = dummyGroupBooks
+                savedBooks = uiState.savedBooks,
+                groupBooks = uiState.groupBooks,
+                searchResults = uiState.searchResults,
+                isLoading = uiState.isLoadingBooks,
+                isSearching = uiState.isSearching,
+                onSearch = onSearchBooks
             )
         }
     }
@@ -331,8 +354,42 @@ fun FeedWriteScreen(
 @Composable
 private fun FeedWriteScreenPreview() {
     ThipTheme {
-        FeedWriteScreen(
-            onNavigateBack = { }
+        FeedWriteContent(
+            uiState = FeedWriteUiState(
+                selectedBook = BookData(
+                    title = "미드나이트 라이브러리",
+                    imageUrl = "https://picsum.photos/300/400?1",
+                    author = "매트 헤이그",
+                    isbn = "9788937477263"
+                ),
+                feedContent = "이 책을 읽고 정말 많은 생각이 들었습니다...",
+                selectedCategoryIndex = 0,
+                selectedTags = listOf("한국소설", "에세이"),
+                categories = listOf(
+                    FeedCategory(
+                        category = "문학",
+                        tagList = listOf("한국소설", "외국소설", "에세이", "시", "고전")
+                    ),
+                    FeedCategory(
+                        category = "과학·IT",
+                        tagList = listOf("프로그래밍", "AI", "과학일반")
+                    ),
+                    FeedCategory(
+                        category = "사회과학",
+                        tagList = listOf("프로그래밍", "AI", "과학일반")
+                    ),
+                    FeedCategory(
+                        category = "인문학",
+                        tagList = listOf("프로그래밍", "AI", "과학일반")
+                    ),
+                    FeedCategory(
+                        category = "예술",
+                        tagList = listOf("프로그래밍", "AI", "과학일반")
+                    )
+                ),
+                imageUris = emptyList(),
+                isPrivate = false
+            )
         )
     }
 }
