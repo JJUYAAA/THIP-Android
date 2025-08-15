@@ -161,6 +161,9 @@ fun GroupNoteContent(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var isPinDialogVisible by remember { mutableStateOf(false) }
     var showToast by remember { mutableStateOf(false) }
+    val isOverlayVisible =
+        isCommentBottomSheetVisible || selectedPostForMenu != null || isPinDialogVisible || showDeleteDialog
+    var postToDelete by remember { mutableStateOf<PostList?>(null) }
 
     val commentsViewModel: CommentsViewModel = hiltViewModel()
     val commentsUiState by commentsViewModel.uiState.collectAsStateWithLifecycle()
@@ -198,7 +201,7 @@ fun GroupNoteContent(
     }
 
     Box(
-        if (isCommentBottomSheetVisible || selectedPostForMenu != null || isPinDialogVisible) {
+        if (isOverlayVisible) {
             Modifier
                 .fillMaxSize()
                 .blur(5.dp)
@@ -498,16 +501,15 @@ fun GroupNoteContent(
     }
 
     if (selectedPostForMenu != null) {
-        val isWriter = selectedPostForMenu!!.isWriter
-
-        val menuItems = if (isWriter) {
+        val post = selectedPostForMenu!!
+        val menuItems = if (post.isWriter) {
             listOf(
                 MenuBottomSheetItem(
                     text = stringResource(R.string.delete),
                     color = colors.Red,
                     onClick = {
-                        onEvent(GroupNoteEvent.OnDeleteRecord(selectedPostForMenu!!.postId))
-                        showDeleteDialog = false
+                        postToDelete = post // 삭제할 포스트 정보를 기억
+                        showDeleteDialog = true
                         selectedPostForMenu = null
                     }
                 )
@@ -527,10 +529,32 @@ fun GroupNoteContent(
 
         MenuBottomSheet(
             items = menuItems,
-            onDismiss = {
-                selectedPostForMenu = null
-            }
+            onDismiss = { selectedPostForMenu = null }
         )
+    }
+
+    if (showDeleteDialog) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            DialogPopup(
+                title = stringResource(R.string.delete_post_title),
+                description = stringResource(R.string.delete_post_content),
+                onConfirm = {
+                    postToDelete?.let {
+                        onEvent(GroupNoteEvent.OnDeleteRecord(it.postId, it.postType))
+                    }
+                    showDeleteDialog = false
+                    postToDelete = null
+                },
+                onCancel = {
+                    showDeleteDialog = false
+                    postToDelete = null
+                }
+            )
+        }
     }
 
     if (isPinDialogVisible) {
@@ -575,7 +599,8 @@ private fun GroupNoteScreenPreview() {
                         likeCount = 10,
                         commentCount = 2,
                         isLocked = false,
-                        isWriter = true
+                        isWriter = true,
+                        isOverview = false
                     )
                 ),
                 selectedTabIndex = 0,

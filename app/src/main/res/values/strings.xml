@@ -231,6 +231,8 @@
     <string name="no_comment_subtext">첫번째 댓글을 남겨보세요</string>
     <string name="pin_modal_title">이 기록을 피드에 핀할까요?</string>
     <string name="pin_modal_content">핀하면 내 피드에 글을 옮길 수 있어요.</string>
+    <string name="delete_post_title">이 기록을 삭제하시겠어요?</string>
+    <string name="delete_post_content">삭제 후에는 되돌릴 수 없어요.</string>
     <string name="sort_comment">댓글 많은 순</string>
     <string name="posting_in_progress">기록을 게시 중입니다...</string>
     <string name="posting_complete">기록이 게시되었습니다!</string>

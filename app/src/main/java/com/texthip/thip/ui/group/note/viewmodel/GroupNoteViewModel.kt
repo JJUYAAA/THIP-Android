@@ -47,7 +47,7 @@ sealed interface GroupNoteEvent {
     data object ApplyPageFilter : GroupNoteEvent
     data object LoadMorePosts : GroupNoteEvent
     data class OnVote(val postId: Int, val voteItemId: Int, val type: Boolean) : GroupNoteEvent
-    data class OnDeleteRecord(val postId: Int) : GroupNoteEvent
+    data class OnDeleteRecord(val postId: Int, val postType: String) : GroupNoteEvent
     data class OnLikeRecord(val postId: Int, val postType: String) : GroupNoteEvent
 }
 
@@ -144,7 +144,7 @@ class GroupNoteViewModel @Inject constructor(
                 type = event.type
             )
 
-            is GroupNoteEvent.OnDeleteRecord -> deleteRecord(event.postId)
+            is GroupNoteEvent.OnDeleteRecord -> deletePost(event.postId, event.postType)
             is GroupNoteEvent.OnLikeRecord -> likeRecord(event.postId, event.postType)
         }
     }
@@ -180,16 +180,20 @@ class GroupNoteViewModel @Inject constructor(
         }
     }
 
-    private fun deleteRecord(postId: Int) {
+    private fun deletePost(postId: Int, postType: String) {
         viewModelScope.launch {
-            roomsRepository.deleteRoomsRecord(roomId = roomId, recordId = postId)
-                .onSuccess {
-                    val updatedPosts = _uiState.value.posts.filter { it.postId != postId }
-                    _uiState.update { it.copy(posts = updatedPosts) }
-                }
-                .onFailure { throwable ->
-                    _uiState.update { it.copy(error = throwable.message) }
-                }
+            val result = when (postType) {
+                "RECORD" -> roomsRepository.deleteRoomsRecord(roomId = roomId, recordId = postId)
+                "VOTE" -> roomsRepository.deleteRoomsVote(roomId = roomId, voteId = postId)
+                else -> Result.failure(IllegalArgumentException("Unknown post type for deletion: $postType"))
+            }
+
+            result.onSuccess {
+                val updatedPosts = _uiState.value.posts.filter { it.postId != postId }
+                _uiState.update { it.copy(posts = updatedPosts) }
+            }.onFailure { throwable ->
+                _uiState.update { it.copy(error = throwable.message) }
+            }
         }
     }
 
