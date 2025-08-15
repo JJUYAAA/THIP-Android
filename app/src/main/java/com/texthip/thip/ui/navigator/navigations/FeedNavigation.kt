@@ -4,7 +4,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.texthip.thip.ui.feed.screen.FeedScreen
+import com.texthip.thip.ui.feed.screen.FeedWriteScreen
 import com.texthip.thip.ui.feed.screen.MySubscriptionScreen
+import com.texthip.thip.ui.navigator.extensions.navigateToFeedWrite
 import com.texthip.thip.ui.navigator.extensions.navigateToMySubscription
 import com.texthip.thip.ui.navigator.routes.FeedRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
@@ -23,10 +25,24 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController) {
             followerProfileImageUrls = emptyList(),
             onNavigateToMySubscription = {
                 navController.navigateToMySubscription()
+            },
+            onNavigateToFeedWrite = {
+                navController.navigateToFeedWrite()
             }
         )
     }
     composable<FeedRoutes.MySubscription> {
         MySubscriptionScreen(navController = navController)
+    }
+    composable<FeedRoutes.Write> {
+        FeedWriteScreen(
+            onNavigateBack = {
+                navController.popBackStack()
+            },
+            onFeedCreated = { feedId ->
+                // 피드 생성 성공 시 피드 목록으로 돌아가기
+                navController.popBackStack()
+            }
+        )
     }
 }

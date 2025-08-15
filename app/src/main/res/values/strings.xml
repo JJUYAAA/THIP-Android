@@ -330,9 +330,9 @@
     <string name="feed_private_comment">비공개로 설정</string>
     <string name="tag">태그</string>
     <string name="add_photo">사진 추가</string>
-    <string name="photo_count">%1$d / %2$d</string>
+    <string name="photo_count">%1$d / %2$d개</string>
     <string name="selected_tags">선택된 태그</string>
-    <string name="tag_count">%1$d / %2$d</string>
+    <string name="tag_count">%1$d / %2$d개</string>
     <string name="edit_feed">수정하기</string>
     <string name="delete_feed">삭제하기</string>
     <string name="delete_feed_dialog_title">이 피드를 삭제하시겠어요?</string>

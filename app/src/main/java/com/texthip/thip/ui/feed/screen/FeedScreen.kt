@@ -49,6 +49,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun FeedScreen(
     navController: NavController? = null,
     onNavigateToMySubscription: () -> Unit = {},
+    onNavigateToFeedWrite: () -> Unit = {},
     nickname: String = "",
     userRole: String = "",
     feeds: List<FeedItem> = emptyList(),
@@ -261,7 +262,7 @@ fun FeedScreen(
         }
         FloatingButton(
             icon = painterResource(id = R.drawable.ic_write),
-            onClick = { }
+            onClick = onNavigateToFeedWrite
         )
     }
 }
@@ -302,7 +303,8 @@ private fun FeedScreenPreview() {
                 selectedTabIndex = 1,
                 feeds = mockFeeds,
                 totalFeedCount = mockFeeds.size,
-                followerProfileImageUrls = mockFollowerImages
+                followerProfileImageUrls = mockFollowerImages,
+                onNavigateToFeedWrite = { }
             )
         }
     }
@@ -322,7 +324,8 @@ private fun FeedScreenWithoutDataPreview() {
                 selectedTabIndex = 0,
                 feeds = mockFeeds,
                 totalFeedCount = mockFeeds.size,
-                followerProfileImageUrls = mockFollowerImages
+                followerProfileImageUrls = mockFollowerImages,
+                onNavigateToFeedWrite = { }
             )
         }
     }
