@@ -67,21 +67,6 @@ class FeedWriteViewModel @Inject constructor(
         updateState { it.copy(selectedBook = book) }
     }
 
-    fun setPreselectedBook(isbn: String, title: String, imageUrl: String, author: String) {
-        val preselectedBook = BookData(
-            title = title,
-            imageUrl = imageUrl,
-            author = author,
-            isbn = isbn
-        )
-        updateState {
-            it.copy(
-                selectedBook = preselectedBook,
-                isBookPreselected = true
-            )
-        }
-    }
-
     fun toggleBookSearchSheet(show: Boolean) {
         updateState { it.copy(showBookSearchSheet = show) }
         if (show) {
@@ -258,31 +243,22 @@ class FeedWriteViewModel @Inject constructor(
             try {
                 updateState { it.copy(isLoading = true, errorMessage = null) }
 
-                // TODO: 실제 피드 생성 API 구현 시 여기에 추가
-                // val request = CreateFeedRequest(
-                //     isbn = selectedBook.isbn,
-                //     content = currentState.feedContent.trim(),
-                //     imageUrls = currentState.imageUris.map { it.toString() },
-                //     isPrivate = currentState.isPrivate,
-                //     category = currentState.selectedCategoryName ?: "",
-                //     tags = currentState.selectedTags
-                // )
-                // 
-                // val result = feedRepository.createFeed(request)
-                // result.onSuccess { feedId ->
-                //     onSuccess(feedId)
-                // }.onFailure { exception ->
-                //     onError(
-                //         stringResourceProvider.getString(
-                //             R.string.error_feed_creation_failed,
-                //             exception.message ?: ""
-                //         )
-                //     )
-                // }
-
-                // 임시로 성공 처리 (API 구현 전)
-                delay(1000) // 로딩 시뮬레이션
-                onSuccess(1) // 임시 피드 ID
+                val result = feedRepository.createFeed(
+                    isbn = selectedBook.isbn,
+                    contentBody = currentState.feedContent.trim(),
+                    isPublic = !currentState.isPrivate,
+                    tagList = currentState.selectedTags,
+                    imageUris = currentState.imageUris
+                )
+                
+                result.onSuccess { response ->
+                    val feedId = response?.feedId ?: 1
+                    onSuccess(feedId)
+                }.onFailure { exception ->
+                    onError(
+                        exception.message ?: stringResourceProvider.getString(R.string.error_network_error)
+                    )
+                }
 
             } catch (e: Exception) {
                 onError(
