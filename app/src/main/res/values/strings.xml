@@ -340,6 +340,8 @@
     <string name="no_user_you_look_for">찾는 사용자가 없어요</string>
     <string name="search_user">사용자 찾기</string>
     <string name="search_user_you_look_for">내가 찾는 사용자를 검색해보세요.</string>
+    <string name="posting_in_progress_feed">글을 작성중이에요...</string>
+    <string name="posting_complete_feed">새 글 작성을 완료했어요!</string>
 
 
     <!--    book search   -->
