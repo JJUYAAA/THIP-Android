@@ -223,6 +223,16 @@ class RoomsRepository @Inject constructor(
         ).handleBaseResponse().getOrThrow()
     }
 
+    suspend fun deleteRoomsVote(
+        roomId: Int,
+        voteId: Int
+    ) = runCatching {
+        roomsService.deleteRoomsVote(
+            roomId = roomId,
+            voteId = voteId
+        ).handleBaseResponse().getOrThrow()
+    }
+
     suspend fun postRoomsPostsLikes(
         postId: Int,
         type: Boolean,
