@@ -1,6 +1,7 @@
 package com.texthip.thip.data.di
 
 import com.texthip.thip.data.service.BookService
+import com.texthip.thip.data.service.CommentsService
 import com.texthip.thip.data.service.GroupService
 import com.texthip.thip.data.service.RoomsService
 import com.texthip.thip.data.service.UserService
@@ -36,4 +37,9 @@ object ServiceModule {
     fun provideUserService(retrofit: Retrofit): UserService {
         return retrofit.create(UserService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun providesCommentsService(retrofit: Retrofit): CommentsService =
+        retrofit.create(CommentsService::class.java)
 }

@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.common.header
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,16 +17,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun ProfileBarFeed(
-    profileImage: Painter?,
+    profileImage: String?,
     nickname: String,
     genreName: String,
     genreColor: Color = colors.NeonGreen,
@@ -41,8 +40,8 @@ fun ProfileBarFeed(
     ) {
         Row {
             if (profileImage != null) {
-                Image(
-                    painter = profileImage,
+                AsyncImage(
+                    model = profileImage,
                     contentDescription = "프로필 이미지",
                     modifier = Modifier
                         .size(24.dp)

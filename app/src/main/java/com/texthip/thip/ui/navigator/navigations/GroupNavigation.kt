@@ -206,8 +206,7 @@ fun NavGraphBuilder.groupNavigation(
         val roomId = route.roomId
 
         GroupRoomScreen(
-//            roomId = roomId,
-            roomId = 1,
+            roomId = roomId,
             onBackClick = {
                 navigateBack()
             },
@@ -226,8 +225,7 @@ fun NavGraphBuilder.groupNavigation(
         val roomId = route.roomId
 
         GroupRoomMatesScreen(
-//            roomId = roomId,
-            roomId = 1,
+            roomId = roomId,
             onBackClick = {
                 navigateBack()
             },
@@ -250,8 +248,7 @@ fun NavGraphBuilder.groupNavigation(
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         GroupNoteScreen(
-//            roomId = roomId,
-            roomId = 1,
+            roomId = roomId,
             resultTabIndex = result,
             initialPage = page,
             initialIsOverview = isOverview,
@@ -286,7 +283,7 @@ fun NavGraphBuilder.groupNavigation(
         val roomId = route.roomId
 
         GroupNoteCreateScreen(
-            roomId = 1,
+            roomId = roomId,
             recentPage = route.recentBookPage,
             totalPage = route.totalBookPage,
             isOverviewPossible = route.isOverviewPossible,
@@ -307,8 +304,7 @@ fun NavGraphBuilder.groupNavigation(
         val roomId = route.roomId
 
         GroupVoteCreateScreen(
-//            roomId = roomId,
-            roomId = 1,
+            roomId = roomId,
             recentPage = route.recentPage,
             totalPage = route.totalPage,
             isOverviewPossible = route.isOverviewPossible,

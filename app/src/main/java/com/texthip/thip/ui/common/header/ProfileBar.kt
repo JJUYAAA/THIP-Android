@@ -32,7 +32,7 @@ fun ProfileBar(
     profileImage: String,
     topText: String,
     bottomText: String,
-    bottomTextColor: Color = colors.NeonGreen, // todo: 서버에서 색 보내주는걸로 받기?
+    bottomTextColor: Color = colors.NeonGreen,
     showSubscriberInfo: Boolean,
     subscriberCount: Int = 0,
     hoursAgo: String = "",
