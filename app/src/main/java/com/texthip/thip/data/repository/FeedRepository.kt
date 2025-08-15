@@ -61,28 +61,36 @@ class FeedRepository @Inject constructor(
         )
 
         // JSON 요청 부분을 RequestBody로 변환
-        val requestJson = Json.encodeToString(request)
+        val requestJson = Json.encodeToString(CreateFeedRequest.serializer(), request)
         val requestBody = requestJson.toRequestBody("application/json".toMediaType())
 
-        // 이미지 파일들을 MultipartBody.Part로 변환
-        val imageParts = if (imageUris.isNotEmpty()) {
-            imageUris.mapNotNull { uri ->
-                try {
-                    uriToMultipartBodyPart(uri, "images")
-                } catch (e: Exception) {
-                    null
+        // 임시 파일 목록 추적
+        val tempFiles = mutableListOf<File>()
+        
+        try {
+            // 이미지 파일들을 MultipartBody.Part로 변환
+            val imageParts = if (imageUris.isNotEmpty()) {
+                imageUris.mapNotNull { uri ->
+                    try {
+                        uriToMultipartBodyPart(uri, "images", tempFiles)
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
+            } else {
+                null
             }
-        } else {
-            null
-        }
 
-        feedService.createFeed(requestBody, imageParts)
-            .handleBaseResponse()
-            .getOrThrow()
+            feedService.createFeed(requestBody, imageParts)
+                .handleBaseResponse()
+                .getOrThrow()
+        } finally {
+            // 임시 파일들 정리
+            cleanupTempFiles(tempFiles)
+        }
     }
 
-    private fun uriToMultipartBodyPart(uri: Uri, paramName: String): MultipartBody.Part? {
+    private fun uriToMultipartBodyPart(uri: Uri, paramName: String, tempFiles: MutableList<File>): MultipartBody.Part? {
         return try {
             val inputStream = context.contentResolver.openInputStream(uri) ?: return null
             
@@ -99,9 +107,14 @@ class FeedRepository @Inject constructor(
             val fileName = "feed_image_${System.currentTimeMillis()}.$extension"
             val tempFile = File(context.cacheDir, fileName)
             
-            // 임시 파일로 복사
-            FileOutputStream(tempFile).use { output ->
-                inputStream.copyTo(output)
+            // 임시 파일 목록에 추가
+            tempFiles.add(tempFile)
+            
+            // 임시 파일로 복사 (use 블록으로 자동 리소스 해제)
+            inputStream.use { input ->
+                FileOutputStream(tempFile).use { output ->
+                    input.copyTo(output)
+                }
             }
             
             // MultipartBody.Part 생성
@@ -110,6 +123,19 @@ class FeedRepository @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+    /** 임시 파일들을 정리하는 함수 */
+    private fun cleanupTempFiles(tempFiles: List<File>) {
+        tempFiles.forEach { file ->
+            try {
+                if (file.exists()) {
+                    file.delete()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }
