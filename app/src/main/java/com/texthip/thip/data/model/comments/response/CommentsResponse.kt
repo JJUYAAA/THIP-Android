@@ -21,6 +21,7 @@ data class CommentList(
     val content: String,
     val likeCount: Int,
     val isDeleted: Boolean,
+    val isWriter: Boolean,
     val isLike: Boolean,
     val replyList: List<ReplyList>,
 )
@@ -38,4 +39,5 @@ data class ReplyList(
     val content: String,
     val likeCount: Int,
     val isLike: Boolean,
+    val isWriter: Boolean,
 )
