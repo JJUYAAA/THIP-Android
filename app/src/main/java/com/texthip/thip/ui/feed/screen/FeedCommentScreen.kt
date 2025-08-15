@@ -48,12 +48,8 @@ import com.texthip.thip.ui.common.forms.CommentTextField
 import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.group.note.component.CommentItem
-import com.texthip.thip.ui.group.note.component.ReplyItem
 import com.texthip.thip.ui.feed.component.ImageViewerModal
 import com.texthip.thip.ui.feed.mock.FeedItemType
-import com.texthip.thip.ui.group.note.component.CommentItem
-import com.texthip.thip.ui.group.note.component.ReplyItem
 import com.texthip.thip.ui.group.note.mock.mockCommentList
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.mypage.mock.FeedItem
@@ -241,10 +237,10 @@ fun FeedCommentScreen(
                                         )
                                     }
                             ) {
-                                CommentItem(
-                                    data = commentItem,
-                                    onReplyClick = { replyTo.value = it }
-                                )
+//                                CommentItem(
+//                                    data = commentItem,
+//                                    onReplyClick = { replyTo.value = it }
+//                                )
                             }
                             if (selectedComment == commentItem) {
                                 Row(
@@ -304,7 +300,7 @@ fun FeedCommentScreen(
                                             )
                                         }
                                 ) {
-                                    ReplyItem(data = reply, onReplyClick = { replyTo.value = it })
+//                                    ReplyItem(data = reply, onReplyClick = { replyTo.value = it })
                                 }
 
                                 if (selectedReply == reply) {

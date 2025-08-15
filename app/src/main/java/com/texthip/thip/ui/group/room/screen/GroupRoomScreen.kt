@@ -162,7 +162,8 @@ fun GroupRoomContent(
                     progressStartDate = roomDetails.progressStartDate,
                     progressEndDate = roomDetails.progressEndDate,
                     memberCount = roomDetails.memberCount,
-                    category = roomDetails.category
+                    category = roomDetails.category,
+                    categoryColor = roomDetails.categoryColor,
                 ) {
                     onNavigateToMates()
                 }
@@ -282,6 +283,7 @@ private fun GroupRoomScreenPreview() {
                 progressStartDate = "2023.10.01",
                 progressEndDate = "2023.10.31",
                 category = "문학",
+                categoryColor = "#A0F8E8",
                 roomDescription = "‘시집만 읽는 사람들’ 3월 모임입니다.",
                 memberCount = 22,
                 recruitCount = 30,

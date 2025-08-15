@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,30 +16,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.data.model.comments.response.CommentList
 import com.texthip.thip.ui.common.header.ProfileBarFeed
-import com.texthip.thip.ui.group.note.mock.CommentItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.color.hexToColor
 
 @Composable
 fun CommentItem(
     modifier: Modifier = Modifier,
-    data: CommentItem,
-    onReplyClick: (String) -> Unit = { }
+    data: CommentList,
+    onReplyClick: (String) -> Unit = { },
+    onLikeClick: () -> Unit = {}
 ) {
-    var isLiked by remember { mutableStateOf(data.isLiked) }
-
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         ProfileBarFeed(
-//            profileImage = data.profileImageUrl,
-            profileImage = painterResource(R.drawable.character_literature),
-            nickname = data.nickName,
-            genreName = data.genreName,
-            genreColor = colors.SocialScience,
+            profileImage = data.creatorProfileImageUrl,
+            nickname = data.creatorNickname,
+            genreName = data.aliasName,
+            genreColor = hexToColor(data.aliasColor),
             date = data.postDate
         )
 
@@ -61,7 +56,7 @@ fun CommentItem(
                     style = typography.feedcopy_r400_s14_h20,
                 )
                 Text(
-                    modifier = Modifier.clickable(onClick = { onReplyClick(data.nickName) }),
+                    modifier = Modifier.clickable(onClick = { onReplyClick(data.creatorNickname) }),
                     text = stringResource(R.string.write_reply),
                     style = typography.menu_sb600_s12,
                     color = colors.Grey02,
@@ -69,12 +64,12 @@ fun CommentItem(
             }
 
             Column(
-                modifier = Modifier.clickable(onClick = { isLiked = !isLiked }),
+                modifier = Modifier.clickable(onClick = onLikeClick),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Icon(
-                    painter = painterResource(if (isLiked) R.drawable.ic_heart_center_filled else R.drawable.ic_heart_center),
+                    painter = painterResource(if (data.isLike) R.drawable.ic_heart_center_filled else R.drawable.ic_heart_center),
                     contentDescription = null,
                     tint = Color.Unspecified
                 )
@@ -100,47 +95,53 @@ private fun CommentItemPreview() {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             CommentItem(
-                data = CommentItem(
+                data = CommentList(
                     commentId = 1,
-                    userId = 1,
-                    nickName = "user.01",
-                    genreName = "칭호칭호",
-                    profileImageUrl = "https://example.com/profile.jpg",
-                    content = "입력하세요. 댓글 내용을 입력하세요오. 댓글 내용을 입력하세요. 댓글 내용을 입력하세요. 댓글 내용을 입력하세요. 댓글 내용을 입력하세요. 댓글 내용을 입력하세요. 댓글 내용을 입력하세요. ",
-                    postDate = "2025.01.12",
-                    isWriter = false,
-                    isLiked = true,
+                    creatorId = 1,
+                    creatorNickname = "User1",
+                    creatorProfileImageUrl = "https://example.com/image1.jpg",
+                    aliasName= "칭호칭호",
+                    aliasColor = "#FF5733",
+                    content = "This is a comment.",
+                    postDate = "2023-10-01T12:00:00Z",
+                    isLike = false,
                     likeCount = 10,
+                    isDeleted = false,
+                    replyList = emptyList()
                 )
             )
 
             CommentItem(
-                data = CommentItem(
+                data = CommentList(
                     commentId = 1,
-                    userId = 1,
-                    nickName = "user.01",
-                    genreName = "칭호칭호",
-                    profileImageUrl = "https://example.com/profile.jpg",
-                    content = "입력하세요. 댓글 내용을 입력하세요오. 댓글 내용을 입력하세요. 댓글 내용을 입력하세요.",
-                    postDate = "12시간 전",
-                    isWriter = false,
-                    isLiked = true,
-                    likeCount = 10
+                    creatorId = 1,
+                    creatorNickname = "User1",
+                    creatorProfileImageUrl = "https://example.com/image1.jpg",
+                    aliasName= "칭호칭호",
+                    aliasColor = "#FF5733",
+                    content = "This is a comment.",
+                    postDate = "2023-10-01T12:00:00Z",
+                    isLike = false,
+                    likeCount = 10,
+                    isDeleted = false,
+                    replyList = emptyList()
                 )
             )
 
             CommentItem(
-                data = CommentItem(
+                data = CommentList(
                     commentId = 1,
-                    userId = 1,
-                    nickName = "user.01",
-                    genreName = "칭호칭호",
-                    profileImageUrl = "https://example.com/profile.jpg",
-                    content = "입력하세요.",
-                    postDate = "12시간 전",
-                    isWriter = false,
-                    isLiked = true,
-                    likeCount = 10
+                    creatorId = 1,
+                    creatorNickname = "User1",
+                    creatorProfileImageUrl = "https://example.com/image1.jpg",
+                    aliasName= "칭호칭호",
+                    aliasColor = "#FF5733",
+                    content = "This is a comment.",
+                    postDate = "2023-10-01T12:00:00Z",
+                    isLike = false,
+                    likeCount = 10,
+                    isDeleted = false,
+                    replyList = emptyList()
                 )
             )
         }
