@@ -13,3 +13,8 @@ fun NavHostController.navigateToFeed() {
 fun NavHostController.navigateToMySubscription() {
     navigate(FeedRoutes.MySubscription)
 }
+
+// 피드 작성으로
+fun NavHostController.navigateToFeedWrite() {
+    navigate(FeedRoutes.Write)
+}
