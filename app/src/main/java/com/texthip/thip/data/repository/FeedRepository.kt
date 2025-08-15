@@ -8,6 +8,8 @@ import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
 import com.texthip.thip.data.service.FeedService
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -21,7 +23,8 @@ import javax.inject.Singleton
 @Singleton
 class FeedRepository @Inject constructor(
     private val feedService: FeedService,
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
+    private val json: Json
 ) {
 
     /** 피드 작성에 필요한 카테고리 및 태그 목록 조회 */
@@ -61,7 +64,7 @@ class FeedRepository @Inject constructor(
         )
 
         // JSON 요청 부분을 RequestBody로 변환
-        val requestJson = Json.encodeToString(CreateFeedRequest.serializer(), request)
+        val requestJson = json.encodeToString(CreateFeedRequest.serializer(), request)
         val requestBody = requestJson.toRequestBody("application/json".toMediaType())
 
         // 임시 파일 목록 추적
@@ -70,11 +73,13 @@ class FeedRepository @Inject constructor(
         try {
             // 이미지 파일들을 MultipartBody.Part로 변환
             val imageParts = if (imageUris.isNotEmpty()) {
-                imageUris.mapNotNull { uri ->
-                    try {
-                        uriToMultipartBodyPart(uri, "images", tempFiles)
-                    } catch (e: Exception) {
-                        null
+                withContext(Dispatchers.IO) {
+                    imageUris.mapNotNull { uri ->
+                        try {
+                            uriToMultipartBodyPart(uri, "images", tempFiles)
+                        } catch (e: Exception) {
+                            null
+                        }
                     }
                 }
             } else {
@@ -92,8 +97,6 @@ class FeedRepository @Inject constructor(
 
     private fun uriToMultipartBodyPart(uri: Uri, paramName: String, tempFiles: MutableList<File>): MultipartBody.Part? {
         return try {
-            val inputStream = context.contentResolver.openInputStream(uri) ?: return null
-            
             // MIME 타입 확인
             val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
             val extension = when (mimeType) {
@@ -110,12 +113,12 @@ class FeedRepository @Inject constructor(
             // 임시 파일 목록에 추가
             tempFiles.add(tempFile)
             
-            // 임시 파일로 복사 (use 블록으로 자동 리소스 해제)
-            inputStream.use { input ->
-                FileOutputStream(tempFile).use { output ->
-                    input.copyTo(output)
+            // InputStream을 use 블록으로 안전하게 관리
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                FileOutputStream(tempFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
                 }
-            }
+            } ?: return null
             
             // MultipartBody.Part 생성
             val requestFile = tempFile.asRequestBody(mimeType.toMediaType())

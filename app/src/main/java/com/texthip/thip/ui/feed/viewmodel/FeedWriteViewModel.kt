@@ -252,8 +252,12 @@ class FeedWriteViewModel @Inject constructor(
                 )
                 
                 result.onSuccess { response ->
-                    val feedId = response?.feedId ?: 1
-                    onSuccess(feedId)
+                    val feedId = response?.feedId
+                    if (feedId != null) {
+                        onSuccess(feedId)
+                    } else {
+                        onError(stringResourceProvider.getString(R.string.error_feed_id_not_returned))
+                    }
                 }.onFailure { exception ->
                     onError(
                         exception.message ?: stringResourceProvider.getString(R.string.error_network_error)
