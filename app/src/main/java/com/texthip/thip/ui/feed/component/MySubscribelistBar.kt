@@ -143,7 +143,7 @@ private fun EmptyMySubscriptionBar() {
         )
 
         Icon(
-            painter = painterResource(id = R.drawable.search_character_image),
+            painter = painterResource(id = R.drawable.ic_search_character),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier
