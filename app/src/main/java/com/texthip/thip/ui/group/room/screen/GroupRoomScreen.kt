@@ -53,6 +53,7 @@ fun GroupRoomScreen(
     onNavigateToMates: () -> Unit = {},
     onNavigateToChat: () -> Unit = {},
     onNavigateToNote: (page: Int?, isOverview: Boolean?) -> Unit = { _, _ -> },
+    onNavigateToBookDetail: (isbn: String) -> Unit = {},
     viewModel: GroupRoomViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -77,7 +78,8 @@ fun GroupRoomScreen(
                 onBackClick = onBackClick,
                 onNavigateToMates = onNavigateToMates,
                 onNavigateToChat = onNavigateToChat,
-                onNavigateToNote = onNavigateToNote
+                onNavigateToNote = onNavigateToNote,
+                onNavigateToBookDetail = onNavigateToBookDetail
             )
         }
 
@@ -97,6 +99,7 @@ fun GroupRoomContent(
     onNavigateToMates: () -> Unit = {},
     onNavigateToChat: () -> Unit = {},
     onNavigateToNote: (page: Int?, isOverview: Boolean?) -> Unit = { _, _ -> },
+    onNavigateToBookDetail: (isbn: String) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
 
@@ -176,9 +179,11 @@ fun GroupRoomContent(
                 GroupRoomBody(
                     bookTitle = roomDetails.bookTitle,
                     authorName = roomDetails.authorName,
+                    isbn = roomDetails.isbn,
                     currentPage = roomDetails.currentPage,
                     userPercentage = roomDetails.userPercentage,
                     currentVotes = roomDetails.currentVotes,
+                    onNavigateToBookDetail = onNavigateToBookDetail,
                     // 일반 노트 카드 클릭 시 필터 없이 이동
                     onNavigateToNote = { onNavigateToNote(null, null) },
                     onNavigateToChat = onNavigateToChat,

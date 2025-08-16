@@ -21,9 +21,11 @@ fun GroupRoomBody(
     modifier: Modifier = Modifier,
     bookTitle: String,
     authorName: String,
+    isbn: String,
     currentPage: Int,
     userPercentage: Double,
     currentVotes: List<CurrentVote>,
+    onNavigateToBookDetail: (isbn: String) -> Unit = {},
     onNavigateToNote: () -> Unit = {},
     onNavigateToChat: () -> Unit = {},
     onVoteClick: (CurrentVote) -> Unit = {}
@@ -35,7 +37,9 @@ fun GroupRoomBody(
         ActionBookButton(
             bookTitle = bookTitle,
             bookAuthor = authorName
-        ) {}
+        ) {
+            onNavigateToBookDetail(isbn)
+        }
 
         CardNote(
             currentPage = currentPage,
@@ -64,6 +68,7 @@ private fun GroupRoomBodyPreview() {
     GroupRoomBody(
         bookTitle = "책 제목",
         authorName = "저자 이름",
+        isbn = "1234567890",
         currentPage = 100,
         userPercentage = 50.0,
         currentVotes = listOf(

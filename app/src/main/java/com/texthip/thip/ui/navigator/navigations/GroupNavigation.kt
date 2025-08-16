@@ -279,6 +279,9 @@ fun NavGraphBuilder.groupNavigation(
             onNavigateToNote = { page, isOverview ->
                 navController.navigateToGroupNote(roomId, page, isOverview)
             },
+            onNavigateToBookDetail = { isbn ->
+                navController.navigateToBookDetail(isbn)
+            }
         )
     }
 
