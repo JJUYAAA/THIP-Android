@@ -31,6 +31,7 @@ import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
+import com.texthip.thip.ui.navigator.extensions.navigateToFeedWrite
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
@@ -343,6 +344,15 @@ fun NavGraphBuilder.groupNavigation(
                     recentPage = recentPage,
                     totalPage = totalPage,
                     isOverviewPossible = isOverviewPossible
+                )
+            },
+            onNavigateToFeedWrite = { pinInfo, recordContent ->
+                navController.navigateToFeedWrite(
+                    isbn = pinInfo.isbn,
+                    bookTitle = pinInfo.bookTitle,
+                    bookAuthor = pinInfo.authorName,
+                    bookImageUrl = pinInfo.bookImageUrl,
+                    recordContent = recordContent
                 )
             },
             viewModel = viewModel

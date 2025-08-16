@@ -44,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
 import com.texthip.thip.data.model.rooms.response.PostList
+import com.texthip.thip.data.model.rooms.response.RoomsRecordsPinResponse
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.buttons.ExpandableFloatingButton
 import com.texthip.thip.ui.common.buttons.FabMenuItem
@@ -59,6 +60,7 @@ import com.texthip.thip.ui.group.note.component.VoteCommentCard
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
 import com.texthip.thip.ui.group.note.viewmodel.CommentsViewModel
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteEvent
+import com.texthip.thip.ui.group.note.viewmodel.GroupNoteSideEffect
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteUiState
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteViewModel
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
@@ -76,6 +78,7 @@ fun GroupNoteScreen(
     onBackClick: () -> Unit = {},
     onCreateNoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
     onCreateVoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
+    onNavigateToFeedWrite: (pinInfo: RoomsRecordsPinResponse, recordContent: String) -> Unit,
     resultTabIndex: Int? = null,
     onResultConsumed: () -> Unit = {},
     initialPage: Int? = null,
@@ -126,6 +129,16 @@ fun GroupNoteScreen(
         }
     }
 
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is GroupNoteSideEffect.NavigateToFeedWrite -> {
+                    onNavigateToFeedWrite(effect.pinInfo, effect.recordContent)
+                }
+            }
+        }
+    }
+
     GroupNoteContent(
         uiState = uiState,
         onEvent = viewModel::onEvent,
@@ -160,6 +173,7 @@ fun GroupNoteContent(
     var selectedPostForMenu by remember { mutableStateOf<PostList?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var isPinDialogVisible by remember { mutableStateOf(false) }
+    var postToPin by remember { mutableStateOf<PostList?>(null) }
     var showToast by remember { mutableStateOf(false) }
     val isOverlayVisible =
         isCommentBottomSheetVisible || selectedPostForMenu != null || isPinDialogVisible || showDeleteDialog
@@ -370,7 +384,10 @@ fun GroupNoteContent(
                                         isCommentBottomSheetVisible = true
                                     },
                                     onLongPress = { selectedPostForMenu = post },
-                                    onPinClick = { isPinDialogVisible = true },
+                                    onPinClick = {
+                                        postToPin = post
+                                        isPinDialogVisible = true
+                                    },
                                     onLikeClick = { postId, postType ->
                                         onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
                                     }
@@ -384,7 +401,6 @@ fun GroupNoteContent(
                                         isCommentBottomSheetVisible = true
                                     },
                                     onLongPress = { selectedPostForMenu = post },
-                                    onPinClick = { isPinDialogVisible = true },
                                     onVote = { postId, voteItemId, type ->
                                         onEvent(GroupNoteEvent.OnVote(postId, voteItemId, type))
                                     },
@@ -569,11 +585,20 @@ fun GroupNoteContent(
                 title = stringResource(R.string.pin_modal_title),
                 description = stringResource(R.string.pin_modal_content),
                 onConfirm = {
-                    // 핀하기 로직
+                    postToPin?.let { post ->
+                        onEvent(
+                            GroupNoteEvent.OnPinRecord(
+                                recordId = post.postId,
+                                content = post.content
+                            )
+                        )
+                    }
                     isPinDialogVisible = false
+                    postToPin = null
                 },
                 onCancel = {
                     isPinDialogVisible = false
+                    postToPin = null
                 }
             )
         }

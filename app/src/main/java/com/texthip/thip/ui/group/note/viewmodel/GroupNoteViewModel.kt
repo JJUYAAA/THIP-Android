@@ -5,12 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.rooms.request.RoomsPostsRequestParams
 import com.texthip.thip.data.model.rooms.response.PostList
+import com.texthip.thip.data.model.rooms.response.RoomsRecordsPinResponse
 import com.texthip.thip.data.repository.RoomsRepository
 import com.texthip.thip.utils.type.SortType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -39,6 +42,13 @@ data class GroupNoteUiState(
     val totalEnabled: Boolean = false
 )
 
+sealed interface GroupNoteSideEffect {
+    data class NavigateToFeedWrite(
+        val pinInfo: RoomsRecordsPinResponse,
+        val recordContent: String
+    ) : GroupNoteSideEffect
+}
+
 sealed interface GroupNoteEvent {
     data class OnTabSelected(val index: Int) : GroupNoteEvent
     data class OnSortSelected(val sortType: SortType) : GroupNoteEvent
@@ -50,6 +60,7 @@ sealed interface GroupNoteEvent {
     data class OnVote(val postId: Int, val voteItemId: Int, val type: Boolean) : GroupNoteEvent
     data class OnDeleteRecord(val postId: Int, val postType: String) : GroupNoteEvent
     data class OnLikeRecord(val postId: Int, val postType: String) : GroupNoteEvent
+    data class OnPinRecord(val recordId: Int, val content: String) : GroupNoteEvent
     data object RefreshPosts : GroupNoteEvent
 }
 
@@ -61,6 +72,9 @@ class GroupNoteViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(GroupNoteUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<GroupNoteSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
 
     private var nextCursor: String? = null
     private var roomId: Int = -1
@@ -149,9 +163,28 @@ class GroupNoteViewModel @Inject constructor(
             is GroupNoteEvent.OnDeleteRecord -> deletePost(event.postId, event.postType)
             is GroupNoteEvent.OnLikeRecord -> likeRecord(event.postId, event.postType)
             is GroupNoteEvent.RefreshPosts -> loadPosts(isRefresh = true)
+            is GroupNoteEvent.OnPinRecord -> pinRecord(event.recordId, event.content)
             else -> {
                 Log.w("GroupNoteViewModel", "Unhandled event received: $event")
             }
+        }
+    }
+
+    private fun pinRecord(recordId: Int, content: String) {
+        viewModelScope.launch {
+            roomsRepository.getRoomsRecordsPin(roomId = roomId, recordId = recordId)
+                .onSuccess { pinInfo ->
+                    if (pinInfo != null) {
+                        _sideEffect.emit(
+                            GroupNoteSideEffect.NavigateToFeedWrite(
+                                pinInfo = pinInfo,
+                                recordContent = content
+                            )
+                        )
+                    }
+                }
+                .onFailure {
+                }
         }
     }
 

@@ -1,12 +1,16 @@
 package com.texthip.thip.ui.navigator.navigations
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.texthip.thip.ui.feed.screen.FeedOthersScreen
 import com.texthip.thip.ui.feed.screen.FeedScreen
 import com.texthip.thip.ui.feed.screen.FeedWriteScreen
 import com.texthip.thip.ui.feed.screen.MySubscriptionScreen
+import com.texthip.thip.ui.feed.viewmodel.FeedWriteViewModel
 import com.texthip.thip.ui.navigator.extensions.navigateToFeedWrite
 import com.texthip.thip.ui.navigator.extensions.navigateToMySubscription
 import com.texthip.thip.ui.navigator.routes.FeedRoutes
@@ -46,17 +50,34 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             }
         )
     }
-    composable<FeedRoutes.Write> {
+    composable<FeedRoutes.Write> { backStackEntry ->
+        val route = backStackEntry.toRoute<FeedRoutes.Write>()
+        val viewModel: FeedWriteViewModel = hiltViewModel()
+
+        LaunchedEffect(route) {
+            if (route.isbn != null &&
+                route.bookTitle != null &&
+                route.bookAuthor != null &&
+                route.bookImageUrl != null &&
+                route.recordContent != null) {
+                viewModel.setPinnedRecord(
+                    isbn = route.isbn,
+                    bookTitle = route.bookTitle,
+                    bookAuthor = route.bookAuthor,
+                    bookImageUrl = route.bookImageUrl,
+                    recordContent = route.recordContent
+                )
+            }
+        }
+
         FeedWriteScreen(
-            onNavigateBack = {
-                navigateBack()
-            },
+            viewModel = viewModel,
+            onNavigateBack = { navigateBack() },
             onFeedCreated = { feedId ->
                 // 피드 생성 성공 시 결과를 저장하고 피드 목록으로 돌아가기
                 navController.getBackStackEntry(MainTabRoutes.Feed)
-                    .savedStateHandle
-                    .set("feedId", feedId)
-                navController.popBackStack()
+                    .savedStateHandle["feedId"] = feedId
+                navController.popBackStack(MainTabRoutes.Feed, inclusive = false)
             }
         )
     }

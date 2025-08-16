@@ -28,7 +28,6 @@ fun VoteCommentCard(
     onVote: (postId: Int, voteItemId: Int, type: Boolean) -> Unit = { _, _, _ -> },
     onCommentClick: () -> Unit = {},
     onLongPress: () -> Unit = {},
-    onPinClick: () -> Unit = {}
 ) {
     val selectedIndex = data.voteItems.indexOfFirst { it.isVoted }.takeIf { it != -1 }
     val hasVoted = selectedIndex != null
@@ -93,15 +92,11 @@ fun VoteCommentCard(
             isLiked = data.isLiked,
             likeCount = data.likeCount,
             commentCount = data.commentCount,
-            isPinVisible = isWriter,
             onLikeClick = {
                 if (!isLocked) onLikeClick(data.postId, data.postType)
             },
             onCommentClick = {
                 if (!isLocked) onCommentClick()
-            },
-            onPinClick = {
-                if (!isLocked) onPinClick()
             }
         )
     }
