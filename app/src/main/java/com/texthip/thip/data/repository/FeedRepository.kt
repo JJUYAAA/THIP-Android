@@ -151,4 +151,10 @@ class FeedRepository @Inject constructor(
             .handleBaseResponse()
             .getOrThrow()
     }
+
+    suspend fun getFeedUsers(userId: Long) = runCatching {
+        feedService.getFeedUsers(userId)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
 }

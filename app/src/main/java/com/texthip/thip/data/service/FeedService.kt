@@ -3,6 +3,7 @@ package com.texthip.thip.data.service
 import com.texthip.thip.data.model.base.BaseResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersInfoResponse
+import com.texthip.thip.data.model.feed.response.FeedUsersResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -30,4 +31,9 @@ interface FeedService {
     suspend fun getFeedUsersInfo(
         @Path("userId") userId: Long
     ): BaseResponse<FeedUsersInfoResponse>
+
+    @GET("feeds/users/{userId}")
+    suspend fun getFeedUsers(
+        @Path("userId") userId: Long
+    ): BaseResponse<FeedUsersResponse>
 }
