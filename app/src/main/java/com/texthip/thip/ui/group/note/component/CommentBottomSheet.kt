@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.group.note.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,7 +60,6 @@ fun CommentBottomSheet(
         if (isOverlayVisible) {
             Modifier
                 .fillMaxSize()
-                .background(color = colors.Black.copy(alpha = 0.8f))
                 .blur(5.dp)
         } else {
             Modifier.fillMaxSize()
