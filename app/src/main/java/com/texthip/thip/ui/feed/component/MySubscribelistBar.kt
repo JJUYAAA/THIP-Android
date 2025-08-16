@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.texthip.thip.R
-import com.texthip.thip.ui.feed.mock.MySubscriptionData
+import com.texthip.thip.data.model.users.response.RecentWriterList
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -39,7 +39,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun MySubscribeBarlist(
     modifier: Modifier = Modifier,
-    subscriptions: List<MySubscriptionData>,
+    subscriptions: List<RecentWriterList>,
     onClick: () -> Unit
 ) {
 // 이미지 + 간격 너비
@@ -123,6 +123,7 @@ fun MySubscribeBarlist(
         }
     }
 }
+
 @Composable
 private fun EmptyMySubscriptionBar() {
     Box(
@@ -160,12 +161,10 @@ private fun EmptyMySubscriptionBar() {
 private fun MySubscribeBarlistPrev() {
     ThipTheme {
         val previewData = List(10) {
-            MySubscriptionData(
+            RecentWriterList(
+                userId = it.toLong(),
                 profileImageUrl = "https://example.com/profile$it.jpg",
-                nickname = "닉네임임$it",
-                role = "문학가",
-                roleColor = colors.Red,
-                subscriberCount = 100 + it
+                nickname = "닉네임임$it"
             )
         }
 
@@ -183,7 +182,7 @@ private fun MySubscribeBarlistPrev() {
 @Composable
 private fun MySubscribeBarlistWithoutDataPrev() {
     ThipTheme {
-        val previewData = emptyList<MySubscriptionData>()
+        val previewData = emptyList<RecentWriterList>()
 
         Column {
             MySubscribeBarlist(

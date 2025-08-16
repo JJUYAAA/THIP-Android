@@ -30,15 +30,20 @@ class FeedViewModel @Inject constructor(
         fetchRecentWriters()
     }
 
+    fun refreshData() {
+        fetchRecentWriters()
+    }
+
     private fun fetchRecentWriters() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            userRepository.getRecentWriters()
+            userRepository.getMyFollowingsRecentFeeds()
                 .onSuccess { data ->
+                    val writers = data?.recentWriters ?: emptyList()
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            recentWriters = data?.recentWriters ?: emptyList()
+                            recentWriters = writers
                         )
                     }
                 }

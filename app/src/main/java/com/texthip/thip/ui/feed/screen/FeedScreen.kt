@@ -46,9 +46,7 @@ import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
 import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
-import com.texthip.thip.ui.feed.mock.MySubscriptionData
 import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
-import com.texthip.thip.ui.feed.viewmodel.MySubscriptionViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme
@@ -68,10 +66,9 @@ fun FeedScreen(
     totalFeedCount: Int = 0,
     selectedTabIndex: Int = 0,
     followerProfileImageUrls: List<String> = emptyList(),
-    feedViewModel: FeedViewModel = hiltViewModel(),
     resultFeedId: Int? = null,
     onResultConsumed: () -> Unit = {},
-    mySubscriptionViewModel: MySubscriptionViewModel = hiltViewModel()
+    feedViewModel: FeedViewModel = hiltViewModel(),
 ) {
     val feedUiState by feedViewModel.uiState.collectAsState()
     val selectedIndex = rememberSaveable { mutableIntStateOf(selectedTabIndex) }
@@ -81,14 +78,20 @@ fun FeedScreen(
         }
     }
     val scope = rememberCoroutineScope()
-    
+
     var showProgressBar by remember { mutableStateOf(false) }
     val progress = remember { Animatable(0f) }
-    
+
+    val feedTabTitles = listOf(stringResource(R.string.feed), stringResource(R.string.my_feed))
+
+    LaunchedEffect(Unit) {
+        feedViewModel.refreshData()
+    }
+
     LaunchedEffect(resultFeedId) {
         if (resultFeedId != null) {
             onResultConsumed()
-            
+
             showProgressBar = true
             progress.snapTo(0f)
             scope.launch {
@@ -103,57 +106,7 @@ fun FeedScreen(
             }
         }
     }
-    val mySubscriptions = listOf(
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image1.jpg",
-            nickname = "abcabcabcabc",
-            role = "문학가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image.jpg",
-            nickname = "aaaaaaa",
-            role = "작가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image1.jpg",
-            nickname = "abcabcabcabc",
-            role = "문학가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image.jpg",
-            nickname = "aaaaaaa",
-            role = "작가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image1.jpg",
-            nickname = "abcabcabcabc",
-            role = "문학가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image.jpg",
-            nickname = "aaaaaaa",
-            role = "작가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image1.jpg",
-            nickname = "abcabcabcabc",
-            role = "문학가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image.jpg",
-            nickname = "aaaaaaa",
-            role = "작가",
-            roleColor = colors.SocialScience
-        )
-    )
-    val subscriptionUiState by mySubscriptionViewModel.uiState.collectAsState()
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -166,7 +119,7 @@ fun FeedScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
             HeaderMenuBarTab(
-                titles = listOf("피드", "내 피드"),
+                titles = feedTabTitles,
                 selectedTabIndex = selectedIndex.value,
                 onTabSelected = { selectedIndex.value = it }
             )
@@ -291,19 +244,10 @@ fun FeedScreen(
                     //피드
                     item {
                         Spacer(modifier = Modifier.height(20.dp))
-                        val subscriptionsForBar = feedUiState.recentWriters.map { user ->
-                            MySubscriptionData(
-                                profileImageUrl = user.profileImageUrl,
-                                nickname = user.nickname,
-                                role = "",
-                                roleColor = colors.White,
-                                subscriberCount = 0,
-                                isSubscribed = true
-                            )
-                        }
+
                         MySubscribeBarlist(
                             modifier = Modifier.padding(horizontal = 20.dp),
-                            subscriptions = subscriptionsForBar,
+                            subscriptions = feedUiState.recentWriters,
                             onClick = onNavigateToMySubscription
                         )
                     }

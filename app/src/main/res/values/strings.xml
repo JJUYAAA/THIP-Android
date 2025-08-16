@@ -314,6 +314,7 @@
     <string name="create_feed">피드에 글을 작성해보세요</string>
     <string name="empty_feed">피드에 작성된 글이 없어요</string>
     <string name="find_thip_mate">관심있는 독서메이트를 찾아보세요!</string>
+    <string name="my_feed">내 피드</string>
 
     <string name="group_participant_close_popup">모집을 마감하시겠습니까?</string>
     <string name="group_participant_close_comment">독서메이트 모집을 마감하면\n지금 바로 모임방 활동을 바로 시작할 수 있어요.</string>
