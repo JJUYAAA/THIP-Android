@@ -3,6 +3,7 @@ package com.texthip.thip.ui.navigator.navigations
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.texthip.thip.ui.feed.screen.FeedOthersScreen
 import com.texthip.thip.ui.feed.screen.FeedScreen
 import com.texthip.thip.ui.feed.screen.FeedWriteScreen
 import com.texthip.thip.ui.feed.screen.MySubscriptionScreen
@@ -12,10 +13,10 @@ import com.texthip.thip.ui.navigator.routes.FeedRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
 // Feed
-fun NavGraphBuilder.feedNavigation(navController: NavHostController) {
+fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBack: () -> Unit) {
     composable<MainTabRoutes.Feed> { backStackEntry ->
         val resultFeedId = backStackEntry.savedStateHandle.get<Int>("feedId")
-        
+
         FeedScreen(
             nickname = "ThipUser01",
             userRole = "문학가",
@@ -36,12 +37,19 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController) {
         )
     }
     composable<FeedRoutes.MySubscription> {
-        MySubscriptionScreen(navController = navController)
+        MySubscriptionScreen(
+            onNavigateBack = {
+                navigateBack()
+            },
+            onNavigateToUserProfile = { userId ->
+                navController.navigate(FeedRoutes.Others(userId))
+            }
+        )
     }
     composable<FeedRoutes.Write> {
         FeedWriteScreen(
             onNavigateBack = {
-                navController.popBackStack()
+                navigateBack()
             },
             onFeedCreated = { feedId ->
                 // 피드 생성 성공 시 결과를 저장하고 피드 목록으로 돌아가기
@@ -49,6 +57,14 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController) {
                     .savedStateHandle
                     .set("feedId", feedId)
                 navController.popBackStack()
+            }
+        )
+    }
+    composable<FeedRoutes.Others> { backStackEntry ->
+        // 다른 유저의 피드 화면
+        FeedOthersScreen(
+            onNavigateBack = {
+                navigateBack()
             }
         )
     }

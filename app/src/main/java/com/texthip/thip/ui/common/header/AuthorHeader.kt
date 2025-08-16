@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,7 +30,6 @@ import com.texthip.thip.ui.common.buttons.OutlinedButton
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import androidx.compose.ui.graphics.Color
 
 @Composable
 fun AuthorHeader(
@@ -37,7 +37,7 @@ fun AuthorHeader(
     profileImage: String?,
     nickname: String,
     badgeText: String,
-    badgeTextColor: Color  = colors.NeonGreen,
+    badgeTextColor: Color = colors.NeonGreen,
     buttonText: String = "",
     buttonWidth: Dp = 60.dp,
     showButton: Boolean = true,
@@ -89,8 +89,8 @@ fun AuthorHeader(
         if (showButton) {
             OutlinedButton(
                 modifier = Modifier
-                                .width(buttonWidth)
-                                .height(33.dp),
+                    .width(buttonWidth)
+                    .height(33.dp),
                 text = buttonText,
                 textStyle = typography.view_m500_s14,
                 onClick = onButtonClick
@@ -102,7 +102,10 @@ fun AuthorHeader(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.thip_num, thipNum)+ stringResource(R.string.thip_ing),
+                    text = stringResource(
+                        R.string.thip_num,
+                        thipNum
+                    ) + stringResource(R.string.thip_ing),
                     style = typography.view_r400_s11_h20,
                     color = colors.White
                 )

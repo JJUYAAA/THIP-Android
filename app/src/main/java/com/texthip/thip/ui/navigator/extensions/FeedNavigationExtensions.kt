@@ -18,3 +18,8 @@ fun NavHostController.navigateToMySubscription() {
 fun NavHostController.navigateToFeedWrite() {
     navigate(FeedRoutes.Write)
 }
+
+// 유저 프로필(피드)로
+fun NavHostController.navigateToUserProfile(userId: Long) {
+    navigate(FeedRoutes.Others(userId))
+}

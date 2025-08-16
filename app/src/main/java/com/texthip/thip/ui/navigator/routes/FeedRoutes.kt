@@ -4,7 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class FeedRoutes : Routes() {
-
     @Serializable data object MySubscription : FeedRoutes()
     @Serializable data object Write : FeedRoutes()
+
+    @Serializable data class Others(val userId: Long) : FeedRoutes()
 }
