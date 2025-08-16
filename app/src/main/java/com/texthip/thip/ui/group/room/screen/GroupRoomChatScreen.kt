@@ -38,6 +38,7 @@ import com.texthip.thip.ui.group.room.viewmodel.GroupRoomChatViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.rooms.advancedImePadding
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -97,6 +98,7 @@ fun GroupRoomChatContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .advancedImePadding()
         ) {
             DefaultTopAppBar(
                 title = stringResource(R.string.group_room_chat),
