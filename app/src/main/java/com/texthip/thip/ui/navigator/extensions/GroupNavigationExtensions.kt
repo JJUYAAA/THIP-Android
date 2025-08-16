@@ -80,6 +80,11 @@ fun NavHostController.navigateToGroupRoomMates(roomId: Int) {
     navigate(GroupRoutes.RoomMates(roomId))
 }
 
+// 오늘의 한마디 회면으로 이동
+fun NavHostController.navigateToGroupRoomChat(roomId: Int) {
+    navigate(GroupRoutes.RoomChat(roomId))
+}
+
 // 기록장 화면으로 이동
 fun NavHostController.navigateToGroupNote(
     roomId: Int,

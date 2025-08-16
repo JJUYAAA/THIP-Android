@@ -25,6 +25,7 @@ fun GroupRoomBody(
     userPercentage: Double,
     currentVotes: List<CurrentVote>,
     onNavigateToNote: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
     onVoteClick: (CurrentVote) -> Unit = {}
 ) {
     Column(
@@ -46,7 +47,9 @@ fun GroupRoomBody(
         CardChat(
             title = stringResource(R.string.group_room_chat),
             subtitle = stringResource(R.string.group_room_chat_description)
-        ) {}
+        ) {
+            onNavigateToChat()
+        }
 
         CardVote(
             voteData = currentVotes,

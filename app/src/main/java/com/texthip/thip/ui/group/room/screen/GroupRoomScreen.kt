@@ -51,6 +51,7 @@ fun GroupRoomScreen(
     roomId: Int,
     onBackClick: () -> Unit = {},
     onNavigateToMates: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
     onNavigateToNote: (page: Int?, isOverview: Boolean?) -> Unit = { _, _ -> },
     viewModel: GroupRoomViewModel = hiltViewModel()
 ) {
@@ -75,6 +76,7 @@ fun GroupRoomScreen(
                 roomDetails = state.roomsPlaying,
                 onBackClick = onBackClick,
                 onNavigateToMates = onNavigateToMates,
+                onNavigateToChat = onNavigateToChat,
                 onNavigateToNote = onNavigateToNote
             )
         }
@@ -93,6 +95,7 @@ fun GroupRoomContent(
     roomDetails: RoomsPlayingResponse,
     onBackClick: () -> Unit = {},
     onNavigateToMates: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
     onNavigateToNote: (page: Int?, isOverview: Boolean?) -> Unit = { _, _ -> },
 ) {
     val scrollState = rememberScrollState()
@@ -178,6 +181,7 @@ fun GroupRoomContent(
                     currentVotes = roomDetails.currentVotes,
                     // 일반 노트 카드 클릭 시 필터 없이 이동
                     onNavigateToNote = { onNavigateToNote(null, null) },
+                    onNavigateToChat = onNavigateToChat,
                     // 투표 카드 클릭 시 필터 값과 함께 이동
                     onVoteClick = { vote: CurrentVote ->
                         if (vote.isOverview) {
