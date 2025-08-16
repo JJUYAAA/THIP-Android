@@ -8,6 +8,7 @@ import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomJoinRequest
 import com.texthip.thip.data.model.rooms.request.RoomSecretRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
+import com.texthip.thip.data.model.rooms.request.RoomsDailyGreetingRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
@@ -243,6 +244,18 @@ class RoomsRepository @Inject constructor(
             request = RoomsPostsLikesRequest(
                 type = type,
                 roomPostType = roomPostType
+            )
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun postRoomsDailyGreeting(
+        roomId: Int,
+        content: String
+    ) = runCatching {
+        roomsService.postRoomsDailyGreeting(
+            roomId = roomId,
+            request = RoomsDailyGreetingRequest(
+                content = content
             )
         ).handleBaseResponse().getOrThrow()
     }
