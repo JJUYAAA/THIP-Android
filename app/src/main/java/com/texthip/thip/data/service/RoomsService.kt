@@ -26,6 +26,7 @@ import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsLikesResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsResponse
 import com.texthip.thip.data.model.rooms.response.RoomsRecordResponse
+import com.texthip.thip.data.model.rooms.response.RoomsRecordsPinResponse
 import com.texthip.thip.data.model.rooms.response.RoomsUsersResponse
 import com.texthip.thip.data.model.rooms.response.RoomsVoteResponse
 import retrofit2.http.Body
@@ -158,4 +159,10 @@ interface RoomsService {
         @Path("roomId") roomId: Int,
         @Body request: RoomsDailyGreetingRequest
     ): BaseResponse<RoomsDailyGreetingResponse>
+
+    @GET("rooms/{roomId}/records/{recordId}/pin")
+    suspend fun getRoomsRecordsPin(
+        @Path("roomId") roomId: Int,
+        @Path("recordId") recordId: Int
+    ): BaseResponse<RoomsRecordsPinResponse>
 }

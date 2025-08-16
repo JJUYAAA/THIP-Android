@@ -259,4 +259,14 @@ class RoomsRepository @Inject constructor(
             )
         ).handleBaseResponse().getOrThrow()
     }
+
+    suspend fun getRoomsRecordsPin(
+        roomId: Int,
+        recordId: Int
+    ) = runCatching {
+        roomsService.getRoomsRecordsPin(
+            roomId = roomId,
+            recordId = recordId
+        ).handleBaseResponse().getOrThrow()
+    }
 }
