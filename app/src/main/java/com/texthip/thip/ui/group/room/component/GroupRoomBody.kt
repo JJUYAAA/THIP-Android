@@ -15,6 +15,7 @@ import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.cards.CardChat
 import com.texthip.thip.ui.common.cards.CardNote
 import com.texthip.thip.ui.common.cards.CardVote
+import kotlin.math.roundToInt
 
 @Composable
 fun GroupRoomBody(
@@ -43,7 +44,7 @@ fun GroupRoomBody(
 
         CardNote(
             currentPage = currentPage,
-            percentage = userPercentage
+            percentage = userPercentage.roundToInt(),
         ) {
             onNavigateToNote()
         }
