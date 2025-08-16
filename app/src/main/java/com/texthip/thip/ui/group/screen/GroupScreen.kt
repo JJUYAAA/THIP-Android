@@ -57,7 +57,7 @@ fun GroupScreen(
         viewModel.refreshDataOnScreenEnter()
     }
     val uiState by viewModel.uiState.collectAsState()
-    
+
     GroupContent(
         uiState = uiState,
         onNavigateToMakeRoom = onNavigateToMakeRoom,
@@ -105,63 +105,65 @@ fun GroupContent(
                     .fillMaxSize()
                     .verticalScroll(scrollState)
             ) {
-            // 상단바
-            LogoTopAppBar(
-                leftIcon = painterResource(R.drawable.ic_done),
-                hasNotification = false,
-                onLeftClick = onNavigateToGroupDone,
-                onRightClick = onNavigateToAlarm
-            )
 
-            // 검색창
-            GroupSearchTextField(
-                modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
-                onClick = onNavigateToGroupSearch
-            )
+                // 검색창
+                GroupSearchTextField(
+                    modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
+                    onClick = onNavigateToGroupSearch
+                )
 
-            // 내 모임방 헤더 + 카드
-            GroupMySectionHeader(
-                onClick = onNavigateToGroupMy
-            )
-            Spacer(Modifier.height(20.dp))
+                // 내 모임방 헤더 + 카드
+                GroupMySectionHeader(
+                    onClick = onNavigateToGroupMy
+                )
+                Spacer(Modifier.height(20.dp))
 
-            GroupPager(
-                groupCards = uiState.myJoinedRooms,
-                userName = uiState.userName,
-                onCardClick = { joinedRoom ->
-                    onNavigateToGroupRoom(joinedRoom.roomId)
-                },
-                onCardVisible = onCardVisible
-            )
-            Spacer(Modifier.height(32.dp))
+                GroupPager(
+                    groupCards = uiState.myJoinedRooms,
+                    userName = uiState.userName,
+                    onCardClick = { joinedRoom ->
+                        onNavigateToGroupRoom(joinedRoom.roomId)
+                    },
+                    onCardVisible = onCardVisible
+                )
+                Spacer(Modifier.height(32.dp))
 
-            Spacer(
-                Modifier
-                    .padding(bottom = 32.dp)
-                    .height(10.dp)
-                    .fillMaxWidth()
-                    .background(color = colors.DarkGrey02)
-            )
+                Spacer(
+                    Modifier
+                        .padding(bottom = 32.dp)
+                        .height(10.dp)
+                        .fillMaxWidth()
+                        .background(color = colors.DarkGrey02)
+                )
 
-            // 마감 임박한 독서 모임방
-            GroupRoomDeadlineSection(
-                roomMainList = uiState.roomMainList,
-                selectedGenreIndex = uiState.selectedGenreIndex,
-                errorMessage = uiState.roomSectionsError,
-                onGenreSelect = onSelectGenre,
-                onRoomClick = { room ->
-                    onNavigateToGroupRecruit(room.roomId)
-                }
-            )
-            Spacer(Modifier.height(102.dp))
+                // 마감 임박한 독서 모임방
+                GroupRoomDeadlineSection(
+                    roomMainList = uiState.roomMainList,
+                    selectedGenreIndex = uiState.selectedGenreIndex,
+                    errorMessage = uiState.roomSectionsError,
+                    onGenreSelect = onSelectGenre,
+                    onRoomClick = { room ->
+                        onNavigateToGroupRecruit(room.roomId)
+                    }
+                )
+                Spacer(Modifier.height(102.dp))
             }
         }
+
+        // 상단바
+        LogoTopAppBar(
+            leftIcon = painterResource(R.drawable.ic_done),
+            hasNotification = false,
+            onLeftClick = onNavigateToGroupDone,
+            onRightClick = onNavigateToAlarm
+        )
+
         // 오른쪽 하단 FAB
         FloatingButton(
             icon = painterResource(id = R.drawable.ic_makegroup),
             onClick = onNavigateToMakeRoom
         )
-        
+
         // 토스트 팝업
         if (uiState.showToast) {
             ToastWithDate(
@@ -173,7 +175,7 @@ fun GroupContent(
             )
         }
     }
-    
+
     // 토스트 3초 후 자동 숨김 - showToast가 true가 된 시점부터 카운트
     LaunchedEffect(uiState.showToast) {
         if (uiState.showToast) {
