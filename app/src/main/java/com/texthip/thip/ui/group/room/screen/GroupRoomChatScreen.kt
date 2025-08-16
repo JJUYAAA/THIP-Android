@@ -104,7 +104,7 @@ fun GroupRoomChatScreen() {
                         ) {
                             if (isNewDate) {
                                 HorizontalDivider(
-                                    color = colors.DarkGrey02,
+                                    color = colors.DarkGrey03,
                                     thickness = 10.dp
                                 )
                                 CountingBar(

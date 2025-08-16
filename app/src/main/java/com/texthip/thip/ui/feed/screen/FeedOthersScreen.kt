@@ -106,7 +106,7 @@ fun FeedOthersContent(
                                 .padding(bottom = 12.dp, start = 20.dp)
                         )
                         HorizontalDivider(
-                            color = colors.DarkGrey02,
+                            color = colors.DarkGrey03,
                             thickness = 1.dp,
                             modifier = Modifier.padding(horizontal = 20.dp)
                         )
@@ -140,7 +140,7 @@ fun FeedOthersContent(
                             Spacer(modifier = Modifier.height(40.dp))
                             if (index < uiState.feeds.lastIndex) {
                                 HorizontalDivider(
-                                    color = colors.DarkGrey02,
+                                    color = colors.DarkGrey03,
                                     thickness = 10.dp
                                 )
                             }

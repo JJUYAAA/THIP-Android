@@ -189,7 +189,7 @@ fun FeedCommentScreen(
                             }
                         }
                     }
-                    HorizontalDivider(color = colors.DarkGrey02, thickness = 10.dp)
+                    HorizontalDivider(color = colors.DarkGrey03, thickness = 10.dp)
                 }
             }
             //댓글이 없는 경우

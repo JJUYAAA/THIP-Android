@@ -196,7 +196,7 @@ fun FeedScreen(
                                 .padding(bottom = 12.dp, start = 20.dp)
                         )
                         HorizontalDivider(
-                            color = colors.DarkGrey02,
+                            color = colors.DarkGrey03,
                             thickness = 1.dp,
                             modifier = Modifier.padding(horizontal = 20.dp)
                         )
@@ -234,7 +234,7 @@ fun FeedScreen(
                             Spacer(modifier = Modifier.height(40.dp))
                             if (index != feeds.lastIndex) {
                                 HorizontalDivider(
-                                    color = colors.DarkGrey02,
+                                    color = colors.DarkGrey03,
                                     thickness = 10.dp
                                 )
                             }
@@ -272,7 +272,7 @@ fun FeedScreen(
                         )
                         if (index != feeds.lastIndex) {
                             HorizontalDivider(
-                                color = colors.DarkGrey02,
+                                color = colors.DarkGrey03,
                                 thickness = 10.dp
                             )
                         }
