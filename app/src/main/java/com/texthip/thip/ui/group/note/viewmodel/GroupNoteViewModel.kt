@@ -204,16 +204,54 @@ class GroupNoteViewModel @Inject constructor(
     }
 
     private fun vote(postId: Int, voteItemId: Int, type: Boolean) {
+        val originalPosts = _uiState.value.posts
+        val postIndex = originalPosts.indexOfFirst { it.postId == postId }
+        if (postIndex == -1) return
+        val postToUpdate = originalPosts[postIndex]
+
+        val optimisticVoteItems = postToUpdate.voteItems.map { voteItem ->
+            voteItem.copy(isVoted = if (voteItem.voteItemId == voteItemId) type else false)
+        }
+
+        val optimisticPosts = originalPosts.toMutableList().apply {
+            this[postIndex] = postToUpdate.copy(voteItems = optimisticVoteItems)
+        }
+
+        _uiState.update { it.copy(posts = optimisticPosts) }
+
         viewModelScope.launch {
             roomsRepository.postRoomsVote(
                 roomId = roomId,
                 voteId = postId,
                 voteItemId = voteItemId,
                 type = type
-            ).onSuccess {
-                loadPosts(isRefresh = true)
-            }.onFailure { throwable ->
-                _uiState.update { it.copy(error = throwable.message) }
+            ).onSuccess { voteResponse ->
+                if (voteResponse != null) {
+                    val serverVoteItems = voteResponse.voteItems
+
+                    // 현재 UI가 가지고 있는 포스트 목록을 가져오기
+                    val currentPosts = _uiState.value.posts
+                    val postIndex = currentPosts.indexOfFirst { it.postId == postId }
+                    if (postIndex == -1) return@onSuccess
+
+                    val postToUpdate = currentPosts[postIndex]
+
+                    // 기존 순서는 유지하고 내용만 업데이트
+                    val updatedVoteItems = postToUpdate.voteItems.map { originalItem ->
+                        val newItem = serverVoteItems.find { it.voteItemId == originalItem.voteItemId }
+                        newItem ?: originalItem
+                    }
+
+                    // 순서가 유지된 목록으로 최종 업데이트
+                    val finalPosts = currentPosts.toMutableList().apply {
+                        this[postIndex] = postToUpdate.copy(voteItems = updatedVoteItems)
+                    }
+                    _uiState.update { it.copy(posts = finalPosts) }
+                } else {
+                    loadPosts(isRefresh = true)
+                }
+            }.onFailure {
+                _uiState.update { it.copy(posts = originalPosts) }
             }
         }
     }

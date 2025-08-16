@@ -4,7 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RoomsVoteResponse(
-    val voteItemId: Int,
-    val roomId: Int,
-    val type: Boolean,
+    val voteItems: List<VoteItems>,
 )
