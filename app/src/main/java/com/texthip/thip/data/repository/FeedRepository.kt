@@ -72,22 +72,20 @@ class FeedRepository @Inject constructor(
         // 임시 파일 목록 추적
         val tempFiles = mutableListOf<File>()
         
-        try {
-            // 이미지 파일들을 MultipartBody.Part로 변환
-            val imageParts = if (imageUris.isNotEmpty()) {
-                withContext(Dispatchers.IO) {
-                    imageUris.mapNotNull { uri ->
-                        try {
-                            uriToMultipartBodyPart(uri, "images", tempFiles)
-                        } catch (e: Exception) {
-                            null
-                        }
-                    }
+        // 이미지 파일들을 MultipartBody.Part로 변환
+        val imageParts = if (imageUris.isNotEmpty()) {
+            withContext(Dispatchers.IO) {
+                imageUris.mapNotNull { uri ->
+                    runCatching {
+                        uriToMultipartBodyPart(uri, "images", tempFiles)
+                    }.getOrNull()
                 }
-            } else {
-                null
             }
+        } else {
+            null
+        }
 
+        try {
             feedService.createFeed(requestBody, imageParts)
                 .handleBaseResponse()
                 .getOrThrow()
@@ -98,7 +96,7 @@ class FeedRepository @Inject constructor(
     }
 
     private fun uriToMultipartBodyPart(uri: Uri, paramName: String, tempFiles: MutableList<File>): MultipartBody.Part? {
-        return try {
+        return runCatching {
             // MIME 타입 확인
             val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
             val extension = when (mimeType) {
@@ -120,15 +118,14 @@ class FeedRepository @Inject constructor(
                 FileOutputStream(tempFile).use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }
-            } ?: return null
+            } ?: throw IllegalStateException("Failed to open input stream for URI: $uri")
             
             // MultipartBody.Part 생성
             val requestFile = tempFile.asRequestBody(mimeType.toMediaType())
             MultipartBody.Part.createFormData(paramName, fileName, requestFile)
-        } catch (e: Exception) {
+        }.onFailure { e ->
             e.printStackTrace()
-            null
-        }
+        }.getOrNull()
     }
 
     /** 전체 피드 목록 조회 */
@@ -148,11 +145,11 @@ class FeedRepository @Inject constructor(
     /** 임시 파일들을 정리하는 함수 */
     private fun cleanupTempFiles(tempFiles: List<File>) {
         tempFiles.forEach { file ->
-            try {
+            runCatching {
                 if (file.exists()) {
                     file.delete()
                 }
-            } catch (e: Exception) {
+            }.onFailure { e ->
                 e.printStackTrace()
             }
         }
