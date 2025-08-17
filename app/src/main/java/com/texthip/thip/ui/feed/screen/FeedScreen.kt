@@ -16,12 +16,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -54,10 +59,12 @@ import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.color.hexToColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
     onNavigateToMySubscription: () -> Unit = {},
@@ -68,22 +75,45 @@ fun FeedScreen(
     totalFeedCount: Int = 0,
     selectedTabIndex: Int = 0,
     followerProfileImageUrls: List<String> = emptyList(),
-    feedViewModel: FeedViewModel = hiltViewModel(),
     resultFeedId: Int? = null,
     onResultConsumed: () -> Unit = {},
+    feedViewModel: FeedViewModel = hiltViewModel(),
     mySubscriptionViewModel: MySubscriptionViewModel = hiltViewModel()
 ) {
     val feedUiState by feedViewModel.uiState.collectAsState()
-    val selectedIndex = rememberSaveable { mutableIntStateOf(selectedTabIndex) }
+    val selectedIndex = rememberSaveable { mutableIntStateOf(feedUiState.selectedTabIndex) }
     val feedStateList = remember {
         mutableStateListOf<FeedItem>().apply {
             addAll(feeds)
         }
     }
     val scope = rememberCoroutineScope()
-    
     var showProgressBar by remember { mutableStateOf(false) }
     val progress = remember { Animatable(0f) }
+    
+    // 무한 스크롤 로직
+    val listState = rememberLazyListState()
+
+    // 무한 스크롤 로직
+    val shouldLoadMore by remember(feedUiState.canLoadMoreCurrentTab, feedUiState.isLoadingMore) {
+        derivedStateOf {
+            val layoutInfo = listState.layoutInfo
+            val totalItems = layoutInfo.totalItemsCount
+            val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+
+            feedUiState.canLoadMoreCurrentTab &&
+                    !feedUiState.isLoadingMore &&
+                    feedUiState.currentTabFeeds.isNotEmpty() &&
+                    totalItems > 0 &&
+                    lastVisibleIndex >= totalItems - 3
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore) {
+        if (shouldLoadMore) {
+            feedViewModel.loadMoreFeeds()
+        }
+    }
     
     LaunchedEffect(resultFeedId) {
         if (resultFeedId != null) {
@@ -103,6 +133,7 @@ fun FeedScreen(
             }
         }
     }
+
     val mySubscriptions = listOf(
         MySubscriptionData(
             profileImageUrl = "https://example.com/image1.jpg",
@@ -155,9 +186,13 @@ fun FeedScreen(
     )
     val subscriptionUiState by mySubscriptionViewModel.uiState.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize()
+        PullToRefreshBox(
+            isRefreshing = feedUiState.isRefreshing,
+            onRefresh = { feedViewModel.refreshCurrentTab() }
         ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
             LogoTopAppBar(
                 leftIcon = painterResource(R.drawable.ic_plusfriend),
                 hasNotification = false,
@@ -167,12 +202,16 @@ fun FeedScreen(
             Spacer(modifier = Modifier.height(32.dp))
             HeaderMenuBarTab(
                 titles = listOf("피드", "내 피드"),
-                selectedTabIndex = selectedIndex.value,
-                onTabSelected = { selectedIndex.value = it }
+                selectedTabIndex = feedUiState.selectedTabIndex,
+                onTabSelected = { 
+                    selectedIndex.intValue = it
+                    feedViewModel.onTabSelected(it)
+                }
             )
 
             // 스크롤 영역 전체
             LazyColumn(
+                state = listState,
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -235,7 +274,7 @@ fun FeedScreen(
                         )
                         Spacer(modifier = Modifier.height(40.dp))
                         Text(
-                            text = stringResource(R.string.whole_num, totalFeedCount),
+                            text = stringResource(R.string.whole_num, feedUiState.myFeeds.size),
                             style = typography.menu_m500_s14_h24,
                             color = colors.Grey,
                             modifier = Modifier
@@ -249,7 +288,7 @@ fun FeedScreen(
                         )
                     }
 
-                    if (totalFeedCount == 0) {
+                    if (feedUiState.myFeeds.isEmpty()) {
                         item {
                             Box(
                                 modifier = Modifier
@@ -265,21 +304,35 @@ fun FeedScreen(
                             }
                         }
                     } else {
-                        itemsIndexed(feedStateList, key = { _, item -> item.id }) { index, feed ->
+                        itemsIndexed(feedUiState.myFeeds, key = { _, item -> item.feedId }) { index, myFeed ->
                             Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
+                            
+                            // MyFeedItem을 FeedItem으로 변환
+                            val feedItem = FeedItem(
+                                id = myFeed.feedId,
+                                userProfileImage = null,
+                                userName = "", // 내 피드이므로 고정값
+                                userRole = "", // 내 피드이므로 고정값
+                                bookTitle = myFeed.bookTitle,
+                                authName = myFeed.bookAuthor,
+                                timeAgo = myFeed.postDate,
+                                content = myFeed.contentBody,
+                                likeCount = myFeed.likeCount,
+                                commentCount = myFeed.commentCount,
+                                isLiked = false, // 내 피드는 좋아요 개념 없음
+                                isSaved = false, // 내 피드는 저장 개념 없음
+                                isLocked = !myFeed.isPublic, // isPublic의 반대값
+                                tags = emptyList(),
+                                imageUrls = myFeed.contentUrls
+                            )
+                            
                             MyFeedCard(
-                                feedItem = feed,
-                                onLikeClick = {
-                                    val updated = feed.copy(
-                                        isLiked = !feed.isLiked,
-                                        likeCount = if (feed.isLiked) feed.likeCount - 1 else feed.likeCount + 1
-                                    )
-                                    feedStateList[index] = updated
-                                },
-                                onContentClick = {} //TODO FeedCommentScreen으로
+                                feedItem = feedItem,
+                                onLikeClick = {},
+                                onContentClick = {}
                             )
                             Spacer(modifier = Modifier.height(40.dp))
-                            if (index != feeds.lastIndex) {
+                            if (index != feedUiState.myFeeds.lastIndex) {
                                 HorizontalDivider(
                                     color = colors.DarkGrey02,
                                     thickness = 10.dp
@@ -307,26 +360,38 @@ fun FeedScreen(
                             onClick = onNavigateToMySubscription
                         )
                     }
-                    itemsIndexed(feedStateList, key = { _, item -> item.id }) { index, feed ->
-                        val profileImage = feed.userProfileImage?.let { painterResource(it) }
+                    itemsIndexed(feedUiState.allFeeds, key = { _, item -> item.feedId }) { index, allFeed ->
+                        // AllFeedItem을 FeedItem으로 변환
+                        val feedItem = FeedItem(
+                            id = allFeed.feedId,
+                            userProfileImage = allFeed.creatorProfileImageUrl,
+                            userName = allFeed.creatorNickname,
+                            userRole = allFeed.aliasName,
+                            bookTitle = allFeed.bookTitle,
+                            authName = allFeed.bookAuthor,
+                            timeAgo = allFeed.postDate,
+                            content = allFeed.contentBody,
+                            likeCount = allFeed.likeCount,
+                            commentCount = allFeed.commentCount,
+                            isLiked = allFeed.isLiked,
+                            isSaved = allFeed.isSaved,
+                            isLocked = false,
+                            tags = emptyList(),
+                            imageUrls = allFeed.contentUrls
+                        )
 
                         SavedFeedCard(
-                            feedItem = feed,
+                            feedItem = feedItem,
+                            bottomTextColor = hexToColor(allFeed.aliasColor),
                             onBookmarkClick = {
-                                val updated = feed.copy(isSaved = !feed.isSaved)
-                                feedStateList[index] = updated
+                                // TODO: API 호출로 북마크 상태 변경
                             },
                             onLikeClick = {
-                                val updated = feed.copy(
-                                    isLiked = !feed.isLiked,
-                                    likeCount = if (feed.isLiked) feed.likeCount - 1 else feed.likeCount + 1
-                                )
-                                feedStateList[index] = updated
+                                // TODO: API 호출로 좋아요 상태 변경
                             },
-                            onContentClick = {} //FeedCommentScreen으로
-
+                            onContentClick = {}
                         )
-                        if (index != feeds.lastIndex) {
+                        if (index != feedUiState.allFeeds.lastIndex) {
                             HorizontalDivider(
                                 color = colors.DarkGrey02,
                                 thickness = 10.dp
@@ -334,6 +399,23 @@ fun FeedScreen(
                         }
                     }
                 }
+                
+                // 무한 스크롤 로딩 인디케이터
+                if (feedUiState.isLoadingMore) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = colors.White
+                            )
+                        }
+                    }
+                }
+            }
             }
         }
         FloatingButton(
@@ -350,7 +432,7 @@ private fun FeedScreenPreview() {
         val mockFeeds = List(5) {
             FeedItem(
                 id = it + 1,
-                userProfileImage = R.drawable.character_literature,
+                userProfileImage = "https://example.com/profile$it.jpg",
                 userName = "user.$it",
                 userRole = "문학 칭호",
                 bookTitle = "책 제목 ",
@@ -362,7 +444,7 @@ private fun FeedScreenPreview() {
                 isLiked = false,
                 isSaved = false,
                 isLocked = it % 2 == 0,
-                imageUrls = listOf(R.drawable.img_book_cover_sample)
+                imageUrls = listOf("https://example.com/image$it.jpg")
             )
         }
         val mockFollowerImages = listOf(
