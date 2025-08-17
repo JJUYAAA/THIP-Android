@@ -166,4 +166,16 @@ class FeedRepository @Inject constructor(
             }
         }
     }
+
+    suspend fun getFeedUsersInfo(userId: Long) = runCatching {
+        feedService.getFeedUsersInfo(userId)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    suspend fun getFeedUsers(userId: Long) = runCatching {
+        feedService.getFeedUsers(userId)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
 }

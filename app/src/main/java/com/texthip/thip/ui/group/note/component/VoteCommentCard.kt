@@ -28,13 +28,18 @@ fun VoteCommentCard(
     onVote: (postId: Int, voteItemId: Int, type: Boolean) -> Unit = { _, _, _ -> },
     onCommentClick: () -> Unit = {},
     onLongPress: () -> Unit = {},
-    onPinClick: () -> Unit = {}
 ) {
     val selectedIndex = data.voteItems.indexOfFirst { it.isVoted }.takeIf { it != -1 }
     val hasVoted = selectedIndex != null
 
     val isLocked = data.isLocked
     val isWriter = data.isWriter
+
+    val pageText = if (data.isOverview) {
+        stringResource(id = R.string.general_review)
+    } else {
+        data.page.toString() + stringResource(R.string.page)
+    }
 
     Column(
         modifier = modifier
@@ -50,7 +55,7 @@ fun VoteCommentCard(
         ProfileBar(
             profileImage = "https://example.com/image1.jpg",
             topText = data.nickName,
-            bottomText = data.page.toString() + stringResource(R.string.page),
+            bottomText = pageText,
             bottomTextColor = colors.Purple,
             showSubscriberInfo = false,
             hoursAgo = data.postDate
@@ -87,15 +92,11 @@ fun VoteCommentCard(
             isLiked = data.isLiked,
             likeCount = data.likeCount,
             commentCount = data.commentCount,
-            isPinVisible = isWriter,
             onLikeClick = {
                 if (!isLocked) onLikeClick(data.postId, data.postType)
             },
             onCommentClick = {
                 if (!isLocked) onCommentClick()
-            },
-            onPinClick = {
-                if (!isLocked) onPinClick()
             }
         )
     }
@@ -119,6 +120,7 @@ private fun VoteCommentCardPreview() {
             isLiked = true,
             isWriter = false,
             isLocked = false,
+            isOverview = false,
             voteItems = emptyList()
         )
     )

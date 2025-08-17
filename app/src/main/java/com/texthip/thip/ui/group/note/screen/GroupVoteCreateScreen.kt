@@ -126,7 +126,7 @@ fun GroupVoteCreateContent(
 
         if (showTooltip && iconCoordinates.value != null) {
             val yOffsetDp = with(density) {
-                iconCoordinates.value!!.positionInRoot().y.toDp() + 32.dp
+                iconCoordinates.value!!.positionInRoot().y.toDp()
             }
 
             Box(

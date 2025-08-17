@@ -24,6 +24,7 @@ data class PostList(
     val content: String,
     val likeCount: Int,
     val commentCount: Int,
+    val isOverview: Boolean,
     val isLiked: Boolean,
     val isWriter: Boolean,
     val isLocked: Boolean,

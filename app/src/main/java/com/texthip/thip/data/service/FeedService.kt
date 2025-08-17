@@ -3,6 +3,8 @@ package com.texthip.thip.data.service
 import com.texthip.thip.data.model.base.BaseResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
+import com.texthip.thip.data.model.feed.response.FeedUsersInfoResponse
+import com.texthip.thip.data.model.feed.response.FeedUsersResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
 import com.texthip.thip.data.model.feeds.response.AllFeedResponse
 import com.texthip.thip.data.model.feeds.response.MyFeedResponse
@@ -14,6 +16,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+
 
 interface FeedService {
 
@@ -46,4 +49,14 @@ interface FeedService {
     suspend fun getFeedDetail(
         @Path("feedId") feedId: Int
     ): BaseResponse<FeedDetailResponse>
+
+    @GET("feeds/users/{userId}/info")
+    suspend fun getFeedUsersInfo(
+        @Path("userId") userId: Long
+    ): BaseResponse<FeedUsersInfoResponse>
+
+    @GET("feeds/users/{userId}")
+    suspend fun getFeedUsers(
+        @Path("userId") userId: Long
+    ): BaseResponse<FeedUsersResponse>
 }

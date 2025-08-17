@@ -5,24 +5,28 @@ import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomJoinRequest
 import com.texthip.thip.data.model.rooms.request.RoomSecretRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
+import com.texthip.thip.data.model.rooms.request.RoomsDailyGreetingRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
 import com.texthip.thip.data.model.rooms.response.CreateRoomResponse
 import com.texthip.thip.data.model.rooms.response.JoinedRoomListResponse
 import com.texthip.thip.data.model.rooms.response.MyRoomListResponse
-import com.texthip.thip.data.model.rooms.response.RoomJoinResponse
-import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
-import com.texthip.thip.data.model.rooms.response.RoomMainList
-import com.texthip.thip.data.model.rooms.response.RoomSecretRoomResponse
 import com.texthip.thip.data.model.rooms.response.RoomCloseResponse
+import com.texthip.thip.data.model.rooms.response.RoomJoinResponse
+import com.texthip.thip.data.model.rooms.response.RoomMainList
+import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
+import com.texthip.thip.data.model.rooms.response.RoomSecretRoomResponse
 import com.texthip.thip.data.model.rooms.response.RoomsBookPageResponse
 import com.texthip.thip.data.model.rooms.response.RoomsCreateVoteResponse
+import com.texthip.thip.data.model.rooms.response.RoomsDailyGreetingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteRecordResponse
+import com.texthip.thip.data.model.rooms.response.RoomsDeleteVoteResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsLikesResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsResponse
 import com.texthip.thip.data.model.rooms.response.RoomsRecordResponse
+import com.texthip.thip.data.model.rooms.response.RoomsRecordsPinResponse
 import com.texthip.thip.data.model.rooms.response.RoomsUsersResponse
 import com.texthip.thip.data.model.rooms.response.RoomsVoteResponse
 import retrofit2.http.Body
@@ -138,9 +142,27 @@ interface RoomsService {
         @Path("recordId") recordId: Int
     ): BaseResponse<RoomsDeleteRecordResponse>
 
+    @DELETE("rooms/{roomId}/vote/{voteId}")
+    suspend fun deleteRoomsVote(
+        @Path("roomId") roomId: Int,
+        @Path("voteId") voteId: Int
+    ): BaseResponse<RoomsDeleteVoteResponse>
+
     @POST("room-posts/{postId}/likes")
     suspend fun postRoomsPostsLikes(
         @Path("postId") postId: Int,
         @Body request: RoomsPostsLikesRequest
     ): BaseResponse<RoomsPostsLikesResponse>
+
+    @POST("rooms/{roomId}/daily-greeting")
+    suspend fun postRoomsDailyGreeting(
+        @Path("roomId") roomId: Int,
+        @Body request: RoomsDailyGreetingRequest
+    ): BaseResponse<RoomsDailyGreetingResponse>
+
+    @GET("rooms/{roomId}/records/{recordId}/pin")
+    suspend fun getRoomsRecordsPin(
+        @Path("roomId") roomId: Int,
+        @Path("recordId") recordId: Int
+    ): BaseResponse<RoomsRecordsPinResponse>
 }

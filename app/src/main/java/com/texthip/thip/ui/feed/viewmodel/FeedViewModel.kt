@@ -62,7 +62,7 @@ class FeedViewModel @Inject constructor(
         loadAllFeeds()
         fetchRecentWriters()
     }
-
+    
     fun onTabSelected(index: Int) {
         updateState { it.copy(selectedTabIndex = index) }
 
@@ -255,15 +255,22 @@ class FeedViewModel @Inject constructor(
             0 -> loadAllFeeds(isInitial = false)
             1 -> loadMyFeeds(isInitial = false)
         }
+
+    fun refreshData() {
+        fetchRecentWriters()
+
     }
 
     private fun fetchRecentWriters() {
         viewModelScope.launch {
-            userRepository.getRecentWriters()
+            _uiState.update { it.copy(isLoading = true) }
+            userRepository.getMyFollowingsRecentFeeds()
                 .onSuccess { data ->
-                    updateState {
+                    val writers = data?.recentWriters ?: emptyList()
+                    _uiState.update {
                         it.copy(
-                            recentWriters = data?.recentWriters ?: emptyList()
+                            isLoading = false,
+                            recentWriters = writers
                         )
                     }
                 }

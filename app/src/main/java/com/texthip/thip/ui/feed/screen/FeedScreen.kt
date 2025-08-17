@@ -81,14 +81,11 @@ fun FeedScreen(
     mySubscriptionViewModel: MySubscriptionViewModel = hiltViewModel()
 ) {
     val feedUiState by feedViewModel.uiState.collectAsState()
-    val feedStateList = remember {
-        mutableStateListOf<FeedItem>().apply {
-            addAll(feeds)
-        }
-    }
     val scope = rememberCoroutineScope()
     var showProgressBar by remember { mutableStateOf(false) }
     val progress = remember { Animatable(0f) }
+    
+    val feedTabTitles = listOf(stringResource(R.string.feed), stringResource(R.string.my_feed))
 
     // 무한 스크롤 로직
     val listState = rememberLazyListState()
@@ -113,6 +110,10 @@ fun FeedScreen(
             feedViewModel.loadMoreFeeds()
         }
     }
+    
+    LaunchedEffect(Unit) {
+        feedViewModel.refreshData()
+    }
 
     LaunchedEffect(resultFeedId) {
         if (resultFeedId != null) {
@@ -133,56 +134,6 @@ fun FeedScreen(
         }
     }
 
-    val mySubscriptions = listOf(
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image1.jpg",
-            nickname = "abcabcabcabc",
-            role = "문학가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image.jpg",
-            nickname = "aaaaaaa",
-            role = "작가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image1.jpg",
-            nickname = "abcabcabcabc",
-            role = "문학가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image.jpg",
-            nickname = "aaaaaaa",
-            role = "작가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image1.jpg",
-            nickname = "abcabcabcabc",
-            role = "문학가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image.jpg",
-            nickname = "aaaaaaa",
-            role = "작가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image1.jpg",
-            nickname = "abcabcabcabc",
-            role = "문학가",
-            roleColor = colors.SocialScience
-        ),
-        MySubscriptionData(
-            profileImageUrl = "https://example.com/image.jpg",
-            nickname = "aaaaaaa",
-            role = "작가",
-            roleColor = colors.SocialScience
-        )
-    )
     val subscriptionUiState by mySubscriptionViewModel.uiState.collectAsState()
 
     // 초기 로딩 상태 처리
@@ -215,7 +166,7 @@ fun FeedScreen(
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 HeaderMenuBarTab(
-                    titles = listOf("피드", "내 피드"),
+                    titles = feedTabTitles,
                     selectedTabIndex = feedUiState.selectedTabIndex,
                     onTabSelected = feedViewModel::onTabSelected
                 )
@@ -264,6 +215,7 @@ fun FeedScreen(
                             }
                         }
                     }
+                    
                     if (feedUiState.selectedTabIndex == 1) {
                         // 내 피드
                         item {
@@ -315,9 +267,7 @@ fun FeedScreen(
                                 }
                             }
                         } else {
-                            itemsIndexed(
-                                feedUiState.myFeeds,
-                                key = { _, item -> item.feedId }) { index, myFeed ->
+                            itemsIndexed(feedUiState.myFeeds, key = { _, item -> item.feedId }) { index, myFeed ->
                                 Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
 
                                 // MyFeedItem을 FeedItem으로 변환
@@ -375,9 +325,7 @@ fun FeedScreen(
                                 onClick = onNavigateToMySubscription
                             )
                         }
-                        itemsIndexed(
-                            feedUiState.allFeeds,
-                            key = { _, item -> item.feedId }) { index, allFeed ->
+                        itemsIndexed(feedUiState.allFeeds, key = { _, item -> item.feedId }) { index, allFeed ->
                             // AllFeedItem을 FeedItem으로 변환
                             val feedItem = FeedItem(
                                 id = allFeed.feedId,
