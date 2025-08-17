@@ -6,6 +6,7 @@ import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersInfoResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
+import com.texthip.thip.data.model.feed.response.FeedMineInfoResponse
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
 import okhttp3.MultipartBody
@@ -43,6 +44,10 @@ interface FeedService {
     suspend fun getMyFeeds(
         @Query("cursor") cursor: String? = null
     ): BaseResponse<MyFeedResponse>
+
+    /** 내 피드 정보 조회 */
+    @GET("feeds/mine/info")
+    suspend fun getMyFeedInfo(): BaseResponse<FeedMineInfoResponse>
 
     /** 피드 상세 조회 */
     @GET("feeds/{feedId}")
