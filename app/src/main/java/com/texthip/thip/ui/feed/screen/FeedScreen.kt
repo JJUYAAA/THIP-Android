@@ -67,6 +67,7 @@ fun FeedScreen(
     onNavigateToMySubscription: () -> Unit = {},
     onNavigateToFeedWrite: () -> Unit = {},
     onNavigateToFeedComment: (Int) -> Unit = {},
+    onNavigateToBookDetail: (String) -> Unit = {},
     resultFeedId: Int? = null,
     onResultConsumed: () -> Unit = {},
     feedViewModel: FeedViewModel = hiltViewModel(),
@@ -287,6 +288,9 @@ fun FeedScreen(
                                     onLikeClick = {},
                                     onContentClick = {
                                         onNavigateToFeedComment(feedItem.id)
+                                    },
+                                    onBookClick = {
+                                        onNavigateToBookDetail(myFeed.isbn)
                                     }
                                 )
                                 Spacer(modifier = Modifier.height(40.dp))
@@ -344,6 +348,9 @@ fun FeedScreen(
                                 },
                                 onCommentClick = {
                                     onNavigateToFeedComment(feedItem.id)
+                                },
+                                onBookClick = {
+                                    onNavigateToBookDetail(allFeed.isbn)
                                 }
                             )
                             Spacer(modifier = Modifier.height(40.dp))
@@ -386,7 +393,8 @@ fun FeedScreen(
 private fun FeedScreenPreview() {
     ThipTheme {
         FeedScreen(
-            onNavigateToFeedWrite = { }
+            onNavigateToFeedWrite = { },
+            onNavigateToBookDetail = { }
         )
     }
 }
@@ -396,7 +404,8 @@ private fun FeedScreenPreview() {
 private fun FeedScreenWithoutDataPreview() {
     ThipTheme {
         FeedScreen(
-            onNavigateToFeedWrite = { }
+            onNavigateToFeedWrite = { },
+            onNavigateToBookDetail = { }
         )
     }
 }
