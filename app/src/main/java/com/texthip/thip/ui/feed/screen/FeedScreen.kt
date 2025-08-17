@@ -404,6 +404,9 @@ fun FeedScreen(
                             },
                             onContentClick = {
                                 onNavigateToFeedComment(feedItem.id)
+                            },
+                            onCommentClick = {
+                                onNavigateToFeedComment(feedItem.id)
                             }
                         )
                         if (index != feedUiState.allFeeds.lastIndex) {
