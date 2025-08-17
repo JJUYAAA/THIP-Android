@@ -5,6 +5,7 @@ import android.net.Uri
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.feed.request.CreateFeedRequest
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
+import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
 import com.texthip.thip.data.model.feeds.response.AllFeedResponse
 import com.texthip.thip.data.model.feeds.response.MyFeedResponse
@@ -138,6 +139,13 @@ class FeedRepository @Inject constructor(
     /** 내 피드 목록 조회 */
     suspend fun getMyFeeds(cursor: String? = null): Result<MyFeedResponse?> = runCatching {
         feedService.getMyFeeds(cursor)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    /** 피드 상세 조회 */
+    suspend fun getFeedDetail(feedId: Int): Result<FeedDetailResponse?> = runCatching {
+        feedService.getFeedDetail(feedId)
             .handleBaseResponse()
             .getOrThrow()
     }
