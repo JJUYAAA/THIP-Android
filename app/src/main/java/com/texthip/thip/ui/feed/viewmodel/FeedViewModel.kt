@@ -3,6 +3,7 @@ package com.texthip.thip.ui.feed.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.feed.response.AllFeedItem
+import com.texthip.thip.data.model.feed.response.FeedMineInfoResponse
 import com.texthip.thip.data.model.feed.response.MyFeedItem
 import com.texthip.thip.data.model.users.response.RecentWriterList
 import com.texthip.thip.data.repository.FeedRepository
@@ -18,6 +19,7 @@ data class FeedUiState(
     val allFeeds: List<AllFeedItem> = emptyList(),
     val myFeeds: List<MyFeedItem> = emptyList(),
     val recentWriters: List<RecentWriterList> = emptyList(),
+    val myFeedInfo: FeedMineInfoResponse? = null,
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val isLoadingMore: Boolean = false,
@@ -73,6 +75,7 @@ class FeedViewModel @Inject constructor(
 
             1 -> {
                 loadMyFeeds(isInitial = true)
+                fetchMyFeedInfo()
             }
         }
     }
@@ -280,6 +283,22 @@ class FeedViewModel @Inject constructor(
                             isLoading = false,
                             error = exception.message
                         ) 
+                    }
+                }
+        }
+    }
+
+    private fun fetchMyFeedInfo() {
+        viewModelScope.launch {
+            feedRepository.getMyFeedInfo()
+                .onSuccess { data ->
+                    updateState {
+                        it.copy(myFeedInfo = data)
+                    }
+                }
+                .onFailure { exception ->
+                    updateState { 
+                        it.copy(error = exception.message) 
                     }
                 }
         }
