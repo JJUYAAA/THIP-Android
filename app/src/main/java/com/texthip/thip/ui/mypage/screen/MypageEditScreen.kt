@@ -22,59 +22,56 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.FormTextFieldDefault
+import com.texthip.thip.ui.common.forms.WarningTextField
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.mypage.component.RoleCard
 import com.texthip.thip.ui.mypage.mock.RoleItem
+import com.texthip.thip.ui.mypage.viewmodel.EditProfileUiState
+import com.texthip.thip.ui.mypage.viewmodel.EditProfileViewModel
+import com.texthip.thip.ui.signin.viewmodel.SignupAliasUiState
+import com.texthip.thip.ui.signin.viewmodel.SignupAliasViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun EditProfileScreen() {
-    var selectedIndex by rememberSaveable { mutableStateOf(-1) }
-    val roleCards = listOf(
-        RoleItem(
-            stringResource(R.string.literature),
-            stringResource(R.string.literary_person),
-            "https://photos/1111",
-            "#FF6B6B"
-        ),
-        RoleItem(
-            stringResource(R.string.science_it),
-            stringResource(R.string.scientist),
-            "https://photos/1111",
-            "#FF6B6B"
-        ),
-        RoleItem(
-            stringResource(R.string.social_science),
-            stringResource(R.string.sociologist),
-            "https://photos/1111",
-            "#FF6B6B"
-        ),
-        RoleItem(
-            stringResource(R.string.art),
-            stringResource(R.string.artist),
-            "https://photos/1111",
-            "#FF6B6B"
-        ),
-        RoleItem(
-            stringResource(R.string.humanities),
-            stringResource(R.string.philosopher),
-            "https://photos/1111",
-            "#FF6B6B"
-        )
+fun EditProfileScreen(
+    viewModel: EditProfileViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    EditProfileContent(
+        uiState = uiState,
+        onNicknameChange = viewModel::onNicknameChange,
+        onCardSelected = viewModel::selectCard,
+        onSaveClick = viewModel::saveProfile
     )
+}
+
+
+@Composable
+fun EditProfileContent(
+    uiState: EditProfileUiState,
+    onNicknameChange: (String) -> Unit,
+    onCardSelected: (Int) -> Unit,
+    onSaveClick: () -> Unit
+) {
+    val isChanged = uiState.nickname != uiState.initialNickname || uiState.selectedIndex != uiState.initialSelectedIndex
+    val isRightButtonEnabled = isChanged && uiState.nickname.isNotBlank() && !uiState.isLoading
+
     Column(
         Modifier
             .fillMaxSize()
     ) {
         InputTopAppBar(
             title = stringResource(R.string.edit_profile),
-            isRightButtonEnabled = true,
+            isRightButtonEnabled = isRightButtonEnabled,
             onLeftClick = {},
-            onRightClick = {}
+            onRightClick = onSaveClick
         )
         Column(
             modifier = Modifier
@@ -92,13 +89,26 @@ fun EditProfileScreen() {
                     .padding(bottom = 12.dp)
             )
             //TODO 컴포넌트 수정 필요 -> text count 추가, boolean 값으로 icon, limit 설정가능하도록
-            FormTextFieldDefault(
+           /* FormTextFieldDefault(
+                value = uiState.nickname,
+                onValueChange = onNicknameChange,
                 modifier = Modifier.fillMaxWidth(),
                 showLimit = true,
                 limit = 10,
                 showIcon = false,
                 containerColor = colors.DarkGrey02,
                 hint = stringResource(R.string.change_nickname)
+            )*/
+            WarningTextField(
+                containerColor = colors.DarkGrey02,
+                value = uiState.nickname,
+                onValueChange = onNicknameChange,
+                hint = stringResource(R.string.nickname_condition),
+                showWarning = uiState.nicknameWarningMessageResId != null,
+                showIcon = false,
+                showLimit = true,
+                maxLength = 10,
+                warningMessage = uiState.nicknameWarningMessageResId?.let { stringResource(it) } ?: ""
             )
             Spacer(modifier = Modifier.height(40.dp))
             Text(
@@ -115,16 +125,16 @@ fun EditProfileScreen() {
                 color = colors.White,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp)
+                    .padding(bottom = 20.dp)
             )
-            Text(
+            /*Text(
                 text = stringResource(R.string.choice_one),
                 style = typography.info_r400_s12,
                 color = colors.NeonGreen,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 12.dp)
-            )
+            )*/
 
 
             LazyVerticalGrid(
@@ -135,14 +145,14 @@ fun EditProfileScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 userScrollEnabled = false,
             ) {
-                itemsIndexed(roleCards) { index, roleItem ->
+                itemsIndexed(uiState.roleCards) { index, roleItem ->
                     RoleCard(
                         genre = roleItem.genre,
                         role = roleItem.role,
                         imageUrl = roleItem.imageUrl,
                         roleColor = roleItem.roleColor,
-                        selected = selectedIndex == index,
-                        onClick = { selectedIndex = index }
+                        selected = uiState.selectedIndex == index,
+                        onClick = { onCardSelected(index) }
                     )
                 }
             }
@@ -151,10 +161,26 @@ fun EditProfileScreen() {
     }
 }
 
+
 @Preview
 @Composable
 private fun EditProfileScreenPrev() {
+    val previewRoleCards = listOf(
+        RoleItem("문학", "문학가", "", "#FFFFFF"),
+        RoleItem("과학/IT", "과학자", "", "#FFFFFF")
+    )
+    val previewUiState = EditProfileUiState(
+        isLoading = false,
+        roleCards = previewRoleCards,
+        selectedIndex = 0,
+        nickname = "기존닉네임"
+    )
     ThipTheme {
-        EditProfileScreen()
+        EditProfileContent(
+            uiState = previewUiState,
+            onNicknameChange = {},
+            onCardSelected = {},
+            onSaveClick = {}
+        )
     }
 }
