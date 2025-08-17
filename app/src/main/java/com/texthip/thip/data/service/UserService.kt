@@ -5,6 +5,7 @@ import com.texthip.thip.data.model.users.request.FollowRequest
 import com.texthip.thip.data.model.users.response.MyFollowingsResponse
 import com.texthip.thip.data.model.users.response.MyPageInfoResponse
 import com.texthip.thip.data.model.users.request.NicknameRequest
+import com.texthip.thip.data.model.users.request.ProfileUpdateRequest
 import com.texthip.thip.data.model.users.response.AliasChoiceResponse
 import com.texthip.thip.data.model.users.response.FollowResponse
 import com.texthip.thip.data.model.users.response.MyRecentFollowingsResponse
@@ -12,6 +13,7 @@ import com.texthip.thip.data.model.users.response.NicknameResponse
 import com.texthip.thip.data.model.users.response.OthersFollowersResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -49,4 +51,9 @@ interface UserService {
         @Path("followingUserId") followingUserId: Long,
         @Body request: FollowRequest
     ): BaseResponse<FollowResponse>
+
+    @PATCH("users")
+    suspend fun updateProfile(
+        @Body request: ProfileUpdateRequest
+    ): BaseResponse<Unit>
 }

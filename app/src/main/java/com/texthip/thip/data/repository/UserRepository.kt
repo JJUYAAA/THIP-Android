@@ -5,6 +5,7 @@ import com.texthip.thip.data.model.users.request.FollowRequest
 import com.texthip.thip.data.model.users.response.MyFollowingsResponse
 import com.texthip.thip.data.model.users.response.MyPageInfoResponse
 import com.texthip.thip.data.model.users.request.NicknameRequest
+import com.texthip.thip.data.model.users.request.ProfileUpdateRequest
 import com.texthip.thip.data.model.users.response.AliasChoiceResponse
 import com.texthip.thip.data.model.users.response.FollowResponse
 import com.texthip.thip.data.model.users.response.MyRecentFollowingsResponse
@@ -70,6 +71,12 @@ class UserRepository @Inject constructor(
     ): Result<FollowResponse?> = runCatching {
         val request = FollowRequest(type = isFollowing)
         userService.toggleFollow(followingUserId, request)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    suspend fun updateProfile(request: ProfileUpdateRequest): Result<Unit?> = runCatching {
+        userService.updateProfile(request)
             .handleBaseResponse()
             .getOrThrow()
     }
