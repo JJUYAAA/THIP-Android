@@ -15,6 +15,14 @@ fun NavHostController.navigateToMySubscription() {
 }
 
 // 피드 작성으로
+fun NavHostController.navigateToFeedWrite() {
+    navigate(FeedRoutes.Write)
+}
+
+// 피드 댓글으로
+fun NavHostController.navigateToFeedComment(feedId: Int) {
+    navigate(FeedRoutes.Comment(feedId))
+
 fun NavHostController.navigateToFeedWrite(
     isbn: String? = null,
     bookTitle: String? = null,
@@ -34,4 +42,5 @@ fun NavHostController.navigateToFeedWrite(
 // 유저 프로필(피드)로
 fun NavHostController.navigateToUserProfile(userId: Long) {
     navigate(FeedRoutes.Others(userId))
+
 }

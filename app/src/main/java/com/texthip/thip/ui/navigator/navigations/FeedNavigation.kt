@@ -5,6 +5,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.texthip.thip.ui.feed.screen.FeedCommentScreen
+import com.texthip.thip.ui.feed.screen.FeedScreen
+import com.texthip.thip.ui.feed.screen.FeedWriteScreen
+import com.texthip.thip.ui.feed.screen.MySubscriptionScreen
+import com.texthip.thip.ui.navigator.extensions.navigateToFeedComment
 import androidx.navigation.toRoute
 import com.texthip.thip.ui.feed.screen.FeedOthersScreen
 import com.texthip.thip.ui.feed.screen.FeedScreen
@@ -37,6 +42,9 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             },
             onNavigateToFeedWrite = {
                 navController.navigateToFeedWrite()
+            },
+            onNavigateToFeedComment = { feedId ->
+                navController.navigateToFeedComment(feedId)
             }
         )
     }
@@ -86,6 +94,18 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         FeedOthersScreen(
             onNavigateBack = {
                 navigateBack()
+            }
+        )
+    }
+    composable<FeedRoutes.Comment> { backStackEntry ->
+        val route = backStackEntry.arguments?.let {
+            FeedRoutes.Comment(it.getInt("feedId"))
+        } ?: return@composable
+
+        FeedCommentScreen(
+            feedId = route.feedId,
+            onNavigateBack = {
+                navController.popBackStack()
             }
         )
     }

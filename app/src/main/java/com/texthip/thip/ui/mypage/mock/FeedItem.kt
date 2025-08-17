@@ -2,7 +2,7 @@ package com.texthip.thip.ui.mypage.mock
 
 data class FeedItem(
     val id: Int,
-    val userProfileImage: Int? = null,
+    val userProfileImage: String? = null,
     val userName: String,
     val userRole: String,
     val bookTitle: String,
@@ -15,6 +15,6 @@ data class FeedItem(
     val isSaved: Boolean,
     val isLocked: Boolean = false,
     val tags: List<String> = emptyList(),
-    val imageUrls: List<Int>? = emptyList()
+    val imageUrls: List<String> = emptyList()
 )
 

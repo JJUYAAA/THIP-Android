@@ -155,6 +155,7 @@ fun FeedOthersContent(
 @Preview
 @Composable
 private fun FeedOthersScreenPrev() {
+
     val mockUserInfo = FeedUsersInfoResponse(
         creatorId = 1,
         profileImageUrl = "",

@@ -66,7 +66,7 @@ class FeedWriteViewModel @Inject constructor(
             updateState { it.copy(isLoadingCategories = true) }
             feedRepository.getFeedWriteInfo()
                 .onSuccess { response ->
-                    updateState { 
+                    updateState {
                         it.copy(
                             categories = response?.categoryList ?: emptyList(),
                             isLoadingCategories = false
@@ -74,7 +74,7 @@ class FeedWriteViewModel @Inject constructor(
                     }
                 }
                 .onFailure {
-                    updateState { 
+                    updateState {
                         it.copy(
                             categories = emptyList(),
                             isLoadingCategories = false,
@@ -199,9 +199,9 @@ class FeedWriteViewModel @Inject constructor(
         val currentState = _uiState.value
         val availableSlots = 3 - currentState.imageUris.size
         val imagesToAdd = newImageUris.take(availableSlots)
-        
-        updateState { 
-            it.copy(imageUris = currentState.imageUris + imagesToAdd) 
+
+        updateState {
+            it.copy(imageUris = currentState.imageUris + imagesToAdd)
         }
     }
 
@@ -218,7 +218,7 @@ class FeedWriteViewModel @Inject constructor(
     }
 
     fun selectCategory(index: Int) {
-        updateState { 
+        updateState {
             it.copy(
                 selectedCategoryIndex = index,
                 selectedTags = emptyList() // 카테고리 변경 시 태그 초기화
@@ -242,8 +242,8 @@ class FeedWriteViewModel @Inject constructor(
 
     fun removeTag(tag: String) {
         val currentTags = _uiState.value.selectedTags
-        updateState { 
-            it.copy(selectedTags = currentTags - tag) 
+        updateState {
+            it.copy(selectedTags = currentTags - tag)
         }
     }
 
@@ -272,7 +272,7 @@ class FeedWriteViewModel @Inject constructor(
                     tagList = currentState.selectedTags,
                     imageUris = currentState.imageUris
                 )
-                
+
                 result.onSuccess { response ->
                     val feedId = response?.feedId
                     if (feedId != null) {
@@ -282,7 +282,8 @@ class FeedWriteViewModel @Inject constructor(
                     }
                 }.onFailure { exception ->
                     onError(
-                        exception.message ?: stringResourceProvider.getString(R.string.error_network_error)
+                        exception.message
+                            ?: stringResourceProvider.getString(R.string.error_network_error)
                     )
                 }
 

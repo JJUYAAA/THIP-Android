@@ -1,28 +1,26 @@
 package com.texthip.thip.ui.mypage.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.texthip.thip.R
+import com.texthip.thip.ui.common.buttons.ActionBarButton
 import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.mypage.mock.FeedItem
@@ -34,13 +32,13 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun SavedFeedCard(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
+    bottomTextColor: Color = colors.NeonGreen,
     onBookmarkClick: () -> Unit = {},
     onLikeClick: () -> Unit = {},
-    onContentClick: () -> Unit = {}
+    onContentClick: () -> Unit = {},
+    onCommentClick: () -> Unit = {}
 ) {
-    val images = feedItem.imageUrls.orEmpty().map { painterResource(id = it) }
-    val imagePainters = feedItem.imageUrls.orEmpty().map { painterResource(it) }
-    val hasImages = imagePainters.isNotEmpty()
+    val hasImages = feedItem.imageUrls.isNotEmpty()
     val maxLines = if (hasImages) 3 else 8
 
     Column(
@@ -49,9 +47,10 @@ fun SavedFeedCard(
             .padding(horizontal = 20.dp)
     ) {
         ProfileBar(
-            profileImage = feedItem.userProfileImage.toString(),
+            profileImage = feedItem.userProfileImage ?: "https://example.com/image1.jpg",
             topText = feedItem.userName,
             bottomText = feedItem.userRole,
+            bottomTextColor = bottomTextColor,
             showSubscriberInfo = false,
             hoursAgo = feedItem.timeAgo
         )
@@ -66,69 +65,53 @@ fun SavedFeedCard(
                 onClick = {}
             )
         }
-        Text(
-            text = feedItem.content,
-            style = typography.feedcopy_r400_s14_h20,
-            color = colors.White,
-            maxLines = maxLines,
+
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-                .clickable { onContentClick() }
-        )
-        if (images.isNotEmpty()) {
-            Row(
+                .clickable { onContentClick() },
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = feedItem.content,
+                style = typography.feedcopy_r400_s14_h20,
+                color = colors.White,
+                maxLines = maxLines,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                images.take(3).forEach { image ->
-                    Image(
-                        painter = image,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .size(100.dp),
-                        contentScale = ContentScale.Crop
-                    )
+                    .padding(vertical = 16.dp)
+            )
+            if (hasImages) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    feedItem.imageUrls.take(3).forEach { imageUrl ->
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(end = 10.dp)
+                                .size(100.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
         }
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier.clickable { onLikeClick() },
-                painter = painterResource(if (feedItem.isLiked) R.drawable.ic_heart_filled else R.drawable.ic_heart),
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
-            Text(
-                text = feedItem.likeCount.toString(),
-                style = typography.feedcopy_r400_s14_h20,
-                color = colors.White,
-                modifier = Modifier.padding(start = 5.dp, end = 12.dp)
-            )
-            Icon(
-                painter = painterResource(R.drawable.ic_comment),
-                contentDescription = null,
-                tint = colors.White
-            )
-            Text(
-                text = feedItem.commentCount.toString(),
-                style = typography.feedcopy_r400_s14_h20,
-                color = colors.White,
-                modifier = Modifier.padding(start = 5.dp, end = 12.dp)
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                modifier = Modifier.clickable { onBookmarkClick() },
-                painter = painterResource(if (feedItem.isSaved) R.drawable.ic_save_filled else R.drawable.ic_save),
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
-        }
+
+        ActionBarButton(
+            isLiked = feedItem.isLiked,
+            likeCount = feedItem.likeCount,
+            commentCount = feedItem.commentCount,
+            isSaveVisible = true,
+            isSaved = feedItem.isSaved,
+            onLikeClick = onLikeClick,
+            onCommentClick = onCommentClick,
+            onBookmarkClick = onBookmarkClick
+        )
     }
 }
 
@@ -137,7 +120,7 @@ fun SavedFeedCard(
 private fun SavedFeedCardPrev() {
     val feed1 = FeedItem(
         id = 1,
-        userProfileImage = R.drawable.character_literature,
+        userProfileImage = "https://example.com/profile1.jpg",
         userName = "user.01",
         userRole = stringResource(R.string.influencer),
         bookTitle = "책 제목",
@@ -148,12 +131,12 @@ private fun SavedFeedCardPrev() {
         commentCount = 5,
         isLiked = false,
         isSaved = true,
-        imageUrls = null
+        imageUrls = emptyList()
     )
 
     val feed2 = FeedItem(
         id = 2,
-        userProfileImage = R.drawable.character_art,
+        userProfileImage = "https://example.com/profile2.jpg",
         userName = "user.01",
         userRole = stringResource(R.string.influencer),
         bookTitle = "책 제목",
@@ -166,9 +149,9 @@ private fun SavedFeedCardPrev() {
         isLiked = false,
         isSaved = true,
         imageUrls = listOf(
-            R.drawable.img_book_cover_sample,
-            R.drawable.img_book_cover_sample,
-            R.drawable.img_book_cover_sample
+            "https://example.com/image1.jpg",
+            "https://example.com/image2.jpg",
+            "https://example.com/image3.jpg"
         )
     )
     val scrollState = rememberScrollState()
