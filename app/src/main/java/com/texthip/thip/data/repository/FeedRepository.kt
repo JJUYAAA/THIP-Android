@@ -6,6 +6,8 @@ import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.feed.request.CreateFeedRequest
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
+import com.texthip.thip.data.model.feeds.response.AllFeedResponse
+import com.texthip.thip.data.model.feeds.response.MyFeedResponse
 import com.texthip.thip.data.service.FeedService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -127,6 +129,20 @@ class FeedRepository @Inject constructor(
             e.printStackTrace()
             null
         }
+    }
+
+    /** 전체 피드 목록 조회 */
+    suspend fun getAllFeeds(cursor: String? = null): Result<AllFeedResponse?> = runCatching {
+        feedService.getAllFeeds(cursor)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    /** 내 피드 목록 조회 */
+    suspend fun getMyFeeds(cursor: String? = null): Result<MyFeedResponse?> = runCatching {
+        feedService.getMyFeeds(cursor)
+            .handleBaseResponse()
+            .getOrThrow()
     }
 
     /** 임시 파일들을 정리하는 함수 */
