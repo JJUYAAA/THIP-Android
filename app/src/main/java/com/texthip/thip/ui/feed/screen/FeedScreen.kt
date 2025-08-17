@@ -29,7 +29,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -50,7 +49,6 @@ import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
 import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
-import com.texthip.thip.ui.feed.mock.MySubscriptionData
 import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
 import com.texthip.thip.ui.feed.viewmodel.MySubscriptionViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
@@ -71,9 +69,6 @@ fun FeedScreen(
     onNavigateToFeedComment: (Int) -> Unit = {},
     nickname: String = "",
     userRole: String = "",
-    feeds: List<FeedItem> = emptyList(),
-    totalFeedCount: Int = 0,
-    selectedTabIndex: Int = 0,
     followerProfileImageUrls: List<String> = emptyList(),
     resultFeedId: Int? = null,
     onResultConsumed: () -> Unit = {},
@@ -309,19 +304,9 @@ fun FeedScreen(
                         //피드
                         item {
                             Spacer(modifier = Modifier.height(20.dp))
-                            val subscriptionsForBar = feedUiState.recentWriters.map { user ->
-                                MySubscriptionData(
-                                    profileImageUrl = user.profileImageUrl,
-                                    nickname = user.nickname,
-                                    role = "",
-                                    roleColor = colors.White,
-                                    subscriberCount = 0,
-                                    isSubscribed = true
-                                )
-                            }
                             MySubscribeBarlist(
                                 modifier = Modifier.padding(horizontal = 20.dp),
-                                subscriptions = subscriptionsForBar,
+                                subscriptions = feedUiState.recentWriters,
                                 onClick = onNavigateToMySubscription
                             )
                         }
@@ -431,9 +416,6 @@ private fun FeedScreenPreview() {
             FeedScreen(
                 nickname = "ThipUser01",
                 userRole = "문학 칭호",
-                selectedTabIndex = 1,
-                feeds = mockFeeds,
-                totalFeedCount = mockFeeds.size,
                 followerProfileImageUrls = mockFollowerImages,
                 onNavigateToFeedWrite = { }
             )
@@ -452,9 +434,6 @@ private fun FeedScreenWithoutDataPreview() {
             FeedScreen(
                 nickname = "ThipUser01",
                 userRole = "문학 칭호",
-                selectedTabIndex = 0,
-                feeds = mockFeeds,
-                totalFeedCount = mockFeeds.size,
                 followerProfileImageUrls = mockFollowerImages,
                 onNavigateToFeedWrite = { }
             )

@@ -2,8 +2,8 @@ package com.texthip.thip.ui.feed.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.texthip.thip.data.model.feeds.response.AllFeedItem
-import com.texthip.thip.data.model.feeds.response.MyFeedItem
+import com.texthip.thip.data.model.feed.response.AllFeedItem
+import com.texthip.thip.data.model.feed.response.MyFeedItem
 import com.texthip.thip.data.model.users.response.RecentWriterList
 import com.texthip.thip.data.repository.FeedRepository
 import com.texthip.thip.data.repository.UserRepository
@@ -255,19 +255,19 @@ class FeedViewModel @Inject constructor(
             0 -> loadAllFeeds(isInitial = false)
             1 -> loadMyFeeds(isInitial = false)
         }
+    }
 
     fun refreshData() {
         fetchRecentWriters()
-
     }
 
     private fun fetchRecentWriters() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            updateState { it.copy(isLoading = true) }
             userRepository.getMyFollowingsRecentFeeds()
                 .onSuccess { data ->
                     val writers = data?.recentWriters ?: emptyList()
-                    _uiState.update {
+                    updateState {
                         it.copy(
                             isLoading = false,
                             recentWriters = writers
@@ -275,7 +275,12 @@ class FeedViewModel @Inject constructor(
                     }
                 }
                 .onFailure { exception ->
-                    updateState { it.copy(error = exception.message) }
+                    updateState { 
+                        it.copy(
+                            isLoading = false,
+                            error = exception.message
+                        ) 
+                    }
                 }
         }
     }

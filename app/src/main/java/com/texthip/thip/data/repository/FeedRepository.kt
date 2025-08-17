@@ -7,8 +7,8 @@ import com.texthip.thip.data.model.feed.request.CreateFeedRequest
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
-import com.texthip.thip.data.model.feeds.response.AllFeedResponse
-import com.texthip.thip.data.model.feeds.response.MyFeedResponse
+import com.texthip.thip.data.model.feed.response.AllFeedResponse
+import com.texthip.thip.data.model.feed.response.MyFeedResponse
 import com.texthip.thip.data.service.FeedService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
