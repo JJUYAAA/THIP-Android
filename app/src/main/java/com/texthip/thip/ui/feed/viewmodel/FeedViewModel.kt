@@ -25,8 +25,8 @@ data class FeedUiState(
     val isLastPageMyFeeds: Boolean = false,
     val error: String? = null
 ) {
-    val canLoadMoreAllFeeds: Boolean get() = !isLoading && !isLoadingMore && !isLastPageAllFeeds
-    val canLoadMoreMyFeeds: Boolean get() = !isLoading && !isLoadingMore && !isLastPageMyFeeds
+    val canLoadMoreAllFeeds: Boolean get() = !isLoading && !isLoadingMore && !isRefreshing && !isLastPageAllFeeds
+    val canLoadMoreMyFeeds: Boolean get() = !isLoading && !isLoadingMore && !isRefreshing && !isLastPageMyFeeds
     val currentTabFeeds: List<Any> get() = when (selectedTabIndex) {
         0 -> allFeeds
         1 -> myFeeds
@@ -234,6 +234,8 @@ class FeedViewModel @Inject constructor(
     }
     
     fun loadMoreFeeds() {
+        if (!_uiState.value.canLoadMoreCurrentTab || _uiState.value.isRefreshing) return
+        
         when (_uiState.value.selectedTabIndex) {
             0 -> loadAllFeeds(isInitial = false)
             1 -> loadMyFeeds(isInitial = false)
