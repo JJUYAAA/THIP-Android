@@ -27,16 +27,18 @@ data class FeedUiState(
 ) {
     val canLoadMoreAllFeeds: Boolean get() = !isLoading && !isLoadingMore && !isRefreshing && !isLastPageAllFeeds
     val canLoadMoreMyFeeds: Boolean get() = !isLoading && !isLoadingMore && !isRefreshing && !isLastPageMyFeeds
-    val currentTabFeeds: List<Any> get() = when (selectedTabIndex) {
-        0 -> allFeeds
-        1 -> myFeeds
-        else -> emptyList()
-    }
-    val canLoadMoreCurrentTab: Boolean get() = when (selectedTabIndex) {
-        0 -> canLoadMoreAllFeeds
-        1 -> canLoadMoreMyFeeds
-        else -> false
-    }
+    val currentTabFeeds: List<Any>
+        get() = when (selectedTabIndex) {
+            0 -> allFeeds
+            1 -> myFeeds
+            else -> emptyList()
+        }
+    val canLoadMoreCurrentTab: Boolean
+        get() = when (selectedTabIndex) {
+            0 -> canLoadMoreAllFeeds
+            1 -> canLoadMoreMyFeeds
+            else -> false
+        }
 }
 
 @HiltViewModel
@@ -46,12 +48,12 @@ class FeedViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState = _uiState.asStateFlow()
-    
+
     private var allFeedsNextCursor: String? = null
     private var myFeedsNextCursor: String? = null
     private var isLoadingAllFeeds = false
     private var isLoadingMyFeeds = false
-    
+
     private fun updateState(update: (FeedUiState) -> FeedUiState) {
         _uiState.value = update(_uiState.value)
     }
@@ -63,11 +65,12 @@ class FeedViewModel @Inject constructor(
 
     fun onTabSelected(index: Int) {
         updateState { it.copy(selectedTabIndex = index) }
-        
+
         when (index) {
             0 -> {
                 loadAllFeeds(isInitial = true)
             }
+
             1 -> {
                 loadMyFeeds(isInitial = true)
             }
@@ -77,20 +80,26 @@ class FeedViewModel @Inject constructor(
     private fun loadAllFeeds(isInitial: Boolean = true) {
         if (isLoadingAllFeeds && !isInitial) return
         if (_uiState.value.isLastPageAllFeeds && !isInitial) return
-        
+
         viewModelScope.launch {
             try {
                 isLoadingAllFeeds = true
-                
+
                 if (isInitial) {
-                    updateState { it.copy(isLoading = true, allFeeds = emptyList(), isLastPageAllFeeds = false) }
+                    updateState {
+                        it.copy(
+                            isLoading = true,
+                            allFeeds = emptyList(),
+                            isLastPageAllFeeds = false
+                        )
+                    }
                     allFeedsNextCursor = null
                 } else {
                     updateState { it.copy(isLoadingMore = true) }
                 }
-                
+
                 val cursor = if (isInitial) null else allFeedsNextCursor
-                
+
                 feedRepository.getAllFeeds(cursor).onSuccess { response ->
                     if (response != null) {
                         val currentList = if (isInitial) emptyList() else _uiState.value.allFeeds
@@ -118,20 +127,26 @@ class FeedViewModel @Inject constructor(
     private fun loadMyFeeds(isInitial: Boolean = true) {
         if (isLoadingMyFeeds && !isInitial) return
         if (_uiState.value.isLastPageMyFeeds && !isInitial) return
-        
+
         viewModelScope.launch {
             try {
                 isLoadingMyFeeds = true
-                
+
                 if (isInitial) {
-                    updateState { it.copy(isLoading = true, myFeeds = emptyList(), isLastPageMyFeeds = false) }
+                    updateState {
+                        it.copy(
+                            isLoading = true,
+                            myFeeds = emptyList(),
+                            isLastPageMyFeeds = false
+                        )
+                    }
                     myFeedsNextCursor = null
                 } else {
                     updateState { it.copy(isLoadingMore = true) }
                 }
-                
+
                 val cursor = if (isInitial) null else myFeedsNextCursor
-                
+
                 feedRepository.getMyFeeds(cursor).onSuccess { response ->
                     if (response != null) {
                         val currentList = if (isInitial) emptyList() else _uiState.value.myFeeds
@@ -159,7 +174,7 @@ class FeedViewModel @Inject constructor(
     fun refreshCurrentTab() {
         viewModelScope.launch {
             updateState { it.copy(isRefreshing = true) }
-            
+
             when (_uiState.value.selectedTabIndex) {
                 0 -> refreshAllFeeds()
                 1 -> refreshMyFeeds()
@@ -169,7 +184,7 @@ class FeedViewModel @Inject constructor(
 
     private suspend fun refreshAllFeeds() {
         allFeedsNextCursor = null
-        
+
         feedRepository.getAllFeeds().onSuccess { response ->
             if (response != null) {
                 allFeedsNextCursor = response.nextCursor
@@ -202,7 +217,7 @@ class FeedViewModel @Inject constructor(
 
     private suspend fun refreshMyFeeds() {
         myFeedsNextCursor = null
-        
+
         feedRepository.getMyFeeds().onSuccess { response ->
             if (response != null) {
                 myFeedsNextCursor = response.nextCursor
@@ -232,10 +247,10 @@ class FeedViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun loadMoreFeeds() {
         if (!_uiState.value.canLoadMoreCurrentTab || _uiState.value.isRefreshing) return
-        
+
         when (_uiState.value.selectedTabIndex) {
             0 -> loadAllFeeds(isInitial = false)
             1 -> loadMyFeeds(isInitial = false)

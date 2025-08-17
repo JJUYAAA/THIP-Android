@@ -47,7 +47,7 @@ fun MyFeedCard(
             onClick = {}
         )
 
-        Column (
+        Column(
             modifier = Modifier
                 .clickable { onContentClick() },
             verticalArrangement = Arrangement.Center,

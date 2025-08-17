@@ -32,7 +32,7 @@ class FeedDetailViewModel @Inject constructor(
     fun loadFeedDetail(feedId: Int) {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true, error = null) }
-            
+
             feedRepository.getFeedDetail(feedId)
                 .onSuccess { response ->
                     updateState {

@@ -89,7 +89,7 @@ fun FeedScreen(
     val scope = rememberCoroutineScope()
     var showProgressBar by remember { mutableStateOf(false) }
     val progress = remember { Animatable(0f) }
-    
+
     // 무한 스크롤 로직
     val listState = rememberLazyListState()
 
@@ -113,11 +113,11 @@ fun FeedScreen(
             feedViewModel.loadMoreFeeds()
         }
     }
-    
+
     LaunchedEffect(resultFeedId) {
         if (resultFeedId != null) {
             onResultConsumed()
-            
+
             showProgressBar = true
             progress.snapTo(0f)
             scope.launch {
@@ -184,7 +184,7 @@ fun FeedScreen(
         )
     )
     val subscriptionUiState by mySubscriptionViewModel.uiState.collectAsState()
-    
+
     // 초기 로딩 상태 처리
     if (feedUiState.isLoading && feedUiState.currentTabFeeds.isEmpty()) {
         Box(
@@ -198,7 +198,7 @@ fun FeedScreen(
         }
         return
     }
-    
+
     Box(modifier = Modifier.fillMaxSize()) {
         PullToRefreshBox(
             isRefreshing = feedUiState.isRefreshing,
@@ -207,145 +207,216 @@ fun FeedScreen(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-            LogoTopAppBar(
-                leftIcon = painterResource(R.drawable.ic_plusfriend),
-                hasNotification = false,
-                onLeftClick = {},
-                onRightClick = {},
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            HeaderMenuBarTab(
-                titles = listOf("피드", "내 피드"),
-                selectedTabIndex = feedUiState.selectedTabIndex,
-                onTabSelected = feedViewModel::onTabSelected
-            )
+                LogoTopAppBar(
+                    leftIcon = painterResource(R.drawable.ic_plusfriend),
+                    hasNotification = false,
+                    onLeftClick = {},
+                    onRightClick = {},
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                HeaderMenuBarTab(
+                    titles = listOf("피드", "내 피드"),
+                    selectedTabIndex = feedUiState.selectedTabIndex,
+                    onTabSelected = feedViewModel::onTabSelected
+                )
 
-            // 스크롤 영역 전체
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                item {
-                    AnimatedVisibility(visible = showProgressBar) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 20.dp, end = 20.dp, top = 32.dp),
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(bottom = 12.dp),
-                                text = if (progress.value < 1.0f) {
-                                    stringResource(R.string.posting_in_progress_feed)
-                                } else {
-                                    stringResource(R.string.posting_complete_feed)
-                                },
-                                style = typography.view_m500_s14,
-                                color = colors.NeonGreen
-                            )
-
-                            Box(
+                // 스크롤 영역 전체
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    item {
+                        AnimatedVisibility(visible = showProgressBar) {
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(8.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(color = colors.Grey02) // 트랙(배경) 색상
+                                    .padding(start = 20.dp, end = 20.dp, top = 32.dp),
                             ) {
+                                Text(
+                                    modifier = Modifier.padding(bottom = 12.dp),
+                                    text = if (progress.value < 1.0f) {
+                                        stringResource(R.string.posting_in_progress_feed)
+                                    } else {
+                                        stringResource(R.string.posting_complete_feed)
+                                    },
+                                    style = typography.view_m500_s14,
+                                    color = colors.NeonGreen
+                                )
+
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxWidth(fraction = progress.value)
-                                        .fillMaxHeight()
-                                        .background(
-                                            color = colors.NeonGreen,
-                                            shape = RoundedCornerShape(12.dp)
-                                        )
-                                )
+                                        .fillMaxWidth()
+                                        .height(8.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(color = colors.Grey02) // 트랙(배경) 색상
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth(fraction = progress.value)
+                                            .fillMaxHeight()
+                                            .background(
+                                                color = colors.NeonGreen,
+                                                shape = RoundedCornerShape(12.dp)
+                                            )
+                                    )
+                                }
                             }
                         }
                     }
-                }
-                if (feedUiState.selectedTabIndex == 1) {
-                    // 내 피드
-                    item {
-                        Spacer(modifier = Modifier.height(32.dp))
-                        AuthorHeader(
-                            profileImage = null,
-                            nickname = nickname,
-                            badgeText = userRole,
-                            buttonText = "",
-                            buttonWidth = 60.dp,
-                            showButton = false
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        FeedSubscribeBarlist(
-                            modifier = Modifier.padding(horizontal = 20.dp),
-                            followerProfileImageUrls = followerProfileImageUrls,
-                            onClick = {
-                            }
-                        )
-                        Spacer(modifier = Modifier.height(40.dp))
-                        Text(
-                            text = stringResource(R.string.whole_num, feedUiState.myFeeds.size),
-                            style = typography.menu_m500_s14_h24,
-                            color = colors.Grey,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 12.dp, start = 20.dp)
-                        )
-                        HorizontalDivider(
-                            color = colors.DarkGrey02,
-                            thickness = 1.dp,
-                            modifier = Modifier.padding(horizontal = 20.dp)
-                        )
-                    }
-
-                    if (feedUiState.myFeeds.isEmpty()) {
+                    if (feedUiState.selectedTabIndex == 1) {
+                        // 내 피드
                         item {
-                            Box(
+                            Spacer(modifier = Modifier.height(32.dp))
+                            AuthorHeader(
+                                profileImage = null,
+                                nickname = nickname,
+                                badgeText = userRole,
+                                buttonText = "",
+                                buttonWidth = 60.dp,
+                                showButton = false
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            FeedSubscribeBarlist(
+                                modifier = Modifier.padding(horizontal = 20.dp),
+                                followerProfileImageUrls = followerProfileImageUrls,
+                                onClick = {
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(40.dp))
+                            Text(
+                                text = stringResource(R.string.whole_num, feedUiState.myFeeds.size),
+                                style = typography.menu_m500_s14_h24,
+                                color = colors.Grey,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 244.dp),
-                                contentAlignment = Alignment.TopCenter
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.create_feed),
-                                    style = typography.smalltitle_sb600_s18_h24,
-                                    color = colors.White
+                                    .padding(bottom = 12.dp, start = 20.dp)
+                            )
+                            HorizontalDivider(
+                                color = colors.DarkGrey02,
+                                thickness = 1.dp,
+                                modifier = Modifier.padding(horizontal = 20.dp)
+                            )
+                        }
+
+                        if (feedUiState.myFeeds.isEmpty()) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 244.dp),
+                                    contentAlignment = Alignment.TopCenter
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.create_feed),
+                                        style = typography.smalltitle_sb600_s18_h24,
+                                        color = colors.White
+                                    )
+                                }
+                            }
+                        } else {
+                            itemsIndexed(
+                                feedUiState.myFeeds,
+                                key = { _, item -> item.feedId }) { index, myFeed ->
+                                Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
+
+                                // MyFeedItem을 FeedItem으로 변환
+                                val feedItem = FeedItem(
+                                    id = myFeed.feedId,
+                                    userProfileImage = null,
+                                    userName = "", // 내 피드이므로 고정값
+                                    userRole = "", // 내 피드이므로 고정값
+                                    bookTitle = myFeed.bookTitle,
+                                    authName = myFeed.bookAuthor,
+                                    timeAgo = myFeed.postDate,
+                                    content = myFeed.contentBody,
+                                    likeCount = myFeed.likeCount,
+                                    commentCount = myFeed.commentCount,
+                                    isLiked = false, // 내 피드는 좋아요 개념 없음
+                                    isSaved = false, // 내 피드는 저장 개념 없음
+                                    isLocked = !myFeed.isPublic, // isPublic의 반대값
+                                    tags = emptyList(),
+                                    imageUrls = myFeed.contentUrls
                                 )
+
+                                MyFeedCard(
+                                    feedItem = feedItem,
+                                    onLikeClick = {},
+                                    onContentClick = {
+                                        onNavigateToFeedComment(feedItem.id)
+                                    }
+                                )
+                                Spacer(modifier = Modifier.height(40.dp))
+                                if (index != feedUiState.myFeeds.lastIndex) {
+                                    HorizontalDivider(
+                                        color = colors.DarkGrey02,
+                                        thickness = 6.dp
+                                    )
+                                }
                             }
                         }
                     } else {
-                        itemsIndexed(feedUiState.myFeeds, key = { _, item -> item.feedId }) { index, myFeed ->
-                            Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
-                            
-                            // MyFeedItem을 FeedItem으로 변환
-                            val feedItem = FeedItem(
-                                id = myFeed.feedId,
-                                userProfileImage = null,
-                                userName = "", // 내 피드이므로 고정값
-                                userRole = "", // 내 피드이므로 고정값
-                                bookTitle = myFeed.bookTitle,
-                                authName = myFeed.bookAuthor,
-                                timeAgo = myFeed.postDate,
-                                content = myFeed.contentBody,
-                                likeCount = myFeed.likeCount,
-                                commentCount = myFeed.commentCount,
-                                isLiked = false, // 내 피드는 좋아요 개념 없음
-                                isSaved = false, // 내 피드는 저장 개념 없음
-                                isLocked = !myFeed.isPublic, // isPublic의 반대값
-                                tags = emptyList(),
-                                imageUrls = myFeed.contentUrls
+                        //피드
+                        item {
+                            Spacer(modifier = Modifier.height(20.dp))
+                            val subscriptionsForBar = feedUiState.recentWriters.map { user ->
+                                MySubscriptionData(
+                                    profileImageUrl = user.profileImageUrl,
+                                    nickname = user.nickname,
+                                    role = "",
+                                    roleColor = colors.White,
+                                    subscriberCount = 0,
+                                    isSubscribed = true
+                                )
+                            }
+                            MySubscribeBarlist(
+                                modifier = Modifier.padding(horizontal = 20.dp),
+                                subscriptions = subscriptionsForBar,
+                                onClick = onNavigateToMySubscription
                             )
-                            
-                            MyFeedCard(
+                        }
+                        itemsIndexed(
+                            feedUiState.allFeeds,
+                            key = { _, item -> item.feedId }) { index, allFeed ->
+                            // AllFeedItem을 FeedItem으로 변환
+                            val feedItem = FeedItem(
+                                id = allFeed.feedId,
+                                userProfileImage = allFeed.creatorProfileImageUrl,
+                                userName = allFeed.creatorNickname,
+                                userRole = allFeed.aliasName,
+                                bookTitle = allFeed.bookTitle,
+                                authName = allFeed.bookAuthor,
+                                timeAgo = allFeed.postDate,
+                                content = allFeed.contentBody,
+                                likeCount = allFeed.likeCount,
+                                commentCount = allFeed.commentCount,
+                                isLiked = allFeed.isLiked,
+                                isSaved = allFeed.isSaved,
+                                isLocked = false,
+                                tags = emptyList(),
+                                imageUrls = allFeed.contentUrls
+                            )
+
+                            Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
+
+                            SavedFeedCard(
                                 feedItem = feedItem,
-                                onLikeClick = {},
+                                bottomTextColor = hexToColor(allFeed.aliasColor),
+                                onBookmarkClick = {
+                                    // TODO: API 호출로 북마크 상태 변경
+                                },
+                                onLikeClick = {
+                                    // TODO: API 호출로 좋아요 상태 변경
+                                },
                                 onContentClick = {
+                                    onNavigateToFeedComment(feedItem.id)
+                                },
+                                onCommentClick = {
                                     onNavigateToFeedComment(feedItem.id)
                                 }
                             )
                             Spacer(modifier = Modifier.height(40.dp))
-                            if (index != feedUiState.myFeeds.lastIndex) {
+                            if (index != feedUiState.allFeeds.lastIndex) {
                                 HorizontalDivider(
                                     color = colors.DarkGrey02,
                                     thickness = 6.dp
@@ -353,90 +424,23 @@ fun FeedScreen(
                             }
                         }
                     }
-                } else {
-                    //피드
-                    item {
-                        Spacer(modifier = Modifier.height(20.dp))
-                        val subscriptionsForBar = feedUiState.recentWriters.map { user ->
-                            MySubscriptionData(
-                                profileImageUrl = user.profileImageUrl,
-                                nickname = user.nickname,
-                                role = "",
-                                roleColor = colors.White,
-                                subscriberCount = 0,
-                                isSubscribed = true
-                            )
-                        }
-                        MySubscribeBarlist(
-                            modifier = Modifier.padding(horizontal = 20.dp),
-                            subscriptions = subscriptionsForBar,
-                            onClick = onNavigateToMySubscription
-                        )
-                    }
-                    itemsIndexed(feedUiState.allFeeds, key = { _, item -> item.feedId }) { index, allFeed ->
-                        // AllFeedItem을 FeedItem으로 변환
-                        val feedItem = FeedItem(
-                            id = allFeed.feedId,
-                            userProfileImage = allFeed.creatorProfileImageUrl,
-                            userName = allFeed.creatorNickname,
-                            userRole = allFeed.aliasName,
-                            bookTitle = allFeed.bookTitle,
-                            authName = allFeed.bookAuthor,
-                            timeAgo = allFeed.postDate,
-                            content = allFeed.contentBody,
-                            likeCount = allFeed.likeCount,
-                            commentCount = allFeed.commentCount,
-                            isLiked = allFeed.isLiked,
-                            isSaved = allFeed.isSaved,
-                            isLocked = false,
-                            tags = emptyList(),
-                            imageUrls = allFeed.contentUrls
-                        )
 
-                        Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
-                        
-                        SavedFeedCard(
-                            feedItem = feedItem,
-                            bottomTextColor = hexToColor(allFeed.aliasColor),
-                            onBookmarkClick = {
-                                // TODO: API 호출로 북마크 상태 변경
-                            },
-                            onLikeClick = {
-                                // TODO: API 호출로 좋아요 상태 변경
-                            },
-                            onContentClick = {
-                                onNavigateToFeedComment(feedItem.id)
-                            },
-                            onCommentClick = {
-                                onNavigateToFeedComment(feedItem.id)
+                    // 무한 스크롤 로딩 인디케이터
+                    if (feedUiState.isLoadingMore) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    color = colors.White
+                                )
                             }
-                        )
-                        Spacer(modifier = Modifier.height(40.dp))
-                        if (index != feedUiState.allFeeds.lastIndex) {
-                            HorizontalDivider(
-                                color = colors.DarkGrey02,
-                                thickness = 6.dp
-                            )
                         }
                     }
                 }
-                
-                // 무한 스크롤 로딩 인디케이터
-                if (feedUiState.isLoadingMore) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                color = colors.White
-                            )
-                        }
-                    }
-                }
-            }
             }
         }
         FloatingButton(

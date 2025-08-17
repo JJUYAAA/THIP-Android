@@ -17,7 +17,7 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 fun NavGraphBuilder.feedNavigation(navController: NavHostController) {
     composable<MainTabRoutes.Feed> { backStackEntry ->
         val resultFeedId = backStackEntry.savedStateHandle.get<Int>("feedId")
-        
+
         FeedScreen(
             nickname = "ThipUser01",
             userRole = "문학가",
@@ -58,10 +58,10 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController) {
         )
     }
     composable<FeedRoutes.Comment> { backStackEntry ->
-        val route = backStackEntry.arguments?.let { 
+        val route = backStackEntry.arguments?.let {
             FeedRoutes.Comment(it.getInt("feedId"))
         } ?: return@composable
-        
+
         FeedCommentScreen(
             feedId = route.feedId,
             onNavigateBack = {

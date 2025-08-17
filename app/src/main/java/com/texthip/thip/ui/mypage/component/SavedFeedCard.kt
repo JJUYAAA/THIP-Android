@@ -66,7 +66,7 @@ fun SavedFeedCard(
             )
         }
 
-        Column (
+        Column(
             modifier = Modifier
                 .clickable { onContentClick() },
             verticalArrangement = Arrangement.Center,
@@ -148,7 +148,11 @@ private fun SavedFeedCardPrev() {
         commentCount = 5,
         isLiked = false,
         isSaved = true,
-        imageUrls = listOf("https://example.com/image1.jpg", "https://example.com/image2.jpg", "https://example.com/image3.jpg")
+        imageUrls = listOf(
+            "https://example.com/image1.jpg",
+            "https://example.com/image2.jpg",
+            "https://example.com/image3.jpg"
+        )
     )
     val scrollState = rememberScrollState()
 
