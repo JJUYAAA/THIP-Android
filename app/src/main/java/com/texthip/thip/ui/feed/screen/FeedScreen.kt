@@ -29,12 +29,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,7 +81,6 @@ fun FeedScreen(
     mySubscriptionViewModel: MySubscriptionViewModel = hiltViewModel()
 ) {
     val feedUiState by feedViewModel.uiState.collectAsState()
-    val selectedIndex = rememberSaveable { mutableIntStateOf(feedUiState.selectedTabIndex) }
     val feedStateList = remember {
         mutableStateListOf<FeedItem>().apply {
             addAll(feeds)
@@ -220,10 +217,7 @@ fun FeedScreen(
             HeaderMenuBarTab(
                 titles = listOf("피드", "내 피드"),
                 selectedTabIndex = feedUiState.selectedTabIndex,
-                onTabSelected = { 
-                    selectedIndex.intValue = it
-                    feedViewModel.onTabSelected(it)
-                }
+                onTabSelected = feedViewModel::onTabSelected
             )
 
             // 스크롤 영역 전체
@@ -270,7 +264,7 @@ fun FeedScreen(
                         }
                     }
                 }
-                if (selectedIndex.value == 1) {
+                if (feedUiState.selectedTabIndex == 1) {
                     // 내 피드
                     item {
                         Spacer(modifier = Modifier.height(32.dp))

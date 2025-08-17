@@ -92,17 +92,17 @@ class FeedViewModel @Inject constructor(
                 val cursor = if (isInitial) null else allFeedsNextCursor
                 
                 feedRepository.getAllFeeds(cursor).onSuccess { response ->
-                    response?.let { data ->
+                    if (response != null) {
                         val currentList = if (isInitial) emptyList() else _uiState.value.allFeeds
                         updateState {
                             it.copy(
-                                allFeeds = currentList + data.feedList,
+                                allFeeds = currentList + response.feedList,
                                 error = null,
-                                isLastPageAllFeeds = data.isLast
+                                isLastPageAllFeeds = response.isLast
                             )
                         }
-                        allFeedsNextCursor = data.nextCursor
-                    } ?: run {
+                        allFeedsNextCursor = response.nextCursor
+                    } else {
                         updateState { it.copy(isLastPageAllFeeds = true) }
                     }
                 }.onFailure { exception ->
@@ -133,17 +133,17 @@ class FeedViewModel @Inject constructor(
                 val cursor = if (isInitial) null else myFeedsNextCursor
                 
                 feedRepository.getMyFeeds(cursor).onSuccess { response ->
-                    response?.let { data ->
+                    if (response != null) {
                         val currentList = if (isInitial) emptyList() else _uiState.value.myFeeds
                         updateState {
                             it.copy(
-                                myFeeds = currentList + data.feedList,
+                                myFeeds = currentList + response.feedList,
                                 error = null,
-                                isLastPageMyFeeds = data.isLast
+                                isLastPageMyFeeds = response.isLast
                             )
                         }
-                        myFeedsNextCursor = data.nextCursor
-                    } ?: run {
+                        myFeedsNextCursor = response.nextCursor
+                    } else {
                         updateState { it.copy(isLastPageMyFeeds = true) }
                     }
                 }.onFailure { exception ->
@@ -171,22 +171,24 @@ class FeedViewModel @Inject constructor(
         allFeedsNextCursor = null
         
         feedRepository.getAllFeeds().onSuccess { response ->
-            response?.let { data ->
-                allFeedsNextCursor = data.nextCursor
+            if (response != null) {
+                allFeedsNextCursor = response.nextCursor
                 updateState {
                     it.copy(
-                        allFeeds = data.feedList,
+                        allFeeds = response.feedList,
                         isRefreshing = false,
-                        isLastPageAllFeeds = data.isLast,
+                        isLastPageAllFeeds = response.isLast,
                         error = null
                     )
                 }
-            } ?: updateState {
-                it.copy(
-                    allFeeds = emptyList(),
-                    isRefreshing = false,
-                    isLastPageAllFeeds = true
-                )
+            } else {
+                updateState {
+                    it.copy(
+                        allFeeds = emptyList(),
+                        isRefreshing = false,
+                        isLastPageAllFeeds = true
+                    )
+                }
             }
         }.onFailure { exception ->
             updateState {
@@ -202,22 +204,24 @@ class FeedViewModel @Inject constructor(
         myFeedsNextCursor = null
         
         feedRepository.getMyFeeds().onSuccess { response ->
-            response?.let { data ->
-                myFeedsNextCursor = data.nextCursor
+            if (response != null) {
+                myFeedsNextCursor = response.nextCursor
                 updateState {
                     it.copy(
-                        myFeeds = data.feedList,
+                        myFeeds = response.feedList,
                         isRefreshing = false,
-                        isLastPageMyFeeds = data.isLast,
+                        isLastPageMyFeeds = response.isLast,
                         error = null
                     )
                 }
-            } ?: updateState {
-                it.copy(
-                    myFeeds = emptyList(),
-                    isRefreshing = false,
-                    isLastPageMyFeeds = true
-                )
+            } else {
+                updateState {
+                    it.copy(
+                        myFeeds = emptyList(),
+                        isRefreshing = false,
+                        isLastPageMyFeeds = true
+                    )
+                }
             }
         }.onFailure { exception ->
             updateState {
