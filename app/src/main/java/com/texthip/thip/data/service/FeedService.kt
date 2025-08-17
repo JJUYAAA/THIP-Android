@@ -6,8 +6,8 @@ import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersInfoResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
-import com.texthip.thip.data.model.feeds.response.AllFeedResponse
-import com.texthip.thip.data.model.feeds.response.MyFeedResponse
+import com.texthip.thip.data.model.feed.response.AllFeedResponse
+import com.texthip.thip.data.model.feed.response.MyFeedResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.GET

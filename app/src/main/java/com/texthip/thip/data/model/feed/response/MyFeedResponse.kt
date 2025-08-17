@@ -1,24 +1,19 @@
-package com.texthip.thip.data.model.feeds.response
+package com.texthip.thip.data.model.feed.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class AllFeedResponse(
-    @SerialName("feedList") val feedList: List<AllFeedItem>,
+data class MyFeedResponse(
+    @SerialName("feedList") val feedList: List<MyFeedItem>,
     @SerialName("nextCursor") val nextCursor: String?,
     @SerialName("isLast") val isLast: Boolean
 )
 
 @Serializable
-data class AllFeedItem(
+data class MyFeedItem(
     @SerialName("feedId") val feedId: Int,
-    @SerialName("creatorId") val creatorId: Int,
-    @SerialName("creatorNickname") val creatorNickname: String,
-    @SerialName("creatorProfileImageUrl") val creatorProfileImageUrl: String?,
-    @SerialName("aliasName") val aliasName: String,
-    @SerialName("aliasColor") val aliasColor: String,
     @SerialName("postDate") val postDate: String,
     @SerialName("isbn") val isbn: String,
     @SerialName("bookTitle") val bookTitle: String,
@@ -27,7 +22,6 @@ data class AllFeedItem(
     @SerialName("contentUrls") val contentUrls: List<String>,
     @SerialName("likeCount") val likeCount: Int,
     @SerialName("commentCount") val commentCount: Int,
-    @SerialName("isSaved") val isSaved: Boolean,
-    @SerialName("isLiked") val isLiked: Boolean,
+    @SerialName("isPublic") val isPublic: Boolean,
     @SerialName("isWriter") val isWriter: Boolean
 )

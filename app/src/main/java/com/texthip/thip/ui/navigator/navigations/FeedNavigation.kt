@@ -12,9 +12,6 @@ import com.texthip.thip.ui.feed.screen.MySubscriptionScreen
 import com.texthip.thip.ui.navigator.extensions.navigateToFeedComment
 import androidx.navigation.toRoute
 import com.texthip.thip.ui.feed.screen.FeedOthersScreen
-import com.texthip.thip.ui.feed.screen.FeedScreen
-import com.texthip.thip.ui.feed.screen.FeedWriteScreen
-import com.texthip.thip.ui.feed.screen.MySubscriptionScreen
 import com.texthip.thip.ui.feed.viewmodel.FeedWriteViewModel
 import com.texthip.thip.ui.navigator.extensions.navigateToFeedWrite
 import com.texthip.thip.ui.navigator.extensions.navigateToMySubscription
@@ -29,9 +26,6 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         FeedScreen(
             nickname = "ThipUser01",
             userRole = "문학가",
-            feeds = emptyList(),
-            totalFeedCount = 0,
-            selectedTabIndex = 0,
             followerProfileImageUrls = emptyList(),
             resultFeedId = resultFeedId,
             onResultConsumed = {
