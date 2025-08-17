@@ -275,7 +275,12 @@ class FeedViewModel @Inject constructor(
                     }
                 }
                 .onFailure { exception ->
-                    updateState { it.copy(error = exception.message) }
+                    updateState { 
+                        it.copy(
+                            isLoading = false,
+                            error = exception.message
+                        ) 
+                    }
                 }
         }
     }
