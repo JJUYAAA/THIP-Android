@@ -44,7 +44,7 @@ fun SavedFeedCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(horizontal = 20.dp)
     ) {
         ProfileBar(
             profileImage = feedItem.userProfileImage ?: "https://example.com/image1.jpg",
@@ -103,7 +103,6 @@ fun SavedFeedCard(
         }
 
         ActionBarButton(
-            modifier = Modifier.padding(bottom = 20.dp),
             isLiked = feedItem.isLiked,
             likeCount = feedItem.likeCount,
             commentCount = feedItem.commentCount,

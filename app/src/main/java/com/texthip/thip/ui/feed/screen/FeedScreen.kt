@@ -348,7 +348,7 @@ fun FeedScreen(
                             if (index != feedUiState.myFeeds.lastIndex) {
                                 HorizontalDivider(
                                     color = colors.DarkGrey02,
-                                    thickness = 10.dp
+                                    thickness = 6.dp
                                 )
                             }
                         }
@@ -393,6 +393,8 @@ fun FeedScreen(
                             imageUrls = allFeed.contentUrls
                         )
 
+                        Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
+                        
                         SavedFeedCard(
                             feedItem = feedItem,
                             bottomTextColor = hexToColor(allFeed.aliasColor),
@@ -409,10 +411,11 @@ fun FeedScreen(
                                 onNavigateToFeedComment(feedItem.id)
                             }
                         )
+                        Spacer(modifier = Modifier.height(40.dp))
                         if (index != feedUiState.allFeeds.lastIndex) {
                             HorizontalDivider(
                                 color = colors.DarkGrey02,
-                                thickness = 10.dp
+                                thickness = 6.dp
                             )
                         }
                     }
