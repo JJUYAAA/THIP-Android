@@ -24,9 +24,6 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         val resultFeedId = backStackEntry.savedStateHandle.get<Int>("feedId")
 
         FeedScreen(
-            nickname = "ThipUser01",
-            userRole = "문학가",
-            followerProfileImageUrls = emptyList(),
             resultFeedId = resultFeedId,
             onResultConsumed = {
                 backStackEntry.savedStateHandle.remove<Int>("feedId")
