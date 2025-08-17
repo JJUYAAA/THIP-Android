@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -69,6 +70,7 @@ import kotlinx.coroutines.launch
 fun FeedScreen(
     onNavigateToMySubscription: () -> Unit = {},
     onNavigateToFeedWrite: () -> Unit = {},
+    onNavigateToFeedComment: (Int) -> Unit = {},
     nickname: String = "",
     userRole: String = "",
     feeds: List<FeedItem> = emptyList(),
@@ -185,6 +187,21 @@ fun FeedScreen(
         )
     )
     val subscriptionUiState by mySubscriptionViewModel.uiState.collectAsState()
+    
+    // 초기 로딩 상태 처리
+    if (feedUiState.isLoading && feedUiState.currentTabFeeds.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = colors.White,
+                modifier = Modifier.size(48.dp)
+            )
+        }
+        return
+    }
+    
     Box(modifier = Modifier.fillMaxSize()) {
         PullToRefreshBox(
             isRefreshing = feedUiState.isRefreshing,
@@ -329,7 +346,9 @@ fun FeedScreen(
                             MyFeedCard(
                                 feedItem = feedItem,
                                 onLikeClick = {},
-                                onContentClick = {}
+                                onContentClick = {
+                                    onNavigateToFeedComment(feedItem.id)
+                                }
                             )
                             Spacer(modifier = Modifier.height(40.dp))
                             if (index != feedUiState.myFeeds.lastIndex) {
@@ -389,7 +408,9 @@ fun FeedScreen(
                             onLikeClick = {
                                 // TODO: API 호출로 좋아요 상태 변경
                             },
-                            onContentClick = {}
+                            onContentClick = {
+                                onNavigateToFeedComment(feedItem.id)
+                            }
                         )
                         if (index != feedUiState.allFeeds.lastIndex) {
                             HorizontalDivider(
