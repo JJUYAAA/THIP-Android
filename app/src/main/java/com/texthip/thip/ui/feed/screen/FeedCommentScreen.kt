@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.feed.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,10 +35,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.buttons.ActionBookButton
@@ -84,7 +83,7 @@ fun FeedCommentScreen(
     val feed = remember { mutableStateOf(feedItem) }
     val justNow = stringResource(R.string.just_a_moment_ago)
 
-    val images = feedItem.imageUrls.orEmpty().map { painterResource(id = it) }
+    val images = feedItem.imageUrls
     var showImageViewer by remember { mutableStateOf(false) }
     var selectedImageIndex by remember { mutableStateOf(0) }
 
@@ -157,9 +156,9 @@ fun FeedCommentScreen(
                                 .padding(start = 20.dp, bottom = 16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            itemsIndexed(images.take(3)) { index, image ->
-                                Image(
-                                    painter = image,
+                            itemsIndexed(images.take(3)) { index, imageUrl ->
+                                AsyncImage(
+                                    model = imageUrl,
                                     contentDescription = null,
                                     modifier = Modifier
                                         .padding(end = 16.dp)
@@ -457,7 +456,7 @@ fun FeedCommentScreen(
 
     if (showImageViewer && images.isNotEmpty()) {
         ImageViewerModal(
-            images = images.take(3),
+            imageUrls = images.take(3),
             initialIndex = selectedImageIndex,
             onDismiss = { showImageViewer = false }
         )
@@ -470,7 +469,7 @@ private fun FeedCommentScreenWithMockComments() {
     ThipTheme {
         val mockFeedItem = FeedItem(
             id = 1,
-            userProfileImage = R.drawable.character_literature,
+            userProfileImage = "https://example.com/profile.jpg",
             userName = "문학소녀",
             userRole = "문학 칭호",
             bookTitle = "채식주의자",
@@ -483,9 +482,9 @@ private fun FeedCommentScreenWithMockComments() {
             isSaved = true,
             isLocked = true,
             imageUrls = listOf(
-                R.drawable.img_book_cover_sample,
-                R.drawable.img_book_cover_sample,
-                R.drawable.img_book_cover_sample
+                "https://example.com/image1.jpg",
+                "https://example.com/image2.jpg",
+                "https://example.com/image3.jpg"
             ),
             tags = listOf("에세이", "문학", "힐링")
         )
@@ -513,7 +512,7 @@ private fun FeedCommentScreenPrev() {
     ThipTheme {
         val mockFeedItem = FeedItem(
             id = 1,
-            userProfileImage = R.drawable.character_literature,
+            userProfileImage = "https://example.com/profile.jpg",
             userName = "문학소녀",
             userRole = "문학 칭호",
             bookTitle = "채식주의자",
@@ -526,9 +525,9 @@ private fun FeedCommentScreenPrev() {
             isSaved = true,
             isLocked = false,
             imageUrls = listOf(
-                R.drawable.img_book_cover_sample,
-                R.drawable.img_book_cover_sample,
-                R.drawable.img_book_cover_sample
+                "https://example.com/image1.jpg",
+                "https://example.com/image2.jpg",
+                "https://example.com/image3.jpg"
             ),
 //            bookImage = painterResource(R.drawable.img_book_cover_sample),
 //            profileImage = "https://example.com/image1.jpg",

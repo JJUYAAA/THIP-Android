@@ -11,7 +11,7 @@ open class SavedFeedViewModel: ViewModel() {
         listOf(
             FeedItem(
                 id = 1,
-                userProfileImage = R.drawable.character_art,
+                userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
                 bookTitle = "라랄ㄹ라라",
@@ -25,7 +25,7 @@ open class SavedFeedViewModel: ViewModel() {
             ),
             FeedItem(
                 id = 2,
-                userProfileImage = R.drawable.character_art,
+                userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
                 bookTitle = "라랄ㄹ라라",
@@ -36,11 +36,11 @@ open class SavedFeedViewModel: ViewModel() {
                 commentCount = 4,
                 isLiked = false,
                 isSaved = true,
-                imageUrls = null
+                imageUrls = emptyList()
             ),
             FeedItem(
                 id = 3,
-                userProfileImage = R.drawable.character_art,
+                userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
                 bookTitle = "라랄ㄹ라라",
@@ -51,11 +51,11 @@ open class SavedFeedViewModel: ViewModel() {
                 commentCount = 4,
                 isLiked = false,
                 isSaved = true,
-                imageUrls = listOf(R.drawable.img_book_cover_sample)
+                imageUrls = listOf("https://example.com/image.jpg")
             ),
             FeedItem(
                 id = 4,
-                userProfileImage = R.drawable.character_art,
+                userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
                 bookTitle = "책이름책이름",
@@ -66,11 +66,11 @@ open class SavedFeedViewModel: ViewModel() {
                 commentCount = 4,
                 isLiked = false,
                 isSaved = true,
-                imageUrls = listOf(R.drawable.img_book_cover_sample)
+                imageUrls = listOf("https://example.com/image.jpg")
             ),
             FeedItem(
                 id = 5,
-                userProfileImage = R.drawable.character_art,
+                userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
                 bookTitle = "책이름책이름",

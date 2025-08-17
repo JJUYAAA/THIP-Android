@@ -139,7 +139,7 @@ private fun FeedOthersScreenPrev() {
         val mockFeeds = List(5) {
             FeedItem(
                 id = it + 1,
-                userProfileImage = R.drawable.character_literature,
+                userProfileImage = "https://example.com/profile$it.jpg",
                 userName = "user.$it",
                 userRole = "문학 칭호",
                 bookTitle = "책 제목 ",
@@ -151,7 +151,7 @@ private fun FeedOthersScreenPrev() {
                 isLiked = false,
                 isSaved = false,
                 isLocked = it % 2 == 0,
-                imageUrls = listOf(R.drawable.img_book_cover_sample)
+                imageUrls = listOf("https://example.com/image$it.jpg")
             )
         }
         val mockFollowerImages = listOf(
