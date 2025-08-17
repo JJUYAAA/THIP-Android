@@ -19,9 +19,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,12 +35,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
@@ -48,10 +51,9 @@ import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.feed.component.ImageViewerModal
-import com.texthip.thip.ui.feed.mock.FeedItemType
+import com.texthip.thip.ui.feed.viewmodel.FeedDetailViewModel
 import com.texthip.thip.ui.group.note.mock.mockCommentList
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
-import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -61,29 +63,73 @@ import com.texthip.thip.ui.group.note.mock.ReplyItem as FeedReplyItem
 @Composable
 fun FeedCommentScreen(
     modifier: Modifier = Modifier,
-    feedItem: FeedItem,
-    bookImage: Painter? = null,
-    profileImage: String,
-    feedType: FeedItemType,
-    currentUserId: Int,
-    currentUserName: String,
-    currentUserGenre: String,
-    currentUserProfileImageUrl: String,
+    feedId: Int,
+    onNavigateBack: () -> Unit = {},
+    currentUserId: Int = 1,
+    currentUserName: String = "현재사용자",
+    currentUserGenre: String = "문학",
+    currentUserProfileImageUrl: String = "",
     onLikeClick: () -> Unit = {},
     onCommentInputChange: (String) -> Unit = {},
     onSendClick: () -> Unit = {},
-    commentList: SnapshotStateList<FeedCommentItem>? = null
+    commentList: SnapshotStateList<FeedCommentItem>? = null,
+    viewModel: FeedDetailViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    
+    LaunchedEffect(feedId) {
+        viewModel.loadFeedDetail(feedId)
+    }
+    
+    // 로딩 상태 처리
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = colors.White,
+                modifier = Modifier.size(48.dp)
+            )
+        }
+        return
+    }
+    
+    // 에러 상태 처리
+    if (uiState.error != null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "오류가 발생했습니다",
+                    style = typography.smalltitle_sb600_s18_h24,
+                    color = colors.White
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = uiState.error!!,
+                    style = typography.copy_r400_s14,
+                    color = colors.Grey
+                )
+            }
+        }
+        return
+    }
+    
+    // 피드 데이터가 없으면 리턴
+    val feedDetail = uiState.feedDetail ?: return
     val CommentList = commentList ?: remember { mutableStateListOf<FeedCommentItem>() }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
     val commentInput = remember { mutableStateOf("") }
     val replyTo = remember { mutableStateOf<String?>(null) }
-    val feed = remember { mutableStateOf(feedItem) }
+    val feed = remember { mutableStateOf(feedDetail) }
     val justNow = stringResource(R.string.just_a_moment_ago)
 
-    val images = feedItem.imageUrls
+    val images = feedDetail.contentUrls
     var showImageViewer by remember { mutableStateOf(false) }
     var selectedImageIndex by remember { mutableStateOf(0) }
 
@@ -109,7 +155,7 @@ fun FeedCommentScreen(
         DefaultTopAppBar(
             isRightIconVisible = true,
             isTitleVisible = false,
-            onLeftClick = {},
+            onLeftClick = onNavigateBack,
             onRightClick = { isBottomSheetVisible = true },
         )
 
@@ -124,11 +170,11 @@ fun FeedCommentScreen(
                 Column {
                     ProfileBar(
                         modifier = Modifier.padding(20.dp),
-                        profileImage = profileImage,
-                        topText = feedItem.userName,
-                        bottomText = feedItem.userRole,
+                        profileImage = feedDetail.creatorProfileImageUrl ?: "",
+                        topText = feedDetail.creatorNickname,
+                        bottomText = feedDetail.aliasName,
                         showSubscriberInfo = false,
-                        hoursAgo = feedItem.timeAgo
+                        hoursAgo = feedDetail.postDate
                     )
                     Column(
                         Modifier
@@ -136,13 +182,13 @@ fun FeedCommentScreen(
                             .padding(vertical = 16.dp, horizontal = 20.dp)
                     ) {
                         ActionBookButton(
-                            bookTitle = feedItem.bookTitle,
-                            bookAuthor = feedItem.authName,
+                            bookTitle = feedDetail.bookTitle,
+                            bookAuthor = feedDetail.bookAuthor,
                             onClick = {}
                         )
                     }
                     Text(
-                        text = feedItem.content,
+                        text = feedDetail.contentBody,
                         style = typography.feedcopy_r400_s14_h20,
                         color = colors.White,
                         modifier = Modifier
@@ -172,16 +218,16 @@ fun FeedCommentScreen(
                             }
                         }
                     }
-                    if (feedItem.tags.isNotEmpty()) {
+                    if (feedDetail.tagList.isNotEmpty()) {
                         Row(
                             Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = 16.dp, start = 20.dp, end = 20.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            feedItem.tags.forEach { tag ->
+                            feedDetail.tagList.forEach { tag ->
                                 OptionChipButton(
-                                    text = tag,
+                                    text = "#$tag",
                                     isFilled = false,
                                     isSelected = false,
                                     onClick = {})
@@ -355,7 +401,7 @@ fun FeedCommentScreen(
         CommentTextField(
             modifier = Modifier.align(Alignment.BottomCenter),
             input = commentInput.value,
-            hint = stringResource(R.string.feed_reply_to, feedItem.userName),
+            hint = stringResource(R.string.feed_reply_to, feedDetail.creatorNickname),
             onInputChange = {
                 commentInput.value = it
                 onCommentInputChange(it)
@@ -467,36 +513,13 @@ fun FeedCommentScreen(
 @Composable
 private fun FeedCommentScreenWithMockComments() {
     ThipTheme {
-        val mockFeedItem = FeedItem(
-            id = 1,
-            userProfileImage = "https://example.com/profile.jpg",
-            userName = "문학소녀",
-            userRole = "문학 칭호",
-            bookTitle = "채식주의자",
-            authName = "한강",
-            timeAgo = "1시간 전",
-            content = "이 책은 인간의 본성과 억압에 대한 깊은 성찰을 담고 있어요.",
-            likeCount = 12,
-            commentCount = 3,
-            isLiked = true,
-            isSaved = true,
-            isLocked = true,
-            imageUrls = listOf(
-                "https://example.com/image1.jpg",
-                "https://example.com/image2.jpg",
-                "https://example.com/image3.jpg"
-            ),
-            tags = listOf("에세이", "문학", "힐링")
-        )
         val commentList = remember {
             mutableStateListOf<FeedCommentItem>().apply {
                 addAll(mockCommentList.commentData)
             }
         }
         FeedCommentScreen(
-            feedItem = mockFeedItem,
-            feedType = FeedItemType.SAVABLE,
-            profileImage = "https://example.com/image1.jpg",
+            feedId = 1,
             currentUserId = 999,
             currentUserName = "나",
             currentUserGenre = "문학",
@@ -510,38 +533,10 @@ private fun FeedCommentScreenWithMockComments() {
 @Composable
 private fun FeedCommentScreenPrev() {
     ThipTheme {
-        val mockFeedItem = FeedItem(
-            id = 1,
-            userProfileImage = "https://example.com/profile.jpg",
-            userName = "문학소녀",
-            userRole = "문학 칭호",
-            bookTitle = "채식주의자",
-            authName = "한강",
-            timeAgo = "1시간 전",
-            content = "이 책은 인간의 본성과 억압에 대한 깊은 성찰을 담고 있어요.",
-            likeCount = 12,
-            commentCount = 3,
-            isLiked = true,
-            isSaved = true,
-            isLocked = false,
-            imageUrls = listOf(
-                "https://example.com/image1.jpg",
-                "https://example.com/image2.jpg",
-                "https://example.com/image3.jpg"
-            ),
-//            bookImage = painterResource(R.drawable.img_book_cover_sample),
-//            profileImage = "https://example.com/image1.jpg",
-//            onLikeClick = {},
-//            onCommentInputChange = {},
-//            onSendClick = {},
-            tags = listOf("에세이", "문학", "힐링")
-        )
         val commentList = remember { mutableStateListOf<FeedCommentItem>() }
 
         FeedCommentScreen(
-            feedItem = mockFeedItem,
-            feedType = FeedItemType.SAVABLE,
-            profileImage = "https://example.com/image1.jpg",
+            feedId = 1,
             currentUserId = 999,
             currentUserName = "나",
             currentUserGenre = "문학",
