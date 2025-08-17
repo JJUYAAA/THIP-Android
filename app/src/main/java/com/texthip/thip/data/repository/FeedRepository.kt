@@ -5,7 +5,10 @@ import android.net.Uri
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.feed.request.CreateFeedRequest
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
+import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
+import com.texthip.thip.data.model.feeds.response.AllFeedResponse
+import com.texthip.thip.data.model.feeds.response.MyFeedResponse
 import com.texthip.thip.data.service.FeedService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +35,7 @@ class FeedRepository @Inject constructor(
         val response = feedService.getFeedWriteInfo()
             .handleBaseResponse()
             .getOrThrow()
-        
+
         // 카테고리 순서 조정
         val orderedCategories = response?.categoryList?.sortedBy { category ->
             when (category.category) {
@@ -44,7 +47,7 @@ class FeedRepository @Inject constructor(
                 else -> 999
             }
         } ?: emptyList()
-        
+
         response?.copy(categoryList = orderedCategories)
     }
 
@@ -69,23 +72,21 @@ class FeedRepository @Inject constructor(
 
         // 임시 파일 목록 추적
         val tempFiles = mutableListOf<File>()
-        
-        try {
-            // 이미지 파일들을 MultipartBody.Part로 변환
-            val imageParts = if (imageUris.isNotEmpty()) {
-                withContext(Dispatchers.IO) {
-                    imageUris.mapNotNull { uri ->
-                        try {
-                            uriToMultipartBodyPart(uri, "images", tempFiles)
-                        } catch (e: Exception) {
-                            null
-                        }
-                    }
-                }
-            } else {
-                null
-            }
 
+        // 이미지 파일들을 MultipartBody.Part로 변환
+        val imageParts = if (imageUris.isNotEmpty()) {
+            withContext(Dispatchers.IO) {
+                imageUris.mapNotNull { uri ->
+                    runCatching {
+                        uriToMultipartBodyPart(uri, "images", tempFiles)
+                    }.getOrNull()
+                }
+            }
+        } else {
+            null
+        }
+
+        try {
             feedService.createFeed(requestBody, imageParts)
                 .handleBaseResponse()
                 .getOrThrow()
@@ -95,8 +96,12 @@ class FeedRepository @Inject constructor(
         }
     }
 
-    private fun uriToMultipartBodyPart(uri: Uri, paramName: String, tempFiles: MutableList<File>): MultipartBody.Part? {
-        return try {
+    private fun uriToMultipartBodyPart(
+        uri: Uri,
+        paramName: String,
+        tempFiles: MutableList<File>
+    ): MultipartBody.Part? {
+        return runCatching {
             // MIME 타입 확인
             val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
             val extension = when (mimeType) {
@@ -105,40 +110,72 @@ class FeedRepository @Inject constructor(
                 "image/jpeg", "image/jpg" -> "jpg"
                 else -> "jpg" // 기본값
             }
-            
+
             // 파일명 생성
             val fileName = "feed_image_${System.currentTimeMillis()}.$extension"
             val tempFile = File(context.cacheDir, fileName)
-            
+
             // 임시 파일 목록에 추가
             tempFiles.add(tempFile)
-            
+
             // InputStream을 use 블록으로 안전하게 관리
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
                 FileOutputStream(tempFile).use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }
-            } ?: return null
-            
+            } ?: throw IllegalStateException("Failed to open input stream for URI: $uri")
+
             // MultipartBody.Part 생성
             val requestFile = tempFile.asRequestBody(mimeType.toMediaType())
             MultipartBody.Part.createFormData(paramName, fileName, requestFile)
-        } catch (e: Exception) {
+        }.onFailure { e ->
             e.printStackTrace()
-            null
-        }
+        }.getOrNull()
+    }
+
+    /** 전체 피드 목록 조회 */
+    suspend fun getAllFeeds(cursor: String? = null): Result<AllFeedResponse?> = runCatching {
+        feedService.getAllFeeds(cursor)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    /** 내 피드 목록 조회 */
+    suspend fun getMyFeeds(cursor: String? = null): Result<MyFeedResponse?> = runCatching {
+        feedService.getMyFeeds(cursor)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    /** 피드 상세 조회 */
+    suspend fun getFeedDetail(feedId: Int): Result<FeedDetailResponse?> = runCatching {
+        feedService.getFeedDetail(feedId)
+            .handleBaseResponse()
+            .getOrThrow()
     }
 
     /** 임시 파일들을 정리하는 함수 */
     private fun cleanupTempFiles(tempFiles: List<File>) {
         tempFiles.forEach { file ->
-            try {
+            runCatching {
                 if (file.exists()) {
                     file.delete()
                 }
-            } catch (e: Exception) {
+            }.onFailure { e ->
                 e.printStackTrace()
             }
         }
+    }
+
+    suspend fun getFeedUsersInfo(userId: Long) = runCatching {
+        feedService.getFeedUsersInfo(userId)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    suspend fun getFeedUsers(userId: Long) = runCatching {
+        feedService.getFeedUsers(userId)
+            .handleBaseResponse()
+            .getOrThrow()
     }
 }

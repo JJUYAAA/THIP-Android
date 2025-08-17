@@ -3,6 +3,7 @@ package com.texthip.thip.ui.group.note.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.comments.response.CommentList
+import com.texthip.thip.data.model.comments.response.ReplyList
 import com.texthip.thip.data.repository.CommentsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +23,9 @@ data class CommentsUiState(
 sealed interface CommentsEvent {
     data object LoadMoreComments : CommentsEvent
     data class LikeComment(val commentId: Int) : CommentsEvent // 댓글 좋아요 이벤트
-    data class LikeReply(val parentCommentId: Int, val replyId: Int) : CommentsEvent // 대댓글 좋아요 이벤트
+    data class LikeReply(val replyId: Int) : CommentsEvent // 답글 좋아요 이벤트
     data class CreateComment(val content: String, val parentId: Int?) : CommentsEvent
+    data class DeleteComment(val commentId: Int) : CommentsEvent
 }
 
 @HiltViewModel
@@ -39,7 +41,6 @@ class CommentsViewModel @Inject constructor(
     private var currentPostType: String = "RECORD"
 
     fun initialize(postId: Long, postType: String) {
-        if (currentPostId == postId) return
         this.currentPostId = postId
         this.currentPostType = postType
         fetchComments(isRefresh = true)
@@ -49,11 +50,53 @@ class CommentsViewModel @Inject constructor(
         when (event) {
             is CommentsEvent.LoadMoreComments -> fetchComments(isRefresh = false)
             is CommentsEvent.LikeComment -> toggleCommentLike(event.commentId)
-            is CommentsEvent.LikeReply -> toggleReplyLike(event.parentCommentId, event.replyId)
+            is CommentsEvent.LikeReply -> toggleReplyLike(event.replyId)
             is CommentsEvent.CreateComment -> createComment(
                 content = event.content,
                 parentId = event.parentId
             )
+
+            is CommentsEvent.DeleteComment -> deleteComment(event.commentId)
+        }
+    }
+
+    private fun deleteComment(commentId: Int) {
+        val originalComments = _uiState.value.comments
+
+        // 삭제하려는 대상이 부모 댓글인지 먼저 확인
+        val parentCommentToDelete = originalComments.firstOrNull { it.commentId == commentId }
+
+        val newComments = if (parentCommentToDelete != null) {
+            // 부모 댓글을 삭제하는 경우
+            if (parentCommentToDelete.replyList.isEmpty()) {
+                // 답글이 없으면 목록에서 완전히 제거
+                originalComments.filterNot { it.commentId == commentId }
+            } else {
+                // 답글이 있으면 "삭제됨" 상태로 변경
+                originalComments.map {
+                    if (it.commentId == commentId) it.copy(isDeleted = true) else it
+                }
+            }
+        } else {
+            // 답글을 삭제하는 경우
+            // 모든 부모 댓글을 순회하며, 해당하는 답글만 목록에서 제거
+            originalComments.map { parentComment ->
+                parentComment.copy(
+                    replyList = parentComment.replyList.filterNot { reply -> reply.commentId == commentId }
+                )
+            }
+        }
+
+        _uiState.update { it.copy(comments = newComments) }
+
+        viewModelScope.launch {
+            commentsRepository.deleteComment(commentId.toLong())
+                .onSuccess { response ->
+                    // 성공 시 별도 처리 필요 없음
+                }
+                .onFailure {
+                    _uiState.update { it.copy(comments = originalComments, error = "삭제 실패") }
+                }
         }
     }
 
@@ -104,33 +147,43 @@ class CommentsViewModel @Inject constructor(
         }
     }
 
-    private fun toggleReplyLike(parentCommentId: Int, replyId: Int) {
-        // 부모 댓글 및 대댓글 찾기
+    private fun toggleReplyLike(replyId: Int) {
         val comments = _uiState.value.comments
-        val parentCommentIndex = comments.indexOfFirst { it.commentId == parentCommentId }
-        if (parentCommentIndex == -1) return
+        var parentComment: CommentList? = null
+        var reply: ReplyList? = null
+        var parentCommentIndex = -1
+        var replyIndex = -1
 
-        val parentComment = comments[parentCommentIndex]
-        val replyIndex = parentComment.replyList.indexOfFirst { it.commentId == replyId }
-        if (replyIndex == -1) return
+        // 전체 댓글 목록을 돌면서 좋아요 누른 답글과 그 부모를 찾기
+        for ((pIndex, pComment) in comments.withIndex()) {
+            val rIndex = pComment.replyList.indexOfFirst { it.commentId == replyId }
+            if (rIndex != -1) {
+                parentComment = pComment
+                reply = pComment.replyList[rIndex]
+                parentCommentIndex = pIndex
+                replyIndex = rIndex
+                break // 찾았으면 루프 종료
+            }
+        }
 
-        val reply = parentComment.replyList[replyIndex]
+        // 답글이나 부모를 못 찾으면 함수 종료
+        if (parentComment == null || reply == null || parentCommentIndex == -1 || replyIndex == -1) return
+
         val currentIsLiked = reply.isLike
         val newLikeCount = if (currentIsLiked) reply.likeCount - 1 else reply.likeCount + 1
 
         // 즉시 UI 업데이트
         val updatedReply = reply.copy(isLike = !currentIsLiked, likeCount = newLikeCount)
-        val newReplyList =
-            parentComment.replyList.toMutableList().apply { set(replyIndex, updatedReply) }
+        val newReplyList = parentComment.replyList.toMutableList().apply { set(replyIndex, updatedReply) }
         val updatedParentComment = parentComment.copy(replyList = newReplyList)
-        val newComments =
-            comments.toMutableList().apply { set(parentCommentIndex, updatedParentComment) }
+        val newComments = comments.toMutableList().apply { set(parentCommentIndex, updatedParentComment) }
         _uiState.update { it.copy(comments = newComments) }
 
         viewModelScope.launch {
             commentsRepository.likeComment(replyId.toLong(), !currentIsLiked)
                 .onFailure {
                     _uiState.update {
+                        // 실패 시 롤백 로직 (기존과 동일)
                         val originalComments = it.comments.toMutableList()
                         originalComments[parentCommentIndex] = parentComment
                         it.copy(comments = originalComments)

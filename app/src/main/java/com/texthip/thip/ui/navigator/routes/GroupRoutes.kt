@@ -37,6 +37,9 @@ sealed class GroupRoutes : Routes() {
     data class RoomMates(val roomId: Int) : GroupRoutes()
 
     @Serializable
+    data class RoomChat(val roomId: Int) : GroupRoutes()
+
+    @Serializable
     data class Note(val roomId: Int, val page: Int? = null, val isOverview: Boolean? = null) :
         GroupRoutes()
 

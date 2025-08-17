@@ -11,15 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.data.model.comments.response.CommentList
+import com.texthip.thip.data.model.comments.response.ReplyList
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
 import com.texthip.thip.ui.theme.ThipTheme
 
 @Composable
 fun CommentSection(
     commentItem: CommentList,
-    onSendReply: (String, Int?, String?) -> Unit = { _, _, _ -> },
-    onReplyClick: (commentId: Int, nickname: String) -> Unit,
-    onEvent: (CommentsEvent) -> Unit = { _ -> }
+    onReplyClick: (commentId: Int, nickname: String?) -> Unit,
+    onEvent: (CommentsEvent) -> Unit = { _ -> },
+    onCommentLongPress: (CommentList) -> Unit = { _ -> },
+    onReplyLongPress: (ReplyList) -> Unit = { _ -> },
 ) {
     Box {
         Column(
@@ -31,23 +33,35 @@ fun CommentSection(
         ) {
             CommentItem(
                 data = commentItem,
-                onReplyClick = { onReplyClick(commentItem.commentId, commentItem.creatorNickname) },
-                onLikeClick = { onEvent(CommentsEvent.LikeComment(commentItem.commentId)) }
+                onReplyClick = {
+                    // commentId가 null이 아닐 때만 답글 달기 가능
+                    // todo: 수정 가능
+                    commentItem.commentId?.let { id ->
+                        onReplyClick(id, commentItem.creatorNickname)
+                    }
+                },
+                onLikeClick = {
+                    // commentId가 null이 아닐 때만 좋아요 가능
+                    // todo: 수정 가능
+                    commentItem.commentId?.let { id ->
+                        onEvent(CommentsEvent.LikeComment(id))
+                    }
+                },
+                onLongPress = { onCommentLongPress(commentItem) }
             )
 
             commentItem.replyList.forEach { reply ->
                 ReplyItem(
                     data = reply,
-                    onReplyClick = { onReplyClick(commentItem.commentId, reply.creatorNickname) },
+                    onReplyClick = {
+                        commentItem.commentId?.let { parentId ->
+                            onReplyClick(parentId, reply.creatorNickname)
+                        }
+                    },
                     onLikeClick = {
-                        onEvent(
-                            CommentsEvent.LikeReply(
-                                commentItem.commentId,
-                                reply.commentId
-                            )
-                        )
-                    }
-
+                        onEvent(CommentsEvent.LikeReply(reply.commentId))
+                    },
+                    onLongPress = { onReplyLongPress(reply) }
                 )
             }
         }
@@ -73,10 +87,9 @@ fun CommentSectionPreview() {
                         isLike = false,
                         likeCount = 10,
                         isDeleted = false,
-                        replyList = emptyList()
-
+                        replyList = emptyList(),
+                        isWriter = false
                     ),
-                onSendReply = { _, _, _ -> },
                 onReplyClick = { commentId, nickname ->
                     // Handle reply click
                 }

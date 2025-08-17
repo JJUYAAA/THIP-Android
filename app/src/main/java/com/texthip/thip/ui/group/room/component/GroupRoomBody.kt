@@ -15,16 +15,20 @@ import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.cards.CardChat
 import com.texthip.thip.ui.common.cards.CardNote
 import com.texthip.thip.ui.common.cards.CardVote
+import kotlin.math.roundToInt
 
 @Composable
 fun GroupRoomBody(
     modifier: Modifier = Modifier,
     bookTitle: String,
     authorName: String,
+    isbn: String,
     currentPage: Int,
     userPercentage: Double,
     currentVotes: List<CurrentVote>,
+    onNavigateToBookDetail: (isbn: String) -> Unit = {},
     onNavigateToNote: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
     onVoteClick: (CurrentVote) -> Unit = {}
 ) {
     Column(
@@ -34,11 +38,13 @@ fun GroupRoomBody(
         ActionBookButton(
             bookTitle = bookTitle,
             bookAuthor = authorName
-        ) {}
+        ) {
+            onNavigateToBookDetail(isbn)
+        }
 
         CardNote(
             currentPage = currentPage,
-            percentage = userPercentage
+            percentage = userPercentage.roundToInt(),
         ) {
             onNavigateToNote()
         }
@@ -46,7 +52,9 @@ fun GroupRoomBody(
         CardChat(
             title = stringResource(R.string.group_room_chat),
             subtitle = stringResource(R.string.group_room_chat_description)
-        ) {}
+        ) {
+            onNavigateToChat()
+        }
 
         CardVote(
             voteData = currentVotes,
@@ -61,6 +69,7 @@ private fun GroupRoomBodyPreview() {
     GroupRoomBody(
         bookTitle = "책 제목",
         authorName = "저자 이름",
+        isbn = "1234567890",
         currentPage = 100,
         userPercentage = 50.0,
         currentVotes = listOf(
