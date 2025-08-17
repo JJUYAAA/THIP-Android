@@ -21,7 +21,9 @@ data class FeedWriteUiState(
     val isSearching: Boolean = false,
     val categories: List<FeedCategory> = emptyList(),
     val isBookPreselected: Boolean = false,
-    val isLoadingCategories: Boolean = false
+    val isLoadingCategories: Boolean = false,
+    val isEditMode: Boolean = false,
+    val editingFeedId: Int? = null
 ) {
     // 유효성 검사 로직
     val isContentValid: Boolean

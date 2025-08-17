@@ -69,6 +69,7 @@ fun FeedCommentScreen(
     modifier: Modifier = Modifier,
     feedId: Int,
     onNavigateBack: () -> Unit = {},
+    onNavigateToFeedEdit: (Int) -> Unit = {},
     currentUserId: Int = 1,
     currentUserName: String = "현재사용자",
     currentUserGenre: String = "문학",
@@ -485,7 +486,7 @@ fun FeedCommentScreen(
                     color = colors.White,
                     onClick = {
                         isBottomSheetVisible = false
-                        // TODO: 피드 수정 화면으로 이동
+                        onNavigateToFeedEdit(feedDetail.feedId)
                     }
                 ),
                 MenuBottomSheetItem(
@@ -568,6 +569,7 @@ private fun FeedCommentScreenWithMockComments() {
         }
         FeedCommentScreen(
             feedId = 1,
+            onNavigateToFeedEdit = {},
             currentUserId = 999,
             currentUserName = "나",
             currentUserGenre = "문학",
@@ -585,6 +587,7 @@ private fun FeedCommentScreenPrev() {
 
         FeedCommentScreen(
             feedId = 1,
+            onNavigateToFeedEdit = {},
             currentUserId = 999,
             currentUserName = "나",
             currentUserGenre = "문학",

@@ -61,6 +61,105 @@ class FeedWriteViewModel @Inject constructor(
         }
     }
 
+    fun loadFeedForEdit(feedId: Int) {
+        viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
+            
+            feedRepository.getFeedDetail(feedId)
+                .onSuccess { feedDetail ->
+                    if (feedDetail != null) {
+                        // 선택된 카테고리 인덱스 찾기
+                        val categoryIndex = _uiState.value.categories.indexOfFirst { category ->
+                            feedDetail.tagList.any { tag -> 
+                                category.tagList.contains(tag)
+                            }
+                        }.let { if (it == -1) 0 else it }
+
+                        val selectedBook = BookData(
+                            title = feedDetail.bookTitle,
+                            imageUrl = feedDetail.bookImageUrl ?: "", // 새로 추가된 필드 사용
+                            author = feedDetail.bookAuthor,
+                            isbn = feedDetail.isbn
+                        )
+
+                        updateState { currentState ->
+                            currentState.copy(
+                                selectedBook = selectedBook,
+                                isBookPreselected = true,
+                                feedContent = feedDetail.contentBody,
+                                isPrivate = !(feedDetail.isPublic ?: true), // 새로 추가된 필드 사용, 기본값은 공개
+                                selectedCategoryIndex = categoryIndex,
+                                selectedTags = feedDetail.tagList,
+                                isLoading = false,
+                                isEditMode = true,
+                                editingFeedId = feedId
+                            )
+                        }
+                    } else {
+                        updateState { 
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = "피드 정보를 불러올 수 없습니다."
+                            )
+                        }
+                    }
+                }
+                .onFailure { exception ->
+                    updateState { 
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = exception.message ?: "네트워크 오류가 발생했습니다."
+                        )
+                    }
+                }
+        }
+    }
+
+    fun setEditData(
+        feedId: Int,
+        isbn: String,
+        bookTitle: String,
+        bookAuthor: String,
+        bookImageUrl: String,
+        contentBody: String,
+        isPublic: Boolean,
+        tagList: List<String>
+    ) {
+        // 선택된 카테고리 인덱스 찾기
+        val categoryIndex = _uiState.value.categories.indexOfFirst { category ->
+            tagList.any { tag -> 
+                category.tagList.contains(tag)
+            }
+        }.let { if (it == -1) 0 else it }
+
+        val selectedBook = BookData(
+            title = bookTitle,
+            imageUrl = bookImageUrl,
+            author = bookAuthor,
+            isbn = isbn
+        )
+
+        updateState { currentState ->
+            currentState.copy(
+                selectedBook = selectedBook,
+                isBookPreselected = true,
+                feedContent = contentBody,
+                isPrivate = !isPublic,
+                selectedCategoryIndex = categoryIndex,
+                selectedTags = tagList,
+                isEditMode = true,
+                editingFeedId = feedId
+            )
+        }
+    }
+
+    // 현재 로드된 내 피드 목록을 가져오는 헬퍼 함수 (FeedViewModel과 연동 필요)
+    private fun getCurrentMyFeeds(): List<com.texthip.thip.data.model.feed.response.MyFeedItem> {
+        // TODO: FeedViewModel에서 현재 내 피드 목록을 가져오는 방법 구현 필요
+        // 임시로 빈 리스트 반환
+        return emptyList()
+    }
+
     private fun loadFeedWriteInfo() {
         viewModelScope.launch {
             updateState { it.copy(isLoadingCategories = true) }

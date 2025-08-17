@@ -15,6 +15,7 @@ data class FeedDetailResponse(
     @SerialName("bookTitle") val bookTitle: String,
     @SerialName("isbn") val isbn: String,
     @SerialName("bookAuthor") val bookAuthor: String,
+    @SerialName("bookImageUrl") val bookImageUrl: String? = null,  // 책 이미지 URL 추가
     @SerialName("contentBody") val contentBody: String,
     @SerialName("contentUrls") val contentUrls: List<String>,
     @SerialName("likeCount") val likeCount: Int,
@@ -22,5 +23,6 @@ data class FeedDetailResponse(
     @SerialName("isSaved") val isSaved: Boolean,
     @SerialName("isLiked") val isLiked: Boolean,
     @SerialName("isWriter") val isWriter: Boolean,
+    @SerialName("isPublic") val isPublic: Boolean? = null,  // 공개/비공개 설정 추가
     @SerialName("tagList") val tagList: List<String>
 )
