@@ -50,4 +50,10 @@ class CommentsRepository @Inject constructor(
             )
         ).handleBaseResponse().getOrThrow()
     }
+
+    suspend fun deleteComment(
+        commentId: Long
+    ) = runCatching {
+        commentsService.deleteComment(commentId).handleBaseResponse().getOrThrow()
+    }
 }

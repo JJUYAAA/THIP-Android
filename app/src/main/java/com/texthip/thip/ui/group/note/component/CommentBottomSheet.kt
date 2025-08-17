@@ -22,15 +22,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.data.model.comments.response.CommentList
+import com.texthip.thip.data.model.comments.response.ReplyList
 import com.texthip.thip.ui.common.bottomsheet.CustomBottomSheet
+import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.forms.CommentTextField
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
 import com.texthip.thip.ui.group.note.viewmodel.CommentsUiState
+import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -47,74 +51,140 @@ fun CommentBottomSheet(
     var replyingToCommentId by remember { mutableStateOf<Int?>(null) }
     var replyingToNickname by remember { mutableStateOf<String?>(null) }
 
-    CustomBottomSheet(onDismiss = onDismiss) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(600.dp)
-                .advancedImePadding()
-        ) {
+    var selectedCommentForMenu by remember { mutableStateOf<CommentList?>(null) }
+    var selectedReplyForMenu by remember { mutableStateOf<ReplyList?>(null) }
+
+    val isOverlayVisible = selectedCommentForMenu != null || selectedReplyForMenu != null
+
+    Box(
+        if (isOverlayVisible) {
+            Modifier
+                .fillMaxSize()
+                .blur(5.dp)
+        } else {
+            Modifier.fillMaxSize()
+        }
+    ) {
+        CustomBottomSheet(onDismiss = onDismiss) {
             Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(0.8f)
+                    .fillMaxWidth()
+                    .height(600.dp)
+                    .advancedImePadding()
             ) {
-                Text(
-                    text = stringResource(R.string.comments),
-                    style = typography.title_b700_s20_h24,
-                    color = colors.White,
-                    modifier = Modifier.padding(start = 20.dp, top = 20.dp, end = 20.dp)
-                )
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(0.8f)
+                ) {
+                    Text(
+                        text = stringResource(R.string.comments),
+                        style = typography.title_b700_s20_h24,
+                        color = colors.White,
+                        modifier = Modifier.padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                    )
 
-                Box(modifier = Modifier.weight(1f)) {
-                    if (uiState.isLoading) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            CircularProgressIndicator()
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (uiState.isLoading) {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        } else if (uiState.comments.isEmpty()) {
+                            EmptyCommentView()
+                        } else {
+                            CommentLazyList(
+                                commentList = uiState.comments,
+                                isLoadingMore = uiState.isLoadingMore,
+                                isLastPage = uiState.isLast,
+                                onLoadMore = { onEvent(CommentsEvent.LoadMoreComments) },
+                                onReplyClick = { commentId, nickname ->
+                                    replyingToCommentId = commentId
+                                    replyingToNickname = nickname
+                                },
+                                onEvent = onEvent,
+                                onCommentLongPress = { comment ->
+                                    selectedCommentForMenu = comment
+                                },
+                                onReplyLongPress = { reply -> selectedReplyForMenu = reply }
+                            )
                         }
-                    } else if (uiState.comments.isEmpty()) {
-                        EmptyCommentView()
-                    } else {
-                        CommentLazyList(
-                            commentList = uiState.comments,
-                            isLoadingMore = uiState.isLoadingMore,
-                            isLastPage = uiState.isLast,
-                            onLoadMore = { onEvent(CommentsEvent.LoadMoreComments) },
-                            onReplyClick = { commentId, nickname ->
-                                replyingToCommentId = commentId
-                                replyingToNickname = nickname
-                            },
-                            onEvent = onEvent
-                        )
                     }
                 }
-            }
 
-            CommentTextField(
-                modifier = Modifier.fillMaxWidth(),
-                hint = stringResource(R.string.reply_to),
-                input = inputText,
-                onInputChange = { inputText = it },
-                onSendClick = {
-                    onSendReply(
-                        inputText,
-                        replyingToCommentId,
-                        replyingToNickname
-                    )
-                    inputText = ""
-                    replyingToCommentId = null
-                    replyingToNickname = null
-                },
-                replyTo = replyingToNickname,
-                onCancelReply = {
-                    replyingToCommentId = null
-                    replyingToNickname = null
-                }
-            )
+                CommentTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    hint = stringResource(R.string.reply_to),
+                    input = inputText,
+                    onInputChange = { inputText = it },
+                    onSendClick = {
+                        onSendReply(
+                            inputText,
+                            replyingToCommentId,
+                            replyingToNickname
+                        )
+                        inputText = ""
+                        replyingToCommentId = null
+                        replyingToNickname = null
+                    },
+                    replyTo = replyingToNickname,
+                    onCancelReply = {
+                        replyingToCommentId = null
+                        replyingToNickname = null
+                    }
+                )
+            }
         }
+    }
+
+    val itemForMenu = selectedCommentForMenu ?: selectedReplyForMenu
+    if (itemForMenu != null) {
+        val isWriter = when (itemForMenu) {
+            is CommentList -> itemForMenu.isWriter
+            is ReplyList -> itemForMenu.isWriter
+            else -> false
+        }
+
+        MenuBottomSheet(
+            items = if (isWriter) {
+                listOf(
+                    MenuBottomSheetItem(
+                        text = stringResource(R.string.delete),
+                        color = colors.Red,
+                        onClick = {
+                            val commentId = when (val item = itemForMenu) {
+                                is CommentList -> item.commentId
+                                is ReplyList -> item.commentId
+                                else -> null
+                            }
+                            commentId?.let { onEvent(CommentsEvent.DeleteComment(it)) }
+
+                            selectedCommentForMenu = null
+                            selectedReplyForMenu = null
+                        }
+                    )
+                )
+            } else {
+                listOf(
+                    MenuBottomSheetItem(
+                        text = stringResource(R.string.report),
+                        color = colors.Red,
+                        onClick = {
+                            // TODO: 신고 로직
+                            selectedCommentForMenu = null
+                            selectedReplyForMenu = null
+                        }
+                    )
+                )
+            },
+            onDismiss = {
+                selectedCommentForMenu = null
+                selectedReplyForMenu = null
+            }
+        )
     }
 }
 
@@ -124,8 +194,10 @@ private fun CommentLazyList(
     isLoadingMore: Boolean,
     isLastPage: Boolean,
     onLoadMore: () -> Unit,
-    onReplyClick: (commentId: Int, nickname: String) -> Unit,
-    onEvent: (CommentsEvent) -> Unit
+    onReplyClick: (commentId: Int, nickname: String?) -> Unit,
+    onEvent: (CommentsEvent) -> Unit,
+    onCommentLongPress: (CommentList) -> Unit,
+    onReplyLongPress: (ReplyList) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -147,12 +219,21 @@ private fun CommentLazyList(
     LazyColumn(state = lazyListState) {
         items(
             items = commentList,
-            key = { it.commentId }
+            key = { comment ->
+                // commentId가 있으면 사용
+                comment.commentId
+                // 없다면(삭제된 댓글), replyList의 첫 번째 항목 ID를 사용
+                    ?: comment.replyList.firstOrNull()?.commentId
+                    // 그것마저 없다면(마지막 답글까지 삭제된 경우), 객체 자체의 hashCode를 사용
+                    ?: comment.hashCode()
+            }
         ) { comment ->
             CommentSection(
                 commentItem = comment,
                 onReplyClick = onReplyClick,
-                onEvent = onEvent
+                onEvent = onEvent,
+                onCommentLongPress = onCommentLongPress,
+                onReplyLongPress = onReplyLongPress
             )
         }
 
@@ -216,6 +297,7 @@ private fun CommentBottomSheetPreview() {
                             aliasColor = "#A0F8E8",
                             isDeleted = false,
                             isLike = false,
+                            isWriter = false,
                             replyList = emptyList()
                         )
                     ),

@@ -39,6 +39,28 @@ class FeedWriteViewModel @Inject constructor(
         loadFeedWriteInfo()
     }
 
+    fun setPinnedRecord(
+        isbn: String,
+        bookTitle: String,
+        bookAuthor: String,
+        bookImageUrl: String,
+        recordContent: String
+    ) {
+        val pinnedBook = BookData(
+            title = bookTitle,
+            imageUrl = bookImageUrl,
+            author = bookAuthor,
+            isbn = isbn
+        )
+        updateState {
+            it.copy(
+                selectedBook = pinnedBook,
+                isBookPreselected = true,
+                feedContent = recordContent
+            )
+        }
+    }
+
     private fun loadFeedWriteInfo() {
         viewModelScope.launch {
             updateState { it.copy(isLoadingCategories = true) }

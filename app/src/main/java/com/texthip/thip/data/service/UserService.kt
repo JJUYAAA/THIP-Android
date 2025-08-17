@@ -2,14 +2,14 @@ package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
 import com.texthip.thip.data.model.users.request.FollowRequest
-import com.texthip.thip.data.model.users.response.MyFollowingsResponse
-import com.texthip.thip.data.model.users.response.MyPageInfoResponse
 import com.texthip.thip.data.model.users.request.NicknameRequest
 import com.texthip.thip.data.model.users.response.AliasChoiceResponse
 import com.texthip.thip.data.model.users.response.FollowResponse
-import com.texthip.thip.data.model.users.response.MyRecentFollowingsResponse
+import com.texthip.thip.data.model.users.response.MyFollowingsResponse
+import com.texthip.thip.data.model.users.response.MyPageInfoResponse
 import com.texthip.thip.data.model.users.response.NicknameResponse
 import com.texthip.thip.data.model.users.response.OthersFollowersResponse
+import com.texthip.thip.data.model.users.response.UsersMyFollowingsRecentFeedsResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -24,7 +24,7 @@ interface UserService {
     ): BaseResponse<MyFollowingsResponse>
 
     @GET("users/my-followings/recent-feeds")
-    suspend fun getRecentWriters(): BaseResponse<MyRecentFollowingsResponse>
+    suspend fun getMyFollowingsRecentFeeds(): BaseResponse<UsersMyFollowingsRecentFeedsResponse>
 
     @GET("users/{userId}/followers")
     suspend fun getUserFollowers(

@@ -32,7 +32,7 @@ class FeedRepository @Inject constructor(
         val response = feedService.getFeedWriteInfo()
             .handleBaseResponse()
             .getOrThrow()
-        
+
         // 카테고리 순서 조정
         val orderedCategories = response?.categoryList?.sortedBy { category ->
             when (category.category) {
@@ -44,7 +44,7 @@ class FeedRepository @Inject constructor(
                 else -> 999
             }
         } ?: emptyList()
-        
+
         response?.copy(categoryList = orderedCategories)
     }
 
@@ -69,7 +69,7 @@ class FeedRepository @Inject constructor(
 
         // 임시 파일 목록 추적
         val tempFiles = mutableListOf<File>()
-        
+
         try {
             // 이미지 파일들을 MultipartBody.Part로 변환
             val imageParts = if (imageUris.isNotEmpty()) {
@@ -95,7 +95,11 @@ class FeedRepository @Inject constructor(
         }
     }
 
-    private fun uriToMultipartBodyPart(uri: Uri, paramName: String, tempFiles: MutableList<File>): MultipartBody.Part? {
+    private fun uriToMultipartBodyPart(
+        uri: Uri,
+        paramName: String,
+        tempFiles: MutableList<File>
+    ): MultipartBody.Part? {
         return try {
             // MIME 타입 확인
             val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
@@ -105,21 +109,21 @@ class FeedRepository @Inject constructor(
                 "image/jpeg", "image/jpg" -> "jpg"
                 else -> "jpg" // 기본값
             }
-            
+
             // 파일명 생성
             val fileName = "feed_image_${System.currentTimeMillis()}.$extension"
             val tempFile = File(context.cacheDir, fileName)
-            
+
             // 임시 파일 목록에 추가
             tempFiles.add(tempFile)
-            
+
             // InputStream을 use 블록으로 안전하게 관리
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
                 FileOutputStream(tempFile).use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }
             } ?: return null
-            
+
             // MultipartBody.Part 생성
             val requestFile = tempFile.asRequestBody(mimeType.toMediaType())
             MultipartBody.Part.createFormData(paramName, fileName, requestFile)
@@ -140,5 +144,17 @@ class FeedRepository @Inject constructor(
                 e.printStackTrace()
             }
         }
+    }
+
+    suspend fun getFeedUsersInfo(userId: Long) = runCatching {
+        feedService.getFeedUsersInfo(userId)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    suspend fun getFeedUsers(userId: Long) = runCatching {
+        feedService.getFeedUsers(userId)
+            .handleBaseResponse()
+            .getOrThrow()
     }
 }

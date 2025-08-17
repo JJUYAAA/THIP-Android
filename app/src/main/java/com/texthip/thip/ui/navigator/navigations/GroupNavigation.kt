@@ -20,6 +20,7 @@ import com.texthip.thip.ui.group.note.screen.GroupNoteCreateScreen
 import com.texthip.thip.ui.group.note.screen.GroupNoteScreen
 import com.texthip.thip.ui.group.note.screen.GroupVoteCreateScreen
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteViewModel
+import com.texthip.thip.ui.group.room.screen.GroupRoomChatScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomMatesScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomRecruitScreen
 import com.texthip.thip.ui.group.room.screen.GroupRoomScreen
@@ -30,6 +31,7 @@ import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
+import com.texthip.thip.ui.navigator.extensions.navigateToFeedWrite
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupDone
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoom
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMy
@@ -37,6 +39,7 @@ import com.texthip.thip.ui.navigator.extensions.navigateToGroupNote
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupNoteCreate
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoom
+import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomChat
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomMates
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomUnlock
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
@@ -271,9 +274,15 @@ fun NavGraphBuilder.groupNavigation(
             onNavigateToMates = {
                 navController.navigateToGroupRoomMates(roomId)
             },
+            onNavigateToChat = {
+                navController.navigateToGroupRoomChat(roomId)
+            },
             onNavigateToNote = { page, isOverview ->
                 navController.navigateToGroupNote(roomId, page, isOverview)
             },
+            onNavigateToBookDetail = { isbn ->
+                navController.navigateToBookDetail(isbn)
+            }
         )
     }
 
@@ -290,6 +299,12 @@ fun NavGraphBuilder.groupNavigation(
             onUserClick = {
                 // 네비게이션 로직 (예: 유저 프로필로 이동)
             }
+        )
+    }
+
+    composable<GroupRoutes.RoomChat> {
+        GroupRoomChatScreen(
+            onBackClick = { navigateBack() },
         )
     }
 
@@ -329,6 +344,15 @@ fun NavGraphBuilder.groupNavigation(
                     recentPage = recentPage,
                     totalPage = totalPage,
                     isOverviewPossible = isOverviewPossible
+                )
+            },
+            onNavigateToFeedWrite = { pinInfo, recordContent ->
+                navController.navigateToFeedWrite(
+                    isbn = pinInfo.isbn,
+                    bookTitle = pinInfo.bookTitle,
+                    bookAuthor = pinInfo.authorName,
+                    bookImageUrl = pinInfo.bookImageUrl,
+                    recordContent = recordContent
                 )
             },
             viewModel = viewModel
