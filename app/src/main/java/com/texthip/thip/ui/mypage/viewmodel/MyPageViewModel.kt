@@ -27,9 +27,6 @@ class MyPageViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(MyPageUiState())
     val uiState = _uiState.asStateFlow()
 
-    init {
-        fetchMyPageInfo()
-    }
 
     fun fetchMyPageInfo() {
         viewModelScope.launch {

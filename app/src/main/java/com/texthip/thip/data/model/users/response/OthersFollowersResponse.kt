@@ -1,22 +1,22 @@
 package com.texthip.thip.data.model.users.response
 
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class OthersFollowersResponse(
-    val followers: List<FollowerList>,
-    val totalFollowerCount: Int,
-    val nextCursor: String?,
-    val isLast: Boolean
+  @SerializedName("followers") val followers: List<FollowerList>,
+  @SerializedName("totalFollowerCount") val totalFollowerCount: Int,
+  @SerializedName("nextCursor") val nextCursor: String?,
+  @SerializedName("isLast") val isLast: Boolean
 )
 
 @Serializable
 data class FollowerList(
-    val userId: Long,
-    val nickname: String,
-    val profileImageUrl: String?,
-    val aliasName: String,
-    val aliasColor: String,
-    val followerCount: Int,
+  @SerializedName("userId") val userId: Long,
+  @SerializedName("nickname") val nickname: String,
+  @SerializedName("profileImageUrl") val profileImageUrl: String?,
+  @SerializedName("aliasName") val aliasName: String,
+  @SerializedName("aliasColor") val aliasColor: String,
+  @SerializedName("followerCount") val followerCount: Int
 )
-

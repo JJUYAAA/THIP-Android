@@ -51,6 +51,7 @@ class FeedViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState = _uiState.asStateFlow()
 
+    fun fetchRecentWriters() {
     private var allFeedsNextCursor: String? = null
     private var myFeedsNextCursor: String? = null
     private var isLoadingAllFeeds = false

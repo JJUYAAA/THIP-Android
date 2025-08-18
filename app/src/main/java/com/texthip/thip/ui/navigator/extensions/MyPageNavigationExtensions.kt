@@ -25,3 +25,7 @@ fun NavHostController.navigateToNotificationSettings() {
 fun NavHostController.navigateToLeaveThipScreen() {
     navigate(MyPageRoutes.LeaveThip)
 }
+
+fun NavHostController.navigateToCustomerService() {
+    navigate(MyPageRoutes.CustomerService)
+}
