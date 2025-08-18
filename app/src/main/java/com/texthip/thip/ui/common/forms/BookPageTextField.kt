@@ -120,7 +120,7 @@ fun BookPageTextField(
             }
         )
 
-        Box(modifier = Modifier.height(22.dp)) {
+        Box(modifier = Modifier.height(24.dp)) {
             if (isError && errorMessageRes != null) {
                 Text(
                     modifier = Modifier.padding(start = 4.dp, top = 8.dp),
