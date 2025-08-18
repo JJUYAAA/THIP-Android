@@ -67,9 +67,7 @@ fun FeedScreen(
     onNavigateToMySubscription: () -> Unit = {},
     onNavigateToFeedWrite: () -> Unit = {},
     onNavigateToFeedComment: (Int) -> Unit = {},
-    nickname: String = "",
-    userRole: String = "",
-    followerProfileImageUrls: List<String> = emptyList(),
+    onNavigateToBookDetail: (String) -> Unit = {},
     resultFeedId: Int? = null,
     onResultConsumed: () -> Unit = {},
     feedViewModel: FeedViewModel = hiltViewModel(),
@@ -128,8 +126,6 @@ fun FeedScreen(
             }
         }
     }
-
-    val subscriptionUiState by mySubscriptionViewModel.uiState.collectAsState()
 
     // 초기 로딩 상태 처리
     if (feedUiState.isLoading && feedUiState.currentTabFeeds.isEmpty()) {
@@ -215,10 +211,13 @@ fun FeedScreen(
                         // 내 피드
                         item {
                             Spacer(modifier = Modifier.height(32.dp))
+                            
+                            val myFeedInfo = feedUiState.myFeedInfo
                             AuthorHeader(
-                                profileImage = null,
-                                nickname = nickname,
-                                badgeText = userRole,
+                                profileImage = myFeedInfo?.profileImageUrl,
+                                nickname = myFeedInfo?.nickname ?: "",
+                                badgeText = myFeedInfo?.aliasName ?: "",
+                                badgeTextColor = myFeedInfo?.aliasColor?.let { hexToColor(it) } ?: colors.NeonGreen,
                                 buttonText = "",
                                 buttonWidth = 60.dp,
                                 showButton = false
@@ -226,13 +225,13 @@ fun FeedScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             FeedSubscribeBarlist(
                                 modifier = Modifier.padding(horizontal = 20.dp),
-                                followerProfileImageUrls = followerProfileImageUrls,
+                                followerProfileImageUrls = myFeedInfo?.latestFollowerProfileImageUrls ?: emptyList(),
                                 onClick = {
                                 }
                             )
                             Spacer(modifier = Modifier.height(40.dp))
                             Text(
-                                text = stringResource(R.string.whole_num, feedUiState.myFeeds.size),
+                                text = stringResource(R.string.whole_num, myFeedInfo?.totalFeedCount ?: 0),
                                 style = typography.menu_m500_s14_h24,
                                 color = colors.Grey,
                                 modifier = Modifier
@@ -289,6 +288,9 @@ fun FeedScreen(
                                     onLikeClick = {},
                                     onContentClick = {
                                         onNavigateToFeedComment(feedItem.id)
+                                    },
+                                    onBookClick = {
+                                        onNavigateToBookDetail(myFeed.isbn)
                                     }
                                 )
                                 Spacer(modifier = Modifier.height(40.dp))
@@ -346,6 +348,9 @@ fun FeedScreen(
                                 },
                                 onCommentClick = {
                                     onNavigateToFeedComment(feedItem.id)
+                                },
+                                onBookClick = {
+                                    onNavigateToBookDetail(allFeed.isbn)
                                 }
                             )
                             Spacer(modifier = Modifier.height(40.dp))
@@ -387,39 +392,10 @@ fun FeedScreen(
 @Composable
 private fun FeedScreenPreview() {
     ThipTheme {
-        val mockFeeds = List(5) {
-            FeedItem(
-                id = it + 1,
-                userProfileImage = "https://example.com/profile$it.jpg",
-                userName = "user.$it",
-                userRole = "문학 칭호",
-                bookTitle = "책 제목 ",
-                authName = "한강",
-                timeAgo = "1시간 전",
-                content = "내용내용내용 입니다. 내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.내용내용내용 입니다.",
-                likeCount = it,
-                commentCount = it,
-                isLiked = false,
-                isSaved = false,
-                isLocked = it % 2 == 0,
-                imageUrls = listOf("https://example.com/image$it.jpg")
-            )
-        }
-        val mockFollowerImages = listOf(
-            "https://example.com/image1.jpg",
-            "https://example.com/image2.jpg",
-            "https://example.com/image3.jpg",
-            "https://example.com/image4.jpg",
-            "https://example.com/image5.jpg"
+        FeedScreen(
+            onNavigateToFeedWrite = { },
+            onNavigateToBookDetail = { }
         )
-        ThipTheme {
-            FeedScreen(
-                nickname = "ThipUser01",
-                userRole = "문학 칭호",
-                followerProfileImageUrls = mockFollowerImages,
-                onNavigateToFeedWrite = { }
-            )
-        }
     }
 }
 
@@ -427,16 +403,9 @@ private fun FeedScreenPreview() {
 @Composable
 private fun FeedScreenWithoutDataPreview() {
     ThipTheme {
-        val mockFeeds: List<FeedItem> = emptyList()
-        val mockFollowerImages = emptyList<String>()
-
-        ThipTheme {
-            FeedScreen(
-                nickname = "ThipUser01",
-                userRole = "문학 칭호",
-                followerProfileImageUrls = mockFollowerImages,
-                onNavigateToFeedWrite = { }
-            )
-        }
+        FeedScreen(
+            onNavigateToFeedWrite = { },
+            onNavigateToBookDetail = { }
+        )
     }
 }

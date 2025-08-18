@@ -52,7 +52,7 @@ class SearchBookViewModel @Inject constructor(
                 ) 
             }
             searchJob = viewModelScope.launch {
-                delay(1000) // Live search에 딜레이 추가
+                delay(300)
                 performSearch(query, isLiveSearch = true)
             }
         } else {

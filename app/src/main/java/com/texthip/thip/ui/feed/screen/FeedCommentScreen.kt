@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.texthip.thip.R
@@ -46,6 +47,7 @@ import com.texthip.thip.ui.common.buttons.OptionChipButton
 import com.texthip.thip.ui.common.forms.CommentTextField
 import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.common.modal.DialogPopup
+import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.feed.component.ImageViewerModal
 import com.texthip.thip.ui.feed.viewmodel.FeedDetailViewModel
@@ -56,12 +58,14 @@ import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import kotlinx.coroutines.delay
 
 @Composable
 fun FeedCommentScreen(
     modifier: Modifier = Modifier,
     feedId: Int,
     onNavigateBack: () -> Unit = {},
+    onNavigateToFeedEdit: (Int) -> Unit = {},
     feedDetailViewModel: FeedDetailViewModel = hiltViewModel(),
     commentsViewModel: CommentsViewModel = hiltViewModel()
 ) {
@@ -114,6 +118,7 @@ fun FeedCommentScreen(
     val feedDetail = feedDetailUiState.feedDetail ?: return
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) } // 피드 삭제
+    var showToast by remember { mutableStateOf(false) }
 
     val images = feedDetail.contentUrls
     var showImageViewer by remember { mutableStateOf(false) }
@@ -127,7 +132,8 @@ fun FeedCommentScreen(
 
     val focusManager = LocalFocusManager.current
 
-    Box(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
         modifier = if (isBottomSheetVisible || showDialog) {
             Modifier
                 .fillMaxSize()
@@ -322,15 +328,31 @@ fun FeedCommentScreen(
                 replyingToNickname = null
             }
         )
+        }
+
+        // 신고 완료 토스트
+        if (showToast) {
+            ToastWithDate(
+                message = "게시글 신고를 완료했어요.",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 20.dp, vertical = 16.dp)
+                    .zIndex(2f)
+            )
+        }
     }
 
     if (isBottomSheetVisible) {
-        MenuBottomSheet(
-            items = listOf(
+        val menuItems = if (feedDetail.isWriter) {
+            // 내 피드인 경우: 수정, 삭제
+            listOf(
                 MenuBottomSheetItem(
                     text = stringResource(R.string.edit_feed),
                     color = colors.White,
-                    onClick = {}
+                    onClick = {
+                        isBottomSheetVisible = false
+                        onNavigateToFeedEdit(feedDetail.feedId)
+                    }
                 ),
                 MenuBottomSheetItem(
                     text = stringResource(R.string.delete_feed),
@@ -340,7 +362,24 @@ fun FeedCommentScreen(
                         showDialog = true
                     }
                 )
-            ),
+            )
+        } else {
+            // 다른 사람 피드인 경우: 신고만
+            listOf(
+                MenuBottomSheetItem(
+                    text = stringResource(R.string.report),
+                    color = colors.Red,
+                    onClick = {
+                        isBottomSheetVisible = false
+                        // TODO: 피드 신고 API 호출
+                        showToast = true
+                    }
+                )
+            )
+        }
+
+        MenuBottomSheet(
+            items = menuItems,
             onDismiss = { isBottomSheetVisible = false }
         )
     }
@@ -357,6 +396,7 @@ fun FeedCommentScreen(
                     onConfirm = {
                         showDialog = false
                         isBottomSheetVisible = false
+                        // TODO: 피드 삭제 API 호출
                     },
                     onCancel = {
                         showDialog = false
@@ -364,6 +404,13 @@ fun FeedCommentScreen(
                     }
                 )
             }
+        }
+    }
+
+    LaunchedEffect(showToast) {
+        if (showToast) {
+            delay(3000)
+            showToast = false
         }
     }
 

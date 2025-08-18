@@ -36,7 +36,8 @@ fun SavedFeedCard(
     onBookmarkClick: () -> Unit = {},
     onLikeClick: () -> Unit = {},
     onContentClick: () -> Unit = {},
-    onCommentClick: () -> Unit = {}
+    onCommentClick: () -> Unit = {},
+    onBookClick: () -> Unit = {}
 ) {
     val hasImages = feedItem.imageUrls.isNotEmpty()
     val maxLines = if (hasImages) 3 else 8
@@ -62,7 +63,7 @@ fun SavedFeedCard(
             ActionBookButton(
                 bookTitle = feedItem.bookTitle,
                 bookAuthor = feedItem.authName,
-                onClick = {}
+                onClick = onBookClick
             )
         }
 

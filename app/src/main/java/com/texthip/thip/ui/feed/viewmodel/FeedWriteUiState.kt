@@ -9,6 +9,7 @@ data class FeedWriteUiState(
     val showBookSearchSheet: Boolean = false,
     val feedContent: String = "",
     val imageUris: List<Uri> = emptyList(),
+    val existingImageUrls: List<String> = emptyList(), // 기존 피드 이미지 URL들
     val isPrivate: Boolean = false,
     val selectedCategoryIndex: Int = -1,
     val selectedTags: List<String> = emptyList(),
@@ -21,14 +22,20 @@ data class FeedWriteUiState(
     val isSearching: Boolean = false,
     val categories: List<FeedCategory> = emptyList(),
     val isBookPreselected: Boolean = false,
-    val isLoadingCategories: Boolean = false
+    val isLoadingCategories: Boolean = false,
+    val isEditMode: Boolean = false,
+    val editingFeedId: Int? = null
 ) {
     // 유효성 검사 로직
     val isContentValid: Boolean
         get() = feedContent.isNotBlank() && feedContent.length <= 2000
 
+    // 현재 모드에 따른 이미지 개수
+    val currentImageCount: Int
+        get() = if (isEditMode) existingImageUrls.size else imageUris.size
+
     val isImageCountValid: Boolean
-        get() = imageUris.size <= 3
+        get() = currentImageCount <= 3
 
     val isFormValid: Boolean
         get() = selectedBook != null &&
@@ -40,9 +47,9 @@ data class FeedWriteUiState(
     val canAddMoreTags: Boolean
         get() = selectedTags.size < 5
 
-    // 이미지 개수 제한 (최대 3개)
+    // 이미지 추가 가능 여부
     val canAddMoreImages: Boolean
-        get() = imageUris.size < 3
+        get() = !isEditMode && imageUris.size < 3
 
     // 현재 선택된 카테고리의 태그 목록
     val availableTags: List<String>
