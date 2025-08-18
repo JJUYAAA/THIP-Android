@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
-import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
+import com.texthip.thip.data.model.rooms.response.SearchRoomItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -40,8 +40,8 @@ fun GroupFilteredSearchResult(
     selectedGenreIndex: Int,
     onGenreSelect: (Int) -> Unit,
     resultCount: Int,
-    roomList: List<GroupCardItemRoomData>,
-    onRoomClick: (GroupCardItemRoomData) -> Unit = {},
+    roomList: List<SearchRoomItem>,
+    onRoomClick: (SearchRoomItem) -> Unit = {},
     canLoadMore: Boolean = false,
     isLoadingMore: Boolean = false,
     onLoadMore: () -> Unit = {}
@@ -79,7 +79,7 @@ fun GroupFilteredSearchResult(
             )
         } else {
             val listState = rememberLazyListState()
-            
+
             // 무한 스크롤 트리거 감지
             val shouldLoadMore by remember {
                 derivedStateOf {
@@ -87,23 +87,23 @@ fun GroupFilteredSearchResult(
                     lastVisibleItem != null && lastVisibleItem.index >= roomList.size - 3 && canLoadMore
                 }
             }
-            
+
             LaunchedEffect(shouldLoadMore) {
                 if (shouldLoadMore) {
                     onLoadMore()
                 }
             }
-            
+
             LazyColumn(state = listState) {
                 itemsIndexed(roomList) { index, room ->
                     CardItemRoomSmall(
-                        title = room.title,
-                        participants = room.participants,
-                        maxParticipants = room.maxParticipants,
-                        endDate = room.endDate,
-                        imageUrl = room.imageUrl,
+                        title = room.roomName,
+                        participants = room.memberCount,
+                        maxParticipants = room.recruitCount,
+                        endDate = room.deadlineDate,
+                        imageUrl = room.bookImageUrl,
                         isWide = true,
-                        isSecret = room.isSecret,
+                        isSecret = !room.isPublic,
                         onClick = { onRoomClick(room) }
                     )
                     if (index < roomList.size - 1) {
@@ -116,7 +116,7 @@ fun GroupFilteredSearchResult(
                         )
                     }
                 }
-                
+
                 // 로딩 인디케이터
                 if (isLoadingMore) {
                     item {
@@ -151,24 +151,22 @@ fun GroupFilteredSearchResultPreview() {
                 onGenreSelect = { selectedGenre = it },
                 resultCount = 3,
                 roomList = listOf(
-                    GroupCardItemRoomData(
-                        id = 1,
-                        title = "해리포터 독서모임",
-                        participants = 5,
-                        maxParticipants = 10,
-                        isRecruiting = true,
-                        endDate = 7,
-                        imageUrl = null,
-                        isSecret = false
-                    ), GroupCardItemRoomData(
-                        id = 2,
-                        title = "소설 읽기 모임",
-                        participants = 8,
-                        maxParticipants = 12,
-                        isRecruiting = false,
-                        endDate = 3,
-                        imageUrl = null,
-                        isSecret = true
+                    SearchRoomItem(
+                        roomId = 1,
+                        roomName = "해리포터 독서모임",
+                        memberCount = 5,
+                        recruitCount = 10,
+                        deadlineDate = "7일 뒤",
+                        bookImageUrl = null,
+                        isPublic = true
+                    ), SearchRoomItem(
+                        roomId = 2,
+                        roomName = "소설 읽기 모임",
+                        memberCount = 8,
+                        recruitCount = 12,
+                        deadlineDate = "3일 뒤",
+                        bookImageUrl = null,
+                        isPublic = false
                     )
                 )
             )

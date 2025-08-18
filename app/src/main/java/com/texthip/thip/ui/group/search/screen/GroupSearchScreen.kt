@@ -26,13 +26,12 @@ import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.myroom.component.GroupRecentSearch
-import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
 import com.texthip.thip.ui.group.search.component.GroupEmptyResult
 import com.texthip.thip.ui.group.search.component.GroupFilteredSearchResult
 import com.texthip.thip.ui.group.search.component.GroupLiveSearchResult
 import com.texthip.thip.ui.group.search.viewmodel.GroupSearchViewModel
 import com.texthip.thip.ui.theme.ThipTheme
-import com.texthip.thip.utils.rooms.DateUtils
+import com.texthip.thip.utils.rooms.toDisplayStrings
 
 @Composable
 fun GroupSearchScreen(
@@ -45,45 +44,23 @@ fun GroupSearchScreen(
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    val genreDisplayNames = uiState.genres.map { genre ->
-        when (genre.displayKey) {
-            "literature" -> stringResource(R.string.literature)
-            "science_it" -> stringResource(R.string.science_it)
-            "social_science" -> stringResource(R.string.social_science)
-            "humanities" -> stringResource(R.string.humanities)
-            "art" -> stringResource(R.string.art)
-            else -> genre.apiCategory
-        }
-    }
-    
+    val genreDisplayNames = uiState.genres.toDisplayStrings()
+
     val sortOptions = listOf(
         stringResource(R.string.group_filter_deadline),
         stringResource(R.string.group_filter_popular)
     )
-    
+
     val selectedGenreIndex = if (uiState.selectedGenre != null) {
         uiState.genres.indexOf(uiState.selectedGenre)
     } else -1
-    
+
     val selectedSortOptionIndex = when (uiState.selectedSort) {
         "deadline" -> 0
         "memberCount" -> 1
         else -> 0
     }
 
-    // 검색 결과를 GroupCardItemRoomData로 변환
-    val convertedRoomList = uiState.searchResults.map { searchRoomItem ->
-        GroupCardItemRoomData(
-            id = searchRoomItem.roomId,
-            title = searchRoomItem.roomName,
-            participants = searchRoomItem.memberCount,
-            maxParticipants = searchRoomItem.recruitCount,
-            isRecruiting = true,
-            endDate = DateUtils.extractDaysFromDeadline(searchRoomItem.deadlineDate),
-            imageUrl = searchRoomItem.bookImageUrl,
-            isSecret = !searchRoomItem.isPublic
-        )
-    }
 
     LaunchedEffect(uiState.isCompleteSearching) {
         if (uiState.isCompleteSearching) {
@@ -153,8 +130,8 @@ fun GroupSearchScreen(
                             )
                         } else if (uiState.hasResults) {
                             GroupLiveSearchResult(
-                                roomList = convertedRoomList,
-                                onRoomClick = { room -> onRoomClick(room.id) },
+                                roomList = uiState.searchResults,
+                                onRoomClick = { room -> onRoomClick(room.roomId) },
                                 canLoadMore = uiState.canLoadMore,
                                 isLoadingMore = uiState.isLoadingMore,
                                 onLoadMore = { viewModel.loadMoreRooms() }
@@ -170,7 +147,7 @@ fun GroupSearchScreen(
                                 val currentSelectedIndex = if (uiState.selectedGenre != null) {
                                     uiState.genres.indexOf(uiState.selectedGenre)
                                 } else -1
-                                
+
                                 val selectedGenre = if (index == currentSelectedIndex) {
                                     // 같은 장르를 다시 터치하면 선택 해제
                                     null
@@ -182,9 +159,9 @@ fun GroupSearchScreen(
                                 }
                                 viewModel.updateSelectedGenre(selectedGenre)
                             },
-                            resultCount = convertedRoomList.size,
-                            roomList = convertedRoomList,
-                            onRoomClick = { room -> onRoomClick(room.id) },
+                            resultCount = uiState.searchResults.size,
+                            roomList = uiState.searchResults,
+                            onRoomClick = { room -> onRoomClick(room.roomId) },
                             canLoadMore = uiState.canLoadMore,
                             isLoadingMore = uiState.isLoadingMore,
                             onLoadMore = { viewModel.loadMoreRooms() }
