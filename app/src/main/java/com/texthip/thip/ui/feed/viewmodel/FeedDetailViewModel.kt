@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.repository.FeedRepository
+import com.texthip.thip.ui.feed.usecase.DeleteFeedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,12 +15,15 @@ import javax.inject.Inject
 data class FeedDetailUiState(
     val isLoading: Boolean = false,
     val feedDetail: FeedDetailResponse? = null,
-    val error: String? = null
+    val error: String? = null,
+    val isDeleting: Boolean = false,
+    val deleteSuccess: Boolean = false
 )
 
 @HiltViewModel
 class FeedDetailViewModel @Inject constructor(
-    private val feedRepository: FeedRepository
+    private val feedRepository: FeedRepository,
+    private val deleteFeedUseCase: DeleteFeedUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedDetailUiState())
@@ -49,6 +53,24 @@ class FeedDetailViewModel @Inject constructor(
                             isLoading = false,
                             feedDetail = null,
                             error = exception.message ?: "알 수 없는 오류가 발생했습니다."
+                        )
+                    }
+                }
+        }
+    }
+    fun deleteFeed(feedId: Long) {
+        viewModelScope.launch {
+            updateState { it.copy(isDeleting = true, error = null) }
+
+            deleteFeedUseCase(feedId) // UseCase 호출
+                .onSuccess {
+                    updateState { it.copy(isDeleting = false, deleteSuccess = true) }
+                }
+                .onFailure { exception ->
+                    updateState {
+                        it.copy(
+                            isDeleting = false,
+                            error = exception.message ?: "피드 삭제 중 오류가 발생했습니다."
                         )
                     }
                 }
