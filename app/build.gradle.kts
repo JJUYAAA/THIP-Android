@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
     implementation(libs.foundation)
+    implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

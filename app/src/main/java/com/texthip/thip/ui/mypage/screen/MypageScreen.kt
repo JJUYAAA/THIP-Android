@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -51,16 +52,20 @@ fun MyPageScreen(
     viewModel: MyPageViewModel = hiltViewModel(),
     onNavigateToEditProfile: () -> Unit,
     onNavigateToSavedFeeds: () -> Unit,
+    onCustomerService: () -> Unit,
     onNavigateToNotificationSettings: () -> Unit,
     onDeleteAccount: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
+    LaunchedEffect(Unit) {
+        viewModel.fetchMyPageInfo()
+    }
     MyPageContent(
         uiState = uiState,
         onEditProfileClick = onNavigateToEditProfile,
         onSavedFeedsClick = onNavigateToSavedFeeds,
         onNotificationSettingsClick = onNavigateToNotificationSettings,
+        onCustomerServiceClick = onCustomerService,
         onLogoutClick = { viewModel.onLogoutClick() },
         onDismissLogoutDialog = { viewModel.onDismissLogoutDialog() },
         onConfirmLogout = { viewModel.confirmLogout() },
@@ -73,6 +78,7 @@ fun MyPageContent(
     onEditProfileClick: () -> Unit,
     onSavedFeedsClick: () -> Unit,
     onNotificationSettingsClick: () -> Unit,
+    onCustomerServiceClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onDismissLogoutDialog: () -> Unit,
     onConfirmLogout: () -> Unit,
@@ -169,6 +175,7 @@ fun MyPageContent(
                             hasRightIcon = true,
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
+                              onCustomerServiceClick
                                 val intent =
                                     Intent(Intent.ACTION_VIEW, URL_CUSTOMER_SERVICE.toUri())
                                 context.startActivity(intent)
@@ -284,6 +291,7 @@ private fun MyPagePrev() {
             onEditProfileClick = {},
             onSavedFeedsClick = {},
             onNotificationSettingsClick = {},
+            onCustomerServiceClick = {},
             onDismissLogoutDialog = {},
             onConfirmLogout = {},
             onDeleteAccount = {}
