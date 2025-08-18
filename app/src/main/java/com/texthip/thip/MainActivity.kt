@@ -9,15 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.data.manager.TokenManager
-import com.texthip.thip.ui.navigator.navigations.commonNavigation
-import com.texthip.thip.ui.navigator.navigations.feedNavigation
-import com.texthip.thip.ui.navigator.navigations.groupNavigation
-import com.texthip.thip.ui.navigator.navigations.myPageNavigation
-import com.texthip.thip.ui.navigator.navigations.searchNavigation
+import com.texthip.thip.ui.navigator.navigations.authNavigation
 import com.texthip.thip.ui.navigator.routes.CommonRoutes
-import com.texthip.thip.ui.signin.screen.LoginScreen
-import com.texthip.thip.ui.signin.screen.SignupNicknameScreen
-import com.texthip.thip.ui.signin.screen.SplashScreen
 import com.texthip.thip.ui.theme.ThipTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -35,6 +28,7 @@ class MainActivity : ComponentActivity() {
                 RootNavHost()
             }
         }
+//        getKakaoKeyHash(this)
     }
 }
 
@@ -46,30 +40,11 @@ fun RootNavHost() {
         startDestination = CommonRoutes.Splash
     ) {
         // --- 인증 관련 화면들 ---
-        composable<CommonRoutes.Splash> {
-            SplashScreen(navController = navController)
-        }
-        composable<CommonRoutes.Login> {
-            LoginScreen(navController = navController)
-        }
-        composable<CommonRoutes.Signup> {
-            SignupNicknameScreen()
-        }
+        authNavigation(navController)
 
         // --- 메인 관련 화면들 ---
-        feedNavigation(
-            navController = navController,
-            navigateBack = navController::popBackStack
-        )
-        groupNavigation(
-            navController = navController,
-            navigateBack = navController::popBackStack
-        )
-        searchNavigation(navController)
-        myPageNavigation(navController)
-        commonNavigation(
-            navController = navController,
-            navigateBack = navController::popBackStack
-        )
+        composable<CommonRoutes.Main> { // MainScreen으로 가는 경로 추가
+            MainScreen()
+        }
     }
 }

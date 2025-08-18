@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
@@ -31,7 +32,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun SignupGenreScreen(
-    viewModel: SignupViewModel,
+    viewModel: SignupViewModel = hiltViewModel(),
     onSignupSuccess: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -47,13 +48,6 @@ fun SignupGenreScreen(
 
     SignupGenreContent(
         uiState = uiState,
-        /*onCardSelected = { index -> viewModel.selectCard(index) },
-        onNextClick = {
-            // 선택된 아이템이 있을 경우에만 다음 화면으로 이동
-            uiState.roleCards.getOrNull(uiState.selectedIndex)?.let { selectedRoleItem ->
-                onNavigateToNext(selectedRoleItem)
-            }
-        }*/
         onCardSelected = viewModel::selectCard,
         onNextClick = viewModel::signup
     )

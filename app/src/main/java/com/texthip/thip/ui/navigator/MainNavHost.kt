@@ -13,8 +13,14 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 // 메인 네비게이션
 @Composable
 fun MainNavHost(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = MainTabRoutes.Feed) {
-        feedNavigation(navController, navigateBack = navController::popBackStack)
+    NavHost(
+        navController = navController,
+        startDestination = MainTabRoutes.Feed
+    ) {
+        feedNavigation(
+            navController = navController,
+            navigateBack = navController::popBackStack
+        )
         groupNavigation(
             navController = navController,
             navigateBack = navController::popBackStack

@@ -20,10 +20,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.R
-import com.texthip.thip.ui.navigator.routes.CommonRoutes
 import com.texthip.thip.ui.theme.Purple
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -31,18 +28,14 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    navController: NavController,
+    onNavigateToLogin: () -> Unit = {}
 ) {
     LaunchedEffect(key1 = Unit) {
         //3초 delay
         delay(3000L)
 
         // 로그인 화면으로 이동
-        navController.navigate(CommonRoutes.Login) {
-            popUpTo(CommonRoutes.Splash) {
-                inclusive = true
-            }
-        }
+        onNavigateToLogin()
     }
     Column(
         Modifier
@@ -73,6 +66,5 @@ fun SplashScreen(
 @Preview
 @Composable
 private fun SplashScreenPrev() {
-    val navController = rememberNavController()
-    SplashScreen(navController)
+    SplashScreen()
 }

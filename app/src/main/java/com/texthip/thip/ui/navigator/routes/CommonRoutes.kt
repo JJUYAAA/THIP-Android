@@ -15,6 +15,15 @@ sealed class CommonRoutes : Routes() {
 
     @Serializable
     data object Signup : CommonRoutes()
+
+    @Serializable
+    data object Genre : CommonRoutes()
+
+    @Serializable
+    data object SignupFlow : CommonRoutes()
+
+    @Serializable
+    data object Main : CommonRoutes()
     
     @Serializable
     data object RegisterBook : CommonRoutes()
