@@ -274,7 +274,11 @@ class CommentsViewModel @Inject constructor(
 
             val cursorToFetch = if (isRefresh) null else nextCursor
 
-            commentsRepository.getComments(postId = currentPostId, cursor = cursorToFetch)
+            commentsRepository.getComments(
+                postId = currentPostId,
+                postType = currentPostType,
+                cursor = cursorToFetch
+            )
                 .onSuccess { response ->
                     if (response != null) {
                         nextCursor = response.nextCursor
