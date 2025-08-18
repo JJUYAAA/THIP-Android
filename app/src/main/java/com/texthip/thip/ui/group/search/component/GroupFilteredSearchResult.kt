@@ -11,8 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -37,7 +41,10 @@ fun GroupFilteredSearchResult(
     onGenreSelect: (Int) -> Unit,
     resultCount: Int,
     roomList: List<GroupCardItemRoomData>,
-    onRoomClick: (GroupCardItemRoomData) -> Unit = {}
+    onRoomClick: (GroupCardItemRoomData) -> Unit = {},
+    canLoadMore: Boolean = false,
+    isLoadingMore: Boolean = false,
+    onLoadMore: () -> Unit = {}
 ) {
     Column {
         GenreChipRow(
@@ -71,7 +78,23 @@ fun GroupFilteredSearchResult(
                 subText = stringResource(R.string.group_no_search_result2)
             )
         } else {
-            LazyColumn {
+            val listState = rememberLazyListState()
+            
+            // 무한 스크롤 트리거 감지
+            val shouldLoadMore by remember {
+                derivedStateOf {
+                    val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+                    lastVisibleItem != null && lastVisibleItem.index >= roomList.size - 3 && canLoadMore
+                }
+            }
+            
+            LaunchedEffect(shouldLoadMore) {
+                if (shouldLoadMore) {
+                    onLoadMore()
+                }
+            }
+            
+            LazyColumn(state = listState) {
                 itemsIndexed(roomList) { index, room ->
                     CardItemRoomSmall(
                         title = room.title,
@@ -91,6 +114,20 @@ fun GroupFilteredSearchResult(
                                 .height(1.dp)
                                 .background(colors.DarkGrey02)
                         )
+                    }
+                }
+                
+                // 로딩 인디케이터
+                if (isLoadingMore) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = colors.White)
+                        }
                     }
                 }
             }
