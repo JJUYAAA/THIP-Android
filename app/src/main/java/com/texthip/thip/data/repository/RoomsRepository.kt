@@ -7,8 +7,8 @@ import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomJoinRequest
 import com.texthip.thip.data.model.rooms.request.RoomSecretRoomRequest
+import com.texthip.thip.data.model.rooms.request.RoomsCreateDailyGreetingRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
-import com.texthip.thip.data.model.rooms.request.RoomsDailyGreetingRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
@@ -29,23 +29,23 @@ class RoomsRepository @Inject constructor(
     private val genreManager: GenreManager,
     private val userDataManager: UserDataManager
 ) {
-    
+
     /** 장르 목록 조회 */
     fun getGenres(): Result<List<Genre>> = runCatching {
         genreManager.getGenres()
     }
-    
+
     /** 사용자 이름 조회(캐싱 데이터 사용)*/
     fun getUserName(): Result<String> = runCatching {
         userDataManager.getUserName()
     }
-    
+
     /** 내가 참여 중인 모임방 목록 조회 */
     suspend fun getMyJoinedRooms(page: Int): Result<JoinedRoomListResponse?> = runCatching {
         val response = roomsService.getJoinedRooms(page)
             .handleBaseResponse()
             .getOrThrow()
-        
+
         response?.let { joinedRoomsDto ->
             userDataManager.cacheUserName(joinedRoomsDto.nickname)
         }
@@ -56,19 +56,22 @@ class RoomsRepository @Inject constructor(
     suspend fun getRoomSections(genre: Genre? = null): Result<RoomMainList?> = runCatching {
         val selectedGenre = genre ?: genreManager.getDefaultGenre()
         val apiCategory = genreManager.mapGenreToApiCategory(selectedGenre)
-        
+
         roomsService.getRooms(apiCategory)
             .handleBaseResponse()
             .getOrThrow()
     }
 
     /** 타입별 내 모임방 목록 조회 */
-    suspend fun getMyRoomsByType(type: String?, cursor: String? = null): Result<MyRoomListResponse?> = runCatching {
+    suspend fun getMyRoomsByType(
+        type: String?,
+        cursor: String? = null
+    ): Result<MyRoomListResponse?> = runCatching {
         roomsService.getMyRooms(type, cursor)
             .handleBaseResponse()
             .getOrThrow()
     }
-    
+
     /** 모집중인 모임방 상세 정보 조회 */
     suspend fun getRoomRecruiting(roomId: Int): Result<RoomRecruitingResponse?> = runCatching {
         roomsService.getRoomRecruiting(roomId)
@@ -96,7 +99,10 @@ class RoomsRepository @Inject constructor(
     }
 
     /** 비밀번호 입력 */
-    suspend fun postParticipateSecretRoom(roomId: Int, password: String): Result<RoomSecretRoomResponse> = runCatching {
+    suspend fun postParticipateSecretRoom(
+        roomId: Int,
+        password: String
+    ): Result<RoomSecretRoomResponse> = runCatching {
         val request = RoomSecretRoomRequest(password = password)
         val response = roomsService.postParticipateSecretRoom(roomId, request)
             .handleBaseResponse()
@@ -114,7 +120,6 @@ class RoomsRepository @Inject constructor(
             ?: throw NoSuchElementException("모집 마감 응답을 받을 수 없습니다.")
         response
     }
-
 
 
     /** 기록장 API들 */
@@ -248,13 +253,23 @@ class RoomsRepository @Inject constructor(
         ).handleBaseResponse().getOrThrow()
     }
 
+    suspend fun getRoomsDailyGreeting(
+        roomId: Int,
+        cursor: String?
+    ) = runCatching {
+        roomsService.getRoomsDailyGreeting(
+            roomId = roomId,
+            cursor = cursor
+        ).handleBaseResponse().getOrThrow()
+    }
+
     suspend fun postRoomsDailyGreeting(
         roomId: Int,
         content: String
     ) = runCatching {
         roomsService.postRoomsDailyGreeting(
             roomId = roomId,
-            request = RoomsDailyGreetingRequest(
+            request = RoomsCreateDailyGreetingRequest(
                 content = content
             )
         ).handleBaseResponse().getOrThrow()

@@ -61,6 +61,99 @@ class FeedWriteViewModel @Inject constructor(
         }
     }
 
+    fun loadFeedForEdit(feedId: Int) {
+        viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
+
+            feedRepository.getFeedDetail(feedId)
+                .onSuccess { feedDetail ->
+                    if (feedDetail != null) {
+                        // 선택된 카테고리 인덱스 찾기
+                        val categoryIndex = _uiState.value.categories.indexOfFirst { category ->
+                            feedDetail.tagList.any { tag ->
+                                category.tagList.contains(tag)
+                            }
+                        }.let { if (it == -1) 0 else it }
+
+                        val selectedBook = BookData(
+                            title = feedDetail.bookTitle,
+                            imageUrl = feedDetail.bookImageUrl ?: "", // 새로 추가된 필드 사용
+                            author = feedDetail.bookAuthor,
+                            isbn = feedDetail.isbn
+                        )
+
+                        updateState { currentState ->
+                            currentState.copy(
+                                selectedBook = selectedBook,
+                                isBookPreselected = true,
+                                feedContent = feedDetail.contentBody,
+                                isPrivate = !(feedDetail.isPublic ?: true), // 새로 추가된 필드 사용, 기본값은 공개
+                                selectedCategoryIndex = categoryIndex,
+                                selectedTags = feedDetail.tagList,
+                                existingImageUrls = feedDetail.contentUrls, // 기존 이미지 URL 저장
+                                isLoading = false,
+                                isEditMode = true,
+                                editingFeedId = feedId
+                            )
+                        }
+                    } else {
+                        updateState {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = "피드 정보를 불러올 수 없습니다."
+                            )
+                        }
+                    }
+                }
+                .onFailure { exception ->
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = exception.message ?: "네트워크 오류가 발생했습니다."
+                        )
+                    }
+                }
+        }
+    }
+
+    fun setEditData(
+        feedId: Int,
+        isbn: String,
+        bookTitle: String,
+        bookAuthor: String,
+        bookImageUrl: String,
+        contentBody: String,
+        isPublic: Boolean,
+        tagList: List<String>
+    ) {
+        // 선택된 카테고리 인덱스 찾기
+        val categoryIndex = _uiState.value.categories.indexOfFirst { category ->
+            tagList.any { tag ->
+                category.tagList.contains(tag)
+            }
+        }.let { if (it == -1) 0 else it }
+
+        val selectedBook = BookData(
+            title = bookTitle,
+            imageUrl = bookImageUrl,
+            author = bookAuthor,
+            isbn = isbn
+        )
+
+        updateState { currentState ->
+            currentState.copy(
+                selectedBook = selectedBook,
+                isBookPreselected = true,
+                feedContent = contentBody,
+                isPrivate = !isPublic,
+                selectedCategoryIndex = categoryIndex,
+                selectedTags = tagList,
+                isEditMode = true,
+                editingFeedId = feedId
+            )
+        }
+    }
+
     private fun loadFeedWriteInfo() {
         viewModelScope.launch {
             updateState { it.copy(isLoadingCategories = true) }
@@ -197,6 +290,10 @@ class FeedWriteViewModel @Inject constructor(
 
     fun addImages(newImageUris: List<Uri>) {
         val currentState = _uiState.value
+
+        // 수정 모드에서는 새 이미지 추가 불가
+        if (currentState.isEditMode) return
+
         val availableSlots = 3 - currentState.imageUris.size
         val imagesToAdd = newImageUris.take(availableSlots)
 
@@ -210,6 +307,14 @@ class FeedWriteViewModel @Inject constructor(
         if (index in currentImages.indices) {
             currentImages.removeAt(index)
             updateState { it.copy(imageUris = currentImages) }
+        }
+    }
+
+    fun removeExistingImage(index: Int) {
+        val currentExistingImages = _uiState.value.existingImageUrls.toMutableList()
+        if (index in currentExistingImages.indices) {
+            currentExistingImages.removeAt(index)
+            updateState { it.copy(existingImageUrls = currentExistingImages) }
         }
     }
 
@@ -247,6 +352,16 @@ class FeedWriteViewModel @Inject constructor(
         }
     }
 
+    fun createOrUpdateFeed(onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
+        val currentState = _uiState.value
+
+        if (currentState.isEditMode && currentState.editingFeedId != null) {
+            updateFeed(currentState.editingFeedId, onSuccess, onError)
+        } else {
+            createFeed(onSuccess, onError)
+        }
+    }
+
     fun createFeed(onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
         val currentState = _uiState.value
 
@@ -280,6 +395,49 @@ class FeedWriteViewModel @Inject constructor(
                     } else {
                         onError(stringResourceProvider.getString(R.string.error_feed_id_not_returned))
                     }
+                }.onFailure { exception ->
+                    onError(
+                        exception.message
+                            ?: stringResourceProvider.getString(R.string.error_network_error)
+                    )
+                }
+
+            } catch (e: Exception) {
+                onError(
+                    stringResourceProvider.getString(
+                        R.string.error_network_error,
+                        e.message ?: ""
+                    )
+                )
+            } finally {
+                updateState { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    private fun updateFeed(feedId: Int, onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
+        val currentState = _uiState.value
+
+        if (!currentState.isFormValid) {
+            onError(stringResourceProvider.getString(R.string.error_form_validation))
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                updateState { it.copy(isLoading = true, errorMessage = null) }
+
+                val result = feedRepository.updateFeed(
+                    feedId = feedId,
+                    contentBody = currentState.feedContent.trim(),
+                    isPublic = !currentState.isPrivate,
+                    tagList = currentState.selectedTags,
+                    remainImageUrls = currentState.existingImageUrls
+                )
+
+                result.onSuccess { response ->
+                    val updatedFeedId = response?.feedId ?: feedId
+                    onSuccess(updatedFeedId)
                 }.onFailure { exception ->
                     onError(
                         exception.message

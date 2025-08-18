@@ -15,6 +15,7 @@ import com.texthip.thip.ui.feed.screen.FeedOthersScreen
 import com.texthip.thip.ui.feed.viewmodel.FeedWriteViewModel
 import com.texthip.thip.ui.navigator.extensions.navigateToFeedWrite
 import com.texthip.thip.ui.navigator.extensions.navigateToMySubscription
+import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
 import com.texthip.thip.ui.navigator.routes.FeedRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
@@ -24,9 +25,6 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         val resultFeedId = backStackEntry.savedStateHandle.get<Long>("feedId")
 
         FeedScreen(
-            nickname = "ThipUser01",
-            userRole = "문학가",
-            followerProfileImageUrls = emptyList(),
             resultFeedId = resultFeedId,
             onResultConsumed = {
                 backStackEntry.savedStateHandle.remove<Long>("feedId")
@@ -39,6 +37,9 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             },
             onNavigateToFeedComment = { feedId ->
                 navController.navigateToFeedComment(feedId)
+            },
+            onNavigateToBookDetail = { isbn ->
+                navController.navigateToBookDetail(isbn)
             }
         )
     }
@@ -57,11 +58,33 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         val viewModel: FeedWriteViewModel = hiltViewModel()
 
         LaunchedEffect(route) {
-            if (route.isbn != null &&
+            if (
+                route.feedId != null &&
+                route.editContentBody != null &&
+                route.isbn != null &&
+                route.bookTitle != null &&
+                route.bookAuthor != null
+            ) {
+                viewModel.setEditData(
+                    feedId = route.feedId,
+                    isbn = route.isbn,
+                    bookTitle = route.bookTitle,
+                    bookAuthor = route.bookAuthor,
+                    bookImageUrl = route.bookImageUrl ?: "",
+                    contentBody = route.editContentBody,
+                    isPublic = route.editIsPublic ?: true,
+                    tagList = route.editTagList ?: emptyList()
+                )
+            } else if (route.feedId != null) {
+                // 수정 모드: 기존 방식 (API 호출)
+                viewModel.loadFeedForEdit(route.feedId)
+            } else if (route.isbn != null &&
                 route.bookTitle != null &&
                 route.bookAuthor != null &&
                 route.bookImageUrl != null &&
-                route.recordContent != null) {
+                route.recordContent != null
+            ) {
+                // 새 글 작성 모드: 기록장에서 온 데이터 설정
                 viewModel.setPinnedRecord(
                     isbn = route.isbn,
                     bookTitle = route.bookTitle,
@@ -100,6 +123,9 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             feedId = route.feedId,
             onNavigateBack = {
                 navController.popBackStack()
+            },
+            onNavigateToFeedEdit = { feedId ->
+                navController.navigate(FeedRoutes.Write(feedId = feedId))
             }
         )
     }

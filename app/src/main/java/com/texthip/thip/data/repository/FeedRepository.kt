@@ -5,12 +5,14 @@ import android.net.Uri
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.feed.request.CreateFeedRequest
 import com.texthip.thip.data.model.feed.request.FeedLikeRequest
+import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
-import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
-import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedLikeResponse
+import com.texthip.thip.data.model.feed.response.FeedMineInfoResponse
+import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
+import com.texthip.thip.data.model.feed.response.RelatedBooksResponse
 import com.texthip.thip.data.service.FeedService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -145,6 +147,24 @@ class FeedRepository @Inject constructor(
     /** 내 피드 목록 조회 */
     suspend fun getMyFeeds(cursor: String? = null): Result<MyFeedResponse?> = runCatching {
         feedService.getMyFeeds(cursor)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    /** 내 피드 정보 조회 */
+    suspend fun getMyFeedInfo(): Result<FeedMineInfoResponse?> = runCatching {
+        feedService.getMyFeedInfo()
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    /** 특정 책과 관련된 피드 목록 조회 */
+    suspend fun getRelatedBookFeeds(
+        isbn: String,
+        sort: String? = null,
+        cursor: String? = null
+    ): Result<RelatedBooksResponse?> = runCatching {
+        feedService.getRelatedBookFeeds(isbn, sort, cursor)
             .handleBaseResponse()
             .getOrThrow()
     }
