@@ -1,3 +1,4 @@
+/*
 package com.texthip.thip.ui.signin.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -57,3 +58,4 @@ class SignupAliasViewModel @Inject constructor(
     }
 }
 
+*/

@@ -1,3 +1,4 @@
+/*
 package com.texthip.thip.ui.signin.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -78,4 +79,4 @@ class NicknameViewModel @Inject constructor(
     fun onNavigated() {
         _uiState.update { it.copy(navigateToNext = false, errorMessage = null) }
     }
-}
+}*/
