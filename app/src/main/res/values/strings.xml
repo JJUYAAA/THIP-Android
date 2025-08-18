@@ -415,6 +415,10 @@
     <!-- FeedWriteViewModel -->
     <string name="error_feed_id_not_returned">서버 feedId 반환 오류</string>
 
+    <!-- API constants -->
+    <string name="api_sort_like" translatable="false">like</string>
+    <string name="api_sort_latest" translatable="false">latest</string>
+    
     <!-- GenreManager API constants -->
     <string name="api_genre_science_it" translatable="false">과학/IT</string>
 
