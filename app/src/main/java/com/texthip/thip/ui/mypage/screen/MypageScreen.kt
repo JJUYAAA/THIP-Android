@@ -43,6 +43,7 @@ fun MyPageScreen(
     viewModel: MyPageViewModel = hiltViewModel(),
     onNavigateToEditProfile: () -> Unit,
     onNavigateToSavedFeeds: () -> Unit,
+    onCustomerService: () -> Unit,
     onNavigateToNotificationSettings: () -> Unit,
     onDeleteAccount: () -> Unit
 ) {
@@ -55,6 +56,7 @@ fun MyPageScreen(
         onEditProfileClick = onNavigateToEditProfile,
         onSavedFeedsClick = onNavigateToSavedFeeds,
         onNotificationSettingsClick = onNavigateToNotificationSettings,
+        onCustomerServiceClick = onCustomerService,
         onLogoutClick = { viewModel.onLogoutClick() },
         onDismissLogoutDialog = { viewModel.onDismissLogoutDialog() },
         onConfirmLogout = { viewModel.confirmLogout() },
@@ -67,6 +69,7 @@ fun MyPageContent(
     onEditProfileClick: () -> Unit,
     onSavedFeedsClick: () -> Unit,
     onNotificationSettingsClick: () -> Unit,
+    onCustomerServiceClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onDismissLogoutDialog: () -> Unit,
     onConfirmLogout: () -> Unit,
@@ -160,7 +163,7 @@ fun MyPageContent(
                             backgroundColor = colors.DarkGrey02,
                             hasRightIcon = true,
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = {}
+                            onClick = onCustomerServiceClick
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         MenuItemButton(
@@ -249,6 +252,7 @@ private fun MyPagePrev() {
             onEditProfileClick = {},
             onSavedFeedsClick = {},
             onNotificationSettingsClick = {},
+            onCustomerServiceClick = {},
             onDismissLogoutDialog = {},
             onConfirmLogout = {},
             onDeleteAccount = {}

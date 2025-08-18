@@ -9,4 +9,5 @@ sealed class MyPageRoutes : Routes() {
     @Serializable data object Reaction : MyPageRoutes()
     @Serializable data object NotificationEdit : MyPageRoutes()
     @Serializable data object LeaveThip : MyPageRoutes()
+    @Serializable data object CustomerService : MyPageRoutes()
 }

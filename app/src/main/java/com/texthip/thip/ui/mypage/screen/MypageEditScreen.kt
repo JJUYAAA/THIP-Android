@@ -116,7 +116,7 @@ fun EditProfileContent(
                     value = uiState.nickname,
                     onValueChange = onNicknameChange,
                     //hint = stringResource(R.string.nickname_condition),
-                    hint = uiState.nickname,
+                    hint = uiState.initialNickname.takeIf { it.isNotBlank() } ?: stringResource(R.string.nickname_condition),
                     showWarning = uiState.nicknameWarningMessageResId != null,
                     showIcon = false,
                     showLimit = true,

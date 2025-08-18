@@ -45,6 +45,7 @@ import com.texthip.thip.ui.theme.White
 
 @Composable
 fun SavedScreen(
+    onNavigateBack: () -> Unit,
     feedViewModel: SavedFeedViewModel = viewModel(),
     bookViewModel: SavedBookViewModel = viewModel()
 
@@ -61,7 +62,7 @@ fun SavedScreen(
     ) {
         DefaultTopAppBar(
             title = stringResource(R.string.saved),
-            onLeftClick = {},
+            onLeftClick = onNavigateBack,
         )
         Column(
             modifier = Modifier
@@ -124,6 +125,7 @@ fun SavedScreen(
 @Composable
 private fun SavedScreenPrev() {
     SavedScreen(
+        onNavigateBack = {},
         feedViewModel = SavedFeedViewModel(),
         bookViewModel = SavedBookViewModel()
     )
@@ -135,6 +137,7 @@ private fun SavedScreenPrev() {
 private fun SavedScreenWithoutFeedPrev() {
     ThipTheme {
         SavedScreen(
+            onNavigateBack = {},
             feedViewModel = EmptySavedFeedViewModel(),
             bookViewModel = EmptySavedBookViewModel()
         )
