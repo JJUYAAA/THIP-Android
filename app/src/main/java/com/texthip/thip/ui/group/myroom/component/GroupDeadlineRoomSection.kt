@@ -27,15 +27,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.data.manager.Genre
+import com.texthip.thip.data.model.rooms.response.RoomMainList
+import com.texthip.thip.data.model.rooms.response.RoomMainResponse
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.cards.CardItemRoom
-import com.texthip.thip.data.model.rooms.response.RoomMainList
-import com.texthip.thip.data.manager.Genre
-import com.texthip.thip.data.model.rooms.response.RoomMainResponse
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.utils.rooms.DateUtils
 import com.texthip.thip.utils.rooms.toDisplayStrings
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -68,11 +67,17 @@ fun GroupRoomDeadlineSection(
 
             // Genre enum을 현지화된 문자열로 변환
             val genreStrings = Genre.entries.toDisplayStrings()
-            
+
             // 마감 임박 방 목록과 인기 방 목록을 섹션으로 구성
             val roomSections = listOf(
-                Pair(stringResource(R.string.room_section_deadline), roomMainList?.deadlineRoomList ?: emptyList()),
-                Pair(stringResource(R.string.room_section_popular), roomMainList?.popularRoomList ?: emptyList())
+                Pair(
+                    stringResource(R.string.room_section_deadline),
+                    roomMainList?.deadlineRoomList ?: emptyList()
+                ),
+                Pair(
+                    stringResource(R.string.room_section_popular),
+                    roomMainList?.popularRoomList ?: emptyList()
+                )
             )
 
             val effectivePagerState = rememberPagerState(
@@ -188,20 +193,19 @@ fun GroupRoomDeadlineSection(
                                     ) {
                                         rooms.forEach { room ->
                                             // RoomMainResponse를 CardItemRoom에 맞게 변환
-                                            val daysLeft = DateUtils.extractDaysFromDeadline(room.deadlineDate)
                                             CardItemRoom(
                                                 title = room.roomName,
                                                 participants = room.memberCount,
                                                 maxParticipants = room.recruitCount,
                                                 isRecruiting = true, // RoomMainResponse에는 모집중인 방만 있음
-                                                endDate = daysLeft,
+                                                endDate = room.deadlineDate,
                                                 imageUrl = room.bookImageUrl,
                                                 onClick = { onRoomClick(room) },
                                                 hasBorder = true,
                                             )
                                         }
                                     }
-                                    
+
                                     if (rooms.size < 4) {
                                         Spacer(
                                             modifier = Modifier

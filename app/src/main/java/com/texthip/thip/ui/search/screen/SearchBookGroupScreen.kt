@@ -39,7 +39,6 @@ import com.texthip.thip.ui.search.viewmodel.SearchBookGroupViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.utils.rooms.DateUtils
 
 
 @Composable
@@ -57,14 +56,12 @@ fun SearchBookGroupScreen(
     }
 
     val recruitingList = uiState.recruitingRooms.map { item ->
-        val daysLeft = DateUtils.extractDaysFromDeadline(item.deadlineEndDate)
-
         GroupCardItemRoomData(
             id = item.roomId,
             title = item.roomName,
             participants = item.memberCount,
             maxParticipants = item.recruitCount,
-            endDate = daysLeft,
+            endDate = item.deadlineEndDate,
             imageUrl = item.bookImageUrl,
             isRecruiting = true
         )
@@ -119,6 +116,7 @@ private fun SearchBookGroupScreenContent(
                 )
             }
         }
+
         error != null -> {
             Box(
                 modifier = modifier.fillMaxSize(),
@@ -131,6 +129,7 @@ private fun SearchBookGroupScreenContent(
                 )
             }
         }
+
         else -> {
             Box(
                 modifier = modifier.fillMaxSize()
@@ -195,21 +194,22 @@ private fun SearchBookGroupScreenContent(
                             }
                         } else {
                             val listState = rememberLazyListState()
-                            
+
                             // 무한 스크롤 로직
                             LaunchedEffect(listState, canLoadMore, isLoadingMore) {
                                 snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
                                     .collect { lastVisibleIndex ->
-                                        if (lastVisibleIndex != null && 
+                                        if (lastVisibleIndex != null &&
                                             recruitingList.isNotEmpty() &&
                                             !isLoadingMore &&
-                                            lastVisibleIndex >= recruitingList.size - 3 && 
-                                            canLoadMore) {
+                                            lastVisibleIndex >= recruitingList.size - 3 &&
+                                            canLoadMore
+                                        ) {
                                             onLoadMore()
                                         }
                                     }
                             }
-                            
+
                             LazyColumn(
                                 state = listState,
                                 verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -227,7 +227,7 @@ private fun SearchBookGroupScreenContent(
                                         onClick = { onCardClick(item.id) }
                                     )
                                 }
-                                
+
                                 // 로딩 인디케이터
                                 if (isLoadingMore) {
                                     item {
@@ -257,7 +257,7 @@ private fun SearchBookGroupScreenContent(
                         .fillMaxWidth()
                         .height(50.dp),
                     shape = RoundedCornerShape(0.dp),
-                    onClick = { 
+                    onClick = {
                         onCreateRoomClick(isbn, bookTitle, bookImageUrl, bookAuthor)
                     }
                 ) {
@@ -280,7 +280,7 @@ private val mockRecruitingList = listOf(
         participants = 8,
         maxParticipants = 12,
         isRecruiting = true,
-        endDate = 3,
+        endDate = "3",
         imageUrl = "https://example.com/demian.jpg",
         isSecret = false
     ),
@@ -290,7 +290,7 @@ private val mockRecruitingList = listOf(
         participants = 15,
         maxParticipants = 20,
         isRecruiting = true,
-        endDate = 7,
+        endDate = "7",
         imageUrl = "https://example.com/demian.jpg",
         isSecret = true
     ),
@@ -300,7 +300,7 @@ private val mockRecruitingList = listOf(
         participants = 5,
         maxParticipants = 10,
         isRecruiting = true,
-        endDate = 1,
+        endDate = "1",
         imageUrl = "https://example.com/demian.jpg",
         isSecret = false
     )

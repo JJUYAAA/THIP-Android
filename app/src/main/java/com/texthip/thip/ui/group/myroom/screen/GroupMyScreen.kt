@@ -47,7 +47,7 @@ fun GroupMyScreen(
     viewModel: GroupMyViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    
+
     GroupMyContent(
         uiState = uiState,
         onCardClick = onCardClick,
@@ -69,7 +69,7 @@ fun GroupMyContent(
     onChangeRoomType: (RoomType) -> Unit = {}
 ) {
     val listState = rememberLazyListState()
-    
+
     // 무한 스크롤 로직
     val shouldLoadMore by remember(uiState.canLoadMore, uiState.isLoadingMore) {
         derivedStateOf {
@@ -78,13 +78,13 @@ fun GroupMyContent(
             uiState.canLoadMore && !uiState.isLoadingMore && totalItems > 0 && lastVisibleIndex >= totalItems - 3
         }
     }
-    
+
     LaunchedEffect(shouldLoadMore) {
         if (shouldLoadMore) {
             onLoadMore()
         }
     }
-    
+
     // Filter 상태를 
     val selectedStates = remember(uiState.currentRoomType) {
         when (uiState.currentRoomType) {
@@ -102,7 +102,7 @@ fun GroupMyContent(
             title = stringResource(R.string.my_group_room),
             onLeftClick = onNavigateBack,
         )
-        
+
         PullToRefreshBox(
             isRefreshing = uiState.isLoading,
             onRefresh = onRefresh,
@@ -138,6 +138,7 @@ fun GroupMyContent(
                                     RoomType.RECRUITING
                                 }
                             }
+
                             else -> RoomType.PLAYING_AND_RECRUITING
                         }
                         onChangeRoomType(newRoomType)
@@ -159,7 +160,7 @@ fun GroupMyContent(
                                 participants = room.memberCount,
                                 maxParticipants = room.recruitCount,
                                 isRecruiting = RoomUtils.isRecruitingByType(room.type),
-                                endDate = RoomUtils.getEndDateInDays(room.endDate),
+                                endDate = room.endDate,
                                 imageUrl = room.bookImageUrl,
                                 onClick = { onCardClick(room) }
                             )
