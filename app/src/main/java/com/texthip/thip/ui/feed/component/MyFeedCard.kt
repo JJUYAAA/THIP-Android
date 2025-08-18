@@ -31,7 +31,8 @@ fun MyFeedCard(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
     onLikeClick: () -> Unit = {},
-    onContentClick: () -> Unit = {}
+    onContentClick: () -> Unit = {},
+    onBookClick: () -> Unit = {}
 ) {
     val hasImages = feedItem.imageUrls.isNotEmpty()
     val maxLines = if (hasImages) 3 else 8
@@ -44,7 +45,7 @@ fun MyFeedCard(
         ActionBookButton(
             bookTitle = feedItem.bookTitle,
             bookAuthor = feedItem.authName,
-            onClick = {}
+            onClick = onBookClick
         )
 
         Column(

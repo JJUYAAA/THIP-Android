@@ -4,9 +4,12 @@ import android.content.Context
 import android.net.Uri
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.feed.request.CreateFeedRequest
+import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
+import com.texthip.thip.data.model.feed.response.FeedMineInfoResponse
+import com.texthip.thip.data.model.feed.response.RelatedBooksResponse
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
 import com.texthip.thip.data.service.FeedService
@@ -147,9 +150,47 @@ class FeedRepository @Inject constructor(
             .getOrThrow()
     }
 
+    /** 내 피드 정보 조회 */
+    suspend fun getMyFeedInfo(): Result<FeedMineInfoResponse?> = runCatching {
+        feedService.getMyFeedInfo()
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    /** 특정 책과 관련된 피드 목록 조회 */
+    suspend fun getRelatedBookFeeds(
+        isbn: String,
+        sort: String? = null,
+        cursor: String? = null
+    ): Result<RelatedBooksResponse?> = runCatching {
+        feedService.getRelatedBookFeeds(isbn, sort, cursor)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
     /** 피드 상세 조회 */
     suspend fun getFeedDetail(feedId: Int): Result<FeedDetailResponse?> = runCatching {
         feedService.getFeedDetail(feedId)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    /** 피드 수정 */
+    suspend fun updateFeed(
+        feedId: Int,
+        contentBody: String? = null,
+        isPublic: Boolean? = null,
+        tagList: List<String>? = null,
+        remainImageUrls: List<String>? = null
+    ): Result<CreateFeedResponse?> = runCatching {
+        val request = UpdateFeedRequest(
+            contentBody = contentBody,
+            isPublic = isPublic,
+            tagList = tagList,
+            remainImageUrls = remainImageUrls
+        )
+
+        feedService.updateFeed(feedId, request)
             .handleBaseResponse()
             .getOrThrow()
     }

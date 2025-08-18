@@ -70,8 +70,8 @@ fun FeedWriteScreen(
     FeedWriteContent(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
-        onCreateFeed = { 
-            viewModel.createFeed(
+        onCreateFeed = {
+            viewModel.createOrUpdateFeed(
                 onSuccess = { feedId ->
                     onFeedCreated(feedId)
                 },
@@ -84,6 +84,7 @@ fun FeedWriteScreen(
         onUpdateFeedContent = viewModel::updateFeedContent,
         onAddImages = viewModel::addImages,
         onRemoveImage = viewModel::removeImage,
+        onRemoveExistingImage = viewModel::removeExistingImage,
         onTogglePrivate = viewModel::togglePrivate,
         onSelectCategory = viewModel::selectCategory,
         onToggleTag = viewModel::toggleTag,
@@ -104,6 +105,7 @@ fun FeedWriteContent(
     onUpdateFeedContent: (String) -> Unit = {},
     onAddImages: (List<Uri>) -> Unit = {},
     onRemoveImage: (Int) -> Unit = {},
+    onRemoveExistingImage: (Int) -> Unit = {},
     onTogglePrivate: (Boolean) -> Unit = {},
     onSelectCategory: (Int) -> Unit = {},
     onToggleTag: (String) -> Unit = {},
@@ -128,8 +130,13 @@ fun FeedWriteContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             InputTopAppBar(
-                title = stringResource(R.string.new_feed),
-                rightButtonName = stringResource(R.string.registration),
+                title = stringResource(
+                    if (uiState.isEditMode) R.string.edit_feed_title
+                    else R.string.new_feed
+                ),
+                rightButtonName = stringResource(
+                    R.string.registration
+                ),
                 isRightButtonEnabled = uiState.isFormValid && !uiState.isLoading,
                 onLeftClick = onNavigateBack,
                 onRightClick = onCreateFeed
@@ -178,12 +185,15 @@ fun FeedWriteContent(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    // 이미지 추가 버튼 (수정 모드에서는 비활성화)
                     item {
                         Box(
                             modifier = Modifier
                                 .size(80.dp)
                                 .background(color = colors.DarkGrey02)
-                                .border(width = 1.dp, color = if (!uiState.canAddMoreImages) colors.DarkGrey else colors.Grey02,
+                                .border(
+                                    width = 1.dp,
+                                    color = if (!uiState.canAddMoreImages) colors.DarkGrey else colors.Grey02,
                                 )
                                 .let {
                                     if (uiState.canAddMoreImages) it.clickable {
@@ -200,6 +210,30 @@ fun FeedWriteContent(
                             )
                         }
                     }
+                    // 기존 이미지들 (수정 모드에서만 표시)
+                    items(uiState.existingImageUrls.size) { index ->
+                        Box(modifier = Modifier.size(80.dp)) {
+                            AsyncImage(
+                                model = uiState.existingImageUrls[index],
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                            IconButton(
+                                onClick = { onRemoveExistingImage(index) },
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .size(24.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_x),
+                                    contentDescription = null,
+                                    tint = colors.White
+                                )
+                            }
+                        }
+                    }
+                    // 새로 추가한 이미지들
                     items(uiState.imageUris.size) { index ->
                         Box(modifier = Modifier.size(80.dp)) {
                             AsyncImage(
@@ -224,11 +258,17 @@ fun FeedWriteContent(
                     }
                 }
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
-                        text = stringResource(id = R.string.photo_count, uiState.imageUris.size, 3),
+                        text = stringResource(
+                            id = R.string.photo_count,
+                            uiState.currentImageCount,
+                            3
+                        ),
                         style = typography.info_r400_s12,
                         color = colors.NeonGreen,
                     )
@@ -284,7 +324,11 @@ fun FeedWriteContent(
                     ) {
                         Text(
                             modifier = Modifier.padding(top = 12.dp),
-                            text = stringResource(id = R.string.tag_count, uiState.selectedTags.size, 5),
+                            text = stringResource(
+                                id = R.string.tag_count,
+                                uiState.selectedTags.size,
+                                5
+                            ),
                             style = typography.info_r400_s12,
                             color = colors.NeonGreen
                         )
