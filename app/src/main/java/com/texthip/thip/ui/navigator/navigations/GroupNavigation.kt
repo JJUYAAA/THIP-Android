@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -59,17 +58,17 @@ fun NavGraphBuilder.groupNavigation(
     // 메인 Group 화면
     composable<MainTabRoutes.Group> { backStackEntry ->
         val groupViewModel: GroupViewModel = hiltViewModel()
-        
+
         // 네비게이션 파라미터로 전달된 토스트 메시지가 있는지 확인
         LaunchedEffect(backStackEntry) {
             val toastMessage = backStackEntry.savedStateHandle.get<String>("toast_message")
-            
+
             toastMessage?.let { message ->
                 backStackEntry.savedStateHandle.remove<String>("toast_message")
                 groupViewModel.showToastMessage(message)
             }
         }
-        
+
         GroupScreen(
             viewModel = groupViewModel,
             onNavigateToMakeRoom = {
@@ -95,7 +94,7 @@ fun NavGraphBuilder.groupNavigation(
             }
         )
     }
-    
+
     // Group MakeRoom 화면
     composable<GroupRoutes.MakeRoom> {
         val viewModel: GroupMakeRoomViewModel = hiltViewModel()
@@ -111,12 +110,12 @@ fun NavGraphBuilder.groupNavigation(
             }
         )
     }
-    
+
     // Group MakeRoom 화면 (책 정보 미리 선택됨)
     composable<GroupRoutes.MakeRoomWithBook> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.MakeRoomWithBook>()
         val viewModel: GroupMakeRoomViewModel = hiltViewModel()
-        
+
         // 책 정보를 ViewModel에 미리 설정
         LaunchedEffect(route) {
             viewModel.setPreselectedBook(
@@ -126,7 +125,7 @@ fun NavGraphBuilder.groupNavigation(
                 author = route.author
             )
         }
-        
+
         GroupMakeRoomScreen(
             viewModel = viewModel,
             onNavigateBack = {
@@ -140,7 +139,7 @@ fun NavGraphBuilder.groupNavigation(
             }
         )
     }
-    
+
     // Group Done 화면
     composable<GroupRoutes.Done> {
         GroupDoneScreen(
@@ -149,11 +148,11 @@ fun NavGraphBuilder.groupNavigation(
             }
         )
     }
-    
+
     // Group My 화면
     composable<GroupRoutes.My> {
         val groupMyViewModel: GroupMyViewModel = hiltViewModel()
-        
+
         GroupMyScreen(
             viewModel = groupMyViewModel,
             onCardClick = { room ->
@@ -169,12 +168,12 @@ fun NavGraphBuilder.groupNavigation(
             }
         )
     }
-    
+
     // Group Search 화면
     composable<GroupRoutes.Search> {
         val groupViewModel: GroupViewModel = hiltViewModel()
         val uiState by groupViewModel.uiState.collectAsState()
-        
+
         GroupSearchScreen(
             roomList = emptyList(),   //TODO: RoomMainResponse -> GroupCardItemRoomData 변환 필요
             onNavigateBack = {
@@ -191,7 +190,7 @@ fun NavGraphBuilder.groupNavigation(
             }
         )
     }
-    
+
     // Group Recruit 화면
     composable<GroupRoutes.Recruit> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Recruit>()
@@ -241,12 +240,12 @@ fun NavGraphBuilder.groupNavigation(
             }
         )
     }
-    
+
     // Group Room Unlock 화면 (비밀번호 입력)
     composable<GroupRoutes.RoomUnlock> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.RoomUnlock>()
         val roomId = route.roomId
-        
+
         GroupRoomUnlockScreen(
             roomId = roomId,
             onBackClick = {
@@ -261,7 +260,7 @@ fun NavGraphBuilder.groupNavigation(
             }
         )
     }
-    
+
     // Group Room 화면
     composable<GroupRoutes.Room> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Room>()
@@ -319,7 +318,6 @@ fun NavGraphBuilder.groupNavigation(
         val result = backStackEntry.savedStateHandle.get<Int>("selected_tab_index")
 
         val viewModel: GroupNoteViewModel = hiltViewModel(backStackEntry)
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         GroupNoteScreen(
             roomId = roomId,
@@ -338,7 +336,6 @@ fun NavGraphBuilder.groupNavigation(
                     isOverviewPossible = isOverviewPossible
                 )
             },
-            // [수정] '투표 생성' 클릭 시 페이지 정보와 함께 내비게이션
             onCreateVoteClick = { recentPage, totalPage, isOverviewPossible ->
                 navController.navigateToGroupVoteCreate(
                     roomId = roomId,
@@ -356,11 +353,14 @@ fun NavGraphBuilder.groupNavigation(
                     recordContent = recordContent
                 )
             },
+            onNavigateToUserProfile = { userId ->
+                navController.navigateToUserProfile(userId)
+            },
             viewModel = viewModel
         )
     }
 
-     // Group Note Create 화면
+    // Group Note Create 화면
     composable<GroupRoutes.NoteCreate> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.NoteCreate>()
         val roomId = route.roomId

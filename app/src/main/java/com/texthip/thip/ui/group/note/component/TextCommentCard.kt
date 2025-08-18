@@ -26,7 +26,8 @@ fun TextCommentCard(
     onLikeClick: (postId: Int, postType: String) -> Unit = { _, _ -> },
     onCommentClick: () -> Unit = {},
     onLongPress: () -> Unit = {},
-    onPinClick: () -> Unit = {}
+    onPinClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val isLocked = data.isLocked
     val isWriter = data.isWriter
@@ -55,7 +56,8 @@ fun TextCommentCard(
             bottomText = pageText,
             bottomTextColor = colors.Purple,
             showSubscriberInfo = false,
-            hoursAgo = data.postDate
+            hoursAgo = data.postDate,
+            onClick = onProfileClick
         )
 
         Text(

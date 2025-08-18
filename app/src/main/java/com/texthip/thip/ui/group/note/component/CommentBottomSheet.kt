@@ -45,7 +45,8 @@ fun CommentBottomSheet(
     uiState: CommentsUiState,
     onEvent: (CommentsEvent) -> Unit,
     onDismiss: () -> Unit,
-    onSendReply: (text: String, parentCommentId: Int?, replyToNickname: String?) -> Unit
+    onSendReply: (text: String, parentCommentId: Int?, replyToNickname: String?) -> Unit,
+    onProfileClick: (userId: Long) -> Unit = {}
 ) {
     var inputText by remember { mutableStateOf("") }
     var replyingToCommentId by remember { mutableStateOf<Int?>(null) }
@@ -109,7 +110,8 @@ fun CommentBottomSheet(
                                 onCommentLongPress = { comment ->
                                     selectedCommentForMenu = comment
                                 },
-                                onReplyLongPress = { reply -> selectedReplyForMenu = reply }
+                                onReplyLongPress = { reply -> selectedReplyForMenu = reply },
+                                onProfileClick = onProfileClick
                             )
                         }
                     }
@@ -197,7 +199,8 @@ private fun CommentLazyList(
     onReplyClick: (commentId: Int, nickname: String?) -> Unit,
     onEvent: (CommentsEvent) -> Unit,
     onCommentLongPress: (CommentList) -> Unit,
-    onReplyLongPress: (ReplyList) -> Unit
+    onReplyLongPress: (ReplyList) -> Unit,
+    onProfileClick: (userId: Long) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -234,7 +237,8 @@ private fun CommentLazyList(
                 onReplyClick = onReplyClick,
                 onEvent = onEvent,
                 onCommentLongPress = onCommentLongPress,
-                onReplyLongPress = onReplyLongPress
+                onReplyLongPress = onReplyLongPress,
+                onProfileClick = onProfileClick
             )
         }
 

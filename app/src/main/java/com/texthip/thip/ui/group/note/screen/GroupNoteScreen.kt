@@ -79,6 +79,7 @@ fun GroupNoteScreen(
     onCreateNoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
     onCreateVoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
     onNavigateToFeedWrite: (pinInfo: RoomsRecordsPinResponse, recordContent: String) -> Unit,
+    onNavigateToUserProfile: (userId: Long) -> Unit = {},
     resultTabIndex: Int? = null,
     onResultConsumed: () -> Unit = {},
     initialPage: Int? = null,
@@ -153,6 +154,7 @@ fun GroupNoteScreen(
                 onCreateVoteClick(s.recentBookPage, s.totalBookPage, s.isOverviewPossible)
             }
         },
+        onNavigateToUserProfile = onNavigateToUserProfile,
         showProgressBar = showProgressBar,
         progress = progress.value
     )
@@ -165,6 +167,7 @@ fun GroupNoteContent(
     onBackClick: () -> Unit,
     onCreateNoteClick: () -> Unit,
     onCreateVoteClick: () -> Unit,
+    onNavigateToUserProfile: (userId: Long) -> Unit,
     showProgressBar: Boolean,
     progress: Float
 ) {
@@ -390,7 +393,8 @@ fun GroupNoteContent(
                                     },
                                     onLikeClick = { postId, postType ->
                                         onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
-                                    }
+                                    },
+                                    onProfileClick = { onNavigateToUserProfile(post.userId) }
                                 )
 
                                 "VOTE" -> VoteCommentCard(
@@ -406,7 +410,8 @@ fun GroupNoteContent(
                                     },
                                     onLikeClick = { postId, postType ->
                                         onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
-                                    }
+                                    },
+                                    onProfileClick = { onNavigateToUserProfile(post.userId) }
                                 )
                             }
                         }
@@ -514,7 +519,8 @@ fun GroupNoteContent(
                         )
                     )
                 }
-            }
+            },
+            onProfileClick = onNavigateToUserProfile
         )
     }
 
@@ -644,7 +650,8 @@ private fun GroupNoteScreenPreview() {
             onCreateNoteClick = {},
             onCreateVoteClick = {},
             showProgressBar = true,
-            progress = 0.5f
+            progress = 0.5f,
+            onNavigateToUserProfile = {}
         )
     }
 }
