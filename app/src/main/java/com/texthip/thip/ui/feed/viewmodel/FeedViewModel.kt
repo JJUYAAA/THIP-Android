@@ -269,7 +269,7 @@ class FeedViewModel @Inject constructor(
             updateState { it.copy(isLoading = true) }
             userRepository.getMyFollowingsRecentFeeds()
                 .onSuccess { data ->
-                    val writers = data?.recentWriters ?: emptyList()
+                    val writers = data?.myFollowingUsers ?: emptyList()
                     updateState {
                         it.copy(
                             isLoading = false,
@@ -278,11 +278,11 @@ class FeedViewModel @Inject constructor(
                     }
                 }
                 .onFailure { exception ->
-                    updateState { 
+                    updateState {
                         it.copy(
                             isLoading = false,
                             error = exception.message
-                        ) 
+                        )
                     }
                 }
         }
@@ -297,8 +297,8 @@ class FeedViewModel @Inject constructor(
                     }
                 }
                 .onFailure { exception ->
-                    updateState { 
-                        it.copy(error = exception.message) 
+                    updateState {
+                        it.copy(error = exception.message)
                     }
                 }
         }
