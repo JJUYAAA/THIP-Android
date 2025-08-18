@@ -56,6 +56,11 @@ fun NavHostController.navigateToGroupRecruit(roomId: Int) {
     navigate(GroupRoutes.Recruit(roomId))
 }
 
+// 비밀번호 입력 화면으로 이동
+fun NavHostController.navigateToGroupRoomUnlock(roomId: Int) {
+    navigate(GroupRoutes.RoomUnlock(roomId))
+}
+
 // 추천 모임방으로 이동 (현재 화면을 대체)
 fun NavHostController.navigateToRecommendedGroupRecruit(roomId: Int) {
     navigate(GroupRoutes.Recruit(roomId)) {
@@ -73,6 +78,11 @@ fun NavHostController.navigateToGroupRoom(roomId: Int) {
 // 독서메이트 화면으로 이동
 fun NavHostController.navigateToGroupRoomMates(roomId: Int) {
     navigate(GroupRoutes.RoomMates(roomId))
+}
+
+// 오늘의 한마디 회면으로 이동
+fun NavHostController.navigateToGroupRoomChat(roomId: Int) {
+    navigate(GroupRoutes.RoomChat(roomId))
 }
 
 // 기록장 화면으로 이동

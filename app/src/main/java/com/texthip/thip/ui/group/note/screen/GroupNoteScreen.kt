@@ -44,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
 import com.texthip.thip.data.model.rooms.response.PostList
+import com.texthip.thip.data.model.rooms.response.RoomsRecordsPinResponse
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.buttons.ExpandableFloatingButton
 import com.texthip.thip.ui.common.buttons.FabMenuItem
@@ -56,8 +57,10 @@ import com.texthip.thip.ui.group.note.component.CommentBottomSheet
 import com.texthip.thip.ui.group.note.component.FilterHeaderSection
 import com.texthip.thip.ui.group.note.component.TextCommentCard
 import com.texthip.thip.ui.group.note.component.VoteCommentCard
-import com.texthip.thip.ui.group.note.mock.mockComment
+import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
+import com.texthip.thip.ui.group.note.viewmodel.CommentsViewModel
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteEvent
+import com.texthip.thip.ui.group.note.viewmodel.GroupNoteSideEffect
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteUiState
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteViewModel
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
@@ -75,6 +78,7 @@ fun GroupNoteScreen(
     onBackClick: () -> Unit = {},
     onCreateNoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
     onCreateVoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
+    onNavigateToFeedWrite: (pinInfo: RoomsRecordsPinResponse, recordContent: String) -> Unit,
     resultTabIndex: Int? = null,
     onResultConsumed: () -> Unit = {},
     initialPage: Int? = null,
@@ -125,6 +129,16 @@ fun GroupNoteScreen(
         }
     }
 
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is GroupNoteSideEffect.NavigateToFeedWrite -> {
+                    onNavigateToFeedWrite(effect.pinInfo, effect.recordContent)
+                }
+            }
+        }
+    }
+
     GroupNoteContent(
         uiState = uiState,
         onEvent = viewModel::onEvent,
@@ -159,7 +173,14 @@ fun GroupNoteContent(
     var selectedPostForMenu by remember { mutableStateOf<PostList?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var isPinDialogVisible by remember { mutableStateOf(false) }
+    var postToPin by remember { mutableStateOf<PostList?>(null) }
     var showToast by remember { mutableStateOf(false) }
+    val isOverlayVisible =
+        isCommentBottomSheetVisible || selectedPostForMenu != null || isPinDialogVisible || showDeleteDialog
+    var postToDelete by remember { mutableStateOf<PostList?>(null) }
+
+    val commentsViewModel: CommentsViewModel = hiltViewModel()
+    val commentsUiState by commentsViewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(showToast) {
         if (showToast) {
@@ -169,7 +190,6 @@ fun GroupNoteContent(
     }
 
     val tabs = listOf(stringResource(R.string.group_record), stringResource(R.string.my_record))
-    val sortOptions = remember { SortType.entries.map { it.displayNameRes } }
     val sortDisplayStrings = remember { SortType.entries.map { it.displayNameRes } }
         .map { stringResource(it) }
 
@@ -194,7 +214,7 @@ fun GroupNoteContent(
     }
 
     Box(
-        if (isCommentBottomSheetVisible || selectedPostForMenu != null || isPinDialogVisible) {
+        if (isOverlayVisible) {
             Modifier
                 .fillMaxSize()
                 .blur(5.dp)
@@ -359,9 +379,15 @@ fun GroupNoteContent(
                                 "RECORD" -> TextCommentCard(
                                     data = post,
                                     modifier = itemModifier,
-                                    onCommentClick = { isCommentBottomSheetVisible = true },
+                                    onCommentClick = {
+                                        selectedPostForComment = post
+                                        isCommentBottomSheetVisible = true
+                                    },
                                     onLongPress = { selectedPostForMenu = post },
-                                    onPinClick = { isPinDialogVisible = true },
+                                    onPinClick = {
+                                        postToPin = post
+                                        isPinDialogVisible = true
+                                    },
                                     onLikeClick = { postId, postType ->
                                         onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
                                     }
@@ -370,9 +396,11 @@ fun GroupNoteContent(
                                 "VOTE" -> VoteCommentCard(
                                     data = post,
                                     modifier = itemModifier,
-                                    onCommentClick = { isCommentBottomSheetVisible = true },
+                                    onCommentClick = {
+                                        selectedPostForComment = post
+                                        isCommentBottomSheetVisible = true
+                                    },
                                     onLongPress = { selectedPostForMenu = post },
-                                    onPinClick = { isPinDialogVisible = true },
                                     onVote = { postId, voteItemId, type ->
                                         onEvent(GroupNoteEvent.OnVote(postId, voteItemId, type))
                                     },
@@ -460,32 +488,46 @@ fun GroupNoteContent(
     }
 
     if (isCommentBottomSheetVisible && selectedPostForComment != null) {
+        LaunchedEffect(selectedPostForComment?.postId) {
+            selectedPostForComment?.let { post ->
+                commentsViewModel.initialize(
+                    postId = post.postId.toLong(),
+                    postType = post.postType
+                )
+            }
+        }
+
         CommentBottomSheet(
-            commentResponse = listOf(mockComment, mockComment, mockComment),
-//            commentResponse = emptyList(),
+            uiState = commentsUiState,
+            onEvent = commentsViewModel::onEvent,
             onDismiss = {
                 isCommentBottomSheetVisible = false
-//                selectedNoteRecord = null
-//                selectedNoteVote = null
                 selectedPostForComment = null
+                onEvent(GroupNoteEvent.RefreshPosts)
             },
-            onSendReply = { replyText, commentId, replyTo ->
-                // 댓글 전송 로직 구현
+            onSendReply = { text, parentId, _ ->
+                if (text.isNotBlank()) {
+                    commentsViewModel.onEvent(
+                        CommentsEvent.CreateComment(
+                            content = text,
+                            parentId = parentId
+                        )
+                    )
+                }
             }
         )
     }
 
     if (selectedPostForMenu != null) {
-        val isWriter = selectedPostForMenu!!.isWriter
-
-        val menuItems = if (isWriter) {
+        val post = selectedPostForMenu!!
+        val menuItems = if (post.isWriter) {
             listOf(
                 MenuBottomSheetItem(
                     text = stringResource(R.string.delete),
                     color = colors.Red,
                     onClick = {
-                        onEvent(GroupNoteEvent.OnDeleteRecord(selectedPostForMenu!!.postId))
-                        showDeleteDialog = false
+                        postToDelete = post // 삭제할 포스트 정보를 기억
+                        showDeleteDialog = true
                         selectedPostForMenu = null
                     }
                 )
@@ -505,10 +547,32 @@ fun GroupNoteContent(
 
         MenuBottomSheet(
             items = menuItems,
-            onDismiss = {
-                selectedPostForMenu = null
-            }
+            onDismiss = { selectedPostForMenu = null }
         )
+    }
+
+    if (showDeleteDialog) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            DialogPopup(
+                title = stringResource(R.string.delete_post_title),
+                description = stringResource(R.string.delete_post_content),
+                onConfirm = {
+                    postToDelete?.let {
+                        onEvent(GroupNoteEvent.OnDeleteRecord(it.postId, it.postType))
+                    }
+                    showDeleteDialog = false
+                    postToDelete = null
+                },
+                onCancel = {
+                    showDeleteDialog = false
+                    postToDelete = null
+                }
+            )
+        }
     }
 
     if (isPinDialogVisible) {
@@ -521,11 +585,20 @@ fun GroupNoteContent(
                 title = stringResource(R.string.pin_modal_title),
                 description = stringResource(R.string.pin_modal_content),
                 onConfirm = {
-                    // 핀하기 로직
+                    postToPin?.let { post ->
+                        onEvent(
+                            GroupNoteEvent.OnPinRecord(
+                                recordId = post.postId,
+                                content = post.content
+                            )
+                        )
+                    }
                     isPinDialogVisible = false
+                    postToPin = null
                 },
                 onCancel = {
                     isPinDialogVisible = false
+                    postToPin = null
                 }
             )
         }
@@ -553,7 +626,8 @@ private fun GroupNoteScreenPreview() {
                         likeCount = 10,
                         commentCount = 2,
                         isLocked = false,
-                        isWriter = true
+                        isWriter = true,
+                        isOverview = false
                     )
                 ),
                 selectedTabIndex = 0,

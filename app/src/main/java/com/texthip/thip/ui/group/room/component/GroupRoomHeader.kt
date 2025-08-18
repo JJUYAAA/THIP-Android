@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.utils.type.GenreColor
+import com.texthip.thip.utils.color.hexToColor
 
 @Composable
 fun GroupRoomHeader(
@@ -37,12 +37,9 @@ fun GroupRoomHeader(
     progressEndDate: String,
     memberCount: Int,
     category: String,
-    color: String = "RED", // TODO: 서버에서 색상 추가해주면 수정,
+    categoryColor: String = "#A0F8E8",
     onNavigateToMates: () -> Unit = { }
 ) {
-    val categoryColorEnum = GenreColor.fromString(color)
-    val categoryColor = categoryColorEnum.colorProvider()
-
     Column(
         modifier = Modifier.padding(horizontal = 20.dp)
     ) {
@@ -176,7 +173,7 @@ fun GroupRoomHeader(
                 Text(
                     text = category,
                     style = typography.info_m500_s12,
-                    color = categoryColor
+                    color = hexToColor(categoryColor)
                 )
             }
         }

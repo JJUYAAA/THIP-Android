@@ -63,6 +63,7 @@ fun CustomBottomSheet(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(color = colors.Black30)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }

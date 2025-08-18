@@ -1,4 +1,4 @@
-package com.texthip.thip.data.model.group.response
+package com.texthip.thip.data.model.rooms.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,6 +15,7 @@ data class RoomRecruitingResponse(
     @SerialName("progressEndDate") val progressEndDate: String,
     @SerialName("recruitEndDate") val recruitEndDate: String,
     @SerialName("category") val category: String,
+    @SerialName("categoryColor") val categoryColor: String,
     @SerialName("roomDescription") val roomDescription: String,
     @SerialName("memberCount") val memberCount: Int,
     @SerialName("recruitCount") val recruitCount: Int,

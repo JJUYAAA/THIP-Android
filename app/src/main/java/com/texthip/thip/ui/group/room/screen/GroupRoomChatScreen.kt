@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.group.room.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,9 +19,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.cards.CardCommentGroup
@@ -29,17 +33,56 @@ import com.texthip.thip.ui.common.view.CountingBar
 import com.texthip.thip.ui.group.room.mock.GroupRoomChatData
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.group.room.mock.mockMessages
+import com.texthip.thip.ui.group.room.viewmodel.GroupRoomChatEvent
+import com.texthip.thip.ui.group.room.viewmodel.GroupRoomChatViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.rooms.advancedImePadding
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun GroupRoomChatScreen() {
-//    val mockMessages = emptyList<GroupRoomChatData>()
+fun GroupRoomChatScreen(
+    onBackClick: () -> Unit,
+    viewModel: GroupRoomChatViewModel = hiltViewModel()
+) {
+    var inputText by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    // val uiState by viewModel.uiState.collectAsState()
+    val chatMessages = emptyList<Any>()
 
-    var input by remember { mutableStateOf("") }
-    var replyTo by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(key1 = Unit) {
+        viewModel.eventFlow.collectLatest { event ->
+            when(event) {
+                is GroupRoomChatEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+                is GroupRoomChatEvent.SubmissionSuccess -> {
+                }
+            }
+        }
+    }
 
+    GroupRoomChatContent(
+        chatMessages = chatMessages,
+        inputText = inputText,
+        onInputTextChanged = { newText -> inputText = newText },
+        onSendClick = {
+            viewModel.postDailyGreeting(inputText)
+            inputText = ""
+        },
+        onNavigateBack = onBackClick
+    )
+}
+
+@Composable
+fun GroupRoomChatContent(
+    chatMessages: List<Any>,
+    inputText: String,
+    onInputTextChanged: (String) -> Unit,
+    onSendClick: () -> Unit,
+    onNavigateBack: () -> Unit
+) {
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedMessage by remember { mutableStateOf<GroupRoomChatData?>(null) }
 
@@ -55,10 +98,11 @@ fun GroupRoomChatScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .advancedImePadding()
         ) {
             DefaultTopAppBar(
                 title = stringResource(R.string.group_room_chat),
-                onLeftClick = {},
+                onLeftClick = onNavigateBack,
             )
 
             if (mockMessages.isEmpty()) {
@@ -104,7 +148,7 @@ fun GroupRoomChatScreen() {
                         ) {
                             if (isNewDate) {
                                 HorizontalDivider(
-                                    color = colors.DarkGrey02,
+                                    color = colors.DarkGrey03,
                                     thickness = 10.dp
                                 )
                                 CountingBar(
@@ -126,15 +170,10 @@ fun GroupRoomChatScreen() {
             }
 
             CommentTextField(
-                input = input,
+                input = inputText,
                 hint = stringResource(R.string.group_room_chat_hint),
-                onInputChange = { input = it },
-                onSendClick = {
-                    input = ""
-                    replyTo = null
-                },
-                replyTo = replyTo,
-                onCancelReply = { replyTo = null }
+                onInputChange = onInputTextChanged,
+                onSendClick = onSendClick
             )
         }
     }
@@ -186,6 +225,13 @@ fun GroupRoomChatScreen() {
 @Composable
 private fun GroupRoomChatScreenPreview() {
     ThipTheme {
-        GroupRoomChatScreen()
+        var inputText by remember { mutableStateOf("") }
+        GroupRoomChatContent(
+            chatMessages = emptyList(),
+            inputText = inputText,
+            onInputTextChanged = { newText -> inputText = newText },
+            onSendClick = {},
+            onNavigateBack = {}
+        )
     }
 }

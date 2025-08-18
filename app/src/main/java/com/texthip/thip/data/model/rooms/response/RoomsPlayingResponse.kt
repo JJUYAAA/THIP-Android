@@ -12,6 +12,7 @@ data class RoomsPlayingResponse(
     val progressStartDate: String,
     val progressEndDate: String,
     val category: String,
+    val categoryColor: String,
     val roomDescription: String,
     val memberCount: Int,
     val recruitCount: Int,

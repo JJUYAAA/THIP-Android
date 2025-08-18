@@ -51,7 +51,9 @@ fun GroupRoomScreen(
     roomId: Int,
     onBackClick: () -> Unit = {},
     onNavigateToMates: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
     onNavigateToNote: (page: Int?, isOverview: Boolean?) -> Unit = { _, _ -> },
+    onNavigateToBookDetail: (isbn: String) -> Unit = {},
     viewModel: GroupRoomViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -75,7 +77,9 @@ fun GroupRoomScreen(
                 roomDetails = state.roomsPlaying,
                 onBackClick = onBackClick,
                 onNavigateToMates = onNavigateToMates,
-                onNavigateToNote = onNavigateToNote
+                onNavigateToChat = onNavigateToChat,
+                onNavigateToNote = onNavigateToNote,
+                onNavigateToBookDetail = onNavigateToBookDetail
             )
         }
 
@@ -93,7 +97,9 @@ fun GroupRoomContent(
     roomDetails: RoomsPlayingResponse,
     onBackClick: () -> Unit = {},
     onNavigateToMates: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
     onNavigateToNote: (page: Int?, isOverview: Boolean?) -> Unit = { _, _ -> },
+    onNavigateToBookDetail: (isbn: String) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
 
@@ -162,7 +168,8 @@ fun GroupRoomContent(
                     progressStartDate = roomDetails.progressStartDate,
                     progressEndDate = roomDetails.progressEndDate,
                     memberCount = roomDetails.memberCount,
-                    category = roomDetails.category
+                    category = roomDetails.category,
+                    categoryColor = roomDetails.categoryColor,
                 ) {
                     onNavigateToMates()
                 }
@@ -172,11 +179,14 @@ fun GroupRoomContent(
                 GroupRoomBody(
                     bookTitle = roomDetails.bookTitle,
                     authorName = roomDetails.authorName,
+                    isbn = roomDetails.isbn,
                     currentPage = roomDetails.currentPage,
                     userPercentage = roomDetails.userPercentage,
                     currentVotes = roomDetails.currentVotes,
+                    onNavigateToBookDetail = onNavigateToBookDetail,
                     // 일반 노트 카드 클릭 시 필터 없이 이동
                     onNavigateToNote = { onNavigateToNote(null, null) },
+                    onNavigateToChat = onNavigateToChat,
                     // 투표 카드 클릭 시 필터 값과 함께 이동
                     onVoteClick = { vote: CurrentVote ->
                         if (vote.isOverview) {
@@ -282,6 +292,7 @@ private fun GroupRoomScreenPreview() {
                 progressStartDate = "2023.10.01",
                 progressEndDate = "2023.10.31",
                 category = "문학",
+                categoryColor = "#A0F8E8",
                 roomDescription = "‘시집만 읽는 사람들’ 3월 모임입니다.",
                 memberCount = 22,
                 recruitCount = 30,

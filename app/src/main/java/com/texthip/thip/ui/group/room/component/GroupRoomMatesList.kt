@@ -13,6 +13,7 @@ import com.texthip.thip.data.model.rooms.response.RoomsUsersResponse
 import com.texthip.thip.data.model.rooms.response.UserList
 import com.texthip.thip.ui.common.header.ProfileBar
 import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.utils.color.hexToColor
 
 @Composable
 fun GroupRoomMatesList(
@@ -31,8 +32,7 @@ fun GroupRoomMatesList(
                 profileImage = member.imageUrl,
                 topText = member.nickname,
                 bottomText = member.aliasName,
-//                bottomTextColor = member.aliasColor,
-                bottomTextColor = colors.ScienceIt, // TODO: 서버에서 보내주는 색상으로 수정
+                bottomTextColor = hexToColor(member.aliasColor),
                 showSubscriberInfo = true,
                 subscriberCount = member.followerCount
             ) { onUserClick(member.userId) }
@@ -58,6 +58,7 @@ private fun GroupRoomMatesListPreview() {
                         userId = 1,
                         nickname = "김희용",
                         aliasName = "문학가",
+                        aliasColor= "#A0F8E8",
                         imageUrl = "https://example.com/image1.jpg",
                         followerCount = 100
                     ),
@@ -65,6 +66,7 @@ private fun GroupRoomMatesListPreview() {
                         userId = 2,
                         nickname = "노성준",
                         aliasName = "문학가",
+                        aliasColor= "#A0F8E8",
                         imageUrl = "https://example.com/image1.jpg",
                         followerCount = 100
                     ),

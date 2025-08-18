@@ -1,15 +1,19 @@
 package com.texthip.thip.ui.group.note.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.rooms.request.RoomsPostsRequestParams
 import com.texthip.thip.data.model.rooms.response.PostList
+import com.texthip.thip.data.model.rooms.response.RoomsRecordsPinResponse
 import com.texthip.thip.data.repository.RoomsRepository
 import com.texthip.thip.utils.type.SortType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -38,6 +42,13 @@ data class GroupNoteUiState(
     val totalEnabled: Boolean = false
 )
 
+sealed interface GroupNoteSideEffect {
+    data class NavigateToFeedWrite(
+        val pinInfo: RoomsRecordsPinResponse,
+        val recordContent: String
+    ) : GroupNoteSideEffect
+}
+
 sealed interface GroupNoteEvent {
     data class OnTabSelected(val index: Int) : GroupNoteEvent
     data class OnSortSelected(val sortType: SortType) : GroupNoteEvent
@@ -47,8 +58,10 @@ sealed interface GroupNoteEvent {
     data object ApplyPageFilter : GroupNoteEvent
     data object LoadMorePosts : GroupNoteEvent
     data class OnVote(val postId: Int, val voteItemId: Int, val type: Boolean) : GroupNoteEvent
-    data class OnDeleteRecord(val postId: Int) : GroupNoteEvent
+    data class OnDeleteRecord(val postId: Int, val postType: String) : GroupNoteEvent
     data class OnLikeRecord(val postId: Int, val postType: String) : GroupNoteEvent
+    data class OnPinRecord(val recordId: Int, val content: String) : GroupNoteEvent
+    data object RefreshPosts : GroupNoteEvent
 }
 
 
@@ -59,6 +72,9 @@ class GroupNoteViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(GroupNoteUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<GroupNoteSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
 
     private var nextCursor: String? = null
     private var roomId: Int = -1
@@ -144,8 +160,31 @@ class GroupNoteViewModel @Inject constructor(
                 type = event.type
             )
 
-            is GroupNoteEvent.OnDeleteRecord -> deleteRecord(event.postId)
+            is GroupNoteEvent.OnDeleteRecord -> deletePost(event.postId, event.postType)
             is GroupNoteEvent.OnLikeRecord -> likeRecord(event.postId, event.postType)
+            is GroupNoteEvent.RefreshPosts -> loadPosts(isRefresh = true)
+            is GroupNoteEvent.OnPinRecord -> pinRecord(event.recordId, event.content)
+            else -> {
+                Log.w("GroupNoteViewModel", "Unhandled event received: $event")
+            }
+        }
+    }
+
+    private fun pinRecord(recordId: Int, content: String) {
+        viewModelScope.launch {
+            roomsRepository.getRoomsRecordsPin(roomId = roomId, recordId = recordId)
+                .onSuccess { pinInfo ->
+                    if (pinInfo != null) {
+                        _sideEffect.emit(
+                            GroupNoteSideEffect.NavigateToFeedWrite(
+                                pinInfo = pinInfo,
+                                recordContent = content
+                            )
+                        )
+                    }
+                }
+                .onFailure {
+                }
         }
     }
 
@@ -180,30 +219,72 @@ class GroupNoteViewModel @Inject constructor(
         }
     }
 
-    private fun deleteRecord(postId: Int) {
+    private fun deletePost(postId: Int, postType: String) {
         viewModelScope.launch {
-            roomsRepository.deleteRoomsRecord(roomId = roomId, recordId = postId)
-                .onSuccess {
-                    val updatedPosts = _uiState.value.posts.filter { it.postId != postId }
-                    _uiState.update { it.copy(posts = updatedPosts) }
-                }
-                .onFailure { throwable ->
-                    _uiState.update { it.copy(error = throwable.message) }
-                }
+            val result = when (postType) {
+                "RECORD" -> roomsRepository.deleteRoomsRecord(roomId = roomId, recordId = postId)
+                "VOTE" -> roomsRepository.deleteRoomsVote(roomId = roomId, voteId = postId)
+                else -> Result.failure(IllegalArgumentException("Unknown post type for deletion: $postType"))
+            }
+
+            result.onSuccess {
+                val updatedPosts = _uiState.value.posts.filter { it.postId != postId }
+                _uiState.update { it.copy(posts = updatedPosts) }
+            }.onFailure { throwable ->
+                _uiState.update { it.copy(error = throwable.message) }
+            }
         }
     }
 
     private fun vote(postId: Int, voteItemId: Int, type: Boolean) {
+        val originalPosts = _uiState.value.posts
+        val postIndex = originalPosts.indexOfFirst { it.postId == postId }
+        if (postIndex == -1) return
+        val postToUpdate = originalPosts[postIndex]
+
+        val optimisticVoteItems = postToUpdate.voteItems.map { voteItem ->
+            voteItem.copy(isVoted = if (voteItem.voteItemId == voteItemId) type else false)
+        }
+
+        val optimisticPosts = originalPosts.toMutableList().apply {
+            this[postIndex] = postToUpdate.copy(voteItems = optimisticVoteItems)
+        }
+
+        _uiState.update { it.copy(posts = optimisticPosts) }
+
         viewModelScope.launch {
             roomsRepository.postRoomsVote(
                 roomId = roomId,
                 voteId = postId,
                 voteItemId = voteItemId,
                 type = type
-            ).onSuccess {
-                loadPosts(isRefresh = true)
-            }.onFailure { throwable ->
-                _uiState.update { it.copy(error = throwable.message) }
+            ).onSuccess { voteResponse ->
+                if (voteResponse != null) {
+                    val serverVoteItems = voteResponse.voteItems
+
+                    // 현재 UI가 가지고 있는 포스트 목록을 가져오기
+                    val currentPosts = _uiState.value.posts
+                    val postIndex = currentPosts.indexOfFirst { it.postId == postId }
+                    if (postIndex == -1) return@onSuccess
+
+                    val postToUpdate = currentPosts[postIndex]
+
+                    // 기존 순서는 유지하고 내용만 업데이트
+                    val updatedVoteItems = postToUpdate.voteItems.map { originalItem ->
+                        val newItem = serverVoteItems.find { it.voteItemId == originalItem.voteItemId }
+                        newItem ?: originalItem
+                    }
+
+                    // 순서가 유지된 목록으로 최종 업데이트
+                    val finalPosts = currentPosts.toMutableList().apply {
+                        this[postIndex] = postToUpdate.copy(voteItems = updatedVoteItems)
+                    }
+                    _uiState.update { it.copy(posts = finalPosts) }
+                } else {
+                    loadPosts(isRefresh = true)
+                }
+            }.onFailure {
+                _uiState.update { it.copy(posts = originalPosts) }
             }
         }
     }

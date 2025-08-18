@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.feed.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.texthip.thip.R
 import com.texthip.thip.data.model.users.response.FollowingList
 import com.texthip.thip.ui.common.header.AuthorHeader
@@ -48,7 +48,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MySubscriptionScreen(
-    navController: NavController?= null,
+    onNavigateBack: () -> Unit,
+    onNavigateToUserProfile: (Long) -> Unit,
     viewModel: MySubscriptionViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -73,11 +74,14 @@ fun MySubscriptionScreen(
     MySubscriptionContent(
         uiState = uiState,
         lazyListState = lazyListState,
-        onNavigateBack = { navController?.popBackStack() },
+        onNavigateBack = onNavigateBack,
         onToggleFollow = { userId, nickname ->
             val followedMessage = context.getString(R.string.toast_thip, nickname)
             val unfollowedMessage = context.getString(R.string.toast_thip_cancel, nickname)
             viewModel.toggleFollow(userId, followedMessage, unfollowedMessage)
+        },
+        onUserClick = { userId ->
+            onNavigateToUserProfile(userId)
         },
         onHideToast = { viewModel.hideToast() }
     )
@@ -88,6 +92,7 @@ fun MySubscriptionContent(
     lazyListState: LazyListState,
     onNavigateBack: () -> Unit,
     onToggleFollow: (userId: Long, nickname: String) -> Unit,
+    onUserClick: (userId: Long) -> Unit,
     onHideToast: () -> Unit
 ) {
     LaunchedEffect(uiState.showToast) {
@@ -147,7 +152,7 @@ fun MySubscriptionContent(
                         items = uiState.followings,
                         key = { _, user -> user.userId }
                     ) { index, user ->
-                        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                        Column(modifier = Modifier.padding(horizontal = 20.dp).clickable { onUserClick(user.userId) }) {
                             AuthorHeader(
                                 profileImage = user.profileImageUrl,
                                 nickname = user.nickname,
@@ -156,7 +161,7 @@ fun MySubscriptionContent(
                                 buttonText = stringResource(if (user.isFollowing) R.string.thip_cancel else R.string.thip),
                                 buttonWidth = 64.dp,
                                 profileImageSize = 36.dp,
-                                onButtonClick = { onToggleFollow(user.userId, user.nickname) }
+                                onButtonClick = { onToggleFollow(user.userId, user.nickname) },
                             )
 
                             if (index < uiState.followings.lastIndex) {
@@ -215,6 +220,7 @@ private fun MySubscriptionListScreenPrev() {
             lazyListState = rememberLazyListState(),
             onNavigateBack = {},
             onToggleFollow = { _, _ -> },
+            onUserClick = {},
             onHideToast = {}
         )
     }

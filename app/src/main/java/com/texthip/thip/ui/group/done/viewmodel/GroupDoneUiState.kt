@@ -1,6 +1,6 @@
 package com.texthip.thip.ui.group.done.viewmodel
 
-import com.texthip.thip.data.model.group.response.MyRoomResponse
+import com.texthip.thip.data.model.rooms.response.MyRoomResponse
 
 data class GroupDoneUiState(
     val expiredRooms: List<MyRoomResponse> = emptyList(),

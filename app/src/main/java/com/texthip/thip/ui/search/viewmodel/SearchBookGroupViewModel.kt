@@ -2,8 +2,10 @@ package com.texthip.thip.ui.search.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.texthip.thip.R
 import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.data.model.book.response.RecruitingRoomItem
+import com.texthip.thip.data.provider.StringResourceProvider
 import com.texthip.thip.data.repository.BookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchBookGroupViewModel @Inject constructor(
-    private val bookRepository: BookRepository
+    private val bookRepository: BookRepository,
+    private val stringResourceProvider: StringResourceProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchBookGroupUiState())
@@ -82,7 +85,7 @@ class SearchBookGroupViewModel @Inject constructor(
                         isLoading = false,
                         isLoadingMore = false,
                         hasMore = false, // null 응답 시 더 이상 로드할 수 없음을 명시
-                        error = if (cursor == null) "모집중인 방 정보를 찾을 수 없습니다." else null
+                        error = if (cursor == null) stringResourceProvider.getString(R.string.error_recruiting_rooms_not_found) else null
                     )
                 }
             }
@@ -90,7 +93,7 @@ class SearchBookGroupViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isLoadingMore = false,
-                    error = exception.message ?: "모집중인 방을 불러오는데 실패했습니다."
+                    error = exception.message ?: stringResourceProvider.getString(R.string.error_recruiting_rooms_load_failed)
                 )
             }
     }
