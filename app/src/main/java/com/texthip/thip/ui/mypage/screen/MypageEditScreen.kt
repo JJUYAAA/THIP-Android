@@ -32,8 +32,6 @@ import com.texthip.thip.ui.mypage.component.RoleCard
 import com.texthip.thip.ui.mypage.mock.RoleItem
 import com.texthip.thip.ui.mypage.viewmodel.EditProfileUiState
 import com.texthip.thip.ui.mypage.viewmodel.EditProfileViewModel
-import com.texthip.thip.ui.signin.viewmodel.SignupAliasUiState
-import com.texthip.thip.ui.signin.viewmodel.SignupAliasViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography

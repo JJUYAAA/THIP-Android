@@ -89,6 +89,9 @@ class UserRepository @Inject constructor(
         val tempToken = tokenManager.getTempToken()
             ?: return Result.failure(Exception("임시 토큰이 없습니다."))
 
+        if (tempToken.isNullOrBlank()) {
+            return Result.failure(Exception("임시 토큰이 없습니다. 로그인을 다시 시도해주세요."))
+        }
         return runCatching {
             userService.signup("Bearer $tempToken", request)
                 .handleBaseResponse()

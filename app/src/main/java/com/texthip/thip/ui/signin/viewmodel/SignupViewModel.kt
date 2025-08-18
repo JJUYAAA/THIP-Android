@@ -3,7 +3,6 @@ package com.texthip.thip.ui.signin.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
-import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.data.model.base.ThipApiFailureException
 import com.texthip.thip.data.model.users.request.SignupRequest
 import com.texthip.thip.data.repository.UserRepository
@@ -30,7 +29,6 @@ data class SignupUiState(
 @HiltViewModel
 class SignupViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignupUiState())
@@ -95,7 +93,7 @@ class SignupViewModel @Inject constructor(
             }
 
             val request = SignupRequest(
-                nickName = currentState.nickname,
+                nickname = currentState.nickname,
                 aliasName = selectedRole.genre
             )
 
@@ -109,6 +107,15 @@ class SignupViewModel @Inject constructor(
                     val errorMsg = if (exception is ThipApiFailureException) exception.message else "회원가입에 실패했습니다."
                     _uiState.update { it.copy(isLoading = false, errorMessage = errorMsg) }
                 }
+        }
+    }
+    // 소셜로그인과 연동 후 삭제 예정
+    fun setInitialDataForTest(nickname: String) {
+        _uiState.update {
+            it.copy(
+                nickname = nickname,
+                isNicknameVerified = true // 닉네임이 검증되었다고 가정
+            )
         }
     }
 }
