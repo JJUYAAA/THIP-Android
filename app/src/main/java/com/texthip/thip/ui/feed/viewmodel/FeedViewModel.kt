@@ -48,24 +48,24 @@ class FeedViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
+
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun fetchRecentWriters() {
     private var allFeedsNextCursor: String? = null
     private var myFeedsNextCursor: String? = null
     private var isLoadingAllFeeds = false
     private var isLoadingMyFeeds = false
 
-    private fun updateState(update: (FeedUiState) -> FeedUiState) {
-        _uiState.value = update(_uiState.value)
-    }
-
     init {
         loadAllFeeds()
         fetchRecentWriters()
     }
-    
+
+    private fun updateState(update: (FeedUiState) -> FeedUiState) {
+        _uiState.value = update(_uiState.value)
+    }
+
     fun onTabSelected(index: Int) {
         updateState { it.copy(selectedTabIndex = index) }
 
@@ -183,6 +183,7 @@ class FeedViewModel @Inject constructor(
                 0 -> refreshAllFeeds()
                 1 -> refreshMyFeeds()
             }
+            updateState { it.copy(isRefreshing = false) }
         }
     }
 

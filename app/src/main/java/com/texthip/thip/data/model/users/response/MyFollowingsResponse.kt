@@ -20,15 +20,3 @@ data class FollowingList(
     @SerializedName("aliasColor") val aliasColor: String,
     @SerializedName("isFollowing") val isFollowing: Boolean
 )
-
-@Serializable
-data class MyRecentFollowingsResponse(
-    @SerializedName("myFollowingUsers") val myFollowingUsers: List<RecentWriterList>
-)
-
-@Serializable
-data class RecentWriterList(
-    @SerializedName("userId") val userId: Long,
-    @SerializedName("nickname") val nickname: String,
-    @SerializedName("profileImageUrl") val profileImageUrl: String?
-)
