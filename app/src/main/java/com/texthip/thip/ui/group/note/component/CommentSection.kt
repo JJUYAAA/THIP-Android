@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.data.model.comments.response.CommentList
 import com.texthip.thip.data.model.comments.response.ReplyList
+import com.texthip.thip.ui.common.CommentActionMode
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
 import com.texthip.thip.ui.theme.ThipTheme
 
@@ -22,6 +23,9 @@ fun CommentSection(
     onEvent: (CommentsEvent) -> Unit = { _ -> },
     onCommentLongPress: (CommentList) -> Unit = { _ -> },
     onReplyLongPress: (ReplyList) -> Unit = { _ -> },
+    actionMode: CommentActionMode,
+    selectedCommentId: Int? = null,
+    onDismissPopup: () -> Unit = {}
 ) {
     Box {
         Column(
@@ -47,7 +51,11 @@ fun CommentSection(
                         onEvent(CommentsEvent.LikeComment(id))
                     }
                 },
-                onLongPress = { onCommentLongPress(commentItem) }
+                onLongPress = { onCommentLongPress(commentItem) },
+                actionMode = actionMode,
+                isSelected = selectedCommentId != null && commentItem.commentId == selectedCommentId,
+                onDismissPopup = onDismissPopup,
+                onEvent = onEvent
             )
 
             commentItem.replyList.forEach { reply ->
@@ -61,7 +69,11 @@ fun CommentSection(
                     onLikeClick = {
                         onEvent(CommentsEvent.LikeReply(reply.commentId))
                     },
-                    onLongPress = { onReplyLongPress(reply) }
+                    onLongPress = { onReplyLongPress(reply) },
+                    actionMode = actionMode,
+                    isSelected = selectedCommentId != null && reply.commentId == selectedCommentId,
+                    onDismissPopup = onDismissPopup,
+                    onEvent = onEvent
                 )
             }
         }
@@ -92,7 +104,8 @@ fun CommentSectionPreview() {
                     ),
                 onReplyClick = { commentId, nickname ->
                     // Handle reply click
-                }
+                },
+                actionMode = CommentActionMode.POPUP,
             )
         }
     }

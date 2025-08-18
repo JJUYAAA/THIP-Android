@@ -39,8 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.texthip.thip.R
-import com.texthip.thip.data.model.comments.response.CommentList
-import com.texthip.thip.data.model.comments.response.ReplyList
+import com.texthip.thip.ui.common.CommentActionMode
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.buttons.OptionChipButton
@@ -114,7 +113,7 @@ fun FeedCommentScreen(
     // 피드 데이터가 없으면 리턴
     val feedDetail = feedDetailUiState.feedDetail ?: return
     var isBottomSheetVisible by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) } // 피드 삭제
 
     val images = feedDetail.contentUrls
     var showImageViewer by remember { mutableStateOf(false) }
@@ -124,12 +123,7 @@ fun FeedCommentScreen(
     var replyingToCommentId by remember { mutableStateOf<Int?>(null) }
     var replyingToNickname by remember { mutableStateOf<String?>(null) }
 
-    var selectedCommentForMenu by remember { mutableStateOf<CommentList?>(null) }
-    var selectedReplyForMenu by remember { mutableStateOf<ReplyList?>(null) }
-    val isMenuSheetVisible = selectedCommentForMenu != null || selectedReplyForMenu != null
-
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var isFeedMenuSheetVisible by remember { mutableStateOf(false) }
+    var selectedCommentId by remember { mutableStateOf<Int?>(null) }
 
     val focusManager = LocalFocusManager.current
 
@@ -145,6 +139,7 @@ fun FeedCommentScreen(
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     focusManager.clearFocus()
+                    selectedCommentId = null
                 })
             }
     ) {
@@ -270,6 +265,7 @@ fun FeedCommentScreen(
                         }
                     }
                 }
+
                 else -> {
                     items(
                         items = commentsUiState.comments,
@@ -277,13 +273,23 @@ fun FeedCommentScreen(
                     ) { commentItem ->
                         CommentSection(
                             commentItem = commentItem,
+                            actionMode = CommentActionMode.POPUP,
+                            selectedCommentId = selectedCommentId,
                             onEvent = commentsViewModel::onEvent,
                             onReplyClick = { commentId, nickname ->
                                 replyingToCommentId = commentId
                                 replyingToNickname = nickname
+                                selectedCommentId = null
                             },
-                            onCommentLongPress = { selectedCommentForMenu = it },
-                            onReplyLongPress = { selectedReplyForMenu = it }
+                            onCommentLongPress = { comment ->
+                                selectedCommentId = comment.commentId
+                            },
+                            onReplyLongPress = { reply ->
+                                selectedCommentId = reply.commentId
+                            },
+                            onDismissPopup = {
+                                selectedCommentId = null
+                            }
                         )
                     }
                 }
