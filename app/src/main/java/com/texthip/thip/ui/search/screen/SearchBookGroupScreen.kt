@@ -34,12 +34,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardItemRoom
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
+import com.texthip.thip.data.model.book.response.RecruitingRoomItem
 import com.texthip.thip.ui.search.viewmodel.SearchBookGroupViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import com.texthip.thip.utils.rooms.DateUtils
 
 
 @Composable
@@ -56,24 +55,11 @@ fun SearchBookGroupScreen(
         viewModel.loadRecruitingRooms(isbn)
     }
 
-    val recruitingList = uiState.recruitingRooms.map { item ->
-        val daysLeft = DateUtils.extractDaysFromDeadline(item.deadlineEndDate)
-
-        GroupCardItemRoomData(
-            id = item.roomId,
-            title = item.roomName,
-            participants = item.memberCount,
-            maxParticipants = item.recruitCount,
-            endDate = daysLeft,
-            imageUrl = item.bookImageUrl,
-            isRecruiting = true
-        )
-    }
 
     SearchBookGroupScreenContent(
         isLoading = uiState.isLoading,
         error = uiState.error,
-        recruitingList = recruitingList,
+        recruitingList = uiState.recruitingRooms,
         totalCount = uiState.totalCount,
         isLoadingMore = uiState.isLoadingMore,
         canLoadMore = uiState.canLoadMore,
@@ -95,7 +81,7 @@ private fun SearchBookGroupScreenContent(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     error: String? = null,
-    recruitingList: List<GroupCardItemRoomData> = emptyList(),
+    recruitingList: List<RecruitingRoomItem> = emptyList(),
     totalCount: Int = 0,
     isLoadingMore: Boolean = false,
     canLoadMore: Boolean = true,
@@ -119,6 +105,7 @@ private fun SearchBookGroupScreenContent(
                 )
             }
         }
+
         error != null -> {
             Box(
                 modifier = modifier.fillMaxSize(),
@@ -131,6 +118,7 @@ private fun SearchBookGroupScreenContent(
                 )
             }
         }
+
         else -> {
             Box(
                 modifier = modifier.fillMaxSize()
@@ -195,21 +183,22 @@ private fun SearchBookGroupScreenContent(
                             }
                         } else {
                             val listState = rememberLazyListState()
-                            
+
                             // 무한 스크롤 로직
                             LaunchedEffect(listState, canLoadMore, isLoadingMore) {
                                 snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
                                     .collect { lastVisibleIndex ->
-                                        if (lastVisibleIndex != null && 
+                                        if (lastVisibleIndex != null &&
                                             recruitingList.isNotEmpty() &&
                                             !isLoadingMore &&
-                                            lastVisibleIndex >= recruitingList.size - 3 && 
-                                            canLoadMore) {
+                                            lastVisibleIndex >= recruitingList.size - 3 &&
+                                            canLoadMore
+                                        ) {
                                             onLoadMore()
                                         }
                                     }
                             }
-                            
+
                             LazyColumn(
                                 state = listState,
                                 verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -218,16 +207,16 @@ private fun SearchBookGroupScreenContent(
                             ) {
                                 items(recruitingList) { item ->
                                     CardItemRoom(
-                                        title = item.title,
-                                        participants = item.participants,
-                                        maxParticipants = item.maxParticipants,
-                                        isRecruiting = item.isRecruiting,
-                                        endDate = item.endDate,
-                                        imageUrl = item.imageUrl,
-                                        onClick = { onCardClick(item.id) }
+                                        title = item.roomName,
+                                        participants = item.memberCount,
+                                        maxParticipants = item.recruitCount,
+                                        isRecruiting = true,
+                                        endDate = item.deadlineEndDate,
+                                        imageUrl = item.bookImageUrl,
+                                        onClick = { onCardClick(item.roomId) }
                                     )
                                 }
-                                
+
                                 // 로딩 인디케이터
                                 if (isLoadingMore) {
                                     item {
@@ -257,7 +246,7 @@ private fun SearchBookGroupScreenContent(
                         .fillMaxWidth()
                         .height(50.dp),
                     shape = RoundedCornerShape(0.dp),
-                    onClick = { 
+                    onClick = {
                         onCreateRoomClick(isbn, bookTitle, bookImageUrl, bookAuthor)
                     }
                 ) {
@@ -274,35 +263,29 @@ private fun SearchBookGroupScreenContent(
 
 // Preview용 Mock 데이터
 private val mockRecruitingList = listOf(
-    GroupCardItemRoomData(
-        id = 1,
-        title = "데미안 함께 읽기 📚",
-        participants = 8,
-        maxParticipants = 12,
-        isRecruiting = true,
-        endDate = 3,
-        imageUrl = "https://example.com/demian.jpg",
-        isSecret = false
+    RecruitingRoomItem(
+        roomId = 1,
+        roomName = "데미안 함께 읽기 📚",
+        memberCount = 8,
+        recruitCount = 12,
+        deadlineEndDate = "3일 뒤",
+        bookImageUrl = "https://example.com/demian.jpg"
     ),
-    GroupCardItemRoomData(
-        id = 2,
-        title = "헤르만 헤세 작품 토론방",
-        participants = 15,
-        maxParticipants = 20,
-        isRecruiting = true,
-        endDate = 7,
-        imageUrl = "https://example.com/demian.jpg",
-        isSecret = true
+    RecruitingRoomItem(
+        roomId = 2,
+        roomName = "헤르만 헤세 작품 토론방",
+        memberCount = 15,
+        recruitCount = 20,
+        deadlineEndDate = "7일 뒤",
+        bookImageUrl = "https://example.com/demian.jpg"
     ),
-    GroupCardItemRoomData(
-        id = 3,
-        title = "클래식 문학 읽기 모임",
-        participants = 5,
-        maxParticipants = 10,
-        isRecruiting = true,
-        endDate = 1,
-        imageUrl = "https://example.com/demian.jpg",
-        isSecret = false
+    RecruitingRoomItem(
+        roomId = 3,
+        roomName = "클래식 문학 읽기 모임",
+        memberCount = 5,
+        recruitCount = 10,
+        deadlineEndDate = "1일 뒤",
+        bookImageUrl = "https://example.com/demian.jpg"
     )
 )
 

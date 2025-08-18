@@ -10,13 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -30,74 +25,45 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
-import com.texthip.thip.ui.group.myroom.component.GroupRecentSearch
-import com.texthip.thip.ui.group.myroom.mock.GroupCardItemRoomData
+import com.texthip.thip.ui.group.search.component.GroupRecentSearch
 import com.texthip.thip.ui.group.search.component.GroupEmptyResult
 import com.texthip.thip.ui.group.search.component.GroupFilteredSearchResult
 import com.texthip.thip.ui.group.search.component.GroupLiveSearchResult
 import com.texthip.thip.ui.group.search.viewmodel.GroupSearchViewModel
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.utils.rooms.toDisplayStrings
 
 @Composable
 fun GroupSearchScreen(
     modifier: Modifier = Modifier,
-    roomList: List<GroupCardItemRoomData>,
     onNavigateBack: () -> Unit = {},
-    onRoomClick: (GroupCardItemRoomData) -> Unit = {},
+    onRoomClick: (Int) -> Unit = {},
     viewModel: GroupSearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var searchText by rememberSaveable { mutableStateOf("") }
-    var isSearched by rememberSaveable { mutableStateOf(false) }
-    var selectedGenreIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var selectedSortOptionIndex by rememberSaveable { mutableIntStateOf(0) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    val genres = listOf(
-        stringResource(R.string.literature),
-        stringResource(R.string.science_it),
-        stringResource(R.string.social_science),
-        stringResource(R.string.humanities),
-        stringResource(R.string.art)
-    )
+    val genreDisplayNames = uiState.genres.toDisplayStrings()
+
     val sortOptions = listOf(
         stringResource(R.string.group_filter_deadline),
         stringResource(R.string.group_filter_popular)
     )
 
-    val liveFilteredRoomList by remember(searchText) {
-        derivedStateOf {
-            if (searchText.isBlank()) emptyList() else
-                roomList.filter { room ->
-                    room.title.contains(searchText, ignoreCase = true)
-                }
-        }
+    val selectedGenreIndex = if (uiState.selectedGenre != null) {
+        uiState.genres.indexOf(uiState.selectedGenre)
+    } else -1
+
+    val selectedSortOptionIndex = when (uiState.selectedSort) {
+        "deadline" -> 0
+        "memberCount" -> 1
+        else -> 0
     }
 
-    val filteredRoomList by remember(
-        searchText,
-        selectedGenreIndex,
-        selectedSortOptionIndex,
-        isSearched
-    ) {
-        derivedStateOf {
-            if (!isSearched) emptyList()
-            else {
-                val filtered = roomList.filter { room ->
-                    (searchText.isBlank() || room.title.contains(searchText, ignoreCase = true))
-                }
-                when (selectedSortOptionIndex) {
-                    0 -> filtered.sortedBy { it.endDate }             // 마감임박순
-                    1 -> filtered.sortedByDescending { it.participants } // 인기순
-                    else -> filtered
-                }
-            }
-        }
-    }
 
-    LaunchedEffect(isSearched) {
-        if (isSearched) {
+    LaunchedEffect(uiState.isCompleteSearching) {
+        if (uiState.isCompleteSearching) {
             focusManager.clearFocus()
         }
     }
@@ -124,80 +90,101 @@ fun GroupSearchScreen(
                         .fillMaxWidth()
                         .focusRequester(focusRequester),
                     hint = stringResource(R.string.group_room_search_hint),
-                    text = searchText,
-                    onValueChange = {
-                        searchText = it
-                        isSearched = false
+                    text = uiState.searchQuery,
+                    onValueChange = { query ->
+                        viewModel.updateSearchQuery(query)
                     },
-                    onSearch = { query ->
-                        // 검색 실행
-                        isSearched = true
-                        selectedGenreIndex = -1
-                        // 최근 검색어 새로고침 (서버에서 자동으로 추가됨)
-                        viewModel.refreshData()
+                    onSearch = {
+                        viewModel.onSearchButtonClick()
                     }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
                 when {
-                    searchText.isBlank() && !isSearched && uiState.recentSearches.isEmpty() -> {
-                        GroupRecentSearch(
-                            recentSearches = emptyList(),
-                            onSearchClick = {},
-                            onRemove = {}
-                        )
-                    }
-
-                    searchText.isBlank() && !isSearched && uiState.recentSearches.isNotEmpty() -> {
-                        GroupRecentSearch(
-                            recentSearches = uiState.recentSearches.map { it.searchTerm },
-                            onSearchClick = { keyword ->
-                                searchText = keyword
-                                isSearched = true
-                            },
-                            onRemove = { keyword ->
-                                viewModel.deleteRecentSearchByKeyword(keyword)
-                            }
-                        )
-                    }
-
-                    searchText.isNotBlank() && !isSearched -> {
-                        if (liveFilteredRoomList.isEmpty()) {
-                            GroupEmptyResult(
-                                mainText = stringResource(R.string.group_no_search_result1),
-                                subText = stringResource(R.string.group_no_search_result2)
+                    uiState.isInitial -> {
+                        if (uiState.recentSearches.isEmpty()) {
+                            GroupRecentSearch(
+                                recentSearches = emptyList(),
+                                onSearchClick = {},
+                                onRemove = {}
                             )
                         } else {
-                            GroupLiveSearchResult(
-                                roomList = liveFilteredRoomList,
-                                onRoomClick = onRoomClick
+                            GroupRecentSearch(
+                                recentSearches = uiState.recentSearches.map { it.searchTerm },
+                                onSearchClick = { keyword ->
+                                    viewModel.updateSearchQuery(keyword)
+                                    viewModel.onSearchButtonClick()
+                                },
+                                onRemove = { keyword ->
+                                    viewModel.deleteRecentSearchByKeyword(keyword)
+                                }
                             )
                         }
                     }
 
-                    isSearched -> {
+                    uiState.isLiveSearching -> {
+                        if (uiState.showEmptyState) {
+                            GroupEmptyResult(
+                                mainText = stringResource(R.string.group_no_search_result1),
+                                subText = stringResource(R.string.group_no_search_result2)
+                            )
+                        } else if (uiState.hasResults) {
+                            GroupLiveSearchResult(
+                                roomList = uiState.searchResults,
+                                onRoomClick = { room -> onRoomClick(room.roomId) },
+                                canLoadMore = uiState.canLoadMore,
+                                isLoadingMore = uiState.isLoadingMore,
+                                onLoadMore = { viewModel.loadMoreRooms() }
+                            )
+                        }
+                    }
+
+                    uiState.isCompleteSearching -> {
                         GroupFilteredSearchResult(
-                            genres = genres,
+                            genres = genreDisplayNames,
                             selectedGenreIndex = selectedGenreIndex,
-                            onGenreSelect = { selectedGenreIndex = it },
-                            resultCount = filteredRoomList.size,
-                            roomList = filteredRoomList,
-                            onRoomClick = onRoomClick
+                            onGenreSelect = { index ->
+                                val currentSelectedIndex = if (uiState.selectedGenre != null) {
+                                    uiState.genres.indexOf(uiState.selectedGenre)
+                                } else -1
+
+                                val selectedGenre = if (index == currentSelectedIndex) {
+                                    // 같은 장르를 다시 터치하면 선택 해제
+                                    null
+                                } else if (index >= 0 && index < uiState.genres.size) {
+                                    // 새로운 장르 선택
+                                    uiState.genres[index]
+                                } else {
+                                    null
+                                }
+                                viewModel.updateSelectedGenre(selectedGenre)
+                            },
+                            resultCount = uiState.searchResults.size,
+                            roomList = uiState.searchResults,
+                            onRoomClick = { room -> onRoomClick(room.roomId) },
+                            canLoadMore = uiState.canLoadMore,
+                            isLoadingMore = uiState.isLoadingMore,
+                            onLoadMore = { viewModel.loadMoreRooms() }
                         )
                     }
                 }
             }
         }
 
-        if (isSearched) {
+        if (uiState.isCompleteSearching) {
             FilterButton(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(top = 176.dp, end = 20.dp),
+                    .padding(top = 196.dp, end = 20.dp),
                 selectedOption = sortOptions[selectedSortOptionIndex],
                 options = sortOptions,
                 onOptionSelected = { selected ->
-                    selectedSortOptionIndex = sortOptions.indexOf(selected)
+                    val sortType = when (sortOptions.indexOf(selected)) {
+                        0 -> "deadline"
+                        1 -> "memberCount"
+                        else -> "deadline"
+                    }
+                    viewModel.updateSortType(sortType)
                 }
             )
         }
@@ -209,39 +196,6 @@ fun GroupSearchScreen(
 @Composable
 fun PreviewGroupSearchScreen() {
     ThipTheme {
-        GroupSearchScreen(
-            roomList = listOf(
-                GroupCardItemRoomData(
-                    id = 1,
-                    title = "aaa",
-                    participants = 22,
-                    maxParticipants = 30,
-                    isRecruiting = true,
-                    endDate = 3,
-                    imageUrl = null,
-                    isSecret = false
-                ),
-                GroupCardItemRoomData(
-                    id = 2,
-                    title = "abc",
-                    participants = 15,
-                    maxParticipants = 20,
-                    isRecruiting = true,
-                    endDate = 7,
-                    imageUrl = null,
-                    isSecret = true
-                ),
-                GroupCardItemRoomData(
-                    id = 3,
-                    title = "abcd",
-                    participants = 10,
-                    maxParticipants = 15,
-                    isRecruiting = true,
-                    endDate = 5,
-                    imageUrl = null,
-                    isSecret = true
-                )
-            )
-        )
+        GroupSearchScreen()
     }
 }

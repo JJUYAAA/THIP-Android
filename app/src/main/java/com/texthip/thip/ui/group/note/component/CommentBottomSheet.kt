@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -46,7 +45,8 @@ fun CommentBottomSheet(
     uiState: CommentsUiState,
     onEvent: (CommentsEvent) -> Unit,
     onDismiss: () -> Unit,
-    onSendReply: (text: String, parentCommentId: Int?, replyToNickname: String?) -> Unit
+    onSendReply: (text: String, parentCommentId: Int?, replyToNickname: String?) -> Unit,
+    onProfileClick: (userId: Long) -> Unit = {}
 ) {
     var inputText by remember { mutableStateOf("") }
     var replyingToCommentId by remember { mutableStateOf<Int?>(null) }
@@ -70,7 +70,7 @@ fun CommentBottomSheet(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(600.dp)
+                    .fillMaxHeight(0.8f)
                     .advancedImePadding()
             ) {
                 Column(
@@ -110,7 +110,8 @@ fun CommentBottomSheet(
                                 onCommentLongPress = { comment ->
                                     selectedCommentForMenu = comment
                                 },
-                                onReplyLongPress = { reply -> selectedReplyForMenu = reply }
+                                onReplyLongPress = { reply -> selectedReplyForMenu = reply },
+                                onProfileClick = onProfileClick
                             )
                         }
                     }
@@ -198,7 +199,8 @@ private fun CommentLazyList(
     onReplyClick: (commentId: Int, nickname: String?) -> Unit,
     onEvent: (CommentsEvent) -> Unit,
     onCommentLongPress: (CommentList) -> Unit,
-    onReplyLongPress: (ReplyList) -> Unit
+    onReplyLongPress: (ReplyList) -> Unit,
+    onProfileClick: (userId: Long) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -235,7 +237,8 @@ private fun CommentLazyList(
                 onReplyClick = onReplyClick,
                 onEvent = onEvent,
                 onCommentLongPress = onCommentLongPress,
-                onReplyLongPress = onReplyLongPress
+                onReplyLongPress = onReplyLongPress,
+                onProfileClick = onProfileClick
             )
         }
 

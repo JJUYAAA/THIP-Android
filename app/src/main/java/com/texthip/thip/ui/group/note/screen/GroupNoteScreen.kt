@@ -79,6 +79,7 @@ fun GroupNoteScreen(
     onCreateNoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
     onCreateVoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
     onNavigateToFeedWrite: (pinInfo: RoomsRecordsPinResponse, recordContent: String) -> Unit,
+    onNavigateToUserProfile: (userId: Long) -> Unit = {},
     resultTabIndex: Int? = null,
     onResultConsumed: () -> Unit = {},
     initialPage: Int? = null,
@@ -153,6 +154,7 @@ fun GroupNoteScreen(
                 onCreateVoteClick(s.recentBookPage, s.totalBookPage, s.isOverviewPossible)
             }
         },
+        onNavigateToUserProfile = onNavigateToUserProfile,
         showProgressBar = showProgressBar,
         progress = progress.value
     )
@@ -165,6 +167,7 @@ fun GroupNoteContent(
     onBackClick: () -> Unit,
     onCreateNoteClick: () -> Unit,
     onCreateVoteClick: () -> Unit,
+    onNavigateToUserProfile: (userId: Long) -> Unit,
     showProgressBar: Boolean,
     progress: Float
 ) {
@@ -256,7 +259,6 @@ fun GroupNoteContent(
                     onTabSelected = { onEvent(GroupNoteEvent.OnTabSelected(it)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp)
                 )
 
                 if (uiState.isLoading) {
@@ -391,7 +393,8 @@ fun GroupNoteContent(
                                     },
                                     onLikeClick = { postId, postType ->
                                         onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
-                                    }
+                                    },
+                                    onProfileClick = { onNavigateToUserProfile(post.userId) }
                                 )
 
                                 "VOTE" -> VoteCommentCard(
@@ -407,7 +410,8 @@ fun GroupNoteContent(
                                     },
                                     onLikeClick = { postId, postType ->
                                         onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
-                                    }
+                                    },
+                                    onProfileClick = { onNavigateToUserProfile(post.userId) }
                                 )
                             }
                         }
@@ -432,19 +436,19 @@ fun GroupNoteContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 118.dp)
+                        .padding(top = 120.dp)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp)
+                            .height(76.dp)
                             .background(color = colors.Black)
                     )
 
                     FilterButton(
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
-                            .padding(top = 20.dp, end = 20.dp),
+                            .padding(top = 20.dp, end = 20.dp, bottom = 20.dp),
                         selectedOption = stringResource(uiState.selectedSort.displayNameRes),
                         options = sortDisplayStrings,
                         onOptionSelected = { selectedString ->
@@ -515,7 +519,8 @@ fun GroupNoteContent(
                         )
                     )
                 }
-            }
+            },
+            onProfileClick = onNavigateToUserProfile
         )
     }
 
@@ -645,7 +650,8 @@ private fun GroupNoteScreenPreview() {
             onCreateNoteClick = {},
             onCreateVoteClick = {},
             showProgressBar = true,
-            progress = 0.5f
+            progress = 0.5f,
+            onNavigateToUserProfile = {}
         )
     }
 }

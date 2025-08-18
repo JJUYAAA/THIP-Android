@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -86,7 +87,9 @@ fun GroupRoomHeader(
             horizontalArrangement = Arrangement.spacedBy(40.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column {
+            Column(
+                modifier = Modifier.widthIn(max = 180.dp)
+            ) {
                 Row {
                     Icon(
                         painter = painterResource(R.drawable.ic_calendar),
@@ -114,7 +117,9 @@ fun GroupRoomHeader(
             }
 
             Column(
-                modifier = Modifier.clickable { onNavigateToMates() }
+                modifier = Modifier
+                    .widthIn(max = 180.dp)
+                    .clickable { onNavigateToMates() }
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -136,16 +141,11 @@ fun GroupRoomHeader(
                         )
                     }
 
-                    IconButton(
-                        onClick = { /* TODO: Navigate to participant list */ },
-                        modifier = Modifier.size(24.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_chevron),
-                            contentDescription = "Participant Icon",
-                            tint = colors.White
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(R.drawable.ic_chevron),
+                        contentDescription = "Participant Icon",
+                        tint = colors.White
+                    )
                 }
                 Spacer(Modifier.height(12.dp))
                 Text(
