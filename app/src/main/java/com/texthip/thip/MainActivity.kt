@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.ui.navigator.navigations.commonNavigation
 import com.texthip.thip.ui.navigator.navigations.feedNavigation
 import com.texthip.thip.ui.navigator.navigations.groupNavigation
@@ -15,11 +16,8 @@ import com.texthip.thip.ui.navigator.navigations.myPageNavigation
 import com.texthip.thip.ui.navigator.navigations.searchNavigation
 import com.texthip.thip.ui.navigator.routes.CommonRoutes
 import com.texthip.thip.ui.signin.screen.LoginScreen
-import com.texthip.thip.ui.signin.screen.SigninNicknameScreen
+import com.texthip.thip.ui.signin.screen.SignupNicknameScreen
 import com.texthip.thip.ui.signin.screen.SplashScreen
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.ui.theme.ThipTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -39,6 +37,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 @Composable
 fun RootNavHost() {
     val navController = rememberNavController()
@@ -54,11 +53,14 @@ fun RootNavHost() {
             LoginScreen(navController = navController)
         }
         composable<CommonRoutes.Signup> {
-            SigninNicknameScreen(navController = navController)
+            SignupNicknameScreen()
         }
 
         // --- 메인 관련 화면들 ---
-        feedNavigation(navController)
+        feedNavigation(
+            navController = navController,
+            navigateBack = navController::popBackStack
+        )
         groupNavigation(
             navController = navController,
             navigateBack = navController::popBackStack

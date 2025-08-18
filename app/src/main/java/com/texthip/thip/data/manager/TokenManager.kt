@@ -24,6 +24,9 @@ class TokenManager @Inject constructor(
     companion object {
         //토큰저장에 사용되는 키
         private val APP_TOKEN_KEY = stringPreferencesKey("app_token")
+        private val TEMP_TOKEN_KEY = stringPreferencesKey("temp_token")
+        private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
+        private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
     }
 
     //토큰 저장
@@ -44,12 +47,7 @@ class TokenManager @Inject constructor(
     suspend fun deleteToken() {
         context.dataStore.edit { prefs ->
             prefs.remove(APP_TOKEN_KEY)
-
-    // 저장할 데이터의 Key 정의
-    companion object {
-        private val TEMP_TOKEN_KEY = stringPreferencesKey("temp_token")
-        private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
-        private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
+        }
     }
 
     // 임시 토큰 저장

@@ -20,8 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.WarningTextField
@@ -32,8 +31,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun SignupNicknameScreen(
-    viewModel: SignupViewModel,
-    onNavigateToGenre: () -> Unit
+    viewModel: SignupViewModel = hiltViewModel(),
+    onNavigateToGenre: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -58,6 +57,7 @@ fun SignupNicknameScreen(
         warningMessageResId = uiState.nicknameWarningMessageResId
     )
 }
+
 @Composable
 fun SignupNicknameContent(
     nickname: String,
@@ -121,6 +121,7 @@ private fun SignupNicknameContentPrev() {
         warningMessageResId = R.string.nickname_warning
     )
 }
+
 @Preview(name = "일반 상태 (비어있음)", showBackground = true)
 @Composable
 private fun SignupNicknameContentPreview_Normal() {
