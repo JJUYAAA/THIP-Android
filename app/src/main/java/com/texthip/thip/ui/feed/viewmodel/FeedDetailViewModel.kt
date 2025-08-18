@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.repository.FeedRepository
+import com.texthip.thip.ui.feed.usecase.ChangeFeedLikeUseCase
 import com.texthip.thip.ui.feed.usecase.DeleteFeedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,8 @@ data class FeedDetailUiState(
 @HiltViewModel
 class FeedDetailViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
-    private val deleteFeedUseCase: DeleteFeedUseCase
+    private val deleteFeedUseCase: DeleteFeedUseCase,
+    private val changeFeedLikeUseCase: ChangeFeedLikeUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedDetailUiState())
@@ -75,6 +77,9 @@ class FeedDetailViewModel @Inject constructor(
                     }
                 }
         }
+    }
+    fun changeFeedLike(){
+
     }
 
     fun clearError() {

@@ -44,6 +44,7 @@ import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.CommentActionMode
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
+import com.texthip.thip.ui.common.buttons.ActionBarButton
 import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.buttons.OptionChipButton
 import com.texthip.thip.ui.common.forms.CommentTextField
@@ -245,6 +246,22 @@ fun FeedCommentScreen(
                     }
                     HorizontalDivider(color = colors.DarkGrey02, thickness = 1.dp)
 
+                    ActionBarButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp, vertical = 12.dp),
+                        isLiked = feedDetail.isLiked,
+                        likeCount = feedDetail.likeCount,
+                        commentCount = feedDetail.commentCount,
+                        isSaveVisible = true,
+                        isSaved = feedDetail.isSaved,
+                        isLockIcon = feedDetail.isLocked,
+                        isPinVisible = true,
+                        onLikeClick = { feedDetailViewModel.feed(feedDetail.feedId) },
+                        onCommentClick = { /* 스크롤 이동 or 포커스 처리 */ },
+                        onBookmarkClick = { feedDetailViewModel.toggleSave(feedDetail.feedId) },
+                        onPinClick = { /* TODO: pin 기능 */ }
+                    )
 
                     HorizontalDivider(color = colors.DarkGrey03, thickness = 10.dp)
                 }
