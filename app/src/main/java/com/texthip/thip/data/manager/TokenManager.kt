@@ -19,8 +19,6 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class TokenManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "thip_auth_tokens")
-
     companion object {
         //토큰저장에 사용되는 키
         private val APP_TOKEN_KEY = stringPreferencesKey("app_token")

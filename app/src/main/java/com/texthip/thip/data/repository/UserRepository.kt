@@ -1,5 +1,6 @@
 package com.texthip.thip.data.repository
 
+import android.util.Log
 import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.users.request.FollowRequest
@@ -86,7 +87,11 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun signup(request: SignupRequest): Result<SignupResponse?> {
+        Log.d("SignupDebug", "UserRepository.signup() 호출됨. 요청 닉네임: ${request.nickname}")
+
         val tempToken = tokenManager.getTempToken()
+
+        Log.d("SignupDebug", "가져온 임시 토큰: $tempToken")
 
         if (tempToken.isNullOrBlank()) {
             return Result.failure(Exception("임시 토큰이 없습니다. 로그인을 다시 시도해주세요."))

@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Unspecified
@@ -33,33 +32,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.texthip.thip.R
-import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
-import com.texthip.thip.ui.navigator.routes.CommonRoutes
-import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 import com.texthip.thip.ui.signin.viewmodel.LoginUiState
 import com.texthip.thip.ui.signin.viewmodel.LoginViewModel
 import com.texthip.thip.ui.theme.Purple
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
-import kotlinx.coroutines.launch
 
 
 @Composable
 fun LoginScreen(
-    navController: NavController,
+    onNavigateToSignup: () -> Unit,
+    onLoginSuccess: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value //by 오류로 인해 변경함
-    val coroutineScope = rememberCoroutineScope()
-    val tokenManager = remember { TokenManager(context) }
 
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -92,17 +85,10 @@ fun LoginScreen(
     LaunchedEffect(key1 = uiState) {
         when (val state = uiState) {
             is LoginUiState.Success -> {
-                coroutineScope.launch { //토큰 저장
-                    tokenManager.saveToken(state.response.token)
-                }
-
-                val destination = if (state.response.isNewUser) {
-                    CommonRoutes.Signup
+                if (state.response.isNewUser) {
+                    onNavigateToSignup()
                 } else {
-                    MainTabRoutes.Feed
-                }
-                navController.navigate(destination) {
-                    popUpTo(CommonRoutes.Login) { inclusive = true }
+                    onLoginSuccess()
                 }
                 viewModel.clearLoginState() // 상태 초기화
             }

@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.signin.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
@@ -83,6 +84,7 @@ class SignupViewModel @Inject constructor(
     }
 
     fun signup() {
+        Log.d("SignupDebug", "signup() 호출됨. 닉네임: ${_uiState.value.nickname}, 인증됨: ${_uiState.value.isNicknameVerified}, 선택된 인덱스: ${_uiState.value.selectedIndex}")
         viewModelScope.launch {
             val currentState = _uiState.value
             val selectedRole = currentState.roleCards.getOrNull(currentState.selectedIndex)
@@ -104,6 +106,8 @@ class SignupViewModel @Inject constructor(
                     _uiState.update { it.copy(isLoading = false, isSignupSuccess = true) }
                 }
                 .onFailure { exception ->
+                    Log.e("SignupDebug", "Signup 실패: ", exception)
+
                     val errorMsg = if (exception is ThipApiFailureException) exception.message else "회원가입에 실패했습니다."
                     _uiState.update { it.copy(isLoading = false, errorMessage = errorMsg) }
                 }
