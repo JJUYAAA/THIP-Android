@@ -98,7 +98,7 @@ interface FeedService {
     /** 피드 수정 */
     @PATCH("feeds/{feedId}")
     suspend fun updateFeed(
-        @Path("feedId") feedId: Int,
+        @Path("feedId") feedId: Long,
         @Body request: UpdateFeedRequest
     ): BaseResponse<CreateFeedResponse>
 

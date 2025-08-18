@@ -66,7 +66,7 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
                 route.bookAuthor != null
             ) {
                 viewModel.setEditData(
-                    feedId = route.feedId,
+                    feedId = route.feedId.toLong(),
                     isbn = route.isbn,
                     bookTitle = route.bookTitle,
                     bookAuthor = route.bookAuthor,
@@ -77,7 +77,7 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
                 )
             } else if (route.feedId != null) {
                 // 수정 모드: 기존 방식 (API 호출)
-                viewModel.loadFeedForEdit(route.feedId)
+                viewModel.loadFeedForEdit(route.feedId.toLong())
             } else if (route.isbn != null &&
                 route.bookTitle != null &&
                 route.bookAuthor != null &&
