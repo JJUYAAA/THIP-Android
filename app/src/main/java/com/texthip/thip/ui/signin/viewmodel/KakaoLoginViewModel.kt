@@ -55,6 +55,28 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun googleLogin(idToken: String){
+        viewModelScope.launch {
+            _uiState.update { LoginUiState.Loading }
+
+            //구글 로그인부터 서버 통신까지
+            authRepository.loginWithGoogle(idToken)
+                .onSuccess { response ->
+                    if (response != null) {
+                        _uiState.update { LoginUiState.Success(response) }
+                    } else {
+                        _uiState.update { LoginUiState.Error("서버로부터 응답을 받지 못했습니다.") }
+                    }
+                }
+                .onFailure { throwable ->
+                    Log.e("LoginViewModel", "Login failed: ${throwable.message}", throwable)
+                    _uiState.update {
+                        LoginUiState.Error(throwable.message ?: "알 수 없는 통신 오류가 발생했습니다.")
+                    }
+                }
+        }
+    }
+
     //상태를 다시 초기화-> 이벤트 중복 실행 방지
     fun clearLoginState() {
         _uiState.update { LoginUiState.Idle }

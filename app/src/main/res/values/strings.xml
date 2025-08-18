@@ -431,4 +431,7 @@
     <!-- GenreManager API constants -->
     <string name="api_genre_science_it" translatable="false">과학/IT</string>
 
+    <!-- Google login constants -->
+    <string name="default_web_client_id" translatable="false">353417813537-ck9g1v0qprlb5nf4dvasinim403eng0f.apps.googleusercontent.com</string>
+
 </resources>
