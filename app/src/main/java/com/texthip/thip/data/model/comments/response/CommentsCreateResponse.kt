@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CommentsCreateResponse(
     val commentId: Int?,
-    val creatorId: Int?,
+    val creatorId: Long?,
     val creatorProfileImageUrl: String?,
     val creatorNickname: String?,
     val aliasName: String?,

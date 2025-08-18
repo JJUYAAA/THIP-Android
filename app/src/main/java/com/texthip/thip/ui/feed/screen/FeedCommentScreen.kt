@@ -67,6 +67,7 @@ fun FeedCommentScreen(
     feedId: Int,
     onNavigateBack: () -> Unit = {},
     onNavigateToFeedEdit: (Int) -> Unit = {},
+    onNavigateToUserProfile: (userId: Long) -> Unit = {},
     feedDetailViewModel: FeedDetailViewModel = hiltViewModel(),
     commentsViewModel: CommentsViewModel = hiltViewModel()
 ) {
@@ -177,7 +178,8 @@ fun FeedCommentScreen(
                                 topText = feedDetail.creatorNickname,
                                 bottomText = feedDetail.aliasName,
                                 showSubscriberInfo = false,
-                                hoursAgo = feedDetail.postDate
+                                hoursAgo = feedDetail.postDate,
+                                onClick = { onNavigateToUserProfile(feedDetail.creatorId) }
                             )
                             Column(
                                 Modifier
@@ -301,7 +303,8 @@ fun FeedCommentScreen(
                                     },
                                     onDismissPopup = {
                                         selectedCommentId = null
-                                    }
+                                    },
+                                    onProfileClick = onNavigateToUserProfile
                                 )
                             }
                         }

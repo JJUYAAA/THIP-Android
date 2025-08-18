@@ -23,9 +23,10 @@ fun CommentSection(
     onEvent: (CommentsEvent) -> Unit = { _ -> },
     onCommentLongPress: (CommentList) -> Unit = { _ -> },
     onReplyLongPress: (ReplyList) -> Unit = { _ -> },
+    onProfileClick: (userId: Long) -> Unit = {},
     actionMode: CommentActionMode,
     selectedCommentId: Int? = null,
-    onDismissPopup: () -> Unit = {}
+    onDismissPopup: () -> Unit = {},
 ) {
     Box {
         Column(
@@ -52,6 +53,10 @@ fun CommentSection(
                     }
                 },
                 onLongPress = { onCommentLongPress(commentItem) },
+
+                onProfileClick = {
+                    commentItem.creatorId?.let { id -> onProfileClick(id) }
+                },
                 actionMode = actionMode,
                 isSelected = selectedCommentId != null && commentItem.commentId == selectedCommentId,
                 onDismissPopup = onDismissPopup,
@@ -70,6 +75,7 @@ fun CommentSection(
                         onEvent(CommentsEvent.LikeReply(reply.commentId))
                     },
                     onLongPress = { onReplyLongPress(reply) },
+                    onProfileClick = { onProfileClick(reply.creatorId) },
                     actionMode = actionMode,
                     isSelected = selectedCommentId != null && reply.commentId == selectedCommentId,
                     onDismissPopup = onDismissPopup,
