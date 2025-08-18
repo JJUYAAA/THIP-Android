@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.rooms.response.TodayCommentList
 import com.texthip.thip.data.repository.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,8 +22,15 @@ data class GroupRoomChatUiState(
     val error: String? = null
 )
 
+enum class ToastType {
+    DAILY_GREETING_LIMIT,
+    FIRST_WRITE
+}
+
 sealed interface GroupRoomChatEvent {
     data object LoadMore : GroupRoomChatEvent
+    data class ShowToast(val type: ToastType) : GroupRoomChatEvent
+    data class ShowErrorToast(val message: String) : GroupRoomChatEvent
 }
 
 @HiltViewModel
@@ -33,6 +42,9 @@ class GroupRoomChatViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(GroupRoomChatUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _eventFlow = MutableSharedFlow<GroupRoomChatEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private var nextCursor: String? = null
 
@@ -53,7 +65,13 @@ class GroupRoomChatViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (isRefresh) {
-                _uiState.update { it.copy(isLoading = true, greetings = emptyList(), isLastPage = false) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = true,
+                        greetings = emptyList(),
+                        isLastPage = false
+                    )
+                }
                 nextCursor = null
             } else {
                 _uiState.update { it.copy(isLoadingMore = true) }
@@ -75,11 +93,16 @@ class GroupRoomChatViewModel @Inject constructor(
                     nextCursor = data.nextCursor
                 }
             }.onFailure { throwable ->
-                _uiState.update { it.copy(isLoading = false, isLoadingMore = false, error = throwable.message) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        isLoadingMore = false,
+                        error = throwable.message
+                    )
+                }
             }
         }
     }
-
 
     fun postDailyGreeting(content: String) {
         if (content.isBlank()) return
@@ -88,10 +111,15 @@ class GroupRoomChatViewModel @Inject constructor(
             roomsRepository.postRoomsDailyGreeting(
                 roomId = roomId,
                 content = content
-            ).onSuccess {
-                fetchDailyGreetings(isRefresh = true)
+            ).onSuccess { response ->
+                if (response != null) {
+                    if (response.isFirstWrite) {
+                        _eventFlow.emit(GroupRoomChatEvent.ShowToast(ToastType.FIRST_WRITE))
+                    }
+                    fetchDailyGreetings(isRefresh = true)
+                }
             }.onFailure { throwable ->
-                _uiState.update { it.copy(isLoading = false, isLoadingMore = false, error = throwable.message) }
+                _eventFlow.emit(GroupRoomChatEvent.ShowToast(ToastType.DAILY_GREETING_LIMIT))
             }
         }
     }

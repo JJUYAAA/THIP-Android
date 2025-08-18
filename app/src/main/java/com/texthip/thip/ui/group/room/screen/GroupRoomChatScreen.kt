@@ -1,5 +1,9 @@
 package com.texthip.thip.ui.group.room.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,22 +31,27 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.data.model.rooms.response.TodayCommentList
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.cards.CardCommentGroup
 import com.texthip.thip.ui.common.forms.CommentTextField
+import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.common.view.CountingBar
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomChatEvent
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomChatUiState
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomChatViewModel
+import com.texthip.thip.ui.group.room.viewmodel.ToastType
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.rooms.advancedImePadding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun GroupRoomChatScreen(
@@ -51,6 +60,20 @@ fun GroupRoomChatScreen(
 ) {
     var inputText by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsState()
+
+    var activeToast by remember { mutableStateOf<ToastType?>(null) }
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is GroupRoomChatEvent.ShowToast -> {
+                    activeToast = event.type
+                }
+
+                else -> Unit
+            }
+        }
+    }
 
     GroupRoomChatContent(
         uiState = uiState,
@@ -61,7 +84,9 @@ fun GroupRoomChatScreen(
             viewModel.postDailyGreeting(inputText)
             inputText = ""
         },
-        onNavigateBack = onBackClick
+        onNavigateBack = onBackClick,
+        activeToast = activeToast,
+        onDismissToast = { activeToast = null }
     )
 }
 
@@ -72,7 +97,9 @@ fun GroupRoomChatContent(
     inputText: String,
     onInputTextChanged: (String) -> Unit,
     onSendClick: () -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    activeToast: ToastType?,
+    onDismissToast: () -> Unit
 ) {
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedMessage by remember { mutableStateOf<TodayCommentList?>(null) }
@@ -211,6 +238,41 @@ fun GroupRoomChatContent(
                 onSendClick = onSendClick
             )
         }
+
+        AnimatedVisibility(
+            visible = activeToast != null,
+            enter = slideInVertically(
+                initialOffsetY = { -it }, // 위에서 아래로
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { -it }, // 위로 사라짐
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .zIndex(3f)
+        ) {
+            LaunchedEffect(activeToast) {
+                if (activeToast != null) {
+                    delay(3000L)
+                    onDismissToast()
+                }
+            }
+
+            when (activeToast) {
+                ToastType.DAILY_GREETING_LIMIT -> {
+                    ToastWithDate(color = colors.Red)
+                }
+
+                ToastType.FIRST_WRITE -> {
+                    ToastWithDate()
+                }
+
+                null -> {}
+            }
+        }
     }
 
     if (isBottomSheetVisible && selectedMessage != null) {
@@ -281,7 +343,9 @@ private fun GroupRoomChatScreenPreview() {
             inputText = inputText,
             onInputTextChanged = { newText -> inputText = newText },
             onSendClick = {},
-            onNavigateBack = {}
+            onNavigateBack = {},
+            activeToast = null,
+            onDismissToast = {}
         )
     }
 }
