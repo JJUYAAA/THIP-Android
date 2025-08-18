@@ -256,7 +256,6 @@ fun GroupNoteContent(
                     onTabSelected = { onEvent(GroupNoteEvent.OnTabSelected(it)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp)
                 )
 
                 if (uiState.isLoading) {
@@ -432,19 +431,19 @@ fun GroupNoteContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 118.dp)
+                        .padding(top = 120.dp)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp)
+                            .height(76.dp)
                             .background(color = colors.Black)
                     )
 
                     FilterButton(
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
-                            .padding(top = 20.dp, end = 20.dp),
+                            .padding(top = 20.dp, end = 20.dp, bottom = 20.dp),
                         selectedOption = stringResource(uiState.selectedSort.displayNameRes),
                         options = sortDisplayStrings,
                         onOptionSelected = { selectedString ->
