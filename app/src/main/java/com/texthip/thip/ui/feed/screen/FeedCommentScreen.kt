@@ -63,7 +63,7 @@ import com.texthip.thip.ui.group.note.mock.ReplyItem as FeedReplyItem
 @Composable
 fun FeedCommentScreen(
     modifier: Modifier = Modifier,
-    feedId: Int,
+    feedId: Long,
     onNavigateBack: () -> Unit = {},
     currentUserId: Int = 1,
     currentUserName: String = "현재사용자",

@@ -33,7 +33,7 @@ class FeedDetailViewModel @Inject constructor(
         _uiState.value = update(_uiState.value)
     }
 
-    fun loadFeedDetail(feedId: Int) {
+    fun loadFeedDetail(feedId: Long) {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true, error = null) }
 

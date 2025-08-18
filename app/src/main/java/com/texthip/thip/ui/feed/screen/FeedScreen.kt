@@ -66,11 +66,11 @@ import kotlinx.coroutines.launch
 fun FeedScreen(
     onNavigateToMySubscription: () -> Unit = {},
     onNavigateToFeedWrite: () -> Unit = {},
-    onNavigateToFeedComment: (Int) -> Unit = {},
+    onNavigateToFeedComment: (Long) -> Unit = {},
     nickname: String = "",
     userRole: String = "",
     followerProfileImageUrls: List<String> = emptyList(),
-    resultFeedId: Int? = null,
+    resultFeedId: Long? = null,
     onResultConsumed: () -> Unit = {},
     feedViewModel: FeedViewModel = hiltViewModel(),
     mySubscriptionViewModel: MySubscriptionViewModel = hiltViewModel()
@@ -267,7 +267,7 @@ fun FeedScreen(
 
                                 // MyFeedItem을 FeedItem으로 변환
                                 val feedItem = FeedItem(
-                                    id = myFeed.feedId,
+                                    id = myFeed.feedId.toLong(),
                                     userProfileImage = null,
                                     userName = "", // 내 피드이므로 고정값
                                     userRole = "", // 내 피드이므로 고정값
@@ -313,7 +313,7 @@ fun FeedScreen(
                         itemsIndexed(feedUiState.allFeeds, key = { _, item -> item.feedId }) { index, allFeed ->
                             // AllFeedItem을 FeedItem으로 변환
                             val feedItem = FeedItem(
-                                id = allFeed.feedId,
+                                id = allFeed.feedId.toLong(),
                                 userProfileImage = allFeed.creatorProfileImageUrl,
                                 userName = allFeed.creatorNickname,
                                 userRole = allFeed.aliasName,
@@ -339,7 +339,7 @@ fun FeedScreen(
                                     // TODO: API 호출로 북마크 상태 변경
                                 },
                                 onLikeClick = {
-                                    // TODO: API 호출로 좋아요 상태 변경
+                                    feedViewModel.changeFeedLike(feedItem.id)
                                 },
                                 onContentClick = {
                                     onNavigateToFeedComment(feedItem.id)
@@ -389,7 +389,7 @@ private fun FeedScreenPreview() {
     ThipTheme {
         val mockFeeds = List(5) {
             FeedItem(
-                id = it + 1,
+                id = (it + 1).toLong(),
                 userProfileImage = "https://example.com/profile$it.jpg",
                 userName = "user.$it",
                 userRole = "문학 칭호",

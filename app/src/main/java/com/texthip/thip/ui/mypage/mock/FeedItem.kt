@@ -1,7 +1,7 @@
 package com.texthip.thip.ui.mypage.mock
 
 data class FeedItem(
-    val id: Int,
+    val id: Long,
     val userProfileImage: String? = null,
     val userName: String,
     val userRole: String,
