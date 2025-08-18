@@ -184,6 +184,7 @@
     <string name="report">신고하기</string>
     <string name="group_room_no_chat_title">아직 대화가 없어요</string>
     <string name="group_room_no_chat_content">첫번째 한마디를 남겨보세요!</string>
+    <string name="group_room_chat_max">오늘의 한마디는 하루에 다섯번까지 작성할 수 있어요</string>
     <string name="numbering" formatted="false">%d. %s</string>
 
     <!--    group note    -->

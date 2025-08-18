@@ -112,8 +112,57 @@ class CommentsViewModel @Inject constructor(
                 isReplyRequest = isReply,
                 parentId = parentId,
                 postType = currentPostType
-            ).onSuccess {
-                fetchComments(isRefresh = true)
+            ).onSuccess { response ->
+                response?.let { res ->
+                    _uiState.update { currentState ->
+                        if (parentId == null) {
+                            val newComment = CommentList(
+                                commentId = res.commentId,
+                                creatorId = res.creatorId,
+                                creatorProfileImageUrl = res.creatorProfileImageUrl,
+                                creatorNickname = res.creatorNickname,
+                                aliasName = res.aliasName,
+                                aliasColor = res.aliasColor,
+                                postDate = res.postDate,
+                                content = res.content,
+                                likeCount = res.likeCount,
+                                isDeleted = res.isDeleted,
+                                isWriter = res.isWriter,
+                                isLike = res.isLike,
+                                replyList = res.replyList
+                            )
+                            currentState.copy(comments = listOf(newComment) + currentState.comments)
+                        } else {
+                            val parentCommentIndex =
+                                currentState.comments.indexOfFirst { it.commentId == parentId }
+
+                            if (parentCommentIndex != -1) {
+                                val updatedParentComment = CommentList(
+                                    commentId = res.commentId,
+                                    creatorId = res.creatorId,
+                                    creatorProfileImageUrl = res.creatorProfileImageUrl,
+                                    creatorNickname = res.creatorNickname,
+                                    aliasName = res.aliasName,
+                                    aliasColor = res.aliasColor,
+                                    postDate = res.postDate,
+                                    content = res.content,
+                                    likeCount = res.likeCount,
+                                    isDeleted = res.isDeleted,
+                                    isWriter = res.isWriter,
+                                    isLike = res.isLike,
+                                    replyList = res.replyList
+                                )
+
+                                val newCommentsList = currentState.comments.toMutableList().apply {
+                                    this[parentCommentIndex] = updatedParentComment
+                                }
+                                currentState.copy(comments = newCommentsList)
+                            } else {
+                                currentState
+                            }
+                        }
+                    }
+                }
             }.onFailure { throwable ->
                 _uiState.update { it.copy(error = "댓글 작성 실패: ${throwable.message}") }
             }
@@ -174,9 +223,11 @@ class CommentsViewModel @Inject constructor(
 
         // 즉시 UI 업데이트
         val updatedReply = reply.copy(isLike = !currentIsLiked, likeCount = newLikeCount)
-        val newReplyList = parentComment.replyList.toMutableList().apply { set(replyIndex, updatedReply) }
+        val newReplyList =
+            parentComment.replyList.toMutableList().apply { set(replyIndex, updatedReply) }
         val updatedParentComment = parentComment.copy(replyList = newReplyList)
-        val newComments = comments.toMutableList().apply { set(parentCommentIndex, updatedParentComment) }
+        val newComments =
+            comments.toMutableList().apply { set(parentCommentIndex, updatedParentComment) }
         _uiState.update { it.copy(comments = newComments) }
 
         viewModelScope.launch {
@@ -206,7 +257,11 @@ class CommentsViewModel @Inject constructor(
 
             val cursorToFetch = if (isRefresh) null else nextCursor
 
-            commentsRepository.getComments(postId = currentPostId, cursor = cursorToFetch)
+            commentsRepository.getComments(
+                postId = currentPostId,
+                postType = currentPostType,
+                cursor = cursorToFetch
+            )
                 .onSuccess { response ->
                     if (response != null) {
                         nextCursor = response.nextCursor

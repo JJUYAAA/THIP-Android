@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.common.modal
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,7 +24,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun ToastWithDate(
     modifier: Modifier = Modifier,
-    message: String,
+    message: String = stringResource(R.string.group_room_chat_max),
+    color: Color = colors.White,
     date: String? = null
 ) {
     Box(
@@ -45,7 +46,7 @@ fun ToastWithDate(
         ) {
             Text(
                 text = message,
-                color = colors.White,
+                color = color,
                 style = typography.view_m500_s12_h20
             )
             if (date != null) {
