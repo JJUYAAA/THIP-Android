@@ -58,13 +58,18 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         val viewModel: FeedWriteViewModel = hiltViewModel()
 
         LaunchedEffect(route) {
-            if (route.feedId != null && route.editContentBody != null) {
-                // 수정 모드: 라우트에서 전달받은 데이터 설정
+            if (
+                route.feedId != null &&
+                route.editContentBody != null &&
+                route.isbn != null &&
+                route.bookTitle != null &&
+                route.bookAuthor != null
+            ) {
                 viewModel.setEditData(
                     feedId = route.feedId,
-                    isbn = route.isbn!!,
-                    bookTitle = route.bookTitle!!,
-                    bookAuthor = route.bookAuthor!!,
+                    isbn = route.isbn,
+                    bookTitle = route.bookTitle,
+                    bookAuthor = route.bookAuthor,
                     bookImageUrl = route.bookImageUrl ?: "",
                     contentBody = route.editContentBody,
                     isPublic = route.editIsPublic ?: true,
@@ -77,7 +82,8 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
                 route.bookTitle != null &&
                 route.bookAuthor != null &&
                 route.bookImageUrl != null &&
-                route.recordContent != null) {
+                route.recordContent != null
+            ) {
                 // 새 글 작성 모드: 기록장에서 온 데이터 설정
                 viewModel.setPinnedRecord(
                     isbn = route.isbn,

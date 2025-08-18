@@ -116,8 +116,8 @@ class BookDetailViewModel @Inject constructor(
                 currentState.nextCursor
             )
                 .onSuccess { response ->
-                    updateState {
-                        it.copy(
+                    updateState { state ->
+                        state.copy(
                             relatedFeeds = currentState.relatedFeeds + (response?.feeds
                                 ?: emptyList()),
                             nextCursor = response?.nextCursor,
@@ -127,8 +127,8 @@ class BookDetailViewModel @Inject constructor(
                     }
                 }
                 .onFailure { exception ->
-                    updateState {
-                        it.copy(
+                    updateState { state ->
+                        state.copy(
                             isLoadingMore = false,
                             feedError = exception.message
                         )

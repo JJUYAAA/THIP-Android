@@ -153,7 +153,7 @@ private fun SearchBookDetailScreenContent(
 
     // 무한 스크롤 로직
     LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore && uiState?.isLoadingMore == false && uiState.isLast == false) {
+        if (shouldLoadMore && uiState?.isLoadingMore == false && !uiState.isLast) {
             onLoadMore()
         }
     }
