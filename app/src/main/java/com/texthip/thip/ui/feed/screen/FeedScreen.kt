@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -56,6 +57,9 @@ fun FeedScreen(
     followerProfileImageUrls: List<String> = emptyList(),
     viewModel: FeedViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.fetchRecentWriters()
+    }
     val feedUiState by viewModel.uiState.collectAsState()
     val selectedIndex = rememberSaveable { mutableIntStateOf(selectedTabIndex) }
     val feedStateList = remember {
@@ -213,7 +217,7 @@ fun FeedScreen(
                     //피드
                     item {
                         Spacer(modifier = Modifier.height(20.dp))
-                        val subscriptionsForBar = feedUiState.recentWriters.map { user ->
+                        val subscriptionsForBar = feedUiState.myFollowingUsers.map { user ->
                             MySubscriptionData(
                                 profileImageUrl = user.profileImageUrl,
                                 nickname = user.nickname,

@@ -23,7 +23,7 @@ data class FollowingList(
 
 @Serializable
 data class MyRecentFollowingsResponse(
-    @SerializedName("recentWriters") val recentWriters: List<RecentWriterList>
+    @SerializedName("myFollowingUsers") val myFollowingUsers: List<RecentWriterList>
 )
 
 @Serializable

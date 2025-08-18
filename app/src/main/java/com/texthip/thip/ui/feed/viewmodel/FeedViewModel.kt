@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 data class FeedUiState(
     val isLoading: Boolean = true,
-    val recentWriters: List<RecentWriterList> = emptyList(),
+    val myFollowingUsers: List<RecentWriterList> = emptyList(),
     val errorMessage: String? = null
     //TODO 추후 피드 목록 등 다른 상태들 추가될 예정
 )
@@ -26,11 +26,7 @@ class FeedViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState = _uiState.asStateFlow()
 
-    init {
-        fetchRecentWriters()
-    }
-
-    private fun fetchRecentWriters() {
+    fun fetchRecentWriters() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             userRepository.getRecentWriters()
@@ -38,7 +34,7 @@ class FeedViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            recentWriters = data?.recentWriters ?: emptyList()
+                            myFollowingUsers = data?.myFollowingUsers ?: emptyList()
                         )
                     }
                 }
