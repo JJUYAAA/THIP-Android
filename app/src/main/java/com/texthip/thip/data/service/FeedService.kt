@@ -10,6 +10,7 @@ import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -59,4 +60,10 @@ interface FeedService {
     suspend fun getFeedUsers(
         @Path("userId") userId: Long
     ): BaseResponse<FeedUsersResponse>
+
+    /** 피드 삭제 */
+    @DELETE("feeds/{feedId}")
+    suspend fun deleteFeed(
+        @Path("feedId") feedId: Long
+    ): BaseResponse<String>
 }

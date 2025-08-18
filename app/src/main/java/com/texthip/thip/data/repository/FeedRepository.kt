@@ -178,4 +178,11 @@ class FeedRepository @Inject constructor(
             .handleBaseResponse()
             .getOrThrow()
     }
+
+    /** 피드 삭제 */
+    suspend fun deleteFeed(feedId: Long): Result<String?> = runCatching {
+        feedService.deleteFeed(feedId)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
 }
