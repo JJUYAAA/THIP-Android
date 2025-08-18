@@ -7,9 +7,11 @@ import com.texthip.thip.data.model.feed.response.MyFeedItem
 import com.texthip.thip.data.model.users.response.RecentWriterList
 import com.texthip.thip.data.repository.FeedRepository
 import com.texthip.thip.data.repository.UserRepository
+import com.texthip.thip.ui.feed.usecase.ChangeFeedLikeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,7 +46,8 @@ data class FeedUiState(
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val changeFeedLikeUseCase: ChangeFeedLikeUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState = _uiState.asStateFlow()
@@ -281,6 +284,33 @@ class FeedViewModel @Inject constructor(
                             error = exception.message
                         ) 
                     }
+                }
+        }
+    }
+
+    fun changeFeedLike(feedId: Long) {
+        viewModelScope.launch {
+            val currentFeeds = _uiState.value.allFeeds
+            val feedToUpdate = currentFeeds.find { it.feedId.toLong() == feedId } ?: return@launch
+
+            //ui 먼저 변경 ( 낙관적 업데이트 )
+            val newFeeds = currentFeeds.map {
+                if (it.feedId.toLong()  == feedId) {
+                    it.copy(
+                        isLiked = !it.isLiked,
+                        likeCount = if (it.isLiked) it.likeCount - 1 else it.likeCount + 1
+                    )
+                } else {
+                    it
+                }
+            }
+            _uiState.update { it.copy(allFeeds = newFeeds)  }
+
+            //api 호출
+            val newLikeStatus = !feedToUpdate.isLiked
+            changeFeedLikeUseCase(feedId, newLikeStatus)
+                .onFailure {
+                    _uiState.update { it.copy(allFeeds = currentFeeds)}
                 }
         }
     }
