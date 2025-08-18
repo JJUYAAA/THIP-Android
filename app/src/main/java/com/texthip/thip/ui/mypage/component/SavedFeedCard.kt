@@ -37,7 +37,8 @@ fun SavedFeedCard(
     onLikeClick: () -> Unit = {},
     onContentClick: () -> Unit = {},
     onCommentClick: () -> Unit = {},
-    onBookClick: () -> Unit = {}
+    onBookClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val hasImages = feedItem.imageUrls.isNotEmpty()
     val maxLines = if (hasImages) 3 else 8
@@ -53,7 +54,8 @@ fun SavedFeedCard(
             bottomText = feedItem.userRole,
             bottomTextColor = bottomTextColor,
             showSubscriberInfo = false,
-            hoursAgo = feedItem.timeAgo
+            hoursAgo = feedItem.timeAgo,
+            onClick = onProfileClick
         )
         Column(
             modifier = Modifier

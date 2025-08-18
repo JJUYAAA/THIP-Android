@@ -14,7 +14,7 @@ data class AllFeedResponse(
 @Serializable
 data class AllFeedItem(
     @SerialName("feedId") val feedId: Int,
-    @SerialName("creatorId") val creatorId: Int,
+    @SerialName("creatorId") val creatorId: Long,
     @SerialName("creatorNickname") val creatorNickname: String,
     @SerialName("creatorProfileImageUrl") val creatorProfileImageUrl: String?,
     @SerialName("aliasName") val aliasName: String,

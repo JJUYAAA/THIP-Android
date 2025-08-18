@@ -50,7 +50,6 @@ import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
 import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
-import com.texthip.thip.ui.feed.viewmodel.MySubscriptionViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme
@@ -68,10 +67,10 @@ fun FeedScreen(
     onNavigateToFeedWrite: () -> Unit = {},
     onNavigateToFeedComment: (Int) -> Unit = {},
     onNavigateToBookDetail: (String) -> Unit = {},
+    onNavigateToUserProfile: (userId: Long) -> Unit = {},
     resultFeedId: Int? = null,
     onResultConsumed: () -> Unit = {},
     feedViewModel: FeedViewModel = hiltViewModel(),
-    mySubscriptionViewModel: MySubscriptionViewModel = hiltViewModel()
 ) {
     val feedUiState by feedViewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
@@ -351,6 +350,9 @@ fun FeedScreen(
                                 },
                                 onBookClick = {
                                     onNavigateToBookDetail(allFeed.isbn)
+                                },
+                                onProfileClick = {
+                                    onNavigateToUserProfile(allFeed.creatorId)
                                 }
                             )
                             Spacer(modifier = Modifier.height(40.dp))
