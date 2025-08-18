@@ -243,6 +243,9 @@ fun FeedCommentScreen(
                             }
                         }
                     }
+                    HorizontalDivider(color = colors.DarkGrey02, thickness = 1.dp)
+
+
                     HorizontalDivider(color = colors.DarkGrey03, thickness = 10.dp)
                 }
             }
