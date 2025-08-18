@@ -339,6 +339,7 @@
     <string name="selected_tags">선택된 태그</string>
     <string name="tag_count">%1$d / %2$d개</string>
     <string name="edit_feed">수정하기</string>
+    <string name="edit_feed_title">글 수정</string>
     <string name="delete_feed">삭제하기</string>
     <string name="delete_feed_dialog_title">이 피드를 삭제하시겠어요?</string>
     <string name="delete_feed_dialog_description">삭제 후에는 되돌릴 수 없어요.</string>
@@ -415,6 +416,10 @@
     <!-- FeedWriteViewModel -->
     <string name="error_feed_id_not_returned">서버 feedId 반환 오류</string>
 
+    <!-- API constants -->
+    <string name="api_sort_like" translatable="false">like</string>
+    <string name="api_sort_latest" translatable="false">latest</string>
+    
     <!-- GenreManager API constants -->
     <string name="api_genre_science_it" translatable="false">과학/IT</string>
 
