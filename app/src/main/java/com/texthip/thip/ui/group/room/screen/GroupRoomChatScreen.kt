@@ -78,6 +78,12 @@ fun GroupRoomChatContent(
     var selectedMessage by remember { mutableStateOf<TodayCommentList?>(null) }
     val lazyListState = rememberLazyListState()
 
+    LaunchedEffect(key1 = uiState.greetings) {
+        if (uiState.greetings.isNotEmpty()) {
+            lazyListState.animateScrollToItem(index = 0)
+        }
+    }
+
     val isScrolledToTop by remember {
         derivedStateOf {
             lazyListState.firstVisibleItemIndex == 0 && lazyListState.firstVisibleItemScrollOffset == 0
