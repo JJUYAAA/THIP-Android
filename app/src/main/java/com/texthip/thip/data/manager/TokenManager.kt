@@ -7,11 +7,11 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
-
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "thip_tokens")
 
@@ -19,11 +19,35 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class TokenManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    // 저장할 데이터의 Key 정의
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "thip_auth_tokens")
+
     companion object {
+        //토큰저장에 사용되는 키
+        private val APP_TOKEN_KEY = stringPreferencesKey("app_token")
         private val TEMP_TOKEN_KEY = stringPreferencesKey("temp_token")
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
+    }
+
+    //토큰 저장
+    suspend fun saveToken(token: String) {
+        context.dataStore.edit { prefs ->
+            prefs[APP_TOKEN_KEY] = token
+        }
+    }
+
+    //저장된 토큰을 Flow 형태로 불러옴
+    fun getToken(): Flow<String?> {
+        return context.dataStore.data.map { prefs ->
+            prefs[APP_TOKEN_KEY]
+        }
+    }
+
+    //저장된 토큰 삭제 (로그아웃 시?)
+    suspend fun deleteToken() {
+        context.dataStore.edit { prefs ->
+            prefs.remove(APP_TOKEN_KEY)
+        }
     }
 
     // 임시 토큰 저장

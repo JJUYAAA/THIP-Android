@@ -12,7 +12,7 @@ data class CommentsResponse(
 @Serializable
 data class CommentList(
     val commentId: Int?,
-    val creatorId: Int?,
+    val creatorId: Long?,
     val creatorProfileImageUrl: String?,
     val creatorNickname: String?,
     val aliasName: String?,
@@ -30,7 +30,7 @@ data class CommentList(
 data class ReplyList(
     val commentId: Int,
     val parentCommentCreatorNickname: String,
-    val creatorId: Int,
+    val creatorId: Long,
     val creatorProfileImageUrl: String,
     val creatorNickname: String,
     val aliasName: String,

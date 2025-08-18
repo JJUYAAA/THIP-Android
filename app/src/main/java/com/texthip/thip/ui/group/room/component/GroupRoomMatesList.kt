@@ -18,7 +18,7 @@ import com.texthip.thip.utils.color.hexToColor
 @Composable
 fun GroupRoomMatesList(
     members: RoomsUsersResponse,
-    onUserClick: (Int) -> Unit = {}
+    onUserClick: (Long) -> Unit = {}
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),

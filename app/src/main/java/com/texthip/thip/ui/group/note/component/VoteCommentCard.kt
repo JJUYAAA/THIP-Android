@@ -28,12 +28,12 @@ fun VoteCommentCard(
     onVote: (postId: Int, voteItemId: Int, type: Boolean) -> Unit = { _, _, _ -> },
     onCommentClick: () -> Unit = {},
     onLongPress: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val selectedIndex = data.voteItems.indexOfFirst { it.isVoted }.takeIf { it != -1 }
     val hasVoted = selectedIndex != null
 
     val isLocked = data.isLocked
-    val isWriter = data.isWriter
 
     val pageText = if (data.isOverview) {
         stringResource(id = R.string.general_review)
@@ -49,16 +49,17 @@ fun VoteCommentCard(
                     detectTapGestures(onLongPress = { onLongPress() })
                 }
             }
-            .padding(start = 20.dp, end = 20.dp, top = 32.dp),
+            .padding(start = 20.dp, end = 20.dp, top = 40.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ProfileBar(
-            profileImage = "https://example.com/image1.jpg",
+            profileImage = data.profileImageUrl,
             topText = data.nickName,
             bottomText = pageText,
             bottomTextColor = colors.Purple,
             showSubscriberInfo = false,
-            hoursAgo = data.postDate
+            hoursAgo = data.postDate,
+            onClick = onProfileClick
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

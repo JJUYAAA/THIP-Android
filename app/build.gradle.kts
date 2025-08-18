@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
     kotlin("kapt")
 }
 
@@ -27,6 +28,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "BASE_URL", "\"${properties["BASE_URL"]}\"")
+        buildConfigField("String", "NATIVE_APP_KEY", "\"${properties["NATIVE_APP_KEY"]}\"")
+        manifestPlaceholders += mapOf(
+            "NATIVE_APP_KEY" to properties["NATIVE_APP_KEY"] as String
+        )
     }
 
     buildTypes {
@@ -68,6 +73,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
     implementation(libs.foundation)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -91,6 +97,17 @@ dependencies {
 // OkHttp
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+
+// 카카오 로그인 SDK
+    implementation("com.kakao.sdk:v2-all:2.21.6")
+
+// 토큰 저장을 위한 DataStore
+    implementation ("androidx.datastore:datastore-preferences:1.1.1")
+
+// 구글 로그인
+    implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
 }
 
 kapt {
