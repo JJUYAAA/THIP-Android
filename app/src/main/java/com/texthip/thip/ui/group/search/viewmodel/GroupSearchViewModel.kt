@@ -19,29 +19,29 @@ import javax.inject.Inject
 
 data class GroupSearchUiState(
     val searchQuery: String = "",
-    
+
     // 상태 관리 단순화 - boolean 필드 사용
     val isInitial: Boolean = true,
     val isLiveSearching: Boolean = false,
     val isCompleteSearching: Boolean = false,
-    
+
     // 검색 결과 및 데이터
     val searchResults: List<SearchRoomItem> = emptyList(),
     val recentSearches: List<RecentSearchItem> = emptyList(),
     val genres: List<Genre> = emptyList(),
-    
+
     // 필터링 상태
     val selectedGenre: Genre? = null,
     val selectedSort: String = "deadline", // "deadline" 또는 "memberCount"
-    
+
     // 로딩 상태
     val isSearching: Boolean = false,
     val isLoadingMore: Boolean = false,
-    
+
     // 페이징 정보
     val nextCursor: String? = null,
     val hasMore: Boolean = true,
-    
+
     // 에러/토스트
     val error: String? = null,
     val showToast: Boolean = false,
@@ -60,17 +60,17 @@ class GroupSearchViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(GroupSearchUiState())
     val uiState: StateFlow<GroupSearchUiState> = _uiState.asStateFlow()
-    
+
     private var searchJob: Job? = null
     private var loadMoreJob: Job? = null
-    
+
     // Map 기반 빠른 최근 검색어 관리
     private val recentSearchMap = mutableMapOf<String, RecentSearchItem>()
 
     init {
         loadInitialData()
     }
-    
+
     private fun updateState(update: (GroupSearchUiState) -> GroupSearchUiState) {
         _uiState.update(update)
     }
@@ -79,16 +79,16 @@ class GroupSearchViewModel @Inject constructor(
         loadGenres()
         loadRecentSearches()
     }
-    
+
     private fun loadGenres() {
         viewModelScope.launch {
             roomsRepository.getGenres()
                 .onSuccess { genres ->
-                    updateState { 
+                    updateState {
                         it.copy(
                             genres = genres,
                             selectedGenre = null  // 기본적으로 아무 장르도 선택하지 않음
-                        ) 
+                        )
                     }
                 }
                 .onFailure {
@@ -104,12 +104,12 @@ class GroupSearchViewModel @Inject constructor(
 
         // 공백도 검색 가능하도록 수정 (빈 문자열만 제외)
         if (query.isNotEmpty()) {
-            updateState { 
+            updateState {
                 it.copy(
                     isInitial = false,
                     isLiveSearching = true,
                     isCompleteSearching = false
-                ) 
+                )
             }
             searchJob = viewModelScope.launch {
                 delay(300)
@@ -126,12 +126,12 @@ class GroupSearchViewModel @Inject constructor(
             searchJob?.cancel()
             loadMoreJob?.cancel()
 
-            updateState { 
+            updateState {
                 it.copy(
                     isInitial = false,
                     isLiveSearching = false,
                     isCompleteSearching = true
-                ) 
+                )
             }
             viewModelScope.launch {
                 performSearch(query, isLiveSearch = false)
@@ -139,7 +139,7 @@ class GroupSearchViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun updateSelectedGenre(genre: Genre?) {
         updateState { it.copy(selectedGenre = genre) }
         // 필터 변경 시 새로운 검색 수행 (공백도 허용)
@@ -147,7 +147,7 @@ class GroupSearchViewModel @Inject constructor(
             performSearchWithCurrentQuery()
         }
     }
-    
+
     fun updateSortType(sort: String) {
         updateState { it.copy(selectedSort = sort) }
         // 정렬 변경 시 새로운 검색 수행 (공백도 허용)
@@ -155,13 +155,13 @@ class GroupSearchViewModel @Inject constructor(
             performSearchWithCurrentQuery()
         }
     }
-    
+
     private fun performSearchWithCurrentQuery() {
         val currentState = uiState.value
         if (currentState.searchQuery.isNotEmpty()) {  // 공백도 허용
             searchJob?.cancel()
             loadMoreJob?.cancel()
-            
+
             searchJob = viewModelScope.launch {
                 performSearch(currentState.searchQuery, isLiveSearch = currentState.isLiveSearching)
             }
@@ -180,18 +180,22 @@ class GroupSearchViewModel @Inject constructor(
 
     private suspend fun performSearch(query: String, isLiveSearch: Boolean) {
         val currentState = uiState.value
-        updateState { 
+        updateState {
             it.copy(
+                isInitial = false,
+                isLiveSearching = isLiveSearch,
+                isCompleteSearching = !isLiveSearch,
                 isSearching = true,
                 error = null,
                 searchResults = emptyList(),
-                nextCursor = null
-            ) 
+                nextCursor = null,
+                hasMore = true
+            )
         }
 
         val category = currentState.selectedGenre?.apiCategory ?: ""
         roomsRepository.searchRooms(
-            keyword = query, 
+            keyword = query,
             category = category,
             sort = currentState.selectedSort,
             isFinalized = !isLiveSearch,
@@ -213,8 +217,8 @@ class GroupSearchViewModel @Inject constructor(
                         it.copy(
                             searchResults = emptyList(),
                             isSearching = false,
-                            isLiveSearching = false,
-                            isCompleteSearching = false,
+                            isLiveSearching = isLiveSearch,
+                            isCompleteSearching = !isLiveSearch,
                             hasMore = false,
                             error = if (isLiveSearch) null else "검색 결과를 불러올 수 없습니다."
                         )
@@ -226,9 +230,10 @@ class GroupSearchViewModel @Inject constructor(
                     it.copy(
                         searchResults = emptyList(),
                         isSearching = false,
-                        isLiveSearching = false,
-                        isCompleteSearching = false,
-                        error = if (isLiveSearch) null else (throwable.message ?: "검색 중 오류가 발생했습니다.")
+                        isLiveSearching = isLiveSearch,
+                        isCompleteSearching = !isLiveSearch,
+                        error = if (isLiveSearch) null else (throwable.message
+                            ?: "검색 중 오류가 발생했습니다.")
                     )
                 }
             }
@@ -236,7 +241,7 @@ class GroupSearchViewModel @Inject constructor(
 
     private suspend fun performLoadMore() {
         val currentState = uiState.value
-        
+
         updateState { it.copy(isLoadingMore = true) }
 
         val category = currentState.selectedGenre?.apiCategory ?: ""
@@ -279,7 +284,7 @@ class GroupSearchViewModel @Inject constructor(
     }
 
     fun loadRecentSearches() {
-        viewModelScope.launch {            
+        viewModelScope.launch {
             recentSearchRepository.getRecentSearches("ROOM")
                 .onSuccess { response ->
                     response?.let { recentSearchResponse ->
@@ -288,7 +293,7 @@ class GroupSearchViewModel @Inject constructor(
                         recentSearchResponse.recentSearchList.forEach { item ->
                             recentSearchMap[item.searchTerm] = item
                         }
-                        
+
                         updateState {
                             it.copy(recentSearches = recentSearchResponse.recentSearchList)
                         }
@@ -311,14 +316,14 @@ class GroupSearchViewModel @Inject constructor(
                 }
         }
     }
-    
+
     /** 키워드로 빠른 최근 검색어 삭제 (Map 기반) */
     fun deleteRecentSearchByKeyword(keyword: String) {
         recentSearchMap[keyword]?.let { recentSearchItem ->
             deleteRecentSearch(recentSearchItem.recentSearchId)
         }
     }
-    
+
     private fun clearSearchResults() {
         searchJob?.cancel()
         loadMoreJob?.cancel()
@@ -341,7 +346,7 @@ class GroupSearchViewModel @Inject constructor(
     fun refreshData() {
         loadInitialData()
     }
-    
+
     override fun onCleared() {
         super.onCleared()
         searchJob?.cancel()
