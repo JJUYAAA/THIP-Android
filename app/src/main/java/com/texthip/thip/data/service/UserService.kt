@@ -6,13 +6,16 @@ import com.texthip.thip.data.model.users.response.MyFollowingsResponse
 import com.texthip.thip.data.model.users.response.MyPageInfoResponse
 import com.texthip.thip.data.model.users.request.NicknameRequest
 import com.texthip.thip.data.model.users.request.ProfileUpdateRequest
+import com.texthip.thip.data.model.users.request.SignupRequest
 import com.texthip.thip.data.model.users.response.AliasChoiceResponse
 import com.texthip.thip.data.model.users.response.FollowResponse
 import com.texthip.thip.data.model.users.response.MyRecentFollowingsResponse
 import com.texthip.thip.data.model.users.response.NicknameResponse
 import com.texthip.thip.data.model.users.response.OthersFollowersResponse
+import com.texthip.thip.data.model.users.response.SignupResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -56,4 +59,10 @@ interface UserService {
     suspend fun updateProfile(
         @Body request: ProfileUpdateRequest
     ): BaseResponse<Unit>
+
+    @POST("users/signup")
+    suspend fun signup(
+        @Header("Authorization") tempToken: String,
+        @Body request: SignupRequest
+    ): BaseResponse<SignupResponse>
 }
