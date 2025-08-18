@@ -38,6 +38,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.CommentActionMode
@@ -62,6 +64,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun FeedCommentScreen(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
     feedId: Long,
     onNavigateBack: () -> Unit = {},
@@ -72,6 +75,15 @@ fun FeedCommentScreen(
     val feedDetailUiState by feedDetailViewModel.uiState.collectAsState()
     val commentsUiState by commentsViewModel.uiState.collectAsState()
 
+    LaunchedEffect(feedDetailUiState.deleteSuccess) {
+        if (feedDetailUiState.deleteSuccess) {
+            navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.set("deleted_feed_id", feedId)
+
+            onNavigateBack()
+        }
+    }
     LaunchedEffect(feedId) {
         feedDetailViewModel.loadFeedDetail(feedId)
         commentsViewModel.initialize(postId = feedId.toLong(), postType = "FEED")
@@ -429,6 +441,7 @@ private fun FeedCommentScreenPrev() {
     ThipTheme {
         FeedCommentScreen(
             feedId = 1,
+            navController = rememberNavController()
         )
     }
 }

@@ -359,4 +359,15 @@ class FeedViewModel @Inject constructor(
                 }
         }
     }
+    fun removeDeletedFeed(feedId: Long) {
+        val currentAllFeeds = _uiState.value.allFeeds.filterNot { it.feedId.toLong() == feedId }
+        val currentMyFeeds = _uiState.value.myFeeds.filterNot { it.feedId.toLong() == feedId }
+
+        updateState {
+            it.copy(
+                allFeeds = currentAllFeeds,
+                myFeeds = currentMyFeeds
+            )
+        }
+    }
 }

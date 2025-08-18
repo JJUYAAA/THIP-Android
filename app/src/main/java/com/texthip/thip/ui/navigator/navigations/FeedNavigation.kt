@@ -25,6 +25,7 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         val resultFeedId = backStackEntry.savedStateHandle.get<Long>("feedId")
 
         FeedScreen(
+            navController = navController,
             resultFeedId = resultFeedId,
             onResultConsumed = {
                 backStackEntry.savedStateHandle.remove<Long>("feedId")
@@ -115,12 +116,14 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         )
     }
     composable<FeedRoutes.Comment> { backStackEntry ->
-        val route = backStackEntry.arguments?.let {
+        /*val route = backStackEntry.arguments?.let {
             FeedRoutes.Comment(it.getLong("feedId"))
-        } ?: return@composable
+        } ?: return@composable*/
+        val route = backStackEntry.toRoute<FeedRoutes.Comment>()
 
         FeedCommentScreen(
             feedId = route.feedId,
+            navController = navController,
             onNavigateBack = {
                 navController.popBackStack()
             },

@@ -42,6 +42,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.header.AuthorHeader
@@ -71,6 +73,7 @@ fun FeedScreen(
     onNavigateToBookDetail: (String) -> Unit = {},
     resultFeedId: Long? = null,
     onResultConsumed: () -> Unit = {},
+    navController: NavHostController,
     feedViewModel: FeedViewModel = hiltViewModel(),
 ) {
     val feedUiState by feedViewModel.uiState.collectAsState()
@@ -95,6 +98,16 @@ fun FeedScreen(
                     feedUiState.currentTabFeeds.isNotEmpty() &&
                     totalItems > 0 &&
                     lastVisibleIndex >= totalItems - 3
+        }
+    }
+    LaunchedEffect(Unit) {
+        navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
+            handle.getLiveData<Long>("deleted_feed_id").observeForever { deletedId ->
+                if (deletedId != null) {
+                    feedViewModel.removeDeletedFeed(deletedId)
+                    handle.remove<Long>("deleted_feed_id")
+                }
+            }
         }
     }
 
@@ -394,7 +407,8 @@ private fun FeedScreenPreview() {
     ThipTheme {
         FeedScreen(
             onNavigateToFeedWrite = { },
-            onNavigateToBookDetail = { }
+            onNavigateToBookDetail = { },
+            navController = rememberNavController()
         )
     }
 }
@@ -405,7 +419,8 @@ private fun FeedScreenWithoutDataPreview() {
     ThipTheme {
         FeedScreen(
             onNavigateToFeedWrite = { },
-            onNavigateToBookDetail = { }
+            onNavigateToBookDetail = { },
+            navController = rememberNavController()
         )
     }
 }
