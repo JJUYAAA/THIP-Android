@@ -58,6 +58,7 @@ import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.rooms.advancedImePadding
 import kotlinx.coroutines.delay
 
 @Composable
@@ -132,202 +133,206 @@ fun FeedCommentScreen(
 
     val focusManager = LocalFocusManager.current
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(
-        modifier = if (isBottomSheetVisible || showDialog) {
-            Modifier
-                .fillMaxSize()
-                .blur(5.dp)
-        } else {
-            Modifier.fillMaxSize()
-        }
-            // 바깥 터치 시 키보드 숨기기
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus()
-                    selectedCommentId = null
-                })
-            }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .advancedImePadding()
     ) {
-        DefaultTopAppBar(
-            isRightIconVisible = true,
-            isTitleVisible = false,
-            onLeftClick = onNavigateBack,
-            onRightClick = { isBottomSheetVisible = true },
-        )
-
-        LazyColumn(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(top = 56.dp),
-            contentPadding = PaddingValues(bottom = 20.dp)
+        Box(
+            modifier = if (isBottomSheetVisible || showDialog) {
+                Modifier
+                    .fillMaxSize()
+                    .blur(5.dp)
+            } else {
+                Modifier.fillMaxSize()
+            }
+                // 바깥 터치 시 키보드 숨기기
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus()
+                        selectedCommentId = null
+                    })
+                }
         ) {
-            // 상단 피드
-            item {
-                Column {
-                    ProfileBar(
-                        modifier = Modifier.padding(20.dp),
-                        profileImage = feedDetail.creatorProfileImageUrl ?: "",
-                        topText = feedDetail.creatorNickname,
-                        bottomText = feedDetail.aliasName,
-                        showSubscriberInfo = false,
-                        hoursAgo = feedDetail.postDate
-                    )
-                    Column(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp, horizontal = 20.dp)
-                    ) {
-                        ActionBookButton(
-                            bookTitle = feedDetail.bookTitle,
-                            bookAuthor = feedDetail.bookAuthor,
-                            onClick = {}
+            DefaultTopAppBar(
+                isRightIconVisible = true,
+                isTitleVisible = false,
+                onLeftClick = onNavigateBack,
+                onRightClick = { isBottomSheetVisible = true },
+            )
+
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(top = 56.dp),
+                contentPadding = PaddingValues(bottom = 20.dp)
+            ) {
+                // 상단 피드
+                item {
+                    Column {
+                        ProfileBar(
+                            modifier = Modifier.padding(20.dp),
+                            profileImage = feedDetail.creatorProfileImageUrl ?: "",
+                            topText = feedDetail.creatorNickname,
+                            bottomText = feedDetail.aliasName,
+                            showSubscriberInfo = false,
+                            hoursAgo = feedDetail.postDate
                         )
-                    }
-                    Text(
-                        text = feedDetail.contentBody,
-                        style = typography.feedcopy_r400_s14_h20,
-                        color = colors.White,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp, start = 20.dp, end = 20.dp)
-                    )
-                    if (images.isNotEmpty()) {
-                        LazyRow(
+                        Column(
                             Modifier
                                 .fillMaxWidth()
-                                .padding(start = 20.dp, bottom = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(vertical = 16.dp, horizontal = 20.dp)
                         ) {
-                            itemsIndexed(images.take(3)) { index, imageUrl ->
-                                AsyncImage(
-                                    model = imageUrl,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .padding(end = 16.dp)
-                                        .size(200.dp)
-                                        .clickable {
-                                            selectedImageIndex = index
-                                            showImageViewer = true
-                                        },
-                                    contentScale = ContentScale.Crop
+                            ActionBookButton(
+                                bookTitle = feedDetail.bookTitle,
+                                bookAuthor = feedDetail.bookAuthor,
+                                onClick = {}
+                            )
+                        }
+                        Text(
+                            text = feedDetail.contentBody,
+                            style = typography.feedcopy_r400_s14_h20,
+                            color = colors.White,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp, start = 20.dp, end = 20.dp)
+                        )
+                        if (images.isNotEmpty()) {
+                            LazyRow(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 20.dp, bottom = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                itemsIndexed(images.take(3)) { index, imageUrl ->
+                                    AsyncImage(
+                                        model = imageUrl,
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .padding(end = 16.dp)
+                                            .size(200.dp)
+                                            .clickable {
+                                                selectedImageIndex = index
+                                                showImageViewer = true
+                                            },
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                            }
+                        }
+                        if (feedDetail.tagList.isNotEmpty()) {
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 16.dp, start = 20.dp, end = 20.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                feedDetail.tagList.forEach { tag ->
+                                    OptionChipButton(
+                                        text = "#$tag",
+                                        isFilled = false,
+                                        isSelected = false,
+                                        onClick = {})
+                                }
+                            }
+                        }
+                        HorizontalDivider(color = colors.DarkGrey03, thickness = 10.dp)
+                    }
+                }
+                when {
+                    commentsUiState.isLoading -> {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 40.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(color = colors.White)
+                            }
+                        }
+                    }
+                    // 댓글 없음
+                    commentsUiState.comments.isEmpty() -> {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(400.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.no_comments_yet),
+                                    style = typography.smalltitle_sb600_s18_h24,
+                                    color = colors.White
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = stringResource(R.string.no_comment_subtext),
+                                    style = typography.copy_r400_s14,
+                                    color = colors.Grey
                                 )
                             }
                         }
                     }
-                    if (feedDetail.tagList.isNotEmpty()) {
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 16.dp, start = 20.dp, end = 20.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            feedDetail.tagList.forEach { tag ->
-                                OptionChipButton(
-                                    text = "#$tag",
-                                    isFilled = false,
-                                    isSelected = false,
-                                    onClick = {})
-                            }
-                        }
-                    }
-                    HorizontalDivider(color = colors.DarkGrey03, thickness = 10.dp)
-                }
-            }
-            when {
-                commentsUiState.isLoading -> {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 40.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = colors.White)
-                        }
-                    }
-                }
-                // 댓글 없음
-                commentsUiState.comments.isEmpty() -> {
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(400.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = stringResource(R.string.no_comments_yet),
-                                style = typography.smalltitle_sb600_s18_h24,
-                                color = colors.White
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = stringResource(R.string.no_comment_subtext),
-                                style = typography.copy_r400_s14,
-                                color = colors.Grey
+
+                    else -> {
+                        items(
+                            items = commentsUiState.comments,
+                            key = { comment -> comment.commentId ?: comment.hashCode() }
+                        ) { commentItem ->
+                            CommentSection(
+                                commentItem = commentItem,
+                                actionMode = CommentActionMode.POPUP,
+                                selectedCommentId = selectedCommentId,
+                                onEvent = commentsViewModel::onEvent,
+                                onReplyClick = { commentId, nickname ->
+                                    replyingToCommentId = commentId
+                                    replyingToNickname = nickname
+                                    selectedCommentId = null
+                                },
+                                onCommentLongPress = { comment ->
+                                    selectedCommentId = comment.commentId
+                                },
+                                onReplyLongPress = { reply ->
+                                    selectedCommentId = reply.commentId
+                                },
+                                onDismissPopup = {
+                                    selectedCommentId = null
+                                }
                             )
                         }
                     }
                 }
-
-                else -> {
-                    items(
-                        items = commentsUiState.comments,
-                        key = { comment -> comment.commentId ?: comment.hashCode() }
-                    ) { commentItem ->
-                        CommentSection(
-                            commentItem = commentItem,
-                            actionMode = CommentActionMode.POPUP,
-                            selectedCommentId = selectedCommentId,
-                            onEvent = commentsViewModel::onEvent,
-                            onReplyClick = { commentId, nickname ->
-                                replyingToCommentId = commentId
-                                replyingToNickname = nickname
-                                selectedCommentId = null
-                            },
-                            onCommentLongPress = { comment ->
-                                selectedCommentId = comment.commentId
-                            },
-                            onReplyLongPress = { reply ->
-                                selectedCommentId = reply.commentId
-                            },
-                            onDismissPopup = {
-                                selectedCommentId = null
-                            }
-                        )
-                    }
-                }
             }
-        }
 
-        // 댓글 입력창
-        CommentTextField(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            input = commentInput,
-            hint = stringResource(R.string.reply_to),
-            onInputChange = { commentInput = it },
-            onSendClick = {
-                if (commentInput.isNotBlank()) {
-                    commentsViewModel.onEvent(
-                        CommentsEvent.CreateComment(
-                            content = commentInput,
-                            parentId = replyingToCommentId
+            // 댓글 입력창
+            CommentTextField(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                input = commentInput,
+                hint = stringResource(R.string.reply_to),
+                onInputChange = { commentInput = it },
+                onSendClick = {
+                    if (commentInput.isNotBlank()) {
+                        commentsViewModel.onEvent(
+                            CommentsEvent.CreateComment(
+                                content = commentInput,
+                                parentId = replyingToCommentId
+                            )
                         )
-                    )
-                    commentInput = ""
+                        commentInput = ""
+                        replyingToCommentId = null
+                        replyingToNickname = null
+                        focusManager.clearFocus()
+                    }
+                },
+                replyTo = replyingToNickname,
+                onCancelReply = {
                     replyingToCommentId = null
                     replyingToNickname = null
-                    focusManager.clearFocus()
                 }
-            },
-            replyTo = replyingToNickname,
-            onCancelReply = {
-                replyingToCommentId = null
-                replyingToNickname = null
-            }
-        )
+            )
         }
 
         // 신고 완료 토스트
