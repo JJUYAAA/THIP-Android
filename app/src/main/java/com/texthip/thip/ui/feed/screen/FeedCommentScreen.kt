@@ -490,6 +490,7 @@ fun FeedCommentScreen(
                     onConfirm = {
                         showDialog = false
                         isBottomSheetVisible = false
+                        viewModel.deleteFeed(feedId.toLong())
                     },
                     onCancel = {
                         showDialog = false
