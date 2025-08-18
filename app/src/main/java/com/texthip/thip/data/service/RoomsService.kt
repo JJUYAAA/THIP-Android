@@ -4,8 +4,8 @@ import com.texthip.thip.data.model.base.BaseResponse
 import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomJoinRequest
 import com.texthip.thip.data.model.rooms.request.RoomSecretRoomRequest
-import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateDailyGreetingRequest
+import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
@@ -18,8 +18,9 @@ import com.texthip.thip.data.model.rooms.response.RoomMainList
 import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
 import com.texthip.thip.data.model.rooms.response.RoomSecretRoomResponse
 import com.texthip.thip.data.model.rooms.response.RoomsBookPageResponse
-import com.texthip.thip.data.model.rooms.response.RoomsCreateVoteResponse
 import com.texthip.thip.data.model.rooms.response.RoomsCreateDailyGreetingResponse
+import com.texthip.thip.data.model.rooms.response.RoomsCreateVoteResponse
+import com.texthip.thip.data.model.rooms.response.RoomsDailyGreetingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteRecordResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteVoteResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
@@ -153,6 +154,12 @@ interface RoomsService {
         @Path("postId") postId: Int,
         @Body request: RoomsPostsLikesRequest
     ): BaseResponse<RoomsPostsLikesResponse>
+
+    @GET("rooms/{roomId}/daily-greeting")
+    suspend fun getRoomsDailyGreeting(
+        @Path("roomId") roomId: Int,
+        @Query("cursor") cursor: String? = null
+    ): BaseResponse<RoomsDailyGreetingResponse>
 
     @POST("rooms/{roomId}/daily-greeting")
     suspend fun postRoomsDailyGreeting(
