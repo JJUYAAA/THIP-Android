@@ -5,11 +5,13 @@ import android.net.Uri
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.feed.request.CreateFeedRequest
 import com.texthip.thip.data.model.feed.request.FeedLikeRequest
+import com.texthip.thip.data.model.feed.request.FeedSaveRequest
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedLikeResponse
 import com.texthip.thip.data.model.feed.response.FeedMineInfoResponse
+import com.texthip.thip.data.model.feed.response.FeedSaveResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
 import com.texthip.thip.data.model.feed.response.RelatedBooksResponse
@@ -210,8 +212,17 @@ class FeedRepository @Inject constructor(
 
     suspend fun changeFeedLike(feedId: Long, newLikeStatus: Boolean): Result<FeedLikeResponse?> = runCatching {
         val request = FeedLikeRequest(type = newLikeStatus)
-        feedService.toggleFeedLike(feedId, request)
+        feedService.changeFeedLike(feedId, request)
             .handleBaseResponse()
             .getOrThrow()
     }
+
+    /** 피드 저장 */
+    suspend fun changeFeedSave(feedId: Long, newSaveStatus: Boolean): Result<FeedSaveResponse?> = runCatching {
+        val request = FeedSaveRequest(type = newSaveStatus)
+        feedService.changeFeedSave(feedId, request)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
 }

@@ -2,12 +2,14 @@ package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
 import com.texthip.thip.data.model.feed.request.FeedLikeRequest
+import com.texthip.thip.data.model.feed.request.FeedSaveRequest
 import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedLikeResponse
 import com.texthip.thip.data.model.feed.response.FeedMineInfoResponse
+import com.texthip.thip.data.model.feed.response.FeedSaveResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersInfoResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
@@ -88,7 +90,7 @@ interface FeedService {
 
     /** 피드 좋아요 상태 변경 */
     @POST("feeds/{feedId}/likes")
-    suspend fun toggleFeedLike(
+    suspend fun changeFeedLike(
         @Path("feedId") feedId: Long,
         @Body request: FeedLikeRequest
     ): BaseResponse<FeedLikeResponse>
@@ -99,4 +101,11 @@ interface FeedService {
         @Path("feedId") feedId: Int,
         @Body request: UpdateFeedRequest
     ): BaseResponse<CreateFeedResponse>
+
+    /** 피드 저장 상태 변경 */
+    @POST("feeds/{feedId}/saved")
+    suspend fun changeFeedSave(
+        @Path("feedId") feedId: Long,
+        @Body request: FeedSaveRequest
+    ): BaseResponse<FeedSaveResponse>
 }
