@@ -137,26 +137,21 @@ class CommentsViewModel @Inject constructor(
                                 currentState.comments.indexOfFirst { it.commentId == parentId }
 
                             if (parentCommentIndex != -1) {
-                                val parentComment = currentState.comments[parentCommentIndex]
-
-                                val newReply = ReplyList(
-                                    commentId = res.commentId ?: 0,
-                                    creatorId = res.creatorId ?: 0,
-                                    parentCommentCreatorNickname = parentComment.creatorNickname ?: "",
-                                    creatorProfileImageUrl = res.creatorProfileImageUrl ?: "",
-                                    creatorNickname = res.creatorNickname ?: "알 수 없음",
-                                    aliasName = res.aliasName ?: "",
-                                    aliasColor = res.aliasColor ?: "",
-                                    postDate = res.postDate ?: "",
-                                    content = res.content ?: "",
+                                val updatedParentComment = CommentList(
+                                    commentId = res.commentId,
+                                    creatorId = res.creatorId,
+                                    creatorProfileImageUrl = res.creatorProfileImageUrl,
+                                    creatorNickname = res.creatorNickname,
+                                    aliasName = res.aliasName,
+                                    aliasColor = res.aliasColor,
+                                    postDate = res.postDate,
+                                    content = res.content,
                                     likeCount = res.likeCount,
+                                    isDeleted = res.isDeleted,
                                     isWriter = res.isWriter,
-                                    isLike = res.isLike
+                                    isLike = res.isLike,
+                                    replyList = res.replyList
                                 )
-
-                                val updatedReplyList = parentComment.replyList + newReply
-                                val updatedParentComment =
-                                    parentComment.copy(replyList = updatedReplyList)
 
                                 val newCommentsList = currentState.comments.toMutableList().apply {
                                     this[parentCommentIndex] = updatedParentComment
