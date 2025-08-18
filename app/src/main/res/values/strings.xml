@@ -46,13 +46,14 @@
     <string name="time_ago">시간 전</string>
     <string name="change">변경</string>
     <string name="card_item_end_date">"%1$s일 뒤 "</string>
-    <string name="card_item_end">모집 마감</string>
+    <string name="card_item_end">" 모집 마감"</string>
+    <string name="time_remaining_after">뒤</string>
+    <string name="time_remaining_left">남음</string>
     <string name="card_item_finish">종료</string>
     <string name="card_item_participating_count">%1$s명</string>
     <string name="card_item_participant_string">참여</string>
     <string name="card_item_participant_count">%1$s</string>
     <string name="card_item_participant_count_max"> / %1$s명</string>
-    <string name="card_item_end_date_recruit">%1$s일 뒤 모집 마감</string>
     <string name="card_book_explain">도서 소개</string>
     <string name="card_author">%1$s 저</string>
     <string name="record_book">기록장</string>

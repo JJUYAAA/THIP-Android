@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,7 +39,7 @@ fun CardItemRoomSmall(
     title: String,
     participants: Int,
     maxParticipants: Int,
-    endDate: Int?,
+    endDate: String?,
     imageUrl: String? = null, // API에서 받은 이미지 URL
     isWide: Boolean = false,
     isSecret: Boolean = false,
@@ -146,7 +145,7 @@ fun CardItemRoomSmall(
 
                     endDate?.let {
                         Text(
-                            text = stringResource(R.string.card_item_end_date_recruit, endDate),
+                            text = endDate + stringResource(R.string.card_item_end),
                             color = colors.Red,
                             style = typography.menu_sb600_s12_h20
                         )
@@ -167,14 +166,14 @@ fun CardItemRoomSmallPreview() {
                 title = "방 제목입니다 방 제목입니다",
                 participants = 22,
                 maxParticipants = 30,
-                endDate = 3
+                endDate = "3일 뒤"
             )
 
             CardItemRoomSmall(
                 title = "와이드 카드 fillMaxWidth",
                 participants = 18,
                 maxParticipants = 25,
-                endDate = 5,
+                endDate = "5",
                 isWide = true
             )
         }

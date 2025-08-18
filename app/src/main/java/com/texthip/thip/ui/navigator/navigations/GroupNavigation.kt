@@ -171,22 +171,12 @@ fun NavGraphBuilder.groupNavigation(
 
     // Group Search 화면
     composable<GroupRoutes.Search> {
-        val groupViewModel: GroupViewModel = hiltViewModel()
-        val uiState by groupViewModel.uiState.collectAsState()
-
         GroupSearchScreen(
-            roomList = emptyList(),   //TODO: RoomMainResponse -> GroupCardItemRoomData 변환 필요
             onNavigateBack = {
                 navigateBack()
             },
-            onRoomClick = { room ->
-                if (room.isRecruiting) {
-                    // TODO: GroupCardItemRoomData -> RoomMainResponse 변환 후 roomId 사용
-                    // navController.navigateToGroupRecruit(room.roomId)
-                } else {
-                    // TODO: GroupCardItemRoomData -> RoomMainResponse 변환 후 roomId 사용
-                    // navController.navigateToGroupRoom(room.roomId)
-                }
+            onRoomClick = { roomId ->
+                navController.navigateToGroupRecruit(roomId)
             }
         )
     }
