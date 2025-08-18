@@ -6,6 +6,7 @@ import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.feed.request.CreateFeedRequest
 import com.texthip.thip.data.model.feed.request.FeedLikeRequest
 import com.texthip.thip.data.model.feed.request.FeedSaveRequest
+import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
@@ -178,6 +179,25 @@ class FeedRepository @Inject constructor(
             .getOrThrow()
     }
 
+    /** 피드 수정 */
+    suspend fun updateFeed(
+        feedId: Long,
+        contentBody: String? = null,
+        isPublic: Boolean? = null,
+        tagList: List<String>? = null,
+        remainImageUrls: List<String>? = null
+    ): Result<CreateFeedResponse?> = runCatching {
+        val request = UpdateFeedRequest(
+            contentBody = contentBody,
+            isPublic = isPublic,
+            tagList = tagList,
+            remainImageUrls = remainImageUrls
+        )
+
+        feedService.updateFeed(feedId, request)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
     /** 임시 파일들을 정리하는 함수 */
     private fun cleanupTempFiles(tempFiles: List<File>) {
         tempFiles.forEach { file ->
