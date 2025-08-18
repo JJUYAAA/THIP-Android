@@ -337,7 +337,7 @@ fun FeedScreen(
                                 feedItem = feedItem,
                                 bottomTextColor = hexToColor(allFeed.aliasColor),
                                 onBookmarkClick = {
-                                    // TODO: API 호출로 북마크 상태 변경
+                                    feedViewModel.changeFeedSave(feedItem.id)
                                 },
                                 onLikeClick = {
                                     feedViewModel.changeFeedLike(feedItem.id)
