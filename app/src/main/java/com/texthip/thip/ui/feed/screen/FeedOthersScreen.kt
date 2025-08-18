@@ -45,14 +45,16 @@ fun FeedOthersScreen(
 
     FeedOthersContent(
         uiState = uiState,
-        onNavigateBack = onNavigateBack
+        onNavigateBack = onNavigateBack,
+        onLikeClick = { feedId -> viewModel.changeFeedLike(feedId) }
     )
 }
 
 @Composable
 fun FeedOthersContent(
     uiState: FeedOthersUiState,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onLikeClick: (Long) -> Unit
 ) {
     val userInfo = uiState.userInfo
 
@@ -134,7 +136,7 @@ fun FeedOthersContent(
                             Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
                             OthersFeedCard(
                                 feedItem = feed,
-                                onLikeClick = { /* TODO: 좋아요 로직 연결 */ },
+                                onLikeClick = { onLikeClick(feed.feedId) },
                                 onContentClick = { /* TODO: 피드 상세 댓글 화면으로 이동 */ }
                             )
                             Spacer(modifier = Modifier.height(40.dp))
@@ -184,7 +186,8 @@ private fun FeedOthersScreenPrev() {
                 userInfo = mockUserInfo,
                 feeds = mockFeeds
             ),
-            onNavigateBack = {}
+            onNavigateBack = {},
+            onLikeClick = {}
         )
     }
 }
