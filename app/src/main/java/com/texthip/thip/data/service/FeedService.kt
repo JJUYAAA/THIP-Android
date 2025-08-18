@@ -10,10 +10,13 @@ import com.texthip.thip.data.model.feed.response.FeedMineInfoResponse
 import com.texthip.thip.data.model.feed.response.RelatedBooksResponse
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
+import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
@@ -73,4 +76,11 @@ interface FeedService {
     suspend fun getFeedUsers(
         @Path("userId") userId: Long
     ): BaseResponse<FeedUsersResponse>
+
+    /** 피드 수정 */
+    @PATCH("feeds/{feedId}")
+    suspend fun updateFeed(
+        @Path("feedId") feedId: Int,
+        @Body request: UpdateFeedRequest
+    ): BaseResponse<CreateFeedResponse>
 }

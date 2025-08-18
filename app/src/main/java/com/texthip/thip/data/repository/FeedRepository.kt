@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.feed.request.CreateFeedRequest
+import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
@@ -170,6 +171,26 @@ class FeedRepository @Inject constructor(
     /** 피드 상세 조회 */
     suspend fun getFeedDetail(feedId: Int): Result<FeedDetailResponse?> = runCatching {
         feedService.getFeedDetail(feedId)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    /** 피드 수정 */
+    suspend fun updateFeed(
+        feedId: Int,
+        contentBody: String? = null,
+        isPublic: Boolean? = null,
+        tagList: List<String>? = null,
+        remainImageUrls: List<String>? = null
+    ): Result<CreateFeedResponse?> = runCatching {
+        val request = UpdateFeedRequest(
+            contentBody = contentBody,
+            isPublic = isPublic,
+            tagList = tagList,
+            remainImageUrls = remainImageUrls
+        )
+
+        feedService.updateFeed(feedId, request)
             .handleBaseResponse()
             .getOrThrow()
     }
