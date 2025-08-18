@@ -1,7 +1,7 @@
 package com.texthip.thip.ui.feed.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.mypage.mock.FeedItem
@@ -30,10 +31,10 @@ fun MyFeedCard(
     modifier: Modifier = Modifier,
     feedItem: FeedItem,
     onLikeClick: () -> Unit = {},
-    onContentClick: () -> Unit = {}
+    onContentClick: () -> Unit = {},
+    onBookClick: () -> Unit = {}
 ) {
-    val images = feedItem.imageUrls.orEmpty().map { painterResource(id = it) }
-    val hasImages = images.isNotEmpty()
+    val hasImages = feedItem.imageUrls.isNotEmpty()
     val maxLines = if (hasImages) 3 else 8
 
     Column(
@@ -44,36 +45,42 @@ fun MyFeedCard(
         ActionBookButton(
             bookTitle = feedItem.bookTitle,
             bookAuthor = feedItem.authName,
-            onClick = {}
+            onClick = onBookClick
         )
 
-        Text(
-            text = feedItem.content,
-            style = typography.feedcopy_r400_s14_h20,
-            color = colors.White,
-            maxLines = maxLines,
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-                .clickable { onContentClick() }
-        )
-
-        if (hasImages) {
-            Row(
+                .clickable { onContentClick() },
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = feedItem.content,
+                style = typography.feedcopy_r400_s14_h20,
+                color = colors.White,
+                maxLines = maxLines,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                images.take(3).forEach { image ->
-                    Image(
-                        painter = image,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .size(100.dp),
-                        contentScale = ContentScale.Crop
-                    )
+                    .padding(vertical = 16.dp)
+            )
+
+            if (hasImages) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    feedItem.imageUrls.take(3).forEach { imageUrl ->
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(end = 10.dp)
+                                .size(100.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
         }
@@ -94,6 +101,7 @@ fun MyFeedCard(
                 modifier = Modifier.padding(start = 5.dp, end = 12.dp)
             )
             Icon(
+                modifier = Modifier.clickable { onContentClick() },
                 painter = painterResource(R.drawable.ic_comment),
                 contentDescription = null,
                 tint = colors.White
@@ -121,7 +129,7 @@ fun MyFeedCard(
 private fun MyFeedCardPrev() {
     val feed1 = FeedItem(
         id = 1,
-        userProfileImage = R.drawable.character_literature,
+        userProfileImage = "https://example.com/profile1.jpg",
         userName = "user.01",
         userRole = stringResource(R.string.influencer),
         bookTitle = "책 제목",
@@ -133,11 +141,11 @@ private fun MyFeedCardPrev() {
         isLiked = false,
         isSaved = true,
         isLocked = true,
-        imageUrls = null
+        imageUrls = emptyList()
     )
     val feed2 = FeedItem(
         id = 2,
-        userProfileImage = R.drawable.character_art,
+        userProfileImage = "https://example.com/profile2.jpg",
         userName = "user.01",
         userRole = stringResource(R.string.influencer),
         bookTitle = "책 제목",
@@ -149,7 +157,7 @@ private fun MyFeedCardPrev() {
         isLiked = false,
         isSaved = true,
         isLocked = false,
-        imageUrls = listOf(R.drawable.img_book_cover_sample, R.drawable.img_book_cover_sample)
+        imageUrls = listOf("https://example.com/image1.jpg", "https://example.com/image2.jpg")
     )
 
     Column {
@@ -160,6 +168,4 @@ private fun MyFeedCardPrev() {
             feedItem = feed2
         )
     }
-
-
 }

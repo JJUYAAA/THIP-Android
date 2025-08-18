@@ -33,9 +33,9 @@ import com.texthip.thip.ui.common.forms.WarningTextField
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.group.makeroom.component.GroupBookSearchBottomSheet
 import com.texthip.thip.ui.group.makeroom.component.GroupInputField
+import com.texthip.thip.ui.group.makeroom.component.GroupMemberLimitPicker
 import com.texthip.thip.ui.group.makeroom.component.GroupRoomDurationPicker
 import com.texthip.thip.ui.group.makeroom.component.GroupSelectBook
-import com.texthip.thip.ui.group.makeroom.component.GroupMemberLimitPicker
 import com.texthip.thip.ui.group.makeroom.component.SectionDivider
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomUiState
@@ -49,7 +49,7 @@ import com.texthip.thip.utils.rooms.toDisplayStrings
 @Composable
 fun GroupMakeRoomScreen(
     onNavigateBack: () -> Unit,
-    onGroupCreated: () -> Unit,
+    onGroupCreated: (Int) -> Unit, // roomId 전달
     modifier: Modifier = Modifier,
     viewModel: GroupMakeRoomViewModel = hiltViewModel()
 ) {
@@ -65,17 +65,12 @@ fun GroupMakeRoomScreen(
     GroupMakeRoomContent(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
-        onGroupCreated = onGroupCreated,
-        onCreateGroup = {
+        onCreateGroup = { 
             viewModel.createGroup(
                 onSuccess = { roomId ->
-                    // TODO: 생성된 roomId를 사용하여 해당 방으로 이동할 수 있음
-                    onGroupCreated()
+                    onGroupCreated(roomId)
                 },
-                onError = { errorMessage ->
-                    // TODO: 에러 메시지 표시 (토스트 메시지 등)
-                    // 현재는 uiState.errorMessage를 통해 처리
-                }
+                onError = { }
             )
         },
         onSelectBook = viewModel::selectBook,
@@ -87,6 +82,7 @@ fun GroupMakeRoomScreen(
         onSetMemberLimit = viewModel::setMemberLimit,
         onTogglePrivate = viewModel::togglePrivate,
         onUpdatePassword = viewModel::updatePassword,
+        onSearchBooks = viewModel::searchBooks,
         modifier = modifier
     )
 }
@@ -96,7 +92,6 @@ fun GroupMakeRoomContent(
     modifier: Modifier = Modifier,
     uiState: GroupMakeRoomUiState,
     onNavigateBack: () -> Unit = {},
-    onGroupCreated: () -> Unit = {},    // 그룹이 만들어졌을때 로직
     onCreateGroup: () -> Unit = {},
     onSelectBook: (BookData) -> Unit = {},
     onToggleBookSearchSheet: (Boolean) -> Unit = {},
@@ -106,7 +101,8 @@ fun GroupMakeRoomContent(
     onSetDateRange: (java.time.LocalDate, java.time.LocalDate) -> Unit = { _, _ -> },
     onSetMemberLimit: (Int) -> Unit = {},
     onTogglePrivate: (Boolean) -> Unit = {},
-    onUpdatePassword: (String) -> Unit = {}
+    onUpdatePassword: (String) -> Unit = {},
+    onSearchBooks: (String) -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
@@ -137,7 +133,8 @@ fun GroupMakeRoomContent(
                 GroupSelectBook(
                     selectedBook = uiState.selectedBook,
                     onChangeBookClick = { onToggleBookSearchSheet(true) },
-                    onSelectBookClick = { onToggleBookSearchSheet(true) }
+                    onSelectBookClick = { onToggleBookSearchSheet(true) },
+                    isBookPreselected = uiState.isBookPreselected
                 )
 
                 SectionDivider()
@@ -256,21 +253,12 @@ fun GroupMakeRoomContent(
                 },
                 savedBooks = uiState.savedBooks,
                 groupBooks = uiState.groupBooks,
-                isLoading = uiState.isLoadingBooks
+                searchResults = uiState.searchResults,
+                isLoading = uiState.isLoadingBooks,
+                isSearching = uiState.isSearching,
+                onSearch = onSearchBooks
             )
         }
-
-        // 로딩 인디케이터
-        /*if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(colors.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = colors.NeonGreen)
-            }
-        }*/
     }
 }
 

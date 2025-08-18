@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.group.room.screen
 
-import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +32,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.texthip.thip.R
+import com.texthip.thip.data.model.rooms.response.CurrentVote
+import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.GradationTopAppBar
@@ -50,6 +51,9 @@ fun GroupRoomScreen(
     roomId: Int,
     onBackClick: () -> Unit = {},
     onNavigateToMates: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
+    onNavigateToNote: (page: Int?, isOverview: Boolean?) -> Unit = { _, _ -> },
+    onNavigateToBookDetail: (isbn: String) -> Unit = {},
     viewModel: GroupRoomViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -72,7 +76,10 @@ fun GroupRoomScreen(
             GroupRoomContent(
                 roomDetails = state.roomsPlaying,
                 onBackClick = onBackClick,
-                onNavigateToMates = onNavigateToMates
+                onNavigateToMates = onNavigateToMates,
+                onNavigateToChat = onNavigateToChat,
+                onNavigateToNote = onNavigateToNote,
+                onNavigateToBookDetail = onNavigateToBookDetail
             )
         }
 
@@ -89,7 +96,10 @@ fun GroupRoomScreen(
 fun GroupRoomContent(
     roomDetails: RoomsPlayingResponse,
     onBackClick: () -> Unit = {},
-    onNavigateToMates: () -> Unit = {}
+    onNavigateToMates: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
+    onNavigateToNote: (page: Int?, isOverview: Boolean?) -> Unit = { _, _ -> },
+    onNavigateToBookDetail: (isbn: String) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
 
@@ -158,7 +168,8 @@ fun GroupRoomContent(
                     progressStartDate = roomDetails.progressStartDate,
                     progressEndDate = roomDetails.progressEndDate,
                     memberCount = roomDetails.memberCount,
-                    category = roomDetails.category
+                    category = roomDetails.category,
+                    categoryColor = roomDetails.categoryColor,
                 ) {
                     onNavigateToMates()
                 }
@@ -168,9 +179,22 @@ fun GroupRoomContent(
                 GroupRoomBody(
                     bookTitle = roomDetails.bookTitle,
                     authorName = roomDetails.authorName,
+                    isbn = roomDetails.isbn,
                     currentPage = roomDetails.currentPage,
                     userPercentage = roomDetails.userPercentage,
-                    currentVotes = roomDetails.currentVotes
+                    currentVotes = roomDetails.currentVotes,
+                    onNavigateToBookDetail = onNavigateToBookDetail,
+                    // 일반 노트 카드 클릭 시 필터 없이 이동
+                    onNavigateToNote = { onNavigateToNote(null, null) },
+                    onNavigateToChat = onNavigateToChat,
+                    // 투표 카드 클릭 시 필터 값과 함께 이동
+                    onVoteClick = { vote: CurrentVote ->
+                        if (vote.isOverview) {
+                            onNavigateToNote(null, true)
+                        } else {
+                            onNavigateToNote(vote.page, false)
+                        }
+                    }
                 )
             }
         }
@@ -268,6 +292,7 @@ private fun GroupRoomScreenPreview() {
                 progressStartDate = "2023.10.01",
                 progressEndDate = "2023.10.31",
                 category = "문학",
+                categoryColor = "#A0F8E8",
                 roomDescription = "‘시집만 읽는 사람들’ 3월 모임입니다.",
                 memberCount = 22,
                 recruitCount = 30,

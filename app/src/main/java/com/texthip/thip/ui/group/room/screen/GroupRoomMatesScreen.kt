@@ -103,14 +103,16 @@ private fun GroupRoomMatesScreenPreview() {
                     UserList(
                         userId = 1,
                         nickname = "김희용",
-                        alias = "문학가",
+                        aliasName = "문학가",
+                        aliasColor = "#A0F8E8",
                         imageUrl = "https://example.com/image1.jpg",
                         followerCount = 100
                     ),
                     UserList(
                         userId = 2,
                         nickname = "노성준",
-                        alias = "문학가",
+                        aliasName = "문학가",
+                        aliasColor = "#A0F8E8",
                         imageUrl = "https://example.com/image1.jpg",
                         followerCount = 100
                     ),

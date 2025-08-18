@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.common.header
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,13 +37,15 @@ fun AuthorHeader(
     profileImage: String?,
     nickname: String,
     badgeText: String,
+    badgeTextColor: Color = colors.NeonGreen,
     buttonText: String = "",
     buttonWidth: Dp = 60.dp,
     showButton: Boolean = true,
     showThipNum: Boolean = false,
     thipNum: Int? = null,
     profileImageSize: Dp = 54.dp,
-    onButtonClick: () -> Unit = {}
+    onButtonClick: () -> Unit = {},
+    onThipNumClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -78,37 +82,40 @@ fun AuthorHeader(
             Text(
                 text = badgeText,
                 style = typography.feedcopy_r400_s14_h20,
-                color = colors.NeonGreen,
+                color = badgeTextColor,
                 maxLines = 1
             )
         }
         if (showButton) {
             OutlinedButton(
-            modifier = Modifier
-                .then(
-                    if (buttonWidth != null)
-                        Modifier
-                            .width(buttonWidth)
-                            .height(33.dp)
-                    else Modifier
-                ),
-            text = buttonText,
-            textStyle = typography.view_m500_s14,
-            onClick = onButtonClick
+                modifier = Modifier
+                    .width(buttonWidth)
+                    .height(33.dp),
+                text = buttonText,
+                textStyle = typography.view_m500_s14,
+                onClick = onButtonClick
             )
         }
-        if(showThipNum && thipNum!=null){
-            Text(
-                text = stringResource(R.string.thip_num,thipNum),
-                style = typography.view_r400_s11_h20,
-                color = colors.White
-            )
-            Spacer(modifier = Modifier.width(18.dp))
-            Icon(
-                painter = painterResource(R.drawable.ic_chevron),
-                contentDescription = null,
-                tint = colors.White,
-            )
+        if (showThipNum && thipNum != null) {
+            Row(
+                modifier = Modifier.clickable(onClick = onThipNumClick),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(
+                        R.string.thip_num,
+                        thipNum
+                    ) + stringResource(R.string.thip_ing),
+                    style = typography.view_r400_s11_h20,
+                    color = colors.White
+                )
+                Spacer(modifier = Modifier.width(18.dp))
+                Icon(
+                    painter = painterResource(R.drawable.ic_chevron),
+                    contentDescription = null,
+                    tint = colors.White,
+                )
+            }
         }
     }
 }
@@ -129,9 +136,13 @@ fun PreviewAuthorHeader() {
                 profileImage = null,
                 nickname = "열자자제한열열자제한",
                 badgeText = "칭호칭호칭호",
+                badgeTextColor = colors.Yellow,
                 showButton = false,
                 showThipNum = true,
-                thipNum = 10
+                thipNum = 10,
+                onThipNumClick = {
+
+                }
             )
         }
     }

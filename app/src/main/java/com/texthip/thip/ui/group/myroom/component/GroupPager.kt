@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.texthip.thip.data.model.group.response.JoinedRoomResponse
+import com.texthip.thip.data.model.rooms.response.JoinedRoomResponse
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
@@ -143,21 +143,21 @@ fun PreviewMyGroupPager() {
         val list = listOf(
             JoinedRoomResponse(
                 roomId = 1,
-                bookTitle = "호르몬 체인지 완독하는 방",
+                roomTitle = "호르몬 체인지 완독하는 방",
                 memberCount = 22,
                 bookImageUrl = "https://picsum.photos/300/200?1",
                 userPercentage = 40
             ),
             JoinedRoomResponse(
                 roomId = 2,
-                bookTitle = "명작 읽기방",
+                roomTitle = "명작 읽기방",
                 memberCount = 10,
                 bookImageUrl = "https://picsum.photos/300/200?2",
                 userPercentage = 70
             ),
             JoinedRoomResponse(
                 roomId = 3,
-                bookTitle = "또 다른 방",
+                roomTitle = "또 다른 방",
                 memberCount = 13,
                 bookImageUrl = "https://picsum.photos/300/200?3",
                 userPercentage = 10
@@ -174,7 +174,7 @@ fun PreviewSingleGroupPager() {
         val single = listOf(
             JoinedRoomResponse(
                 roomId = 4,
-                bookTitle = "단일 그룹",
+                roomTitle = "단일 그룹",
                 memberCount = 15,
                 bookImageUrl = "https://picsum.photos/300/200?4",
                 userPercentage = 60

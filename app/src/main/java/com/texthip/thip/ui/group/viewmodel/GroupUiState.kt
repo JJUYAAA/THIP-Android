@@ -1,7 +1,7 @@
 package com.texthip.thip.ui.group.viewmodel
 
-import com.texthip.thip.data.model.group.response.JoinedRoomResponse
-import com.texthip.thip.data.model.group.response.RoomMainList
+import com.texthip.thip.data.model.rooms.response.JoinedRoomResponse
+import com.texthip.thip.data.model.rooms.response.RoomMainList
 
 data class GroupUiState(
     val myJoinedRooms: List<JoinedRoomResponse> = emptyList(),

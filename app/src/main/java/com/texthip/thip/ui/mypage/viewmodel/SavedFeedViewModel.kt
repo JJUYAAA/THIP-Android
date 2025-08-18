@@ -6,12 +6,12 @@ import com.texthip.thip.ui.mypage.mock.FeedItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class SavedFeedViewModel: ViewModel() {
+open class SavedFeedViewModel: ViewModel() {
     private val _feeds = MutableStateFlow(
         listOf(
             FeedItem(
                 id = 1,
-                userProfileImage = R.drawable.character_art,
+                userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
                 bookTitle = "라랄ㄹ라라",
@@ -25,7 +25,7 @@ class SavedFeedViewModel: ViewModel() {
             ),
             FeedItem(
                 id = 2,
-                userProfileImage = R.drawable.character_art,
+                userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
                 bookTitle = "라랄ㄹ라라",
@@ -36,11 +36,11 @@ class SavedFeedViewModel: ViewModel() {
                 commentCount = 4,
                 isLiked = false,
                 isSaved = true,
-                imageUrls = null
+                imageUrls = emptyList()
             ),
             FeedItem(
                 id = 3,
-                userProfileImage = R.drawable.character_art,
+                userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
                 bookTitle = "라랄ㄹ라라",
@@ -51,11 +51,11 @@ class SavedFeedViewModel: ViewModel() {
                 commentCount = 4,
                 isLiked = false,
                 isSaved = true,
-                imageUrls = listOf(R.drawable.img_book_cover_sample)
+                imageUrls = listOf("https://example.com/image.jpg")
             ),
             FeedItem(
                 id = 4,
-                userProfileImage = R.drawable.character_art,
+                userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
                 bookTitle = "책이름책이름",
@@ -66,11 +66,11 @@ class SavedFeedViewModel: ViewModel() {
                 commentCount = 4,
                 isLiked = false,
                 isSaved = true,
-                imageUrls = listOf(R.drawable.img_book_cover_sample)
+                imageUrls = listOf("https://example.com/image.jpg")
             ),
             FeedItem(
                 id = 5,
-                userProfileImage = R.drawable.character_art,
+                userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
                 bookTitle = "책이름책이름",
@@ -86,7 +86,9 @@ class SavedFeedViewModel: ViewModel() {
 
         )
     )
-    val feeds: StateFlow<List<FeedItem>> = _feeds
+
+
+    open val feeds: StateFlow<List<FeedItem>> = _feeds
 
     fun toggleBookmark(id: Int) {
         _feeds.value = _feeds.value.map {
@@ -99,4 +101,12 @@ class SavedFeedViewModel: ViewModel() {
             if (it.id == id) it.copy(isLiked = !it.isLiked) else it
         }
     }
+}
+
+class EmptySavedFeedViewModel : SavedFeedViewModel() {
+
+    private val _feeds = MutableStateFlow<List<FeedItem>>(emptyList())
+
+    override val feeds: StateFlow<List<FeedItem>> = _feeds
+
 }

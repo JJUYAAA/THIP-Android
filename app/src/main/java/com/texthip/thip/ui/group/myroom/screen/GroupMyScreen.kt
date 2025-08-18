@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
-import com.texthip.thip.data.model.group.response.MyRoomResponse
+import com.texthip.thip.data.model.rooms.response.MyRoomResponse
 import com.texthip.thip.ui.common.cards.CardItemRoom
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.group.myroom.component.GroupMyRoomFilterRow
@@ -71,16 +71,16 @@ fun GroupMyContent(
     val listState = rememberLazyListState()
     
     // 무한 스크롤 로직
-    val shouldLoadMore by remember {
+    val shouldLoadMore by remember(uiState.canLoadMore, uiState.isLoadingMore) {
         derivedStateOf {
             val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
             val totalItems = listState.layoutInfo.totalItemsCount
-            lastVisibleIndex >= totalItems - 3
+            uiState.canLoadMore && !uiState.isLoadingMore && totalItems > 0 && lastVisibleIndex >= totalItems - 3
         }
     }
     
     LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore && uiState.canLoadMore) {
+        if (shouldLoadMore) {
             onLoadMore()
         }
     }

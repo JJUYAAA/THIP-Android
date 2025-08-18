@@ -9,64 +9,62 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.mypage.component.RoleCard
 import com.texthip.thip.ui.mypage.mock.RoleItem
+import com.texthip.thip.ui.signin.viewmodel.SignupUiState
+import com.texthip.thip.ui.signin.viewmodel.SignupViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
-
 @Composable
-fun SignupGenreScreen() {
-    var selectedIndex by rememberSaveable { mutableStateOf(-1) }
-    val isRightButtonEnabled by remember { derivedStateOf { selectedIndex != -1 } }
+fun SignupGenreScreen(
+    viewModel: SignupViewModel,
+    onSignupSuccess: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val roleCards = listOf(
-        RoleItem(
-            stringResource(R.string.literature),
-            stringResource(R.string.literary_person),
-            R.drawable.character_literature,
-            colors.Literature
-        ),
-        RoleItem(
-            stringResource(R.string.science_it),
-            stringResource(R.string.scientist),
-            R.drawable.character_science,
-            colors.ScienceIt
-        ),
-        RoleItem(
-            stringResource(R.string.social_science),
-            stringResource(R.string.sociologist),
-            R.drawable.character_sociology,
-            colors.SocialScience
-        ),
-        RoleItem(
-            stringResource(R.string.art),
-            stringResource(R.string.artist),
-            R.drawable.character_art,
-            colors.Art
-        ),
-        RoleItem(
-            stringResource(R.string.humanities),
-            stringResource(R.string.philosopher),
-            R.drawable.character_humanities,
-            colors.Humanities
-        )
+    LaunchedEffect(Unit) {
+        viewModel.fetchAliasChoices()
+    }
+    LaunchedEffect(uiState.isSignupSuccess) {
+        if (uiState.isSignupSuccess) {
+            onSignupSuccess()
+        }
+    }
+
+    SignupGenreContent(
+        uiState = uiState,
+        /*onCardSelected = { index -> viewModel.selectCard(index) },
+        onNextClick = {
+            // 선택된 아이템이 있을 경우에만 다음 화면으로 이동
+            uiState.roleCards.getOrNull(uiState.selectedIndex)?.let { selectedRoleItem ->
+                onNavigateToNext(selectedRoleItem)
+            }
+        }*/
+        onCardSelected = viewModel::selectCard,
+        onNextClick = viewModel::signup
     )
+}
+@Composable
+fun SignupGenreContent(
+    uiState: SignupUiState,
+    onCardSelected: (Int) -> Unit,
+    onNextClick: () -> Unit
+) {
+    val isRightButtonEnabled = uiState.selectedIndex != -1 && !uiState.isLoading
 
     Column(
         Modifier
@@ -78,9 +76,7 @@ fun SignupGenreScreen() {
             rightButtonName = stringResource(R.string.next),
             isLeftIconVisible = false,
             onLeftClick = {},
-            onRightClick = {
-                // TODO 다음 화면으로 이동
-            }
+            onRightClick = onNextClick
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -114,15 +110,14 @@ fun SignupGenreScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 userScrollEnabled = false,
             ) {
-                items(roleCards.size) { index ->
+                itemsIndexed(uiState.roleCards) { index, roleItem ->
                     RoleCard(
-                        genre = roleCards[index].genre,
-                        role = roleCards[index].role,
-                        imageResId = roleCards[index].imageResId,
-                        genreColor = colors.White,
-                        roleColor = roleCards[index].roleColor,
-                        selected = selectedIndex == index,
-                        onClick = { selectedIndex = index }
+                        genre = roleItem.genre,
+                        role = roleItem.role,
+                        imageUrl = roleItem.imageUrl,
+                        roleColor = roleItem.roleColor,
+                        selected = uiState.selectedIndex == index,
+                        onClick = { onCardSelected(index) }
                     )
                 }
             }
@@ -134,7 +129,23 @@ fun SignupGenreScreen() {
 @Preview
 @Composable
 private fun SignupGenreScreenPrev() {
+    val previewRoleCards = listOf(
+        RoleItem("문학", "문학가", "", "#FFFFFF"),
+        RoleItem("과학/IT", "과학자", "", "#FFFFFF"),
+        RoleItem("사회", "사회학자", "", "#FFFFFF"),
+        RoleItem("예술", "예술가", "", "#FFFFFF"),
+        RoleItem("인문", "철학자", "", "#FFFFFF")
+    )
+    val previewUiState = SignupUiState(
+        roleCards = previewRoleCards,
+        selectedIndex = 1 // 1번 아이템이 선택된 상태로 프리뷰
+    )
+
     ThipTheme {
-        SignupGenreScreen()
+        SignupGenreContent(
+            uiState = previewUiState,
+            onCardSelected = {},
+            onNextClick = {}
+        )
     }
 }

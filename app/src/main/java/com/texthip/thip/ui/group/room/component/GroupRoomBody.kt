@@ -15,15 +15,21 @@ import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.cards.CardChat
 import com.texthip.thip.ui.common.cards.CardNote
 import com.texthip.thip.ui.common.cards.CardVote
+import kotlin.math.roundToInt
 
 @Composable
 fun GroupRoomBody(
     modifier: Modifier = Modifier,
     bookTitle: String,
     authorName: String,
+    isbn: String,
     currentPage: Int,
     userPercentage: Double,
-    currentVotes: List<CurrentVote>
+    currentVotes: List<CurrentVote>,
+    onNavigateToBookDetail: (isbn: String) -> Unit = {},
+    onNavigateToNote: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
+    onVoteClick: (CurrentVote) -> Unit = {}
 ) {
     Column(
         modifier = modifier.padding(horizontal = 20.dp),
@@ -32,20 +38,27 @@ fun GroupRoomBody(
         ActionBookButton(
             bookTitle = bookTitle,
             bookAuthor = authorName
-        ) {}
+        ) {
+            onNavigateToBookDetail(isbn)
+        }
 
         CardNote(
             currentPage = currentPage,
-            percentage = userPercentage
-        ) {}
+            percentage = userPercentage.roundToInt(),
+        ) {
+            onNavigateToNote()
+        }
 
         CardChat(
             title = stringResource(R.string.group_room_chat),
             subtitle = stringResource(R.string.group_room_chat_description)
-        ) {}
+        ) {
+            onNavigateToChat()
+        }
 
         CardVote(
-            voteData = currentVotes
+            voteData = currentVotes,
+            onVoteClick = onVoteClick
         )
     }
 }
@@ -56,9 +69,10 @@ private fun GroupRoomBodyPreview() {
     GroupRoomBody(
         bookTitle = "책 제목",
         authorName = "저자 이름",
+        isbn = "1234567890",
         currentPage = 100,
         userPercentage = 50.0,
-        currentVotes =  listOf(
+        currentVotes = listOf(
             CurrentVote(
                 content = "3연에 나오는 심장은 무엇을 의미하는 걸까요?",
                 page = 12,

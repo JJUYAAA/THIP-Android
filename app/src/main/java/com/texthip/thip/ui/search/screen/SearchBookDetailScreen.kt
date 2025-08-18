@@ -1,7 +1,6 @@
 package com.texthip.thip.ui.search.screen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,15 +12,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,313 +36,550 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.texthip.thip.R
-import com.texthip.thip.ui.search.mock.DetailBookData
+import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
-import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.modal.InfoPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.common.topappbar.GradationTopAppBar
+import com.texthip.thip.ui.mypage.component.SavedFeedCard
+import com.texthip.thip.ui.search.component.SearchFilterButton
+import com.texthip.thip.ui.search.component.SearchFilterDropdownOverlay
+import com.texthip.thip.ui.search.viewmodel.BookDetailUiState
+import com.texthip.thip.ui.search.viewmodel.BookDetailViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.color.hexToColor
 import kotlinx.coroutines.delay
+
 
 @Composable
 fun SearchBookDetailScreen(
     modifier: Modifier = Modifier,
-    book: DetailBookData,
-    feedList: List<String> = emptyList(),
+    isbn: String,
     onLeftClick: () -> Unit = {},
     onRightClick: () -> Unit = {},
     onRecruitingGroupClick: () -> Unit = {},
-    onBookMarkClick: (Boolean) -> Unit = {},
-    onWriteFeedClick: () -> Unit = {}
+    onWriteFeedClick: () -> Unit = {},
+    onFeedClick: (Int) -> Unit = {},
+    onBookmarkClick: (String, Boolean) -> Unit = { _, _ -> },
+    viewModel: BookDetailViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    // ISBN으로 책 상세 정보 로드
+    LaunchedEffect(isbn) {
+        viewModel.loadBookDetail(isbn)
+    }
+
+    SearchBookDetailScreenContent(
+        modifier = modifier,
+        isLoading = uiState.isLoading,
+        error = uiState.error,
+        bookDetail = uiState.bookDetail,
+        uiState = uiState,
+        onLeftClick = onLeftClick,
+        onRightClick = onRightClick,
+        onRecruitingGroupClick = onRecruitingGroupClick,
+        onWriteFeedClick = onWriteFeedClick,
+        onFeedClick = onFeedClick,
+        onBookmarkClick = { isbnParam, newState ->
+            viewModel.saveBook(isbnParam, newState)
+            onBookmarkClick(isbnParam, newState)
+        },
+        onSortChange = { sortType ->
+            val apiSortType = if (sortType == "인기순") "like" else "latest"
+            viewModel.changeSortOrder(isbn, apiSortType)
+        },
+        onLoadMore = {
+            viewModel.loadMoreFeeds(isbn)
+        }
+    )
+}
+
+@Composable
+private fun SearchBookDetailScreenContent(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
+    error: String? = null,
+    bookDetail: BookDetailResponse? = null,
+    uiState: BookDetailUiState? = null,
+    onLeftClick: () -> Unit = {},
+    onRightClick: () -> Unit = {},
+    onRecruitingGroupClick: () -> Unit = {},
+    onWriteFeedClick: () -> Unit = {},
+    onFeedClick: (Int) -> Unit = {},
+    onBookmarkClick: (String, Boolean) -> Unit = { _, _ -> },
+    onSortChange: (String) -> Unit = {},
+    onLoadMore: () -> Unit = {}
 ) {
     var isAlarmVisible by remember { mutableStateOf(true) }
     var isIntroductionPopupVisible by remember { mutableStateOf(false) }
-    var isBookmarked by remember { mutableStateOf(false) }
-    var selectedFilterOption by remember { mutableIntStateOf(0) }
-
+    var isBookmarked by remember { mutableStateOf(bookDetail?.isSaved ?: false) }
+    var isFilterDropdownVisible by remember { mutableStateOf(false) }
+    var filterButtonPosition by remember { mutableStateOf(IntOffset.Zero) }
+    val density = LocalDensity.current
     val filterOptions = listOf(
-        stringResource(R.string.search_filter_popular),
-        stringResource(R.string.search_filter_latest)
+        stringResource(R.string.sort_like),
+        stringResource(R.string.sort_latest)
     )
 
-    // 알림 5초간 노출
-    LaunchedEffect(Unit) {
-        isAlarmVisible = true
-        delay(5000)
-        isAlarmVisible = false
+    // UI 상태를 ViewModel의 currentSort와 동기화
+    val currentSortFromViewModel = uiState?.currentSort ?: "like"
+    val selectedFilterOption = if (currentSortFromViewModel == "like") 0 else 1
+
+    val lazyListState = rememberLazyListState()
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            val layoutInfo = lazyListState.layoutInfo
+            val totalItemsNumber = layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
+
+            lastVisibleItemIndex > (totalItemsNumber - 3)
+        }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        // 메인 컨텐츠
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .then(
-                    if (isIntroductionPopupVisible) {
-                        Modifier.blur(4.dp)
-                    } else {
-                        Modifier
-                    }
+    // 무한 스크롤 로직
+    LaunchedEffect(shouldLoadMore) {
+        if (shouldLoadMore && uiState?.isLoadingMore == false && !uiState.isLast) {
+            onLoadMore()
+        }
+    }
+
+    // 알림 5초간 노출
+    LaunchedEffect(bookDetail) {
+        if (bookDetail != null) {
+            isAlarmVisible = true
+            delay(5000)
+            isAlarmVisible = false
+        }
+    }
+
+    // 북마크 상태 동기화
+    LaunchedEffect(bookDetail?.isSaved) {
+        bookDetail?.let {
+            isBookmarked = it.isSaved
+        }
+    }
+
+    when {
+        isLoading -> {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = colors.White
                 )
-        ) {
-            if (book.coverImageRes != null) {
-                Box(modifier = Modifier
-                    .height(420.dp)
-                    .fillMaxWidth()) {
-                    Image(
-                        painter = painterResource(book.coverImageRes),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .matchParentSize()
-                            .blur(4.dp),
-                        contentScale = ContentScale.Crop
-                    )
+            }
+        }
+
+        error != null -> {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = error,
+                    color = colors.White,
+                    style = typography.smalltitle_sb600_s16_h20
+                )
+            }
+        }
+
+        bookDetail != null -> {
+            Box(modifier = modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(colors.Black)
+                        .then(
+                            if (isIntroductionPopupVisible) {
+                                Modifier.blur(4.dp)
+                            } else {
+                                Modifier
+                            }
+                        )
+                ) {
+                    // 전체 스크롤 가능한 컨텐츠
+                    LazyColumn(
+                        state = lazyListState,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        // 상단 책 이미지 배경 영역
+                        item {
+                            Box(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                AsyncImage(
+                                    model = bookDetail.imageUrl,
+                                    contentDescription = bookDetail.title,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .heightIn(min = 420.dp)
+                                        .blur(4.dp),
+                                    contentScale = ContentScale.Crop,
+                                    fallback = painterResource(R.drawable.img_book_cover_sample),
+                                    error = painterResource(R.drawable.img_book_cover_sample)
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .matchParentSize()
+                                        .background(
+                                            brush = Brush.verticalGradient(
+                                                colors = listOf(
+                                                    Color.Transparent,
+                                                    colors.Black.copy(alpha = 0.3f),
+                                                    colors.Black.copy(alpha = 0.6f),
+                                                    colors.Black.copy(alpha = 0.9f),
+                                                    colors.Black
+                                                ),
+                                                startY = 0f,
+                                                endY = Float.POSITIVE_INFINITY
+                                            )
+                                        )
+                                )
+
+                                // 책 정보 컨텐츠를 이미지 위에 배치
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 20.dp)
+                                ) {
+                                    Spacer(modifier = Modifier.height(96.dp)) // TopAppBar 공간
+
+                                    Text(
+                                        modifier = Modifier.padding(top = 40.dp),
+                                        text = bookDetail.title,
+                                        color = colors.White,
+                                        style = typography.bigtitle_b700_s22
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    Text(
+                                        text = stringResource(
+                                            R.string.search_book_author,
+                                            bookDetail.authorName,
+                                            bookDetail.publisher
+                                        ),
+                                        color = colors.Grey,
+                                        style = typography.menu_sb600_s12_h20
+                                    )
+
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(top = 33.dp)
+                                            .fillMaxWidth()
+                                            .clickable { isIntroductionPopupVisible = true }
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.search_book_comment),
+                                            color = colors.White,
+                                            style = typography.menu_sb600_s14_h24,
+                                        )
+                                        Spacer(modifier = Modifier.height(5.dp))
+
+                                        Text(
+                                            text = bookDetail.description,
+                                            color = colors.Grey,
+                                            style = typography.copy_r400_s12_h20,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+
+                                    Spacer(modifier = Modifier.height(40.dp))
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        ActionMediumButton(
+                                            text = stringResource(
+                                                R.string.search_recruiting_group_count,
+                                                bookDetail.recruitingRoomCount
+                                            ),
+                                            contentColor = colors.Grey,
+                                            backgroundColor = Color.Transparent,
+                                            hasRightIcon = true,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .border(
+                                                    width = 1.dp,
+                                                    color = colors.Grey,
+                                                    shape = RoundedCornerShape(12.dp)
+                                                ),
+                                            onClick = onRecruitingGroupClick,
+                                        )
+                                        Row {
+                                            ActionMediumButton(
+                                                text = stringResource(R.string.search_write_feed_comment),
+                                                contentColor = colors.White,
+                                                backgroundColor = colors.Purple,
+                                                hasRightIcon = true,
+                                                hasRightPlusIcon = true,
+                                                modifier = Modifier.weight(1f),
+                                                onClick = onWriteFeedClick
+                                            )
+                                            Box(
+                                                modifier = Modifier
+                                                    .padding(start = 12.dp)
+                                                    .size(44.dp)
+                                                    .border(
+                                                        width = 1.dp,
+                                                        color = colors.Grey02,
+                                                        shape = RoundedCornerShape(12.dp)
+                                                    )
+                                                    .background(
+                                                        color = Color.Transparent,
+                                                        shape = RoundedCornerShape(12.dp)
+                                                    )
+                                                    .clickable {
+                                                        val newBookmarkState = !isBookmarked
+                                                        isBookmarked = newBookmarkState
+                                                        onBookmarkClick(bookDetail.isbn, newBookmarkState)
+                                                    },
+                                                contentAlignment = Alignment.Center,
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(
+                                                        if (isBookmarked)
+                                                            R.drawable.ic_save_filled
+                                                        else
+                                                            R.drawable.ic_save
+                                                    ),
+                                                    contentDescription = null,
+                                                    tint = Color.Unspecified,
+                                                    modifier = Modifier.size(24.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(44.dp))
+
+                                    Text(
+                                        text = stringResource(R.string.search_watch_feed),
+                                        color = colors.Grey,
+                                        style = typography.smalltitle_sb600_s18_h24,
+                                        modifier = Modifier.padding(bottom = 8.dp)
+                                    )
+
+                                    SearchFilterButton(
+                                        modifier = Modifier
+                                            .onGloballyPositioned { coordinates ->
+                                                filterButtonPosition = IntOffset(
+                                                    coordinates.positionInRoot().x.toInt(),
+                                                    coordinates.positionInRoot().y.toInt()
+                                                )
+                                            },
+                                        selectedOption = filterOptions[selectedFilterOption],
+                                        isExpanded = isFilterDropdownVisible,
+                                        onClick = {
+                                            isFilterDropdownVisible = !isFilterDropdownVisible
+                                        }
+                                    )
+                                    // 구분선
+                                    Spacer(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(1.dp)
+                                            .background(colors.DarkGrey02)
+                                    )
+                                }
+                            }
+                        }
+
+                        // 피드 목록 (ViewModel에서 변환된 데이터 사용)
+                        val feedItems = uiState?.feedItems ?: emptyList()
+
+                        if (feedItems.isEmpty() && uiState?.isLoadingFeeds != true) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(250.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text(
+                                            text = stringResource(R.string.search_no_feed_comment_1),
+                                            color = colors.White,
+                                            style = typography.smalltitle_sb600_s18_h24
+                                        )
+                                        Spacer(modifier = Modifier.height(6.dp))
+                                        Text(
+                                            text = stringResource(R.string.search_no_feed_comment_2),
+                                            color = colors.Grey01,
+                                            style = typography.feedcopy_r400_s14_h20
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        if (uiState?.isLoadingFeeds == true && feedItems.isEmpty()) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(200.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(color = colors.White)
+                                }
+                            }
+                        }
+
+                        // 피드 아이템들
+                        itemsIndexed(
+                            items = feedItems,
+                            key = { _, feedItem -> feedItem.id }
+                        ) { index, feedItem ->
+                            val relatedFeedItem = uiState?.relatedFeeds?.getOrNull(index)
+
+                            Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
+
+                            SavedFeedCard(
+                                feedItem = feedItem,
+                                bottomTextColor = relatedFeedItem?.aliasColor?.let { hexToColor(it) } ?: colors.NeonGreen,
+                                onContentClick = { onFeedClick(feedItem.id) },
+                                onBookClick = { /* TODO: Book navigation */ }
+                            )
+
+                            Spacer(modifier = Modifier.height(40.dp))
+
+                            if (index != feedItems.lastIndex) {
+                                Spacer(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(6.dp)
+                                        .background(colors.DarkGrey02)
+                                )
+                            }
+                        }
+
+                        // 무한 스크롤 로딩 인디케이터
+                        if (uiState?.isLoadingMore == true) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        color = colors.White
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // TopAppBar 오버레이 (고정)
+                Column {
+                    AnimatedVisibility(visible = isAlarmVisible) {
+                        GradationTopAppBar(
+                            isImageVisible = true,
+                            count = bookDetail.readCount,
+                            onLeftClick = onLeftClick,
+                            onRightClick = {}
+                        )
+                    }
+                    AnimatedVisibility(visible = !isAlarmVisible) {
+                        DefaultTopAppBar(
+                            isRightIconVisible = true,
+                            isTitleVisible = false,
+                            onLeftClick = onLeftClick,
+                            onRightClick = onRightClick
+                        )
+                    }
+                }
+
+                if (isIntroductionPopupVisible) {
                     Box(
                         modifier = Modifier
-                            .matchParentSize()
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        colors.Black.copy(alpha = 0.3f),
-                                        colors.Black.copy(alpha = 0.6f),
-                                        colors.Black.copy(alpha = 0.9f),
-                                        colors.Black
-                                    ),
-                                    startY = 0f,
-                                    endY = Float.POSITIVE_INFINITY
-                                )
-                            )
-                    )
-                }
-            }
-
-            Column(modifier = Modifier.fillMaxSize()) {
-                AnimatedVisibility(visible = isAlarmVisible) {
-                    GradationTopAppBar(
-                        isImageVisible = true,
-                        count = book.participantsCount,
-                        onLeftClick = {},
-                        onRightClick = {}
-                    )
-                }
-                AnimatedVisibility(visible = !isAlarmVisible) {
-                    DefaultTopAppBar(
-                        isRightIconVisible = true,
-                        isTitleVisible = false,
-                        onLeftClick = onLeftClick,
-                        onRightClick = onRightClick
-                    )
-                }
-
-                // 상세 정보 영역
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(top = 40.dp),
-                        text = book.title,
-                        color = colors.White,
-                        style = typography.bigtitle_b700_s22
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = stringResource(
-                            R.string.search_book_author,
-                            book.author,
-                            book.publisher
-                        ),
-                        color = colors.Grey,
-                        style = typography.menu_sb600_s12_h20
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .padding(top = 33.dp)
-                            .fillMaxWidth()
-                            .clickable { isIntroductionPopupVisible = true }
+                            .align(Alignment.Center)
+                            .padding(horizontal = 20.dp)
                     ) {
-                        Text(
-                            text = stringResource(R.string.search_book_comment),
-                            color = colors.White,
-                            style = typography.menu_sb600_s14_h24,
+                        InfoPopup(
+                            title = stringResource(R.string.introduction),
+                            content = bookDetail.description,
+                            onDismiss = { isIntroductionPopupVisible = false }
                         )
-                        Spacer(modifier = Modifier.height(5.dp))
-
-                        Text(
-                            text = book.description,
-                            color = colors.Grey,
-                            style = typography.copy_r400_s12_h20,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(40.dp))
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        ActionMediumButton(
-                            text = stringResource(
-                                R.string.search_recruiting_group_count,
-                                book.recruitingRoomCount
-                            ),
-                            contentColor = colors.Grey,
-                            backgroundColor = Color.Transparent,
-                            hasRightIcon = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .border(
-                                    width = 1.dp,
-                                    color = colors.Grey,
-                                    shape = RoundedCornerShape(12.dp)
-                                ),
-                            onClick = onRecruitingGroupClick,
-                        )
-                        Row {
-                            ActionMediumButton(
-                                text = stringResource(R.string.search_write_feed_comment),
-                                contentColor = colors.White,
-                                backgroundColor = colors.Purple,
-                                hasRightIcon = true,
-                                hasRightPlusIcon = true,
-                                modifier = Modifier.weight(1f),
-                                onClick = onWriteFeedClick
-                            )
-                            Box(
-                                modifier = modifier
-                                    .padding(start = 12.dp)
-                                    .size(44.dp)
-                                    .border(
-                                        width = 1.dp,
-                                        color = colors.Grey02,
-                                        shape = RoundedCornerShape(12.dp)
-                                    )
-                                    .background(
-                                        color = Color.Transparent,
-                                        shape = RoundedCornerShape(12.dp)
-                                    )
-                                    .clickable {
-                                        isBookmarked = !isBookmarked
-                                        onBookMarkClick(isBookmarked)
-                                    },
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Icon(
-                                    painter = painterResource(
-                                        if (isBookmarked)
-                                            R.drawable.ic_save_filled
-                                        else
-                                            R.drawable.ic_save
-                                    ),
-                                    contentDescription = null,
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(44.dp))
-
-                    Text(
-                        text = stringResource(R.string.search_watch_feed),
-                        color = colors.Grey,
-                        style = typography.smalltitle_sb600_s18_h24,
-                        modifier = Modifier.padding(bottom = 33.dp)
-                    )
-
-                    // 피드 리스트
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(colors.DarkGrey02)
-                    )
-                    if (feedList.isEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    text = stringResource(R.string.search_no_feed_comment_1),
-                                    color = colors.White,
-                                    style = typography.smalltitle_sb600_s18_h24
-                                )
-                                Spacer(modifier = Modifier.height(6.dp))
-                                Text(
-                                    text = stringResource(R.string.search_no_feed_comment_2),
-                                    color = colors.Grey01,
-                                    style = typography.feedcopy_r400_s14_h20
-                                )
-                            }
-                        }
-                    } else {
-                        // TODO: 피드 UI 구현 되면 수정
                     }
                 }
-            }
 
-            FilterButton(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(top = 462.dp, start = 20.dp, end = 20.dp),
-                selectedOption = filterOptions[selectedFilterOption],
-                options = filterOptions,
-                onOptionSelected = { option ->
-                    selectedFilterOption = filterOptions.indexOf(option)
-                }
-            )
-        }
-
-        if (isIntroductionPopupVisible) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(horizontal = 20.dp)
-            ) {
-                InfoPopup(
-                    title = stringResource(R.string.introduction),
-                    content = book.description,
-                    onDismiss = { isIntroductionPopupVisible = false }
+                // FilterDropdown 오버레이
+                SearchFilterDropdownOverlay(
+                    isVisible = isFilterDropdownVisible,
+                    options = filterOptions,
+                    selectedOption = filterOptions[selectedFilterOption],
+                    filterButtonPosition = filterButtonPosition,
+                    density = density,
+                    onOptionSelected = { option ->
+                        onSortChange(option)
+                    },
+                    onDismiss = { isFilterDropdownVisible = false }
                 )
             }
         }
+        else -> {}
     }
 }
 
-@Preview
+// Preview용 Mock 데이터
+private val mockBookDetail = BookDetailResponse(
+    title = "데미안",
+    imageUrl = "https://example.com/demian.jpg",
+    authorName = "헤르만 헤세",
+    publisher = "민음사",
+    isbn = "9788954682152",
+    description = "한 소년의 성장 이야기를 통해 인간의 내면 세계를 탐구한 헤르만 헤세의 대표작. 주인공 싱클레어가 겪는 정신적 성장과 자아 발견의 과정을 그린 소설로, 청소년기의 혼란과 성인으로의 성장을 섬세하게 그려낸다. 선악의 이분법을 넘어서서 인간 내면의 복잡성을 인정하고 받아들이는 과정을 통해 진정한 자아를 찾아가는 이야기다.",
+    recruitingRoomCount = 8,
+    readCount = 1250,
+    isSaved = false
+)
+
+private val mockBookDetailSaved = mockBookDetail.copy(isSaved = true)
+
+@Preview(showBackground = true)
 @Composable
-fun PreviewBookDetailScreen() {
+fun SearchBookDetailScreenContentPreview() {
     ThipTheme {
-        SearchBookDetailScreen(
-            book = DetailBookData(
-                title = "채식주의자",
-                author = "한강",
-                publisher = "창비",
-                description =
-                    "인터내셔널 북커상, 산클레멘테 문학상 수상작. 전세계가 주목한 인간의 역작을 다시 만나다.2016년 인터내셔널 북커상을 수상하며 한국문학의 입지를 한단계 확장시킨 한강의 명단소설 『채식주의자』. 15년 만에 새로운 장정과 판형으로 출간된다. 식물화로 건설해온 극단적이며 실재적인 상상력의 강렬한 결실로 고통과 구속의 피안에 존재하는 인간의 본성에 다가간 작품." +
-                            "인터내셔널 북커상, 산클레멘테 문학상 수상작. 전세계가 주목한 인간의 역작을 다시 만나다. \n\n2016년 인터내셔널 북커상을 수상하며 한국문학의 입지를 한단계 확장시킨 한강의 명단소설 『채식주의자』. 15년 만에 새로운 장정과 판형으로 출간된다. 식물화로 건설해온 극단적이며 실재적인 상상력의 강렬한 결실로 고통과 구속의 피안에 존재하는 인간의 본성에 다가간 작품.",
-                coverImageRes = R.drawable.img_book_cover_sample,
-                participantsCount = 210,
-                recruitingRoomCount = 4
-            ),
-            feedList = emptyList()
+        SearchBookDetailScreenContent(
+            bookDetail = mockBookDetail
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookDetailScreenContentSavedPreview() {
+    ThipTheme {
+        SearchBookDetailScreenContent(
+            bookDetail = mockBookDetailSaved
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookDetailScreenContentErrorPreview() {
+    ThipTheme {
+        SearchBookDetailScreenContent(
+            error = "책 정보를 불러오는데 실패했습니다."
         )
     }
 }

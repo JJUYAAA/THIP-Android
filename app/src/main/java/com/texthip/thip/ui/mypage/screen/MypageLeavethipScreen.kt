@@ -39,7 +39,9 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun DeleteAccountScreen() {
+fun DeleteAccountScreen(
+    onNavigateBack: () -> Unit
+) {
     var isChecked by rememberSaveable { mutableStateOf(false) }
     val backgroundColor = if (isChecked) colors.Purple else colors.Grey02
     var isDialogVisible by rememberSaveable { mutableStateOf(false) }
@@ -51,7 +53,7 @@ fun DeleteAccountScreen() {
     ) {
         DefaultTopAppBar(
             title = stringResource(R.string.delete_account),
-            onLeftClick = {},
+            onLeftClick = onNavigateBack,
         )
         Spacer(modifier = Modifier.height(40.dp))
         Column(
@@ -169,5 +171,7 @@ fun DeleteAccountScreen() {
 @Preview
 @Composable
 private fun DeleteAccountScreenPrev() {
-    DeleteAccountScreen()
+    DeleteAccountScreen(
+        onNavigateBack = {}
+    )
 }

@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.texthip.thip.R
-import com.texthip.thip.data.model.group.response.JoinedRoomResponse
+import com.texthip.thip.data.model.rooms.response.JoinedRoomResponse
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -90,7 +90,7 @@ fun GroupMainCard(
                     Spacer(Modifier.height(2.dp))
                     // 제목
                     Text(
-                        text = data.bookTitle,
+                        text = data.roomTitle,
                         style = typography.smalltitle_sb600_s18_h24,
                         color = colors.Black,
                         maxLines = 1
@@ -171,7 +171,7 @@ fun PreviewMyGroupMainCard() {
         GroupMainCard(
             data = JoinedRoomResponse(
                 roomId = 1,
-                bookTitle = "호르몬 체인지 완독하는 방",
+                roomTitle = "호르몬 체인지 완독하는 방",
                 memberCount = 22,
                 bookImageUrl = "https://picsum.photos/300/200?1",
                 userPercentage = 40

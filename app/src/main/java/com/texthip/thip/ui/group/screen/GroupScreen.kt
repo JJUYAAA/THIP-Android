@@ -24,7 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
-import com.texthip.thip.data.model.group.response.RoomMainList
+import com.texthip.thip.data.model.rooms.response.JoinedRoomResponse
+import com.texthip.thip.data.model.rooms.response.RoomMainList
+import com.texthip.thip.data.model.rooms.response.RoomMainResponse
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
@@ -55,7 +57,7 @@ fun GroupScreen(
         viewModel.refreshDataOnScreenEnter()
     }
     val uiState by viewModel.uiState.collectAsState()
-    
+
     GroupContent(
         uiState = uiState,
         onNavigateToMakeRoom = onNavigateToMakeRoom,
@@ -103,63 +105,65 @@ fun GroupContent(
                     .fillMaxSize()
                     .verticalScroll(scrollState)
             ) {
-            // 상단바
-            LogoTopAppBar(
-                leftIcon = painterResource(R.drawable.ic_done),
-                hasNotification = false,
-                onLeftClick = onNavigateToGroupDone,
-                onRightClick = onNavigateToAlarm
-            )
 
-            // 검색창
-            GroupSearchTextField(
-                modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
-                onClick = onNavigateToGroupSearch
-            )
+                // 검색창
+                GroupSearchTextField(
+                    modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
+                    onClick = onNavigateToGroupSearch
+                )
 
-            // 내 모임방 헤더 + 카드
-            GroupMySectionHeader(
-                onClick = onNavigateToGroupMy
-            )
-            Spacer(Modifier.height(20.dp))
+                // 내 모임방 헤더 + 카드
+                GroupMySectionHeader(
+                    onClick = onNavigateToGroupMy
+                )
+                Spacer(Modifier.height(20.dp))
 
-            GroupPager(
-                groupCards = uiState.myJoinedRooms,
-                userName = uiState.userName,
-                onCardClick = { joinedRoom ->
-                    onNavigateToGroupRoom(joinedRoom.roomId)
-                },
-                onCardVisible = onCardVisible
-            )
-            Spacer(Modifier.height(32.dp))
+                GroupPager(
+                    groupCards = uiState.myJoinedRooms,
+                    userName = uiState.userName,
+                    onCardClick = { joinedRoom ->
+                        onNavigateToGroupRoom(joinedRoom.roomId)
+                    },
+                    onCardVisible = onCardVisible
+                )
+                Spacer(Modifier.height(32.dp))
 
-            Spacer(
-                Modifier
-                    .padding(bottom = 32.dp)
-                    .height(10.dp)
-                    .fillMaxWidth()
-                    .background(color = colors.DarkGrey02)
-            )
+                Spacer(
+                    Modifier
+                        .padding(bottom = 32.dp)
+                        .height(10.dp)
+                        .fillMaxWidth()
+                        .background(color = colors.DarkGrey02)
+                )
 
-            // 마감 임박한 독서 모임방
-            GroupRoomDeadlineSection(
-                roomMainList = uiState.roomMainList,
-                selectedGenreIndex = uiState.selectedGenreIndex,
-                errorMessage = uiState.roomSectionsError,
-                onGenreSelect = onSelectGenre,
-                onRoomClick = { room ->
-                    onNavigateToGroupRecruit(room.roomId)
-                }
-            )
-            Spacer(Modifier.height(102.dp))
+                // 마감 임박한 독서 모임방
+                GroupRoomDeadlineSection(
+                    roomMainList = uiState.roomMainList,
+                    selectedGenreIndex = uiState.selectedGenreIndex,
+                    errorMessage = uiState.roomSectionsError,
+                    onGenreSelect = onSelectGenre,
+                    onRoomClick = { room ->
+                        onNavigateToGroupRecruit(room.roomId)
+                    }
+                )
+                Spacer(Modifier.height(102.dp))
             }
         }
+
+        // 상단바
+        LogoTopAppBar(
+            leftIcon = painterResource(R.drawable.ic_done),
+            hasNotification = false,
+            onLeftClick = onNavigateToGroupDone,
+            onRightClick = onNavigateToAlarm
+        )
+
         // 오른쪽 하단 FAB
         FloatingButton(
             icon = painterResource(id = R.drawable.ic_makegroup),
             onClick = onNavigateToMakeRoom
         )
-        
+
         // 토스트 팝업
         if (uiState.showToast) {
             ToastWithDate(
@@ -171,7 +175,7 @@ fun GroupContent(
             )
         }
     }
-    
+
     // 토스트 3초 후 자동 숨김 - showToast가 true가 된 시점부터 카운트
     LaunchedEffect(uiState.showToast) {
         if (uiState.showToast) {
@@ -190,31 +194,31 @@ fun PreviewGroupScreen() {
             uiState = GroupUiState(
                 userName = "김독서",
                 myJoinedRooms = listOf(
-                    com.texthip.thip.data.model.group.response.JoinedRoomResponse(
+                    JoinedRoomResponse(
                         roomId = 1,
                         bookImageUrl = "https://picsum.photos/300/400?joined1",
-                        bookTitle = "미드나이트 라이브러리",
+                        roomTitle = "미드나이트 라이브러리",
                         memberCount = 18,
                         userPercentage = 75
                     ),
-                    com.texthip.thip.data.model.group.response.JoinedRoomResponse(
+                    JoinedRoomResponse(
                         roomId = 2,
                         bookImageUrl = "https://picsum.photos/300/400?joined2",
-                        bookTitle = "코스모스",
+                        roomTitle = "코스모스",
                         memberCount = 25,
                         userPercentage = 42
                     ),
-                    com.texthip.thip.data.model.group.response.JoinedRoomResponse(
+                    JoinedRoomResponse(
                         roomId = 3,
                         bookImageUrl = "https://picsum.photos/300/400?joined3",
-                        bookTitle = "사피엔스",
+                        roomTitle = "사피엔스",
                         memberCount = 15,
                         userPercentage = 88
                     )
                 ),
                 roomMainList = RoomMainList(
                     deadlineRoomList = listOf(
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 4,
                             bookImageUrl = "https://picsum.photos/300/400?deadline1",
                             roomName = "🌙 미드나이트 라이브러리 함께읽기",
@@ -222,7 +226,7 @@ fun PreviewGroupScreen() {
                             memberCount = 18,
                             deadlineDate = "D-2"
                         ),
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 5,
                             bookImageUrl = "https://picsum.photos/300/400?deadline2",
                             roomName = "📚 현대문학 깊이 탐구하기",
@@ -230,7 +234,7 @@ fun PreviewGroupScreen() {
                             memberCount = 12,
                             deadlineDate = "D-3"
                         ),
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 6,
                             bookImageUrl = "https://picsum.photos/300/400?deadline3",
                             roomName = "🔬 과학책으로 세상 이해하기",
@@ -240,7 +244,7 @@ fun PreviewGroupScreen() {
                         )
                     ),
                     popularRoomList = listOf(
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 7,
                             bookImageUrl = "https://picsum.photos/300/400?popular1",
                             roomName = "✨ 철학 고전 함께 읽기",
@@ -248,7 +252,7 @@ fun PreviewGroupScreen() {
                             memberCount = 10,
                             deadlineDate = "D-7"
                         ),
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 8,
                             bookImageUrl = "https://picsum.photos/300/400?popular2",
                             roomName = "🎨 예술과 문학의 만남",
@@ -256,7 +260,7 @@ fun PreviewGroupScreen() {
                             memberCount = 16,
                             deadlineDate = "D-10"
                         ),
-                        com.texthip.thip.data.model.group.response.RoomMainResponse(
+                        RoomMainResponse(
                             roomId = 9,
                             bookImageUrl = "https://picsum.photos/300/400?popular3",
                             roomName = "💭 심리학 도서 탐험대",

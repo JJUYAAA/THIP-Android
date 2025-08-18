@@ -22,7 +22,10 @@ data class GroupMakeRoomUiState(
     val savedBooks: List<BookData> = emptyList(),
     val groupBooks: List<BookData> = emptyList(),
     val isLoadingBooks: Boolean = false,
-    val genres: List<Genre> = emptyList()
+    val searchResults: List<BookData> = emptyList(),
+    val isSearching: Boolean = false,
+    val genres: List<Genre> = emptyList(),
+    val isBookPreselected: Boolean = false
 ) {
     // 유효성 검사 로직
     val isDurationValid: Boolean

@@ -24,6 +24,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun FilterHeaderSection(
+    modifier: Modifier = Modifier,
     firstPage: String,
     lastPage: String,
     isTotalSelected: Boolean,
@@ -31,13 +32,14 @@ fun FilterHeaderSection(
     onFirstPageChange: (String) -> Unit,
     onLastPageChange: (String) -> Unit,
     onTotalToggle: () -> Unit,
-    onDisabledClick: () -> Unit = { }
+    onDisabledClick: () -> Unit = { },
+    onApplyPageFilter: () -> Unit
 ) {
     var isPageInputVisible by rememberSaveable { mutableStateOf(false) }
     val isPageFiltered = firstPage.isNotBlank() || lastPage.isNotBlank()
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
         contentAlignment = Alignment.Center
@@ -76,6 +78,7 @@ fun FilterHeaderSection(
                 lastPage = lastPage,
                 onLastPageChange = onLastPageChange,
                 onFinishClick = {
+                    onApplyPageFilter()
                     isPageInputVisible = false
                 }
             )
@@ -97,6 +100,7 @@ private fun FilterHeaderSectionPreview() {
         onFirstPageChange = { firstPage = it },
         onLastPageChange = { lastPage = it },
         onTotalToggle = { isTotalSelected = !isTotalSelected },
-        totalEnabled = true
+        totalEnabled = true,
+        onApplyPageFilter = {},
     )
 }

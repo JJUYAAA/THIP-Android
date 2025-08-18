@@ -2,7 +2,7 @@ package com.texthip.thip.ui.group.done.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.texthip.thip.data.repository.GroupRepository
+import com.texthip.thip.data.repository.RoomsRepository
 import com.texthip.thip.ui.group.myroom.mock.RoomType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GroupDoneViewModel @Inject constructor(
-    private val repository: GroupRepository
+    private val repository: RoomsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GroupDoneUiState())
@@ -78,6 +78,10 @@ class GroupDoneViewModel @Inject constructor(
                             }
                             nextCursor = response.nextCursor
                             isLastPage = response.isLast
+                        } ?: run {
+                            // null 응답 시 더 이상 로드할 수 없음을 명시
+                            updateState { it.copy(hasMore = false, isLoadingMore = false) }
+                            isLastPage = true
                         }
                     }
                     .onFailure { exception ->

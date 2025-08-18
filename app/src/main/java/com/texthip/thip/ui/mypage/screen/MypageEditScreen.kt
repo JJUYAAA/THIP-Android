@@ -1,7 +1,13 @@
 package com.texthip.thip.ui.mypage.screen
 
 
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,151 +16,198 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
-import com.texthip.thip.ui.common.forms.FormTextFieldDefault
+import com.texthip.thip.ui.common.forms.WarningTextField
+import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.mypage.component.RoleCard
 import com.texthip.thip.ui.mypage.mock.RoleItem
+import com.texthip.thip.ui.mypage.viewmodel.EditProfileUiState
+import com.texthip.thip.ui.mypage.viewmodel.EditProfileViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import kotlinx.coroutines.delay
 
 @Composable
-fun EditProfileScreen() {
-    var selectedIndex by rememberSaveable { mutableStateOf(-1) }
-    val roleCards = listOf(
-        RoleItem(
-            stringResource(R.string.literature),
-            stringResource(R.string.literary_person),
-            R.drawable.character_literature,
-            colors.Literature
-        ),
-        RoleItem(
-            stringResource(R.string.science_it),
-            stringResource(R.string.scientist),
-            R.drawable.character_science,
-            colors.ScienceIt
-        ),
-        RoleItem(
-            stringResource(R.string.social_science),
-            stringResource(R.string.sociologist),
-            R.drawable.character_sociology,
-            colors.SocialScience
-        ),
-        RoleItem(
-            stringResource(R.string.art),
-            stringResource(R.string.artist),
-            R.drawable.character_art,
-            colors.Art
-        ),
-        RoleItem(
-            stringResource(R.string.humanities),
-            stringResource(R.string.philosopher),
-            R.drawable.character_humanities,
-            colors.Humanities
-        )
+fun EditProfileScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: EditProfileViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(uiState.isSaveSuccess) {
+        if (uiState.isSaveSuccess) {
+            delay(2500L)
+            onNavigateBack()
+            viewModel.onSaveComplete()
+        }
+    }
+
+
+    EditProfileContent(
+        uiState = uiState,
+        onNicknameChange = viewModel::onNicknameChange,
+        onCardSelected = viewModel::selectCard,
+        onSaveClick = viewModel::saveProfile,
+        onNavigateBack = onNavigateBack
     )
-    Column(
+}
+
+
+@Composable
+fun EditProfileContent(
+    uiState: EditProfileUiState,
+    onNicknameChange: (String) -> Unit,
+    onCardSelected: (Int) -> Unit,
+    onSaveClick: () -> Unit,
+    onNavigateBack: () -> Unit
+) {
+    val isChanged =
+        uiState.nickname != uiState.initialNickname || uiState.selectedIndex != uiState.initialSelectedIndex
+    val isRightButtonEnabled = isChanged && uiState.nickname.isNotBlank() && !uiState.isLoading
+
+    Box(
         Modifier
             .fillMaxSize()
     ) {
-        InputTopAppBar(
-            title = stringResource(R.string.edit_profile),
-            isRightButtonEnabled = true,
-            onLeftClick = {},
-            onRightClick = {}
-        )
         Column(
-            modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            Modifier
+                .fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
-            Text(
-                text = stringResource(R.string.change_nickname),
-                style = typography.smalltitle_sb600_s18_h24,
-                color = colors.White,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
+            InputTopAppBar(
+                title = stringResource(R.string.edit_profile),
+                isRightButtonEnabled = isRightButtonEnabled,
+                onLeftClick = onNavigateBack,
+                onRightClick = onSaveClick
             )
-            //TODO 컴포넌트 수정 필요 -> text count 추가, boolean 값으로 icon, limit 설정가능하도록
-            FormTextFieldDefault(
-                modifier = Modifier.fillMaxWidth(),
-                showLimit = true,
-                limit = 10,
-                showIcon = false,
-                containerColor = colors.DarkGrey02,
-                hint = stringResource(R.string.change_nickname)
-            )
-            Spacer(modifier = Modifier.height(40.dp))
-            Text(
-                text = stringResource(R.string.edit_role),
-                style = typography.smalltitle_sb600_s18_h24,
-                color = colors.White,
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-            )
-            Text(
-                text = stringResource(R.string.role_description),
-                style = typography.copy_r400_s14,
-                color = colors.White,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
-            )
-            Text(
-                text = stringResource(R.string.choice_one),
-                style = typography.info_r400_s12,
-                color = colors.NeonGreen,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
-            )
-
-
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 152.dp), // 카드 최소 크기
-                modifier = Modifier
+                    .padding(horizontal = 20.dp)
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                userScrollEnabled = false,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(roleCards.size) { index ->
-                    RoleCard(
-                        genre = roleCards[index].genre,
-                        role = roleCards[index].role,
-                        imageResId = roleCards[index].imageResId,
-                        genreColor = colors.White,
-                        roleColor = roleCards[index].roleColor,
-                        selected = selectedIndex == index,
-                        onClick = { selectedIndex = index }
-                    )
-                }
-            }
+                Spacer(modifier = Modifier.height(40.dp))
+                Text(
+                    text = stringResource(R.string.change_nickname),
+                    style = typography.smalltitle_sb600_s18_h24,
+                    color = colors.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
+                )
+                WarningTextField(
+                    containerColor = colors.DarkGrey02,
+                    value = uiState.nickname,
+                    onValueChange = onNicknameChange,
+                    //hint = stringResource(R.string.nickname_condition),
+                    hint = uiState.initialNickname.takeIf { it.isNotBlank() } ?: stringResource(R.string.nickname_condition),
+                    showWarning = uiState.nicknameWarningMessageResId != null,
+                    showIcon = false,
+                    showLimit = true,
+                    maxLength = 10,
+                    warningMessage = uiState.nicknameWarningMessageResId?.let { stringResource(it) }
+                        ?: ""
+                )
+                Spacer(modifier = Modifier.height(40.dp))
+                Text(
+                    text = stringResource(R.string.edit_role),
+                    style = typography.smalltitle_sb600_s18_h24,
+                    color = colors.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                )
+                Text(
+                    text = stringResource(R.string.role_description),
+                    style = typography.copy_r400_s14,
+                    color = colors.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp)
+                )
 
+
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 152.dp), // 카드 최소 크기
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    userScrollEnabled = false,
+                ) {
+                    itemsIndexed(uiState.roleCards) { index, roleItem ->
+                        RoleCard(
+                            genre = roleItem.genre,
+                            role = roleItem.role,
+                            imageUrl = roleItem.imageUrl,
+                            roleColor = roleItem.roleColor,
+                            selected = uiState.selectedIndex == index,
+                            onClick = { onCardSelected(index) }
+                        )
+                    }
+                }
+
+            }
+        }
+        AnimatedVisibility(
+            visible = uiState.isSaveSuccess,
+            enter = slideInVertically(
+                initialOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .zIndex(3f)
+        ) {
+            ToastWithDate(
+                message = stringResource(R.string.profile_edit_completely)
+            )
         }
     }
 }
 
+
 @Preview
 @Composable
 private fun EditProfileScreenPrev() {
+    val previewRoleCards = listOf(
+        RoleItem("문학", "문학가", "", "#FFFFFF"),
+        RoleItem("과학/IT", "과학자", "", "#FFFFFF")
+    )
+    val previewUiState = EditProfileUiState(
+        isLoading = false,
+        roleCards = previewRoleCards,
+        selectedIndex = 0,
+        nickname = "기존닉네임"
+    )
     ThipTheme {
-        EditProfileScreen()
+        EditProfileContent(
+            uiState = previewUiState,
+            onNicknameChange = {},
+            onCardSelected = {},
+            onSaveClick = {},
+            onNavigateBack = {}
+        )
     }
 }

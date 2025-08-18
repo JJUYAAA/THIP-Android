@@ -17,11 +17,18 @@ import com.texthip.thip.ui.navigator.routes.CommonRoutes
 import com.texthip.thip.ui.signin.screen.LoginScreen
 import com.texthip.thip.ui.signin.screen.SigninNicknameScreen
 import com.texthip.thip.ui.signin.screen.SplashScreen
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.ui.theme.ThipTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var tokenManager: TokenManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
