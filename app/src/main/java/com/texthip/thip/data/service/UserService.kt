@@ -13,6 +13,7 @@ import com.texthip.thip.data.model.users.response.MyRecentFollowingsResponse
 import com.texthip.thip.data.model.users.response.NicknameResponse
 import com.texthip.thip.data.model.users.response.OthersFollowersResponse
 import com.texthip.thip.data.model.users.response.SignupResponse
+import com.texthip.thip.data.model.users.response.UserSearchResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -65,4 +66,12 @@ interface UserService {
         @Header("Authorization") tempToken: String,
         @Body request: SignupRequest
     ): BaseResponse<SignupResponse>
+
+    @GET("users")
+    suspend fun searchUsers(
+        @Query("isFinalized") isFinalized: Boolean,
+        @Query("keyword") keyword: String,
+        @Query("size") size: Int = 30
+    ): BaseResponse<UserSearchResponse>
+
 }

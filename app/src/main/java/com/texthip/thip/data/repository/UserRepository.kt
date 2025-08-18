@@ -14,6 +14,7 @@ import com.texthip.thip.data.model.users.response.MyRecentFollowingsResponse
 import com.texthip.thip.data.model.users.response.NicknameResponse
 import com.texthip.thip.data.model.users.response.OthersFollowersResponse
 import com.texthip.thip.data.model.users.response.SignupResponse
+import com.texthip.thip.data.model.users.response.UserSearchResponse
 import com.texthip.thip.data.service.UserService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -87,7 +88,6 @@ class UserRepository @Inject constructor(
 
     suspend fun signup(request: SignupRequest): Result<SignupResponse?> {
         val tempToken = tokenManager.getTempToken()
-            ?: return Result.failure(Exception("임시 토큰이 없습니다."))
 
         if (tempToken.isNullOrBlank()) {
             return Result.failure(Exception("임시 토큰이 없습니다. 로그인을 다시 시도해주세요."))
@@ -97,5 +97,14 @@ class UserRepository @Inject constructor(
                 .handleBaseResponse()
                 .getOrThrow()
         }
+    }
+
+    suspend fun searchUsers(
+        keyword: String,
+        isFinalized: Boolean
+    ): Result<UserSearchResponse?> = runCatching {
+        userService.searchUsers(isFinalized = isFinalized, keyword = keyword)
+            .handleBaseResponse()
+            .getOrThrow()
     }
 }
