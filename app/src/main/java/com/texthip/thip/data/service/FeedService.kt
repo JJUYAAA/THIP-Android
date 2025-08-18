@@ -6,12 +6,17 @@ import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersInfoResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
+import com.texthip.thip.data.model.feed.response.FeedMineInfoResponse
+import com.texthip.thip.data.model.feed.response.RelatedBooksResponse
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
+import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
@@ -44,6 +49,18 @@ interface FeedService {
         @Query("cursor") cursor: String? = null
     ): BaseResponse<MyFeedResponse>
 
+    /** 내 피드 정보 조회 */
+    @GET("feeds/mine/info")
+    suspend fun getMyFeedInfo(): BaseResponse<FeedMineInfoResponse>
+
+    /** 특정 책과 관련된 피드 목록 조회 */
+    @GET("feeds/related-books/{isbn}")
+    suspend fun getRelatedBookFeeds(
+        @Path("isbn") isbn: String,
+        @Query("sort") sort: String? = null,
+        @Query("cursor") cursor: String? = null
+    ): BaseResponse<RelatedBooksResponse>
+
     /** 피드 상세 조회 */
     @GET("feeds/{feedId}")
     suspend fun getFeedDetail(
@@ -59,4 +76,11 @@ interface FeedService {
     suspend fun getFeedUsers(
         @Path("userId") userId: Long
     ): BaseResponse<FeedUsersResponse>
+
+    /** 피드 수정 */
+    @PATCH("feeds/{feedId}")
+    suspend fun updateFeed(
+        @Path("feedId") feedId: Int,
+        @Body request: UpdateFeedRequest
+    ): BaseResponse<CreateFeedResponse>
 }

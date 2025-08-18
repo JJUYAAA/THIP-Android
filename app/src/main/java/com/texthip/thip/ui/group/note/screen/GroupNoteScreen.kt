@@ -240,6 +240,7 @@ fun GroupNoteContent(
             ) {
                 ToastWithDate(
                     message = stringResource(R.string.condition_of_view_general_review),
+                    color = colors.Red
                 )
             }
 

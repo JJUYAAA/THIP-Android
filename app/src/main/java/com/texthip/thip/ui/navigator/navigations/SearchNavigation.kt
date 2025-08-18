@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
 import com.texthip.thip.ui.navigator.extensions.navigateToBookGroup
+import com.texthip.thip.ui.navigator.extensions.navigateToFeedComment
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupMakeRoomWithBook
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupRecruit
 import com.texthip.thip.ui.navigator.extensions.navigateToRegisterBook
@@ -44,6 +45,9 @@ fun NavGraphBuilder.searchNavigation(navController: NavHostController) {
             },
             onWriteFeedClick = {
                 // TODO: 피드 작성 화면으로 이동
+            },
+            onFeedClick = { feedId ->
+                navController.navigateToFeedComment(feedId)
             }
         )
     }

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UsersMyFollowingsRecentFeedsResponse(
-    val recentWriters: List<RecentWriterList>
+    val myFollowingUsers: List<RecentWriterList>
 )
 
 @Serializable

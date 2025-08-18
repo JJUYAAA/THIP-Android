@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.mypage.screen
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,11 +19,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.texthip.thip.R
@@ -36,6 +39,12 @@ import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.color.hexToColor
+
+private const val URL_CUSTOMER_SERVICE = "https://slashpage.com/thip/xjqy1g2vw7vejm6vd54z"
+private const val URL_NOTICE = "https://slashpage.com/thip/7vgjr4m1nynpy2dwpy86"
+private const val URL_TERMS_OF_USE = "https://slashpage.com/thip/7916x82r8y74n24kpyg3"
+private const val URL_GUIDE = "https://slashpage.com/thip/ywk9j72989p6rmgpqvnd"
+private const val URL_VERSION = "https://slashpage.com/thip/1q3vdn2p9w93pmxy49pr"
 
 @Composable
 fun MyPageScreen(
@@ -75,6 +84,8 @@ fun MyPageContent(
     onConfirmLogout: () -> Unit,
     onDeleteAccount: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Box(
         Modifier
             .background(colors.Black)
@@ -163,7 +174,26 @@ fun MyPageContent(
                             backgroundColor = colors.DarkGrey02,
                             hasRightIcon = true,
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = onCustomerServiceClick
+                            onClick = {
+                              onCustomerServiceClick
+                                val intent =
+                                    Intent(Intent.ACTION_VIEW, URL_CUSTOMER_SERVICE.toUri())
+                                context.startActivity(intent)
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        MenuItemButton(
+                            text = stringResource(R.string.notice),
+                            icon = painterResource(R.drawable.ic_notice),
+                            contentColor = colors.White,
+                            backgroundColor = colors.DarkGrey02,
+                            hasRightIcon = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {
+                                val intent =
+                                    Intent(Intent.ACTION_VIEW, URL_NOTICE.toUri())
+                                context.startActivity(intent)
+                            }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         MenuItemButton(
@@ -173,7 +203,10 @@ fun MyPageContent(
                             backgroundColor = colors.DarkGrey02,
                             hasRightIcon = true,
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = {}
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_VIEW, URL_TERMS_OF_USE.toUri())
+                                context.startActivity(intent)
+                            }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         MenuItemButton(
@@ -183,17 +216,23 @@ fun MyPageContent(
                             backgroundColor = colors.DarkGrey02,
                             hasRightIcon = true,
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = {}
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_VIEW, URL_GUIDE.toUri())
+                                context.startActivity(intent)
+                            }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         MenuItemButton(
-                            text = stringResource(R.string.version_1_0),
+                            text = stringResource(R.string.version),
                             icon = painterResource(R.drawable.ic_version),
                             contentColor = colors.White,
                             backgroundColor = colors.DarkGrey02,
                             hasRightIcon = true,
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = {}
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_VIEW, URL_VERSION.toUri())
+                                context.startActivity(intent)
+                            }
                         )
                     }
                     Spacer(modifier = Modifier.height(184.dp))

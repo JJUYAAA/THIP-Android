@@ -1,11 +1,11 @@
 package com.texthip.thip.ui.common.topappbar
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,14 +33,16 @@ fun DefaultTopAppBar(
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_arrow_back),
-            contentDescription = "Back Button",
-            tint = Color.Unspecified,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .clickable { onLeftClick() }
-        )
+        IconButton(
+            onClick = onLeftClick,
+            modifier = Modifier.align(Alignment.CenterStart)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_back),
+                contentDescription = "Back Button",
+                tint = Color.Unspecified
+            )
+        }
 
         if (isTitleVisible) {
             Text(
@@ -52,14 +54,16 @@ fun DefaultTopAppBar(
         }
 
         if (isRightIconVisible) {
-            Icon(
-                painter = painterResource(R.drawable.ic_more),
-                contentDescription = "More Options",
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .clickable { onRightClick() }
-            )
+            IconButton(
+                onClick = onRightClick,
+                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_more),
+                    contentDescription = "More Options",
+                    tint = Color.Unspecified
+                )
+            }
         }
     }
 }
