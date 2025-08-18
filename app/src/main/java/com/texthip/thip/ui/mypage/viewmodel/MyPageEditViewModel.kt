@@ -139,4 +139,7 @@ class EditProfileViewModel @Inject constructor(
                 }
         }
     }
+    fun onSaveComplete() {
+        _uiState.update { it.copy(isSaveSuccess = false) }
+    }
 }
