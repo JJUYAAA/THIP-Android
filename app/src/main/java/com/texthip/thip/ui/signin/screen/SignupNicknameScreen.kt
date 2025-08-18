@@ -20,31 +20,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.WarningTextField
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
-import com.texthip.thip.ui.signin.viewmodel.NicknameViewModel
+import com.texthip.thip.ui.signin.viewmodel.SignupViewModel
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun SignupNicknameScreen(
-    viewModel: NicknameViewModel = hiltViewModel(),
-    onNavigateToNext: () -> Unit
+    viewModel: SignupViewModel,
+    onNavigateToGenre: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
-    LaunchedEffect(uiState.navigateToNext, uiState.errorMessage) {
-        if (uiState.navigateToNext) {
-            onNavigateToNext()
-            viewModel.onNavigated()
+    LaunchedEffect(uiState.navigateToGenreScreen) {
+        if (uiState.navigateToGenreScreen) {
+            onNavigateToGenre()
+            viewModel.onNavigatedToGenre()
         }
+    }
+
+    LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            viewModel.onNavigated()
         }
     }
 
@@ -53,7 +53,7 @@ fun SignupNicknameScreen(
         onNicknameChange = viewModel::onNicknameChange,
         onNextClick = viewModel::checkNickname,
         isLoading = uiState.isLoading,
-        warningMessageResId = uiState.warningMessageResId
+        warningMessageResId = uiState.nicknameWarningMessageResId
     )
 }
 @Composable
