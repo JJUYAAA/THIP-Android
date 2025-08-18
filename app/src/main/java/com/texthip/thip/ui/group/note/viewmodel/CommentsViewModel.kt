@@ -112,8 +112,74 @@ class CommentsViewModel @Inject constructor(
                 isReplyRequest = isReply,
                 parentId = parentId,
                 postType = currentPostType
-            ).onSuccess {
-                fetchComments(isRefresh = true)
+            ).onSuccess { response ->
+                response?.let { res ->
+                    _uiState.update { currentState ->
+                        val currentComments = currentState.comments.toMutableList()
+
+                        if (parentId == null) {
+                            // 1. 새 부모 댓글인 경우
+                            val newComment = CommentList(
+                                commentId = res.commentId,
+                                creatorId = res.creatorId,
+                                creatorProfileImageUrl = res.creatorProfileImageUrl,
+                                creatorNickname = res.creatorNickname,
+                                aliasName = res.aliasName,
+                                aliasColor = res.aliasColor,
+                                postDate = res.postDate,
+                                content = res.content,
+                                likeCount = res.likeCount,
+                                isDeleted = res.isDeleted,
+                                isWriter = res.isWriter,
+                                isLike = res.isLike,
+                                replyList = res.replyList
+                            )
+                            // 새 댓글을 목록의 가장 앞에 추가
+                            currentState.copy(comments = listOf(newComment) + currentComments)
+                        } else {
+                            val parentCommentIndex =
+                                currentComments.indexOfFirst { it.commentId == parentId }
+                            if (parentCommentIndex != -1) {
+                                val parentComment = currentComments[parentCommentIndex]
+
+                                val newCommentId = res.commentId ?: return@update currentState
+                                val newCreatorId = res.creatorId ?: return@update currentState
+                                val parentCreatorNickname =
+                                    parentComment.creatorNickname ?: return@update currentState
+                                val newCreatorNickname =
+                                    res.creatorNickname ?: return@update currentState
+                                val newPostDate = res.postDate ?: return@update currentState
+                                val newContent = res.content ?: return@update currentState
+
+
+                                val newReply = ReplyList(
+                                    commentId = newCommentId,
+                                    creatorId = newCreatorId,
+                                    parentCommentCreatorNickname = parentCreatorNickname,
+                                    creatorProfileImageUrl = res.creatorProfileImageUrl
+                                        ?: "",
+                                    creatorNickname = newCreatorNickname,
+                                    aliasName = res.aliasName ?: "",
+                                    aliasColor = res.aliasColor ?: "",
+                                    postDate = newPostDate,
+                                    content = newContent,
+                                    likeCount = res.likeCount,
+                                    isWriter = res.isWriter,
+                                    isLike = res.isLike
+                                )
+
+                                val updatedReplyList = parentComment.replyList + newReply
+                                val updatedParentComment =
+                                    parentComment.copy(replyList = updatedReplyList)
+
+                                currentComments[parentCommentIndex] = updatedParentComment
+                                currentState.copy(comments = currentComments)
+                            } else {
+                                currentState
+                            }
+                        }
+                    }
+                }
             }.onFailure { throwable ->
                 _uiState.update { it.copy(error = "댓글 작성 실패: ${throwable.message}") }
             }
@@ -174,9 +240,11 @@ class CommentsViewModel @Inject constructor(
 
         // 즉시 UI 업데이트
         val updatedReply = reply.copy(isLike = !currentIsLiked, likeCount = newLikeCount)
-        val newReplyList = parentComment.replyList.toMutableList().apply { set(replyIndex, updatedReply) }
+        val newReplyList =
+            parentComment.replyList.toMutableList().apply { set(replyIndex, updatedReply) }
         val updatedParentComment = parentComment.copy(replyList = newReplyList)
-        val newComments = comments.toMutableList().apply { set(parentCommentIndex, updatedParentComment) }
+        val newComments =
+            comments.toMutableList().apply { set(parentCommentIndex, updatedParentComment) }
         _uiState.update { it.copy(comments = newComments) }
 
         viewModelScope.launch {
