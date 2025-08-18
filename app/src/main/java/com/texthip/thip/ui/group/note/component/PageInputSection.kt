@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -42,6 +43,13 @@ fun PageInputSection(
     onInfoPositionCaptured: (LayoutCoordinates) -> Unit
 ) {
     val allRangeText = stringResource(R.string.all_range)
+    val isError = remember(pageText, bookTotalPage, isGeneralReview) {
+        if (isGeneralReview) {
+            false
+        } else {
+            pageText.toIntOrNull()?.let { it > bookTotalPage } ?: false
+        }
+    }
 
     Column(
         modifier = Modifier,
@@ -63,7 +71,8 @@ fun PageInputSection(
                 onValueChange = {
                     if (!isGeneralReview) onPageTextChange(it)
                 },
-                enabled = !isGeneralReview
+                enabled = !isGeneralReview,
+                isError = isError
             )
 
             Row(

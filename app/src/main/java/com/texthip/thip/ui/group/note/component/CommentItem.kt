@@ -36,6 +36,7 @@ fun CommentItem(
     onReplyClick: (String?) -> Unit = { },
     onLikeClick: () -> Unit = {},
     onLongPress: () -> Unit = {},
+    onProfileClick: () -> Unit = {},
     actionMode: CommentActionMode,
     isSelected: Boolean = false,
     onDismissPopup: () -> Unit = {},
@@ -61,7 +62,8 @@ fun CommentItem(
                     nickname = data.creatorNickname ?: "",
                     genreName = data.aliasName ?: "",
                     genreColor = hexToColor(data.aliasColor ?: "#FFFFFF"),
-                    date = data.postDate ?: ""
+                    date = data.postDate ?: "",
+                    onClick = onProfileClick
                 )
 
                 Row(

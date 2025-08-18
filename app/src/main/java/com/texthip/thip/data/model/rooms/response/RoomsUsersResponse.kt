@@ -9,7 +9,7 @@ data class RoomsUsersResponse(
 
 @Serializable
 data class UserList(
-    val userId: Int,
+    val userId: Long,
     val nickname: String,
     val imageUrl: String,
     val aliasColor: String,

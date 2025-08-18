@@ -29,7 +29,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun ProfileBar(
     modifier: Modifier = Modifier,
-    profileImage: String,
+    profileImage: String?,
     topText: String,
     bottomText: String,
     bottomTextColor: Color = colors.NeonGreen,
