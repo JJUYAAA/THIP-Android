@@ -50,7 +50,7 @@ fun TextCommentCard(
     ) {
         ProfileBar(
             modifier = Modifier.padding(0.dp),
-            profileImage = "https://example.com/image1.jpg",
+            profileImage = data.profileImageUrl,
             topText = data.nickName,
             bottomText = pageText,
             bottomTextColor = colors.Purple,

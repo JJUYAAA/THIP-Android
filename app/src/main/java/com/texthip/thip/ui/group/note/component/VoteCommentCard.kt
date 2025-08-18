@@ -53,7 +53,7 @@ fun VoteCommentCard(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ProfileBar(
-            profileImage = "https://example.com/image1.jpg",
+            profileImage = data.profileImageUrl,
             topText = data.nickName,
             bottomText = pageText,
             bottomTextColor = colors.Purple,
