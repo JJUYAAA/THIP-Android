@@ -65,7 +65,7 @@
     <string name="page_name">페이지명</string>
 
     <!--    myPage Screen    -->
-    <string name="my_page">마이페이지</string>
+    <string name="my_page">내 정보</string>
     <string name="etc">기타</string>
     <string name="edit">편집</string>
     <string name="my_activity">내 활동</string>
