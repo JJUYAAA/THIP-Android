@@ -3,21 +3,25 @@ package com.texthip.thip.ui.group.room.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.texthip.thip.data.model.rooms.response.TodayCommentList
 import com.texthip.thip.data.repository.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class GroupRoomChatUiState(
-    val isSubmitting: Boolean = false,
+    val greetings: List<TodayCommentList> = emptyList(),
+    val isLoading: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    val isLastPage: Boolean = false,
     val error: String? = null
 )
 
 sealed interface GroupRoomChatEvent {
-    data class ShowToast(val message: String) : GroupRoomChatEvent
-    data object SubmissionSuccess : GroupRoomChatEvent
+    data object LoadMore : GroupRoomChatEvent
 }
 
 @HiltViewModel
@@ -27,12 +31,55 @@ class GroupRoomChatViewModel @Inject constructor(
 ) : ViewModel() {
     private val roomId: Int = requireNotNull(savedStateHandle["roomId"])
 
-    // TODO: 오늘의 한마디 조회 연결
-    // private val _uiState = MutableStateFlow(GroupRoomChatUiState())
-    // val uiState = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(GroupRoomChatUiState())
+    val uiState = _uiState.asStateFlow()
 
-    private val _eventFlow = MutableSharedFlow<GroupRoomChatEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private var nextCursor: String? = null
+
+    init {
+        fetchDailyGreetings(isRefresh = true)
+    }
+
+    fun onEvent(event: GroupRoomChatEvent) {
+        when (event) {
+            is GroupRoomChatEvent.LoadMore -> fetchDailyGreetings()
+            else -> Unit
+        }
+    }
+
+    private fun fetchDailyGreetings(isRefresh: Boolean = false) {
+        val currentState = _uiState.value
+        if (currentState.isLoading || currentState.isLoadingMore || (currentState.isLastPage && !isRefresh)) return
+
+        viewModelScope.launch {
+            if (isRefresh) {
+                _uiState.update { it.copy(isLoading = true, greetings = emptyList(), isLastPage = false) }
+                nextCursor = null
+            } else {
+                _uiState.update { it.copy(isLoadingMore = true) }
+            }
+
+            roomsRepository.getRoomsDailyGreeting(
+                roomId = roomId,
+                cursor = nextCursor
+            ).onSuccess { response ->
+                response?.let { data ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isLoadingMore = false,
+                            greetings = if (isRefresh) data.todayCommentList else it.greetings + data.todayCommentList,
+                            isLastPage = data.isLast
+                        )
+                    }
+                    nextCursor = data.nextCursor
+                }
+            }.onFailure { throwable ->
+                _uiState.update { it.copy(isLoading = false, isLoadingMore = false, error = throwable.message) }
+            }
+        }
+    }
+
 
     fun postDailyGreeting(content: String) {
         if (content.isBlank()) return
@@ -42,10 +89,9 @@ class GroupRoomChatViewModel @Inject constructor(
                 roomId = roomId,
                 content = content
             ).onSuccess {
-                _eventFlow.emit(GroupRoomChatEvent.SubmissionSuccess)
-                _eventFlow.emit(GroupRoomChatEvent.ShowToast("오늘의 한마디가 등록되었어요!"))
-            }.onFailure {
-                _eventFlow.emit(GroupRoomChatEvent.ShowToast(it.message ?: "등록에 실패했습니다."))
+                fetchDailyGreetings(isRefresh = true)
+            }.onFailure { throwable ->
+                _uiState.update { it.copy(isLoading = false, isLoadingMore = false, error = throwable.message) }
             }
         }
     }
