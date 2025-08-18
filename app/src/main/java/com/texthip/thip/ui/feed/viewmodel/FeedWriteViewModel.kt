@@ -154,13 +154,6 @@ class FeedWriteViewModel @Inject constructor(
         }
     }
 
-    // 현재 로드된 내 피드 목록을 가져오는 헬퍼 함수 (FeedViewModel과 연동 필요)
-    private fun getCurrentMyFeeds(): List<com.texthip.thip.data.model.feed.response.MyFeedItem> {
-        // TODO: FeedViewModel에서 현재 내 피드 목록을 가져오는 방법 구현 필요
-        // 임시로 빈 리스트 반환
-        return emptyList()
-    }
-
     private fun loadFeedWriteInfo() {
         viewModelScope.launch {
             updateState { it.copy(isLoadingCategories = true) }
