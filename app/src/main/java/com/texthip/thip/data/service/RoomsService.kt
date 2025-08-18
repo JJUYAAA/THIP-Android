@@ -5,7 +5,7 @@ import com.texthip.thip.data.model.rooms.request.CreateRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomJoinRequest
 import com.texthip.thip.data.model.rooms.request.RoomSecretRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
-import com.texthip.thip.data.model.rooms.request.RoomsDailyGreetingRequest
+import com.texthip.thip.data.model.rooms.request.RoomsCreateDailyGreetingRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
@@ -19,7 +19,7 @@ import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
 import com.texthip.thip.data.model.rooms.response.RoomSecretRoomResponse
 import com.texthip.thip.data.model.rooms.response.RoomsBookPageResponse
 import com.texthip.thip.data.model.rooms.response.RoomsCreateVoteResponse
-import com.texthip.thip.data.model.rooms.response.RoomsDailyGreetingResponse
+import com.texthip.thip.data.model.rooms.response.RoomsCreateDailyGreetingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteRecordResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteVoteResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
@@ -157,8 +157,8 @@ interface RoomsService {
     @POST("rooms/{roomId}/daily-greeting")
     suspend fun postRoomsDailyGreeting(
         @Path("roomId") roomId: Int,
-        @Body request: RoomsDailyGreetingRequest
-    ): BaseResponse<RoomsDailyGreetingResponse>
+        @Body request: RoomsCreateDailyGreetingRequest
+    ): BaseResponse<RoomsCreateDailyGreetingResponse>
 
     @GET("rooms/{roomId}/records/{recordId}/pin")
     suspend fun getRoomsRecordsPin(
