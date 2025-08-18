@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -130,6 +131,8 @@ fun FeedCommentScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var isFeedMenuSheetVisible by remember { mutableStateOf(false) }
 
+    val focusManager = LocalFocusManager.current
+
     Box(
         modifier = if (isBottomSheetVisible || showDialog) {
             Modifier
@@ -138,9 +141,10 @@ fun FeedCommentScreen(
         } else {
             Modifier.fillMaxSize()
         }
-            //바깥 터치 시 선택 해제 되도록
+            // 바깥 터치 시 키보드 숨기기
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
+                    focusManager.clearFocus()
                 })
             }
     ) {
@@ -290,7 +294,7 @@ fun FeedCommentScreen(
         CommentTextField(
             modifier = Modifier.align(Alignment.BottomCenter),
             input = commentInput,
-            hint = stringResource(R.string.feed_reply_to, feedDetail.creatorNickname),
+            hint = stringResource(R.string.reply_to),
             onInputChange = { commentInput = it },
             onSendClick = {
                 if (commentInput.isNotBlank()) {
@@ -303,6 +307,7 @@ fun FeedCommentScreen(
                     commentInput = ""
                     replyingToCommentId = null
                     replyingToNickname = null
+                    focusManager.clearFocus()
                 }
             },
             replyTo = replyingToNickname,
