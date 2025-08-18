@@ -30,7 +30,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 fun GroupRoomMatesScreen(
     roomId: Int,
     onBackClick: () -> Unit = {},
-    onUserClick: (Int) -> Unit = {},
+    onUserClick: (Long) -> Unit = {},
     viewModel: GroupRoomMatesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -69,7 +69,7 @@ fun GroupRoomMatesScreen(
 fun GroupRoomMatesContent(
     data: RoomsUsersResponse,
     onBackClick: () -> Unit = {},
-    onUserClick: (Int) -> Unit = {},
+    onUserClick: (Long) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
 

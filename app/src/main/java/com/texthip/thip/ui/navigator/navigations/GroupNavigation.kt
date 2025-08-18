@@ -45,6 +45,7 @@ import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomUnlock
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupVoteCreate
 import com.texthip.thip.ui.navigator.extensions.navigateToRecommendedGroupRecruit
+import com.texthip.thip.ui.navigator.extensions.navigateToUserProfile
 import com.texthip.thip.ui.navigator.routes.GroupRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
@@ -296,8 +297,8 @@ fun NavGraphBuilder.groupNavigation(
             onBackClick = {
                 navigateBack()
             },
-            onUserClick = {
-                // 네비게이션 로직 (예: 유저 프로필로 이동)
+            onUserClick = { userId ->
+                navController.navigateToUserProfile(userId)
             }
         )
     }
