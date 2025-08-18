@@ -4,10 +4,12 @@ import android.content.Context
 import android.net.Uri
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.feed.request.CreateFeedRequest
+import com.texthip.thip.data.model.feed.request.FeedLikeRequest
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
+import com.texthip.thip.data.model.feed.response.FeedLikeResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
 import com.texthip.thip.data.service.FeedService
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -148,7 +150,7 @@ class FeedRepository @Inject constructor(
     }
 
     /** 피드 상세 조회 */
-    suspend fun getFeedDetail(feedId: Int): Result<FeedDetailResponse?> = runCatching {
+    suspend fun getFeedDetail(feedId: Long): Result<FeedDetailResponse?> = runCatching {
         feedService.getFeedDetail(feedId)
             .handleBaseResponse()
             .getOrThrow()
@@ -182,6 +184,13 @@ class FeedRepository @Inject constructor(
     /** 피드 삭제 */
     suspend fun deleteFeed(feedId: Long): Result<String?> = runCatching {
         feedService.deleteFeed(feedId)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    suspend fun changeFeedLike(feedId: Long, newLikeStatus: Boolean): Result<FeedLikeResponse?> = runCatching {
+        val request = FeedLikeRequest(type = newLikeStatus)
+        feedService.toggleFeedLike(feedId, request)
             .handleBaseResponse()
             .getOrThrow()
     }

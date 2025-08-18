@@ -1,15 +1,18 @@
 package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
+import com.texthip.thip.data.model.feed.request.FeedLikeRequest
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersInfoResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
+import com.texthip.thip.data.model.feed.response.FeedLikeResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
@@ -48,7 +51,7 @@ interface FeedService {
     /** 피드 상세 조회 */
     @GET("feeds/{feedId}")
     suspend fun getFeedDetail(
-        @Path("feedId") feedId: Int
+        @Path("feedId") feedId: Long
     ): BaseResponse<FeedDetailResponse>
 
     @GET("feeds/users/{userId}/info")
@@ -66,4 +69,11 @@ interface FeedService {
     suspend fun deleteFeed(
         @Path("feedId") feedId: Long
     ): BaseResponse<String>
+
+    /** 피드 좋아요 상태 변경 */
+    @POST("feeds/{feedId}/likes")
+    suspend fun toggleFeedLike(
+        @Path("feedId") feedId: Long,
+        @Body request: FeedLikeRequest
+    ): BaseResponse<FeedLikeResponse>
 }
