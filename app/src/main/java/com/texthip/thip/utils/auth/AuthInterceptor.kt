@@ -1,18 +1,29 @@
 package com.texthip.thip.utils.auth
 
+import com.texthip.thip.data.manager.TokenManager
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 
-class AuthInterceptor @Inject constructor() : Interceptor {
+class AuthInterceptor @Inject constructor(
+    private val tokenManager: TokenManager
+) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request().newBuilder()
+        val token = runBlocking {
+            tokenManager.getToken().first()
+        }
 
-        request
-            .addHeader(
+        val requestBuilder = chain.request().newBuilder()
+
+        if (!token.isNullOrBlank()) {
+            requestBuilder.addHeader(
                 "Authorization",
-                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc1NDI4MjMzNiwiZXhwIjoxNzU2ODc0MzM2fQ.NG_xDSdh8A6egIX2EAFtsqDO4lmFphTzqgzHC-r8eXY"
+                "Bearer $token"
             )
-        return chain.proceed(request.build())
+        }
+
+        return chain.proceed(requestBuilder.build())
     }
 }
