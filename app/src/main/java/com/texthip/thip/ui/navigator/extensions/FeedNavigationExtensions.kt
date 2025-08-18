@@ -20,7 +20,7 @@ fun NavHostController.navigateToFeedWrite() {
 }
 
 // 피드 댓글으로
-fun NavHostController.navigateToFeedComment(feedId: Int) {
+fun NavHostController.navigateToFeedComment(feedId: Long) {
     navigate(FeedRoutes.Comment(feedId))
 }
 

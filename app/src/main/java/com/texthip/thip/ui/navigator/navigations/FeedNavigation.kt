@@ -21,7 +21,7 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 // Feed
 fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBack: () -> Unit) {
     composable<MainTabRoutes.Feed> { backStackEntry ->
-        val resultFeedId = backStackEntry.savedStateHandle.get<Int>("feedId")
+        val resultFeedId = backStackEntry.savedStateHandle.get<Long>("feedId")
 
         FeedScreen(
             nickname = "ThipUser01",
@@ -29,7 +29,7 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             followerProfileImageUrls = emptyList(),
             resultFeedId = resultFeedId,
             onResultConsumed = {
-                backStackEntry.savedStateHandle.remove<Int>("feedId")
+                backStackEntry.savedStateHandle.remove<Long>("feedId")
             },
             onNavigateToMySubscription = {
                 navController.navigateToMySubscription()
@@ -93,7 +93,7 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
     }
     composable<FeedRoutes.Comment> { backStackEntry ->
         val route = backStackEntry.arguments?.let {
-            FeedRoutes.Comment(it.getInt("feedId"))
+            FeedRoutes.Comment(it.getLong("feedId"))
         } ?: return@composable
 
         FeedCommentScreen(
