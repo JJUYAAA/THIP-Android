@@ -141,16 +141,11 @@ fun GroupRoomHeader(
                         )
                     }
 
-                    IconButton(
-                        onClick = { /* TODO: Navigate to participant list */ },
-                        modifier = Modifier.size(24.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_chevron),
-                            contentDescription = "Participant Icon",
-                            tint = colors.White
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(R.drawable.ic_chevron),
+                        contentDescription = "Participant Icon",
+                        tint = colors.White
+                    )
                 }
                 Spacer(Modifier.height(12.dp))
                 Text(
