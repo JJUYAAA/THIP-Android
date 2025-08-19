@@ -109,6 +109,7 @@ fun SavedFeedCard(
             commentCount = feedItem.commentCount,
             isSaveVisible = true,
             isSaved = feedItem.isSaved,
+            isLockIcon = feedItem.isLocked,
             onLikeClick = onLikeClick,
             onCommentClick = onCommentClick,
             onBookmarkClick = onBookmarkClick
