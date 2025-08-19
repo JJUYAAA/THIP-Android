@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.search.screen
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -51,7 +50,6 @@ import com.texthip.thip.R
 import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
 import com.texthip.thip.ui.common.modal.InfoPopup
-import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.common.topappbar.GradationTopAppBar
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.search.component.SearchFilterButton
@@ -62,7 +60,6 @@ import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.color.hexToColor
-import kotlinx.coroutines.delay
 
 
 @Composable
@@ -91,7 +88,6 @@ fun SearchBookDetailScreen(
         bookDetail = uiState.bookDetail,
         uiState = uiState,
         onLeftClick = onLeftClick,
-        onRightClick = onRightClick,
         onRecruitingGroupClick = onRecruitingGroupClick,
         onWriteFeedClick = onWriteFeedClick,
         onFeedClick = onFeedClick,
@@ -117,7 +113,6 @@ private fun SearchBookDetailScreenContent(
     bookDetail: BookDetailResponse? = null,
     uiState: BookDetailUiState? = null,
     onLeftClick: () -> Unit = {},
-    onRightClick: () -> Unit = {},
     onRecruitingGroupClick: () -> Unit = {},
     onWriteFeedClick: () -> Unit = {},
     onFeedClick: (Int) -> Unit = {},
@@ -125,7 +120,6 @@ private fun SearchBookDetailScreenContent(
     onSortChange: (String) -> Unit = {},
     onLoadMore: () -> Unit = {}
 ) {
-    var isAlarmVisible by remember { mutableStateOf(true) }
     var isIntroductionPopupVisible by remember { mutableStateOf(false) }
     var isBookmarked by remember { mutableStateOf(bookDetail?.isSaved ?: false) }
     var isFilterDropdownVisible by remember { mutableStateOf(false) }
@@ -158,14 +152,6 @@ private fun SearchBookDetailScreenContent(
         }
     }
 
-    // 알림 5초간 노출
-    LaunchedEffect(bookDetail) {
-        if (bookDetail != null) {
-            isAlarmVisible = true
-            delay(5000)
-            isAlarmVisible = false
-        }
-    }
 
     // 북마크 상태 동기화
     LaunchedEffect(bookDetail?.isSaved) {
@@ -488,24 +474,13 @@ private fun SearchBookDetailScreenContent(
                 }
 
                 // TopAppBar 오버레이 (고정)
-                Column {
-                    AnimatedVisibility(visible = isAlarmVisible) {
-                        GradationTopAppBar(
-                            isImageVisible = true,
-                            count = bookDetail.readCount,
-                            onLeftClick = onLeftClick,
-                            onRightClick = {}
-                        )
-                    }
-                    AnimatedVisibility(visible = !isAlarmVisible) {
-                        DefaultTopAppBar(
-                            isRightIconVisible = true,
-                            isTitleVisible = false,
-                            onLeftClick = onLeftClick,
-                            onRightClick = onRightClick
-                        )
-                    }
-                }
+                GradationTopAppBar(
+                    count = bookDetail.readCount,
+                    autoHideCount = true,
+                    countDisplayDurationMs = 5000L,
+                    onLeftClick = onLeftClick,
+                    onRightClick = {}
+                )
 
                 if (isIntroductionPopupVisible) {
                     Box(
