@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.data.repository.FeedRepository
 import com.texthip.thip.ui.feed.usecase.ChangeFeedLikeUseCase
+import com.texthip.thip.ui.feed.usecase.ChangeFeedSaveUseCase
 import com.texthip.thip.ui.feed.usecase.DeleteFeedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +27,7 @@ class FeedDetailViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
     private val deleteFeedUseCase: DeleteFeedUseCase,
     private val changeFeedLikeUseCase: ChangeFeedLikeUseCase,
+    private val changeFeedSaveUseCase: ChangeFeedSaveUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedDetailUiState())
@@ -78,8 +80,39 @@ class FeedDetailViewModel @Inject constructor(
                 }
         }
     }
-    fun changeFeedLike(){
+    fun changeFeedLike() {
+        viewModelScope.launch {
+            val originalFeed = _uiState.value.feedDetail ?: return@launch
 
+            val updatedFeed = originalFeed.copy(
+                isLiked = !originalFeed.isLiked,
+                likeCount = if (originalFeed.isLiked) originalFeed.likeCount - 1 else originalFeed.likeCount + 1
+            )
+            updateState { it.copy(feedDetail = updatedFeed) }
+
+            val newLikeStatus = !originalFeed.isLiked
+            changeFeedLikeUseCase(originalFeed.feedId.toLong(), newLikeStatus)
+                .onFailure {
+                    updateState { it.copy(feedDetail = originalFeed) }
+                }
+        }
+    }
+
+    fun changeFeedSave() {
+        viewModelScope.launch {
+            val originalFeed = _uiState.value.feedDetail ?: return@launch
+
+            val updatedFeed = originalFeed.copy(
+                isSaved = !originalFeed.isSaved
+            )
+            updateState { it.copy(feedDetail = updatedFeed) }
+
+            val newSaveStatus = !originalFeed.isSaved
+            changeFeedSaveUseCase(originalFeed.feedId.toLong(), newSaveStatus)
+                .onFailure {
+                    updateState { it.copy(feedDetail = originalFeed) }
+                }
+        }
     }
 
     fun clearError() {
