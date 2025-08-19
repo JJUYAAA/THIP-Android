@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.feed.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -153,10 +154,11 @@ fun FeedCommentScreen(
             .advancedImePadding()
     ) {
         Box(
-            modifier = if (isBottomSheetVisible || showDialog) {
+            modifier = if (isBottomSheetVisible || showDialog || showImageViewer) {
                 Modifier
                     .fillMaxSize()
                     .blur(5.dp)
+                    .background(colors.Black800)
             } else {
                 Modifier.fillMaxSize()
             }
