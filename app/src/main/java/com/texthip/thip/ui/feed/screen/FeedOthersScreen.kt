@@ -53,6 +53,7 @@ fun FeedOthersScreen(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
         onLikeClick = { feedId -> viewModel.changeFeedLike(feedId) },
+        onBookmarkClick = { feedId -> viewModel.changeFeedSave(feedId) },
         onToggleFollow = {
             val followedMessage = context.getString(R.string.toast_thip, uiState.userInfo?.nickname ?: "")
             val unfollowedMessage = context.getString(R.string.toast_thip_cancel, uiState.userInfo?.nickname ?: "")
@@ -67,6 +68,7 @@ fun FeedOthersContent(
     uiState: FeedOthersUiState,
     onNavigateBack: () -> Unit,
     onLikeClick: (Long) -> Unit,
+    onBookmarkClick: (Long) -> Unit,
     onToggleFollow: () -> Unit,
     onHideToast: () -> Unit
 ) {
@@ -157,7 +159,8 @@ fun FeedOthersContent(
                             OthersFeedCard(
                                 feedItem = feed,
                                 onLikeClick = { onLikeClick(feed.feedId) },
-                                onContentClick = { /* TODO: 피드 상세 댓글 화면으로 이동 */ }
+                                onContentClick = { /* TODO: 피드 상세 댓글 화면으로 이동 */ },
+                                onBookmarkClick = { onBookmarkClick(feed.feedId) }
                             )
                             Spacer(modifier = Modifier.height(40.dp))
                             if (index < uiState.feeds.lastIndex) {
@@ -223,7 +226,8 @@ private fun FeedOthersScreenPrev() {
             onNavigateBack = {},
             onLikeClick = {},
             onToggleFollow = {},
-            onHideToast = {}
+            onHideToast = {},
+            onBookmarkClick = {}
         )
     }
 }

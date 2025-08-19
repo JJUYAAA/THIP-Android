@@ -332,7 +332,10 @@ class FeedViewModel @Inject constructor(
 
             //api 호출
             val newLikeStatus = !feedToUpdate.isLiked
-            changeFeedLikeUseCase(feedId, newLikeStatus)
+            changeFeedLikeUseCase(
+                feedId, newLikeStatus, feedToUpdate.likeCount,
+                feedToUpdate.isSaved
+            )
                 .onFailure {
                     _uiState.update { it.copy(allFeeds = currentFeeds) }
                 }
@@ -356,12 +359,17 @@ class FeedViewModel @Inject constructor(
 
             // API 호출
             val newSaveStatus = !feedToUpdate.isSaved
-            changeFeedSaveUseCase(feedId, newSaveStatus)
-                .onFailure {
-                    updateState { it.copy(allFeeds = currentFeeds) }
-                }
+            changeFeedSaveUseCase(
+                feedId = feedId,
+                newSaveStatus = newSaveStatus,
+                currentIsLiked = feedToUpdate.isLiked,
+                currentLikeCount = feedToUpdate.likeCount
+            ).onFailure {
+                _uiState.update { it.copy(allFeeds = currentFeeds) }
+            }
         }
     }
+
     fun updateFeedStateFromResult(result: FeedStateUpdateResult) {
         val updatedFeeds = _uiState.value.allFeeds.map { feed ->
             if (feed.feedId.toLong() == result.feedId) {
@@ -376,6 +384,7 @@ class FeedViewModel @Inject constructor(
         }
         _uiState.update { it.copy(allFeeds = updatedFeeds) }
     }
+
     fun removeDeletedFeed(feedId: Long) {
         val currentAllFeeds = _uiState.value.allFeeds.filterNot { it.feedId.toLong() == feedId }
         val currentMyFeeds = _uiState.value.myFeeds.filterNot { it.feedId.toLong() == feedId }

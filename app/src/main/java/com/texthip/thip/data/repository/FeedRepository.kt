@@ -17,8 +17,12 @@ import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
 import com.texthip.thip.data.model.feed.response.RelatedBooksResponse
 import com.texthip.thip.data.service.FeedService
+import com.texthip.thip.ui.feed.mock.FeedStateUpdateResult
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -36,6 +40,8 @@ class FeedRepository @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val json: Json
 ) {
+    private val _feedStateUpdateResult = MutableSharedFlow<FeedStateUpdateResult>()
+    val feedStateUpdateResult: Flow<FeedStateUpdateResult> = _feedStateUpdateResult.asSharedFlow()
 
     /** 피드 작성에 필요한 카테고리 및 태그 목록 조회 */
     suspend fun getFeedWriteInfo(): Result<FeedWriteInfoResponse?> = runCatching {
@@ -198,6 +204,7 @@ class FeedRepository @Inject constructor(
             .handleBaseResponse()
             .getOrThrow()
     }
+
     /** 임시 파일들을 정리하는 함수 */
     private fun cleanupTempFiles(tempFiles: List<File>) {
         tempFiles.forEach { file ->
@@ -230,19 +237,60 @@ class FeedRepository @Inject constructor(
             .getOrThrow()
     }
 
-    suspend fun changeFeedLike(feedId: Long, newLikeStatus: Boolean): Result<FeedLikeResponse?> = runCatching {
+    /*suspend fun changeFeedLike(feedId: Long, newLikeStatus: Boolean): Result<FeedLikeResponse?> = runCatching {
         val request = FeedLikeRequest(type = newLikeStatus)
         feedService.changeFeedLike(feedId, request)
             .handleBaseResponse()
             .getOrThrow()
+    }*/
+    suspend fun changeFeedLike(
+        feedId: Long, newLikeStatus: Boolean,
+        currentLikeCount: Int,
+        currentIsSaved: Boolean
+    ): Result<FeedLikeResponse?> {
+        // 👈 3. 기존 로직을 수정하여 성공 시 방송(emit)하도록 변경
+        return runCatching {
+            val request = FeedLikeRequest(type = newLikeStatus)
+            feedService.changeFeedLike(feedId, request)
+                .handleBaseResponse()
+                .getOrThrow()
+        }.onSuccess { response ->
+            // API 호출 성공 및 응답 데이터가 있을 경우
+            response?.let {
+                // 변경된 상태를 객체로 만들어 방송(emit)
+                val newLikeCount = if (it.isLiked) currentLikeCount + 1 else currentLikeCount - 1
+                val update = FeedStateUpdateResult(
+                    feedId = feedId,
+                    isLiked = it.isLiked,
+                    likeCount = newLikeCount,
+                    isSaved = currentIsSaved // isSaved 상태는 그대로 유지
+                )
+                _feedStateUpdateResult.emit(update)
+            }
+        }
     }
 
     /** 피드 저장 */
-    suspend fun changeFeedSave(feedId: Long, newSaveStatus: Boolean): Result<FeedSaveResponse?> = runCatching {
-        val request = FeedSaveRequest(type = newSaveStatus)
-        feedService.changeFeedSave(feedId, request)
-            .handleBaseResponse()
-            .getOrThrow()
-    }
+    suspend fun changeFeedSave(
+        feedId: Long, newSaveStatus: Boolean, currentIsLiked: Boolean,
+        currentLikeCount: Int
+    ): Result<FeedSaveResponse?> =
+        runCatching {
+            val request = FeedSaveRequest(type = newSaveStatus)
+            feedService.changeFeedSave(feedId, request)
+                .handleBaseResponse()
+                .getOrThrow()
+        }.onSuccess { response ->
+            response?.let {
+                // API 응답(isSaved)과 파라미터로 받은 값들을 조합
+                val update = FeedStateUpdateResult(
+                    feedId = feedId,
+                    isLiked = currentIsLiked, // isLiked 상태는 그대로 유지
+                    likeCount = currentLikeCount,
+                    isSaved = it.isSaved
+                )
+                _feedStateUpdateResult.emit(update)
+            }
+        }
 
 }
