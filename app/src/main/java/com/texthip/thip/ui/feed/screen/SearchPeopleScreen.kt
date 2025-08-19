@@ -27,6 +27,7 @@ import com.texthip.thip.ui.feed.component.PeopleRecentSearch
 import com.texthip.thip.ui.feed.component.SearchPeopleEmptyResult
 import com.texthip.thip.ui.feed.component.SearchPeopleResult
 import com.texthip.thip.ui.feed.mock.MySubscriptionData
+import com.texthip.thip.ui.feed.viewmodel.RecentSearchUiItem
 import com.texthip.thip.ui.feed.viewmodel.SearchPeopleUiState
 import com.texthip.thip.ui.feed.viewmodel.SearchPeopleViewModel
 import com.texthip.thip.ui.theme.ThipTheme
@@ -41,6 +42,10 @@ fun SearchPeopleScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchRecentSearches()
+    }
 
     LaunchedEffect(uiState.isSearched) {
         if (uiState.isSearched) {
@@ -66,7 +71,7 @@ fun SearchPeopleContent(
     onSearchTextChanged: (String) -> Unit,
     onFinalSearch: (String) -> Unit,
     onRecentSearchClick: (String) -> Unit,
-    onRecentSearchRemove: (String) -> Unit,
+    onRecentSearchRemove: (Long) -> Unit,
     onUserClick: (MySubscriptionData) -> Unit
 ) {
 
@@ -150,7 +155,11 @@ private fun SearchPeopleContentPreview_Recent() {
     ThipTheme {
         SearchPeopleContent(
             uiState = SearchPeopleUiState(
-                recentSearches = listOf("메롱", "메메롱", "메메메롱")
+                recentSearches = listOf(
+                    RecentSearchUiItem(id = 1, term = "메롱"),
+                    RecentSearchUiItem(id = 2, term = "메메롱"),
+                    RecentSearchUiItem(id = 3, term = "메메메롱")
+                )
             ),
             onSearchTextChanged = {},
             onFinalSearch = {},
