@@ -52,6 +52,7 @@ import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
 import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
+import com.texthip.thip.ui.feed.mock.FeedStateUpdateResult
 import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
@@ -140,7 +141,31 @@ fun FeedScreen(
             }
         }
     }
+    LaunchedEffect(Unit) { //커스텀객체 타입 인식오류 -> 직렬화가 아닌 잘게 쪼개어 전달
+        navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
+            handle.getLiveData<Long>("updated_feed_id").observeForever { feedId ->
+                if (feedId != null) {
+                    val isLiked = handle.get<Boolean>("updated_feed_isLiked") ?: false
+                    val likeCount = handle.get<Int>("updated_feed_likeCount") ?: 0
+                    val isSaved = handle.get<Boolean>("updated_feed_isSaved") ?: false
 
+                    val result = FeedStateUpdateResult(
+                        feedId = feedId,
+                        isLiked = isLiked,
+                        likeCount = likeCount,
+                        isSaved = isSaved
+                    )
+
+                    feedViewModel.updateFeedStateFromResult(result)
+
+                    handle.remove<Long>("updated_feed_id")
+                    handle.remove<Boolean>("updated_feed_isLiked")
+                    handle.remove<Int>("updated_feed_likeCount")
+                    handle.remove<Boolean>("updated_feed_isSaved")
+                }
+            }
+        }
+    }
     // 초기 로딩 상태 처리
     if (feedUiState.isLoading && feedUiState.currentTabFeeds.isEmpty()) {
         Box(
