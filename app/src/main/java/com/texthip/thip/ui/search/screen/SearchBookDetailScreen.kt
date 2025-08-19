@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -125,6 +126,12 @@ private fun SearchBookDetailScreenContent(
     var isFilterDropdownVisible by remember { mutableStateOf(false) }
     var filterButtonPosition by remember { mutableStateOf(IntOffset.Zero) }
     val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+    
+    // 화면 크기에 따른 최대 높이 설정 (태블릿 대응)
+    val maxImageHeight = remember(configuration.screenHeightDp) {
+        (configuration.screenHeightDp * 0.6f).dp.coerceAtMost(620.dp)
+    }
     val filterOptions = listOf(
         stringResource(R.string.sort_like),
         stringResource(R.string.sort_latest)
@@ -214,7 +221,7 @@ private fun SearchBookDetailScreenContent(
                                     contentDescription = bookDetail.title,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .heightIn(min = 420.dp)
+                                        .heightIn(min = 420.dp, max = maxImageHeight)
                                         .blur(4.dp),
                                     contentScale = ContentScale.Crop,
                                     fallback = painterResource(R.drawable.img_book_cover_sample),
@@ -227,9 +234,10 @@ private fun SearchBookDetailScreenContent(
                                             brush = Brush.verticalGradient(
                                                 colors = listOf(
                                                     Color.Transparent,
-                                                    colors.Black.copy(alpha = 0.3f),
-                                                    colors.Black.copy(alpha = 0.6f),
-                                                    colors.Black.copy(alpha = 0.9f),
+                                                    colors.Black.copy(alpha = 0.2f),
+                                                    colors.Black.copy(alpha = 0.5f),
+                                                    colors.Black.copy(alpha = 0.8f),
+                                                    colors.Black.copy(alpha = 0.95f),
                                                     colors.Black
                                                 ),
                                                 startY = 0f,
@@ -384,6 +392,24 @@ private fun SearchBookDetailScreenContent(
                                     )
                                 }
                             }
+                        }
+
+                        // 피드 섹션 전환을 위한 추가 그라데이션
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(30.dp)
+                                    .background(
+                                        brush = Brush.verticalGradient(
+                                            colors = listOf(
+                                                colors.Black,
+                                                colors.Black.copy(alpha = 0.95f),
+                                                colors.Black.copy(alpha = 0.9f)
+                                            )
+                                        )
+                                    )
+                            )
                         }
 
                         // 피드 목록 (ViewModel에서 변환된 데이터 사용)
