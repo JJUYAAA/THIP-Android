@@ -252,31 +252,32 @@ fun FeedCommentScreen(
                                     }
                                 }
                             }
-                          HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
-                            color = colors.DarkGrey02, thickness = 1.dp
-                        )
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                                color = colors.DarkGrey02, thickness = 1.dp
+                            )
 
-                        ActionBarButton(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp),
-                            isLiked = feedDetail.isLiked,
-                            likeCount = feedDetail.likeCount,
-                            commentCount = feedDetail.commentCount,
-                            isSaveVisible = true,
-                            isSaved = feedDetail.isSaved,
-                            isPinVisible = false,
-                            onLikeClick = { feedDetailViewModel.changeFeedLike() },
-                            onCommentClick = { /* 스크롤 이동 or 포커스 처리 */ },
-                            onBookmarkClick = { feedDetailViewModel.changeFeedSave() },
-                            onPinClick = { /* TODO: pin 기능 */ }
-                        )
+                            ActionBarButton(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp),
+                                isLiked = feedDetail.isLiked,
+                                likeCount = feedDetail.likeCount,
+                                commentCount = feedDetail.commentCount,
+                                isSaveVisible = true,
+                                isSaved = feedDetail.isSaved,
+                                isPinVisible = false,
+                                onLikeClick = { feedDetailViewModel.changeFeedLike() },
+                                onCommentClick = { /* 스크롤 이동 or 포커스 처리 */ },
+                                onBookmarkClick = { feedDetailViewModel.changeFeedSave() },
+                                onPinClick = { /* TODO: pin 기능 */ }
+                            )
 
-                        HorizontalDivider(
-                            modifier = Modifier.padding(top = 16.dp),
-                            color = colors.DarkGrey03,
-                            thickness = 10.dp
+                            HorizontalDivider(
+                                modifier = Modifier.padding(top = 16.dp),
+                                color = colors.DarkGrey03,
+                                thickness = 10.dp
+                            )
                         }
                     }
                     when {
@@ -375,17 +376,18 @@ fun FeedCommentScreen(
                     }
                 )
             }
+        }
 
-            // 신고 완료 토스트
-            if (showToast) {
-                ToastWithDate(
-                    message = "게시글 신고를 완료했어요.",
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(horizontal = 20.dp, vertical = 16.dp)
-                        .zIndex(2f)
-                )
-            }
+        // 신고 완료 토스트
+        if (showToast) {
+            ToastWithDate(
+                message = "게시글 신고를 완료했어요.",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 20.dp, vertical = 16.dp)
+                    .zIndex(2f)
+            )
+        }
 
         if (isBottomSheetVisible) {
             val menuItems = if (feedDetail.isWriter) {
@@ -422,35 +424,38 @@ fun FeedCommentScreen(
                     )
                 )
             }
-        MenuBottomSheet(
-            items = menuItems,
-            onDismiss = { isBottomSheetVisible = false }
-        )
-    }
+            MenuBottomSheet(
+                items = menuItems,
+                onDismiss = { isBottomSheetVisible = false }
+            )
+        }
 
-    if (showDialog) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .clickable { showDialog = false }) {
-            Box(Modifier.align(Alignment.Center)) {
-                DialogPopup(
-                    title = stringResource(R.string.delete_feed_dialog_title),
-                    description = stringResource(R.string.delete_feed_dialog_description),
-                    onConfirm = {
-                        showDialog = false
-                        isBottomSheetVisible = false
-                        feedDetailViewModel.deleteFeed(feedId)
-                    },
-                    onCancel = {
-                        showDialog = false
-                        isBottomSheetVisible = false
+        if (showDialog) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .clickable { showDialog = false }) {
+                Box(Modifier.align(Alignment.Center)) {
+                    DialogPopup(
+                        title = stringResource(R.string.delete_feed_dialog_title),
+                        description = stringResource(R.string.delete_feed_dialog_description),
+                        onConfirm = {
+                            showDialog = false
+                            isBottomSheetVisible = false
+                            feedDetailViewModel.deleteFeed(feedId)
+                        },
+                        onCancel = {
+                            showDialog = false
+                            isBottomSheetVisible = false
+                        }
+                    )
+                    LaunchedEffect(showToast) {
+                        if (showToast) {
+                            delay(3000)
+                            showToast = false
+                        }
                     }
-                )
-        LaunchedEffect(showToast) {
-            if (showToast) {
-                delay(3000)
-                showToast = false
+                }
             }
         }
 
