@@ -263,6 +263,7 @@ class FeedViewModel @Inject constructor(
     }
 
     fun refreshData() {
+        loadAllFeeds()
         fetchRecentWriters()
     }
 

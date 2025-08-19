@@ -68,8 +68,11 @@ fun FeedScreen(
     onNavigateToFeedComment: (Int) -> Unit = {},
     onNavigateToBookDetail: (String) -> Unit = {},
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
+    onNavigateToNotification: () -> Unit = {},
     resultFeedId: Int? = null,
+    refreshFeed: Boolean? = null,
     onResultConsumed: () -> Unit = {},
+    onRefreshConsumed: () -> Unit = {},
     feedViewModel: FeedViewModel = hiltViewModel(),
 ) {
     val feedUiState by feedViewModel.uiState.collectAsState()
@@ -122,6 +125,19 @@ fun FeedScreen(
                 if (showProgressBar) {
                     showProgressBar = false
                 }
+                
+                // 애니메이션이 완전히 끝난 후 새로고침 실행
+                feedViewModel.refreshData()
+            }
+        }
+    }
+    
+    LaunchedEffect(refreshFeed) {
+        if (refreshFeed == true) {
+            onRefreshConsumed()
+            // resultFeedId가 있을 때는 애니메이션 후에 새로고침하므로 여기서는 실행하지 않음
+            if (resultFeedId == null) {
+                feedViewModel.refreshData()
             }
         }
     }
@@ -152,7 +168,7 @@ fun FeedScreen(
                     leftIcon = painterResource(R.drawable.ic_plusfriend),
                     hasNotification = false,
                     onLeftClick = {},
-                    onRightClick = {},
+                    onRightClick = onNavigateToNotification,
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 HeaderMenuBarTab(
