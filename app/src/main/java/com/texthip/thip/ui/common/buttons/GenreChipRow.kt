@@ -18,11 +18,12 @@ fun GenreChipRow(
     modifier: Modifier = Modifier.width(4.dp),
     genres: List<String>,
     selectedIndex: Int,
-    onSelect: (Int) -> Unit
+    onSelect: (Int) -> Unit,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Center
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = horizontalArrangement
     ) {
         genres.forEachIndexed { idx, genre ->
             OptionChipButton(

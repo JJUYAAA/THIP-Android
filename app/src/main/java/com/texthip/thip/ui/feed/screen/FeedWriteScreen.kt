@@ -304,10 +304,11 @@ fun FeedWriteContent(
                 )
                 Spacer(modifier = Modifier.padding(top = 12.dp))
                 GenreChipRow(
-                    modifier = Modifier.width(18.dp),
+                    modifier = Modifier.width(8.dp),
                     genres = uiState.categories.map { it.category },
                     selectedIndex = uiState.selectedCategoryIndex,
-                    onSelect = onSelectCategory
+                    onSelect = onSelectCategory,
+                    horizontalArrangement = Arrangement.Start
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 if (uiState.selectedCategoryIndex != -1) {
@@ -316,7 +317,8 @@ fun FeedWriteContent(
                     SubGenreChipGrid(
                         subGenres = uiState.availableTags,
                         selectedGenres = uiState.selectedTags,
-                        onGenreToggle = onToggleTag
+                        onGenreToggle = onToggleTag,
+                        horizontalAlignment = Alignment.Start
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),

@@ -56,7 +56,7 @@ data class FeedWriteUiState(
         get() = if (selectedCategoryIndex >= 0 && selectedCategoryIndex < categories.size) {
             categories[selectedCategoryIndex].tagList
         } else {
-            emptyList()
+            categories.flatMap { it.tagList }.distinct()
         }
 
     // 현재 선택된 카테고리 이름
