@@ -195,7 +195,6 @@ fun GroupRoomDurationPicker(
 fun MeetingDurationPickerPreview() {
     ThipTheme {
         GroupRoomDurationPicker { startDate, endDate ->
-            println("Selected date range: $startDate to $endDate")
         }
     }
 }

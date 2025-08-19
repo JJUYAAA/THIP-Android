@@ -66,6 +66,7 @@ fun GroupRoomUnlockScreen(
                 viewModel.resetPasswordState()
                 onSuccessNavigation()
             }
+
             false -> {
                 showError = true
                 delay(1000) // 사용자에게 에러 메시지를 보여줄 시간
@@ -74,7 +75,8 @@ fun GroupRoomUnlockScreen(
                 focusRequesters[0].requestFocus()
                 viewModel.resetPasswordState() // ViewModel 상태 초기화
             }
-            null -> { }
+
+            null -> {}
         }
     }
 
@@ -85,7 +87,7 @@ fun GroupRoomUnlockScreen(
         focusRequesters[0].requestFocus()
         keyboardController?.show()
     }
-    
+
     // 화면 종료 시 리소스 정리
     DisposableEffect(Unit) {
         onDispose {
@@ -94,10 +96,7 @@ fun GroupRoomUnlockScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -133,25 +132,24 @@ fun GroupRoomUnlockScreen(
                             onValueChange = { input ->
                                 if (input.length <= 1 && input.all { it.isDigit() }) {
                                     val newPassword = password.copyOf()
+                                    val wasEmpty = password[index].isEmpty()
                                     newPassword[index] = input
                                     password = newPassword
 
+                                    // 숫자가 입력되면 다음 칸으로 이동
                                     if (input.isNotEmpty() && index < 3) {
                                         focusRequesters[index + 1].requestFocus()
+                                    } else if (input.isEmpty() && !wasEmpty && index > 0) {
+                                        focusRequesters[index - 1].requestFocus()
                                     }
+
                                 }
                             },
                             onBackspace = {
-                                val newPassword = password.copyOf()
-                                if (password[index].isNotEmpty()) {
-                                    // 현재 박스에 값이 있으면 현재 박스 지우기
-                                    newPassword[index] = ""
-                                    password = newPassword
-                                } else if (index > 0) {
-                                    // 현재 박스가 비어있으면 이전 박스로 이동하면서 지우기
-                                    newPassword[index - 1] = ""
-                                    password = newPassword
-                                    focusRequesters[index - 1].requestFocus()
+                                // 빈 박스에서 백스페이스 → 이전 박스로 이동
+                                if (index > 0) {
+                                    val prevIndex = index - 1
+                                    focusRequesters[prevIndex].requestFocus()
                                 }
                             },
                             borderColor = if (showError) colors.Red else Color.Transparent,
