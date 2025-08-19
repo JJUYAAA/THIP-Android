@@ -12,7 +12,10 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
 // 메인 네비게이션
 @Composable
-fun MainNavHost(navController: NavHostController) {
+fun MainNavHost(
+    navController: NavHostController,
+    onNavigateToLogin: () -> Unit
+) {
     NavHost(
         navController = navController,
         startDestination = MainTabRoutes.Feed
@@ -26,7 +29,10 @@ fun MainNavHost(navController: NavHostController) {
             navigateBack = navController::popBackStack
         )
         searchNavigation(navController)
-        myPageNavigation(navController)
+        myPageNavigation(
+            navController = navController,
+            onNavigateToLogin = onNavigateToLogin
+        )
         commonNavigation(
             navController = navController,
             navigateBack = navController::popBackStack

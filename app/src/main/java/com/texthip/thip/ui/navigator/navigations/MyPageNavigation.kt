@@ -19,7 +19,10 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 import com.texthip.thip.ui.navigator.routes.MyPageRoutes
 
 // MyPage
-fun NavGraphBuilder.myPageNavigation(navController: NavHostController) {
+fun NavGraphBuilder.myPageNavigation(
+    navController: NavHostController,
+    onNavigateToLogin: () -> Unit
+) {
     composable<MainTabRoutes.MyPage> {
         MyPageScreen(
             navController = navController,
@@ -27,7 +30,8 @@ fun NavGraphBuilder.myPageNavigation(navController: NavHostController) {
             onNavigateToSavedFeeds = { navController.navigateToSavedFeeds() },
             onNavigateToNotificationSettings = { navController.navigateToNotificationSettings() },
             onCustomerService = {navController.navigateToCustomerService()},
-            onDeleteAccount = { navController.navigateToLeaveThipScreen() }
+            onDeleteAccount = { navController.navigateToLeaveThipScreen() },
+            onNavigateToLogin = onNavigateToLogin
         )
     }
 

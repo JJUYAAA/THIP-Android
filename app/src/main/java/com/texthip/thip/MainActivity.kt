@@ -44,7 +44,16 @@ fun RootNavHost() {
 
         // --- 메인 관련 화면들 ---
         composable<CommonRoutes.Main> { // MainScreen으로 가는 경로 추가
-            MainScreen()
+            MainScreen(
+                onNavigateToLogin = {
+                    navController.navigate(CommonRoutes.Login) {
+                        // 메인 화면으로 돌아올 수 없도록 모든 화면 기록 삭제
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
         }
     }
 }
