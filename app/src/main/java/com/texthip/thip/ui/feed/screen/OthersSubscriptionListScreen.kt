@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.texthip.thip.R
 import com.texthip.thip.data.model.users.response.FollowerList
 import com.texthip.thip.ui.common.header.AuthorHeader
@@ -42,8 +41,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.color.hexToColor
 
 @Composable
-fun OthersSubsciptionListScreen(
-    navController: NavController,
+fun OthersSubscriptionListScreen(
+    onNavigateBack: () -> Unit,
     viewModel: OthersSubscriptionViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -64,14 +63,14 @@ fun OthersSubsciptionListScreen(
         }
     }
 
-    OthersSubsciptionContent(
+    OthersSubscriptionContent(
         uiState = uiState,
         lazyListState = lazyListState,
-        onNavigateBack = { navController.popBackStack() }
+        onNavigateBack = onNavigateBack
     )
 }
 @Composable
-fun OthersSubsciptionContent(
+fun OthersSubscriptionContent(
     uiState: OthersSubscriptionUiState,
     lazyListState: LazyListState,
     onNavigateBack: () -> Unit
@@ -167,7 +166,7 @@ private fun OthersSubsciptionListScreenPrev() {
     }
 
     ThipTheme {
-        OthersSubsciptionContent(
+        OthersSubscriptionContent(
             uiState = OthersSubscriptionUiState(
                 isLoading = false,
                 followers = mockUsers,

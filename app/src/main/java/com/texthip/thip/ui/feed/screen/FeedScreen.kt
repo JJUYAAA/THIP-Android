@@ -68,6 +68,7 @@ fun FeedScreen(
     onNavigateToFeedComment: (Int) -> Unit = {},
     onNavigateToBookDetail: (String) -> Unit = {},
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
+    onNavigateToOthersSubscription: (userId: Long) -> Unit = {},
     resultFeedId: Int? = null,
     onResultConsumed: () -> Unit = {},
     feedViewModel: FeedViewModel = hiltViewModel(),
@@ -226,6 +227,9 @@ fun FeedScreen(
                                 modifier = Modifier.padding(horizontal = 20.dp),
                                 followerProfileImageUrls = myFeedInfo?.latestFollowerProfileImageUrls ?: emptyList(),
                                 onClick = {
+                                    myFeedInfo?.creatorId?.let { creatorId ->
+                                        onNavigateToOthersSubscription(creatorId)
+                                    }
                                 }
                             )
                             Spacer(modifier = Modifier.height(40.dp))
