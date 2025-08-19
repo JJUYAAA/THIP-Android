@@ -1,5 +1,9 @@
 package com.texthip.thip.ui.group.room.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -461,13 +465,23 @@ fun GroupRoomRecruitContent(
         }
 
         // 토스트 팝업
-        if (uiState.showToast && !uiState.shouldNavigateToGroupScreen) {
+        AnimatedVisibility(
+            visible = uiState.showToast && !uiState.shouldNavigateToGroupScreen,
+            enter = slideInVertically(
+                initialOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .zIndex(2f)
+        ) {
             ToastWithDate(
-                message = uiState.toastMessage,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
-                    .zIndex(2f)
+                message = uiState.toastMessage
             )
         }
 

@@ -1,5 +1,9 @@
 package com.texthip.thip.ui.mypage.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,20 +44,27 @@ fun NotificationScreen(
 
     LaunchedEffect(toastMessage) {
         if (toastMessage != null) {
-            delay(2000)
+            delay(3000)
             toastMessage = null
         }
     }
     Box(modifier = Modifier.fillMaxSize()) {
-        toastMessage?.let { message ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .zIndex(1f)
-                    .align(Alignment.TopCenter)
-                    .padding(horizontal = 15.dp, vertical = 15.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
+        AnimatedVisibility(
+            visible = toastMessage != null,
+            enter = slideInVertically(
+                initialOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .zIndex(1f)
+        ) {
+            toastMessage?.let { message ->
                 ToastWithDate(
                     message = stringResource(
                         if (message == "push_on") R.string.push_on else R.string.push_off
