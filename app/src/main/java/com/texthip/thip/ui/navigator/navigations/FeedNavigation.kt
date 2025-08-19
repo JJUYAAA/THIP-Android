@@ -147,7 +147,10 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
 
     composable<FeedRoutes.OthersSubscription> {
         OthersSubscriptionListScreen(
-            onNavigateBack = navigateBack
+            onNavigateBack = navigateBack,
+            onNavigateToUserProfile = { userId ->
+                navController.navigateToUserProfile(userId)
+            }
         )
     }
 }

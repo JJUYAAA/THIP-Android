@@ -45,12 +45,13 @@ fun AuthorHeader(
     thipNum: Int? = null,
     profileImageSize: Dp = 54.dp,
     onButtonClick: () -> Unit = {},
-    onThipNumClick: () -> Unit = {}
+    onClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp)
+            .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (profileImage != null) {
@@ -98,7 +99,6 @@ fun AuthorHeader(
         }
         if (showThipNum && thipNum != null) {
             Row(
-                modifier = Modifier.clickable(onClick = onThipNumClick),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -139,10 +139,7 @@ fun PreviewAuthorHeader() {
                 badgeTextColor = colors.Yellow,
                 showButton = false,
                 showThipNum = true,
-                thipNum = 10,
-                onThipNumClick = {
-
-                }
+                thipNum = 10
             )
         }
     }

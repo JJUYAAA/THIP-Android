@@ -43,6 +43,7 @@ import com.texthip.thip.utils.color.hexToColor
 @Composable
 fun OthersSubscriptionListScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToUserProfile: (userId: Long) -> Unit = {},
     viewModel: OthersSubscriptionViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -66,14 +67,16 @@ fun OthersSubscriptionListScreen(
     OthersSubscriptionContent(
         uiState = uiState,
         lazyListState = lazyListState,
-        onNavigateBack = onNavigateBack
+        onNavigateBack = onNavigateBack,
+        onProfileClick = onNavigateToUserProfile
     )
 }
 @Composable
 fun OthersSubscriptionContent(
     uiState: OthersSubscriptionUiState,
     lazyListState: LazyListState,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onProfileClick: (userId: Long) -> Unit
 ) {
     Column(
         Modifier
@@ -119,7 +122,7 @@ fun OthersSubscriptionContent(
                             showThipNum = true,
                             profileImageSize = 36.dp,
                             thipNum = user.followerCount,
-                            onThipNumClick = {}
+                            onClick = { onProfileClick(user.userId) }
                         )
 
                         if (index < uiState.followers.lastIndex) {
@@ -153,7 +156,7 @@ fun OthersSubscriptionContent(
 }
 @Preview
 @Composable
-private fun OthersSubsciptionListScreenPrev() {
+private fun OthersSubscriptionListScreenPrev() {
     val mockUsers = (1..10).map {
         FollowerList(
             userId = it.toLong(),
@@ -174,7 +177,8 @@ private fun OthersSubsciptionListScreenPrev() {
                 isLastPage = false
             ),
             lazyListState = rememberLazyListState(),
-            onNavigateBack = {}
+            onNavigateBack = {},
+            onProfileClick = {}
         )
     }
 }
