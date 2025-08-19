@@ -121,6 +121,9 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         FeedOthersScreen(
             onNavigateBack = {
                 navigateBack()
+            },
+            onNavigateToSubscriptionList = { userId ->
+                navController.navigateToOthersSubscription(userId)
             }
         )
     }

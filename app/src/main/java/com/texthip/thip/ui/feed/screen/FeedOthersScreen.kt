@@ -39,6 +39,7 @@ import com.texthip.thip.utils.color.hexToColor
 @Composable
 fun FeedOthersScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToSubscriptionList: (userId: Long) -> Unit = {},
     viewModel: FeedOthersViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -46,7 +47,8 @@ fun FeedOthersScreen(
     FeedOthersContent(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
-        onLikeClick = { feedId -> viewModel.changeFeedLike(feedId) }
+        onLikeClick = { feedId -> viewModel.changeFeedLike(feedId) },
+        onNavigateToSubscriptionList = onNavigateToSubscriptionList
     )
 }
 
@@ -54,7 +56,8 @@ fun FeedOthersScreen(
 fun FeedOthersContent(
     uiState: FeedOthersUiState,
     onNavigateBack: () -> Unit,
-    onLikeClick: (Long) -> Unit
+    onLikeClick: (Long) -> Unit,
+    onNavigateToSubscriptionList: (userId: Long) -> Unit
 ) {
     val userInfo = uiState.userInfo
 
@@ -96,7 +99,7 @@ fun FeedOthersContent(
                         FeedSubscribeBarlist(
                             modifier = Modifier.padding(horizontal = 20.dp),
                             followerProfileImageUrls = userInfo.latestFollowerProfileImageUrls,
-                            onClick = {}
+                            onClick = { onNavigateToSubscriptionList(userInfo.creatorId) }
                         )
                         Spacer(modifier = Modifier.height(40.dp))
                         Text(
@@ -187,7 +190,8 @@ private fun FeedOthersScreenPrev() {
                 feeds = mockFeeds
             ),
             onNavigateBack = {},
-            onLikeClick = {}
+            onLikeClick = {},
+            onNavigateToSubscriptionList = {}
         )
     }
 }
