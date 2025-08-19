@@ -114,9 +114,6 @@ fun FeedScreen(
     
     LaunchedEffect(Unit) {
         feedViewModel.resetToInitialState()
-        // 탭 전환 시 스크롤을 맨 위로 초기화
-        allFeedListState.scrollToItem(0)
-        myFeedListState.scrollToItem(0)
     }
 
     // 탭 변경 시 해당 탭의 스크롤을 최상단으로 부드럽게 이동
@@ -169,8 +166,8 @@ fun FeedScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         PullToRefreshBox(
-            isRefreshing = feedUiState.isRefreshing,
-            onRefresh = { feedViewModel.refreshCurrentTab() }
+            isRefreshing = feedUiState.isPullToRefreshing,
+            onRefresh = { feedViewModel.pullToRefresh() }
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -414,6 +411,19 @@ fun FeedScreen(
             icon = painterResource(id = R.drawable.ic_write),
             onClick = onNavigateToFeedWrite
         )
+        
+        // 탭 전환 시 화면 가운데 로딩 인디케이터
+        if (feedUiState.isRefreshing) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = colors.White,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+        }
     }
 }
 

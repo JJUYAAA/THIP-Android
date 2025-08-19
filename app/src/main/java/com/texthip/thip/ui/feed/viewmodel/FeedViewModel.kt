@@ -21,7 +21,8 @@ data class FeedUiState(
     val recentWriters: List<RecentWriterList> = emptyList(),
     val myFeedInfo: FeedMineInfoResponse? = null,
     val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
+    val isRefreshing: Boolean = false, // 탭 전환용 로딩
+    val isPullToRefreshing: Boolean = false, // Pull to refresh용 로딩
     val isLoadingMore: Boolean = false,
     val isLastPageAllFeeds: Boolean = false,
     val isLastPageMyFeeds: Boolean = false,
@@ -71,12 +72,16 @@ class FeedViewModel @Inject constructor(
 
         when (index) {
             0 -> {
-                loadAllFeeds(isInitial = true)
+                // 항상 새로고침 (인디케이터 표시)
+                refreshCurrentTab()
             }
 
             1 -> {
-                loadMyFeeds(isInitial = true)
-                fetchMyFeedInfo()
+                // 항상 새로고침 (인디케이터 표시)
+                refreshCurrentTab()
+                if (_uiState.value.myFeedInfo == null) {
+                    fetchMyFeedInfo()
+                }
             }
         }
     }
@@ -187,6 +192,18 @@ class FeedViewModel @Inject constructor(
         }
     }
 
+    fun pullToRefresh() {
+        viewModelScope.launch {
+            updateState { it.copy(isPullToRefreshing = true) }
+
+            when (_uiState.value.selectedTabIndex) {
+                0 -> refreshAllFeeds()
+                1 -> refreshMyFeeds()
+            }
+            updateState { it.copy(isPullToRefreshing = false) }
+        }
+    }
+
     private suspend fun refreshAllFeeds() {
         allFeedsNextCursor = null
 
@@ -196,7 +213,6 @@ class FeedViewModel @Inject constructor(
                 updateState {
                     it.copy(
                         allFeeds = response.feedList,
-                        isRefreshing = false,
                         isLastPageAllFeeds = response.isLast,
                         error = null
                     )
@@ -205,7 +221,6 @@ class FeedViewModel @Inject constructor(
                 updateState {
                     it.copy(
                         allFeeds = emptyList(),
-                        isRefreshing = false,
                         isLastPageAllFeeds = true
                     )
                 }
@@ -213,7 +228,6 @@ class FeedViewModel @Inject constructor(
         }.onFailure { exception ->
             updateState {
                 it.copy(
-                    isRefreshing = false,
                     error = exception.message
                 )
             }
@@ -229,7 +243,6 @@ class FeedViewModel @Inject constructor(
                 updateState {
                     it.copy(
                         myFeeds = response.feedList,
-                        isRefreshing = false,
                         isLastPageMyFeeds = response.isLast,
                         error = null
                     )
@@ -238,7 +251,6 @@ class FeedViewModel @Inject constructor(
                 updateState {
                     it.copy(
                         myFeeds = emptyList(),
-                        isRefreshing = false,
                         isLastPageMyFeeds = true
                     )
                 }
@@ -246,7 +258,6 @@ class FeedViewModel @Inject constructor(
         }.onFailure { exception ->
             updateState {
                 it.copy(
-                    isRefreshing = false,
                     error = exception.message
                 )
             }
