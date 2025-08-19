@@ -343,10 +343,7 @@ fun GroupRoomRecruitContent(
                                 )
                                 Spacer(Modifier.width(4.dp))
                                 Text(
-                                    text = detail.recruitEndDate.replace(
-                                        "뒤",
-                                        "남음"
-                                    ),
+                                    text = detail.recruitEndDate,
                                     style = typography.info_m500_s12,
                                     color = colors.NeonGreen
                                 )
@@ -406,7 +403,7 @@ fun GroupRoomRecruitContent(
                                     participants = rec.memberCount,
                                     maxParticipants = rec.recruitCount,
                                     endDate = rec.recruitEndDate,
-                                    imageUrl = rec.roomImageUrl,
+                                    imageUrl = rec.bookImageUrl,
                                     onClick = { onRecommendationClick(rec) }
                                 )
                             }
@@ -543,7 +540,7 @@ fun GroupRoomRecruitScreenPreview() {
                     recommendRooms = listOf(
                         RecommendRoomResponse(
                             roomId = 2,
-                            roomImageUrl = "https://picsum.photos/300/400?rec1",
+                            bookImageUrl = "https://picsum.photos/300/400?rec1",
                             roomName = "📚 현대문학 깊이 탐구하기",
                             memberCount = 12,
                             recruitCount = 15,
@@ -551,7 +548,7 @@ fun GroupRoomRecruitScreenPreview() {
                         ),
                         RecommendRoomResponse(
                             roomId = 3,
-                            roomImageUrl = "https://picsum.photos/300/400?rec2",
+                            bookImageUrl = "https://picsum.photos/300/400?rec2",
                             roomName = "✨ 철학 소설로 삶을 되돌아보기",
                             memberCount = 8,
                             recruitCount = 12,
@@ -559,7 +556,7 @@ fun GroupRoomRecruitScreenPreview() {
                         ),
                         RecommendRoomResponse(
                             roomId = 4,
-                            roomImageUrl = "https://picsum.photos/300/400?rec3",
+                            bookImageUrl = "https://picsum.photos/300/400?rec3",
                             roomName = "🎭 인간 심리를 다룬 소설 읽기",
                             memberCount = 15,
                             recruitCount = 18,
