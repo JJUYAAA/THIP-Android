@@ -246,8 +246,7 @@ fun GroupRoomRecruitContent(
 
                     Row(
                         Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         //모집 기간
                         Column {
@@ -282,7 +281,7 @@ fun GroupRoomRecruitContent(
                         //참여 인원
                         Column(
                             verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(end = 18.dp)
+                            modifier = Modifier.padding(start = 90.dp)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
@@ -300,7 +299,8 @@ fun GroupRoomRecruitContent(
                                 )
                             }
                             Row(
-                                modifier = Modifier.padding(top = 12.dp),
+                                modifier = Modifier
+                                    .padding(top = 12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
