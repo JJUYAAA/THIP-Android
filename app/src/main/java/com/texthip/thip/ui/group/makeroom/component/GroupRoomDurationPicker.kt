@@ -33,18 +33,19 @@ fun GroupRoomDurationPicker(
     onDateRangeSelected: (LocalDate, LocalDate) -> Unit = { _, _ -> }
 ) {
     val today = LocalDate.now()
+    val tomorrow = today.plusDays(1)
     val maxDate = today.plusMonths(12)
     var isInitialized by rememberSaveable { mutableStateOf(false) }
 
-    var startDate by rememberSaveable { mutableStateOf(today) }
-    var endDate by rememberSaveable { mutableStateOf(today.plusDays(1)) }
+    var startDate by rememberSaveable { mutableStateOf(tomorrow) }
+    var endDate by rememberSaveable { mutableStateOf(tomorrow.plusDays(1)) }
     var isPickerTouched by rememberSaveable { mutableStateOf(false) }
 
-    // 첫 시작 시에만 모든 날짜를 오늘 기준으로 초기화
+    // 첫 시작 시에만 모든 날짜를 내일 기준으로 초기화
     LaunchedEffect(Unit) {
         if (!isInitialized) {
-            startDate = today
-            endDate = today.plusDays(1)
+            startDate = tomorrow
+            endDate = tomorrow.plusDays(1)
             isInitialized = true
         }
     }
@@ -63,7 +64,7 @@ fun GroupRoomDurationPicker(
     // 날짜 유효성 검사 및 자동 조정
     LaunchedEffect(startDate) {
         val adjustedStartDate = when {
-            startDate.isBefore(today) -> today
+            startDate.isBefore(tomorrow) -> tomorrow
             startDate.isAfter(maxDate) -> maxDate
             else -> startDate
         }
@@ -107,14 +108,13 @@ fun GroupRoomDurationPicker(
             // 시작 날짜 Picker
             GroupDatePicker(
                 selectedDate = startDate,
-                minDate = today,
+                minDate = tomorrow,
                 maxDate = maxDate,
                 onDateSelected = { newDate ->
                     startDate = newDate
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth()
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onPress = { isPickerTouched = true }
@@ -127,20 +127,19 @@ fun GroupRoomDurationPicker(
                 text = "~",
                 style = typography.info_r400_s12,
                 color = colors.White,
-                modifier = Modifier.padding(horizontal = 10.dp)
+                modifier = Modifier.padding(horizontal = 4.dp)
             )
 
             // 끝 날짜 Picker
             GroupDatePicker(
                 selectedDate = endDate,
-                minDate = today,
+                minDate = tomorrow,
                 maxDate = maxDate,
                 onDateSelected = { newDate ->
                     endDate = newDate
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth()
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onPress = { isPickerTouched = true }
