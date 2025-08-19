@@ -72,6 +72,7 @@ fun FeedScreen(
     onNavigateToBookDetail: (String) -> Unit = {},
     resultFeedId: Long? = null,
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
+    onNavigateToSearchPeople: () -> Unit = {},
     onResultConsumed: () -> Unit = {},
     navController: NavHostController,
     feedViewModel: FeedViewModel = hiltViewModel(),

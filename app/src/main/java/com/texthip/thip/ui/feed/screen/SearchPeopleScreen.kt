@@ -35,7 +35,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun SearchPeopleScreen(
-    viewModel: SearchPeopleViewModel = hiltViewModel()
+    viewModel: SearchPeopleViewModel = hiltViewModel(),
+    onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
@@ -48,21 +49,24 @@ fun SearchPeopleScreen(
 
     SearchPeopleContent(
         uiState = uiState,
+        onNavigateBack = onNavigateBack,
         onSearchTextChanged = viewModel::onSearchTextChanged,
         onFinalSearch = viewModel::onFinalSearch,
         onRecentSearchClick = { keyword -> viewModel.onFinalSearch(keyword) },
-        onRecentSearchRemove = viewModel::removeRecentSearch
+        onRecentSearchRemove = viewModel::removeRecentSearch,
+        onUserClick = {}
     )
 }
 
 @Composable
 fun SearchPeopleContent(
     uiState: SearchPeopleUiState,
+    onNavigateBack: () -> Unit,
     onSearchTextChanged: (String) -> Unit,
     onFinalSearch: (String) -> Unit,
     onRecentSearchClick: (String) -> Unit,
-    onRecentSearchRemove: (String) -> Unit
-
+    onRecentSearchRemove: (String) -> Unit,
+    onUserClick: (MySubscriptionData) -> Unit
 ) {
 
     Column(
@@ -70,7 +74,7 @@ fun SearchPeopleContent(
     ) {
         DefaultTopAppBar(
             title = stringResource(R.string.search_user),
-            onLeftClick = {},
+            onLeftClick = onNavigateBack,
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -150,7 +154,9 @@ private fun SearchPeopleContentPreview_Recent() {
             onSearchTextChanged = {},
             onFinalSearch = {},
             onRecentSearchClick = {},
-            onRecentSearchRemove = {}
+            onRecentSearchRemove = {},
+            onUserClick = {},
+            onNavigateBack = {}
         )
     }
 }
@@ -171,7 +177,9 @@ private fun SearchPeopleContentPreview_Typing() {
             onSearchTextChanged = {},
             onFinalSearch = {},
             onRecentSearchClick = {},
-            onRecentSearchRemove = {}
+            onRecentSearchRemove = {},
+            onUserClick = {},
+            onNavigateBack = {}
         )
     }
 }
@@ -193,7 +201,9 @@ private fun SearchPeopleContentPreview_Result() {
             onSearchTextChanged = {},
             onFinalSearch = {},
             onRecentSearchClick = {},
-            onRecentSearchRemove = {}
+            onRecentSearchRemove = {},
+            onUserClick = {},
+            onNavigateBack = {}
         )
     }
 }
@@ -211,7 +221,9 @@ private fun SearchPeopleContentPreview_Empty() {
             onSearchTextChanged = {},
             onFinalSearch = {},
             onRecentSearchClick = {},
-            onRecentSearchRemove = {}
+            onRecentSearchRemove = {},
+            onUserClick = {},
+            onNavigateBack = {}
         )
     }
 }

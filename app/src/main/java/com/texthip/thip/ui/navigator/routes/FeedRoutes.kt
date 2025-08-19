@@ -25,4 +25,5 @@ sealed class FeedRoutes : Routes() {
     ) : FeedRoutes()
 
     @Serializable data class Others(val userId: Long) : FeedRoutes()
+    @Serializable data object SearchPeople : FeedRoutes()
 }

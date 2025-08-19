@@ -45,3 +45,8 @@ fun NavHostController.navigateToUserProfile(userId: Long) {
     navigate(FeedRoutes.Others(userId))
 
 }
+
+//사용자 찾기 화면으로
+fun NavHostController.navigateToSearchPeople() {
+    navigate(FeedRoutes.SearchPeople)
+}
