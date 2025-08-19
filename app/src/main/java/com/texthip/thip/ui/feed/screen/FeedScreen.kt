@@ -166,7 +166,7 @@ fun FeedScreen(
                 LogoTopAppBar(
                     leftIcon = painterResource(R.drawable.ic_plusfriend),
                     hasNotification = false,
-                    onLeftClick = {},
+                    onLeftClick = onNavigateToSearchPeople,
                     onRightClick = {},
                 )
                 Spacer(modifier = Modifier.height(32.dp))

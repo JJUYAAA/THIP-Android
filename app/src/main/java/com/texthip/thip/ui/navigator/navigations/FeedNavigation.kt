@@ -146,7 +146,10 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
     }
     composable<FeedRoutes.SearchPeople> {
         SearchPeopleScreen(
-            onNavigateBack = navigateBack
+            onNavigateBack = navigateBack,
+            onUserClick = { userId ->
+                navController.navigateToUserProfile(userId)
+            }
         )
     }
 }

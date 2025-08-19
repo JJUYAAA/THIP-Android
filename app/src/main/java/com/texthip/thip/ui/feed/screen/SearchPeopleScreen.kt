@@ -36,7 +36,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun SearchPeopleScreen(
     viewModel: SearchPeopleViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onUserClick: (Long) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
@@ -54,7 +55,7 @@ fun SearchPeopleScreen(
         onFinalSearch = viewModel::onFinalSearch,
         onRecentSearchClick = { keyword -> viewModel.onFinalSearch(keyword) },
         onRecentSearchRemove = viewModel::removeRecentSearch,
-        onUserClick = {}
+        onUserClick = { user -> onUserClick(user.userId!!.toLong())}
     )
 }
 
@@ -114,7 +115,7 @@ fun SearchPeopleContent(
                         .height(1.dp)
                         .background(colors.DarkGrey02)
                 )
-                SearchPeopleResult(peopleList = uiState.searchResults)
+                SearchPeopleResult(peopleList = uiState.searchResults,onThipNumClick = onUserClick)
             }
 
             uiState.isSearched && uiState.searchResults.isEmpty() -> { //검색했는데 결과 없음
@@ -125,7 +126,7 @@ fun SearchPeopleContent(
             }
 
             uiState.searchText.isNotBlank() && !uiState.isSearched  -> { //검색중
-                SearchPeopleResult(peopleList = uiState.searchResults)
+                SearchPeopleResult(peopleList = uiState.searchResults,onThipNumClick = onUserClick)
             }
 
             else -> { //최근검색어 보여주기
@@ -165,8 +166,8 @@ private fun SearchPeopleContentPreview_Recent() {
 @Composable
 private fun SearchPeopleContentPreview_Typing() {
     val dummyResults = listOf(
-        MySubscriptionData(null, "메롱이", "인플루언서", colors.NeonGreen, 12, false),
-        MySubscriptionData(null, "메메롱이", "칭호", colors.NeonGreen, 1, false),
+        MySubscriptionData(1L,null, "메롱이", "인플루언서", colors.NeonGreen, 12, false),
+        MySubscriptionData(1L,null, "메메롱이", "칭호", colors.NeonGreen, 1, false),
     )
     ThipTheme {
         SearchPeopleContent(
@@ -188,8 +189,8 @@ private fun SearchPeopleContentPreview_Typing() {
 @Composable
 private fun SearchPeopleContentPreview_Result() {
     val dummyResults = listOf(
-        MySubscriptionData(null, "Thip_Official", "인플루언서", colors.NeonGreen, 111, false),
-        MySubscriptionData(null, "thip01", "작가", colors.NeonGreen, 0, false)
+        MySubscriptionData(1L, null, "Thip_Official", "인플루언서", colors.NeonGreen, 111, false),
+        MySubscriptionData(1L, null, "thip01", "작가", colors.NeonGreen, 0, false)
     )
     ThipTheme {
         SearchPeopleContent(
