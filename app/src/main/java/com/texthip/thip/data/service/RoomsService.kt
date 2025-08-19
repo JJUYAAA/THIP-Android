@@ -28,6 +28,7 @@ import com.texthip.thip.data.model.rooms.response.RoomsPostsLikesResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsResponse
 import com.texthip.thip.data.model.rooms.response.RoomsRecordResponse
 import com.texthip.thip.data.model.rooms.response.RoomsRecordsPinResponse
+import com.texthip.thip.data.model.rooms.response.RoomsSearchResponse
 import com.texthip.thip.data.model.rooms.response.RoomsUsersResponse
 import com.texthip.thip.data.model.rooms.response.RoomsVoteResponse
 import retrofit2.http.Body
@@ -87,6 +88,16 @@ interface RoomsService {
     suspend fun closeRoom(
         @Path("roomId") roomId: Int
     ): BaseResponse<RoomCloseResponse>
+
+    /** 모임방 검색 */
+    @GET("rooms/search")
+    suspend fun searchRooms(
+        @Query("keyword") keyword: String,
+        @Query("category") category: String,
+        @Query("sort") sort: String = "deadline",
+        @Query("isFinalized") isFinalized: Boolean = false,
+        @Query("cursor") cursor: String? = null
+    ): BaseResponse<RoomsSearchResponse>
 
 
 

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,26 +26,27 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.forms.WarningTextField
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
-import com.texthip.thip.ui.signin.viewmodel.NicknameViewModel
+import com.texthip.thip.ui.signin.viewmodel.SignupViewModel
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun SignupNicknameScreen(
-    viewModel: NicknameViewModel = hiltViewModel(),
-    onNavigateToNext: () -> Unit
+    viewModel: SignupViewModel = hiltViewModel(),
+    onNavigateToGenre: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
-    LaunchedEffect(uiState.navigateToNext, uiState.errorMessage) {
-        if (uiState.navigateToNext) {
-            onNavigateToNext()
-            viewModel.onNavigated()
+    LaunchedEffect(uiState.navigateToGenreScreen) {
+        if (uiState.navigateToGenreScreen) {
+            onNavigateToGenre()
+            viewModel.onNavigatedToGenre()
         }
+    }
+
+    LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            viewModel.onNavigated()
         }
     }
 
@@ -53,9 +55,10 @@ fun SignupNicknameScreen(
         onNicknameChange = viewModel::onNicknameChange,
         onNextClick = viewModel::checkNickname,
         isLoading = uiState.isLoading,
-        warningMessageResId = uiState.warningMessageResId
+        warningMessageResId = uiState.nicknameWarningMessageResId
     )
 }
+
 @Composable
 fun SignupNicknameContent(
     nickname: String,
@@ -70,6 +73,7 @@ fun SignupNicknameContent(
         Modifier
             .background(colors.Black)
             .fillMaxSize()
+            .statusBarsPadding()
     ) {
         InputTopAppBar(
             title = stringResource(R.string.settings_1),
@@ -119,6 +123,7 @@ private fun SignupNicknameContentPrev() {
         warningMessageResId = R.string.nickname_warning
     )
 }
+
 @Preview(name = "일반 상태 (비어있음)", showBackground = true)
 @Composable
 private fun SignupNicknameContentPreview_Normal() {

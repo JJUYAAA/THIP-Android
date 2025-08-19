@@ -26,7 +26,8 @@ fun TextCommentCard(
     onLikeClick: (postId: Int, postType: String) -> Unit = { _, _ -> },
     onCommentClick: () -> Unit = {},
     onLongPress: () -> Unit = {},
-    onPinClick: () -> Unit = {}
+    onPinClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val isLocked = data.isLocked
     val isWriter = data.isWriter
@@ -45,17 +46,18 @@ fun TextCommentCard(
                     detectTapGestures(onLongPress = { onLongPress() })
                 }
             }
-            .padding(start = 20.dp, end = 20.dp, top = 32.dp),
+            .padding(start = 20.dp, end = 20.dp, top = 40.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ProfileBar(
             modifier = Modifier.padding(0.dp),
-            profileImage = "https://example.com/image1.jpg",
+            profileImage = data.profileImageUrl,
             topText = data.nickName,
             bottomText = pageText,
             bottomTextColor = colors.Purple,
             showSubscriberInfo = false,
-            hoursAgo = data.postDate
+            hoursAgo = data.postDate,
+            onClick = onProfileClick
         )
 
         Text(

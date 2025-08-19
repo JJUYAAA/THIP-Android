@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,7 +38,7 @@ fun CardItemRoom(
     participants: Int,
     maxParticipants: Int,
     isRecruiting: Boolean,
-    endDate: Int? = null,
+    endDate: String? = null,
     imageUrl: String? = null,
     hasBorder: Boolean = false,
     onClick: () -> Unit = {}
@@ -83,8 +82,8 @@ fun CardItemRoom(
 
                 Column(
                     modifier = Modifier
-                    .fillMaxWidth()
-                    .height(107.dp),
+                        .fillMaxWidth()
+                        .height(107.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
@@ -151,10 +150,8 @@ fun CardItemRoom(
                         Spacer(modifier = Modifier.height(5.dp))
 
                         Text(
-                            text = stringResource(
-                                R.string.card_item_end_date,
-                                endDate
-                            ) + if (isRecruiting) stringResource(
+                            text = endDate
+                                    + if (isRecruiting) stringResource(
                                 R.string.card_item_end
                             ) else stringResource(R.string.card_item_finish),
 
@@ -180,7 +177,7 @@ fun CardItemRoomPreview() {
                 participants = 22,
                 maxParticipants = 30,
                 isRecruiting = true,
-                endDate = 3,
+                endDate = "3일 뒤",
                 imageUrl = null
             )
             CardItemRoom(
@@ -188,7 +185,7 @@ fun CardItemRoomPreview() {
                 participants = 22,
                 maxParticipants = 30,
                 isRecruiting = false,
-                endDate = 3,
+                endDate = "3",
                 imageUrl = null
             )
             CardItemRoom(
@@ -196,7 +193,7 @@ fun CardItemRoomPreview() {
                 participants = 22,
                 maxParticipants = 30,
                 isRecruiting = true,
-                endDate = 3,
+                endDate = "3",
                 imageUrl = null,
                 hasBorder = true
             )
@@ -205,7 +202,7 @@ fun CardItemRoomPreview() {
                 participants = 22,
                 maxParticipants = 30,
                 isRecruiting = false,
-                endDate = 3,
+                endDate = "3",
                 imageUrl = null,
                 hasBorder = true
             )

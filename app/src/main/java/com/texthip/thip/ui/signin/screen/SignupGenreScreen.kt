@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,33 +25,37 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.topappbar.InputTopAppBar
 import com.texthip.thip.ui.mypage.component.RoleCard
 import com.texthip.thip.ui.mypage.mock.RoleItem
-import com.texthip.thip.ui.signin.viewmodel.SignupAliasUiState
-import com.texthip.thip.ui.signin.viewmodel.SignupAliasViewModel
+import com.texthip.thip.ui.signin.viewmodel.SignupUiState
+import com.texthip.thip.ui.signin.viewmodel.SignupViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun SignupGenreScreen(
-    onNavigateToNext: (RoleItem) -> Unit, // 선택된 아이템 정보를 다음 화면으로 넘겨주기
-    viewModel: SignupAliasViewModel = hiltViewModel()
+    viewModel: SignupViewModel = hiltViewModel(),
+    onSignupSuccess: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchAliasChoices()
+    }
+    LaunchedEffect(uiState.isSignupSuccess) {
+        if (uiState.isSignupSuccess) {
+            onSignupSuccess()
+        }
+    }
+
     SignupGenreContent(
         uiState = uiState,
-        onCardSelected = { index -> viewModel.selectCard(index) },
-        onNextClick = {
-            // 선택된 아이템이 있을 경우에만 다음 화면으로 이동
-            uiState.roleCards.getOrNull(uiState.selectedIndex)?.let { selectedRoleItem ->
-                onNavigateToNext(selectedRoleItem)
-            }
-        }
+        onCardSelected = viewModel::selectCard,
+        onNextClick = viewModel::signup
     )
 }
 @Composable
 fun SignupGenreContent(
-    uiState: SignupAliasUiState,
+    uiState: SignupUiState,
     onCardSelected: (Int) -> Unit,
     onNextClick: () -> Unit
 ) {
@@ -58,6 +64,7 @@ fun SignupGenreContent(
     Column(
         Modifier
             .fillMaxSize()
+            .statusBarsPadding()
     ) {
         InputTopAppBar(
             title = stringResource(R.string.settings_2),
@@ -125,7 +132,7 @@ private fun SignupGenreScreenPrev() {
         RoleItem("예술", "예술가", "", "#FFFFFF"),
         RoleItem("인문", "철학자", "", "#FFFFFF")
     )
-    val previewUiState = SignupAliasUiState(
+    val previewUiState = SignupUiState(
         roleCards = previewRoleCards,
         selectedIndex = 1 // 1번 아이템이 선택된 상태로 프리뷰
     )

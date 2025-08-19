@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Unspecified
@@ -23,9 +24,19 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.theme.Purple
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen() {
+fun SplashScreen(
+    onNavigateToLogin: () -> Unit = {}
+) {
+    LaunchedEffect(key1 = Unit) {
+        //3초 delay
+        delay(3000L)
+
+        // 로그인 화면으로 이동
+        onNavigateToLogin()
+    }
     Column(
         Modifier
             .background(colors.Black)

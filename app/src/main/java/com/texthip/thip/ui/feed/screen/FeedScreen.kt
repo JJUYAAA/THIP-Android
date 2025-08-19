@@ -53,7 +53,6 @@ import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
 import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
-import com.texthip.thip.ui.feed.viewmodel.MySubscriptionViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.theme.ThipTheme
@@ -72,6 +71,7 @@ fun FeedScreen(
     onNavigateToFeedComment: (Long) -> Unit = {},
     onNavigateToBookDetail: (String) -> Unit = {},
     resultFeedId: Long? = null,
+    onNavigateToUserProfile: (userId: Long) -> Unit = {},
     onResultConsumed: () -> Unit = {},
     navController: NavHostController,
     feedViewModel: FeedViewModel = hiltViewModel(),
@@ -364,6 +364,9 @@ fun FeedScreen(
                                 },
                                 onBookClick = {
                                     onNavigateToBookDetail(allFeed.isbn)
+                                },
+                                onProfileClick = {
+                                    onNavigateToUserProfile(allFeed.creatorId)
                                 }
                             )
                             Spacer(modifier = Modifier.height(40.dp))

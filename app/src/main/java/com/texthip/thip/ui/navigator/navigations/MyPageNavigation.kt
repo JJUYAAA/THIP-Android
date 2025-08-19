@@ -7,8 +7,10 @@ import androidx.navigation.compose.composable
 import com.texthip.thip.ui.mypage.screen.DeleteAccountScreen
 import com.texthip.thip.ui.mypage.screen.EditProfileScreen
 import com.texthip.thip.ui.mypage.screen.MyPageScreen
+import com.texthip.thip.ui.mypage.screen.MypageCustomerServiceScreen
 import com.texthip.thip.ui.mypage.screen.NotificationScreen
 import com.texthip.thip.ui.mypage.screen.SavedScreen
+import com.texthip.thip.ui.navigator.extensions.navigateToCustomerService
 import com.texthip.thip.ui.navigator.extensions.navigateToEditProfile
 import com.texthip.thip.ui.navigator.extensions.navigateToLeaveThipScreen
 import com.texthip.thip.ui.navigator.extensions.navigateToNotificationSettings
@@ -24,20 +26,34 @@ fun NavGraphBuilder.myPageNavigation(navController: NavHostController) {
             onNavigateToEditProfile = { navController.navigateToEditProfile() },
             onNavigateToSavedFeeds = { navController.navigateToSavedFeeds() },
             onNavigateToNotificationSettings = { navController.navigateToNotificationSettings() },
+            onCustomerService = {navController.navigateToCustomerService()},
             onDeleteAccount = { navController.navigateToLeaveThipScreen() }
         )
     }
 
     composable<MyPageRoutes.Edit> {
-        EditProfileScreen()
+        EditProfileScreen(
+            onNavigateBack = { navController.popBackStack() }
+        )
     }
     composable<MyPageRoutes.Save> {
-        SavedScreen()
+        SavedScreen(
+            onNavigateBack = { navController.popBackStack() }
+        )
     }
     composable<MyPageRoutes.NotificationEdit> {
-        NotificationScreen()
+        NotificationScreen(
+            onNavigateBack = { navController.popBackStack() }
+        )
     }
     composable<MyPageRoutes.LeaveThip> {
-        DeleteAccountScreen()
+        DeleteAccountScreen(
+            onNavigateBack = { navController.popBackStack() }
+        )
+    }
+    composable<MyPageRoutes.CustomerService> {
+        MypageCustomerServiceScreen (
+            onNavigateBack = { navController.popBackStack() }
+        )
     }
 }

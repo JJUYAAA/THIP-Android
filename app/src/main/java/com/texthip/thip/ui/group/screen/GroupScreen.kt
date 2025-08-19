@@ -108,7 +108,7 @@ fun GroupContent(
 
                 // 검색창
                 GroupSearchTextField(
-                    modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
+                    modifier = Modifier.padding(top = 72.dp, bottom = 32.dp),
                     onClick = onNavigateToGroupSearch
                 )
 

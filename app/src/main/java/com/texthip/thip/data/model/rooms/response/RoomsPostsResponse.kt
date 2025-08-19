@@ -18,7 +18,7 @@ data class PostList(
     val postDate: String,
     val postType: String,
     val page: Int,
-    val userId: Int,
+    val userId: Long,
     val nickName: String,
     val profileImageUrl: String?,
     val content: String,

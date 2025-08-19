@@ -32,7 +32,9 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 import kotlinx.coroutines.delay
 
 @Composable
-fun NotificationScreen() {
+fun NotificationScreen(
+    onNavigateBack: () -> Unit
+) {
     var isChecked by rememberSaveable { mutableStateOf(true) }
     var toastMessage by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -68,7 +70,7 @@ fun NotificationScreen() {
         ) {
             DefaultTopAppBar(
                 title = stringResource(R.string.notification_settings),
-                onLeftClick = {},
+                onLeftClick = onNavigateBack,
             )
             Spacer(modifier = Modifier.height(40.dp))
             Column(
@@ -114,5 +116,7 @@ fun NotificationScreen() {
 @Preview
 @Composable
 private fun NotificationScreenPrev() {
-    NotificationScreen()
+    NotificationScreen(
+        onNavigateBack = {}
+    )
 }

@@ -19,6 +19,7 @@ import com.texthip.thip.data.model.rooms.response.RoomCloseResponse
 import com.texthip.thip.data.model.rooms.response.RoomMainList
 import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
 import com.texthip.thip.data.model.rooms.response.RoomSecretRoomResponse
+import com.texthip.thip.data.model.rooms.response.RoomsSearchResponse
 import com.texthip.thip.data.service.RoomsService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -119,6 +120,19 @@ class RoomsRepository @Inject constructor(
             .getOrThrow()
             ?: throw NoSuchElementException("모집 마감 응답을 받을 수 없습니다.")
         response
+    }
+
+    /** 모임방 검색 */
+    suspend fun searchRooms(
+        keyword: String,
+        category: String,
+        sort: String = "deadline",
+        isFinalized: Boolean = false,
+        cursor: String? = null
+    ): Result<RoomsSearchResponse?> = runCatching {
+        roomsService.searchRooms(keyword, category, sort, isFinalized, cursor)
+            .handleBaseResponse()
+            .getOrThrow()
     }
 
 

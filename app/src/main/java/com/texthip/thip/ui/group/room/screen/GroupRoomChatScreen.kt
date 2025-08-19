@@ -279,14 +279,6 @@ fun GroupRoomChatContent(
         val menuItems = if (selectedMessage!!.isWriter) {
             listOf(
                 MenuBottomSheetItem(
-                    text = stringResource(R.string.modify),
-                    color = colors.White,
-                    onClick = {
-                        // TODO: 수정 처리
-                        isBottomSheetVisible = false
-                    }
-                ),
-                MenuBottomSheetItem(
                     text = stringResource(R.string.delete),
                     color = colors.Red,
                     onClick = {

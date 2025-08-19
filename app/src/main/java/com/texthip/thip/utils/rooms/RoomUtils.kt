@@ -11,8 +11,4 @@ object RoomUtils {
             else -> false
         }
     }
-    
-    fun getEndDateInDays(endDate: String): Int {
-        return DateUtils.extractDaysFromDeadline(endDate)
-    }
 }

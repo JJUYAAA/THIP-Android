@@ -1,7 +1,6 @@
 package com.texthip.thip.ui.group.room.screen
 
 import androidx.compose.foundation.background
-import coil.compose.AsyncImage
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -38,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.data.model.rooms.response.RecommendRoomResponse
 import com.texthip.thip.data.model.rooms.response.RoomRecruitingResponse
@@ -53,7 +52,6 @@ import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.color.hexToColor
-import com.texthip.thip.utils.rooms.DateUtils
 import kotlinx.coroutines.delay
 
 @Composable
@@ -68,12 +66,12 @@ fun GroupRoomRecruitScreen(
     viewModel: GroupRoomRecruitViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    
+
     // 데이터 로딩
     LaunchedEffect(roomId) {
         viewModel.loadRoomDetail(roomId)
     }
-    
+
     // GroupScreen으로 네비게이션
     LaunchedEffect(uiState.shouldNavigateToGroupScreen, uiState.toastMessage) {
         if (uiState.shouldNavigateToGroupScreen) {
@@ -81,7 +79,7 @@ fun GroupRoomRecruitScreen(
             viewModel.onNavigatedToGroupScreen()
         }
     }
-    
+
     // 기록장 화면으로 네비게이션
     LaunchedEffect(uiState.shouldNavigateToRoomPlayingScreen, uiState.roomId) {
         if (uiState.shouldNavigateToRoomPlayingScreen) {
@@ -92,13 +90,13 @@ fun GroupRoomRecruitScreen(
             }
         }
     }
-    
+
     GroupRoomRecruitContent(
         uiState = uiState,
         onRecommendationClick = onRecommendationClick,
         onBackClick = onBackClick,
         onBookDetailClick = onBookDetailClick,
-        onParticipationClick = { 
+        onParticipationClick = {
             // 비밀방이면 비밀번호 화면으로, 공개방이면 바로 참여
             val detail = uiState.roomDetail
             if (detail != null && !detail.isPublic) {
@@ -107,8 +105,18 @@ fun GroupRoomRecruitScreen(
                 viewModel.onParticipationClick()
             }
         },
-        onCancelParticipationClick = { title, description -> viewModel.onCancelParticipationClick(title, description) },
-        onCloseRecruitmentClick = { title, description -> viewModel.onCloseRecruitmentClick(title, description) },
+        onCancelParticipationClick = { title, description ->
+            viewModel.onCancelParticipationClick(
+                title,
+                description
+            )
+        },
+        onCloseRecruitmentClick = { title, description ->
+            viewModel.onCloseRecruitmentClick(
+                title,
+                description
+            )
+        },
         onDialogConfirm = { viewModel.onDialogConfirm() },
         onDialogCancel = { viewModel.onDialogCancel() },
         onHideToast = { viewModel.hideToast() }
@@ -142,10 +150,10 @@ fun GroupRoomRecruitContent(
             }
             return@Box
         }
-        
+
         // 데이터가 없는 경우
         val detail = uiState.roomDetail ?: return@Box
-        
+
         AsyncImage(
             model = detail.roomImageUrl,
             contentDescription = "모임방 배경 이미지",
@@ -330,12 +338,10 @@ fun GroupRoomRecruitContent(
                                     color = colors.White
                                 )
                                 Spacer(Modifier.width(4.dp))
-                                // recruitEndDate에서 남은 일수 추출
-                                val daysLeft = DateUtils.extractDaysFromDeadline(detail.recruitEndDate)
                                 Text(
-                                    text = stringResource(
-                                        R.string.group_room_screen_end_date,
-                                        daysLeft
+                                    text = detail.recruitEndDate.replace(
+                                        "뒤",
+                                        "남음"
                                     ),
                                     style = typography.info_m500_s12,
                                     color = colors.NeonGreen
@@ -391,12 +397,11 @@ fun GroupRoomRecruitContent(
                             horizontalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
                             items(detail.recommendRooms) { rec ->
-                                val daysLeft = DateUtils.extractDaysFromDeadline(rec.recruitEndDate)
                                 CardItemRoomSmall(
                                     title = rec.roomName,
                                     participants = rec.memberCount,
                                     maxParticipants = rec.recruitCount,
-                                    endDate = daysLeft,
+                                    endDate = rec.recruitEndDate,
                                     imageUrl = rec.roomImageUrl,
                                     onClick = { onRecommendationClick(rec) }
                                 )

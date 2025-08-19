@@ -45,30 +45,15 @@ fun BookPageTextField(
     bookTotalPage: Int,
     enabled: Boolean = true,
     text: String,
+    isError: Boolean,
     onValueChange: (String) -> Unit,
 ) {
-    var isError by rememberSaveable { mutableStateOf(false) }
-    var errorMessageRes by rememberSaveable { mutableStateOf<Int?>(null) }
-
     Column {
         OutlinedTextField(
             value = text,
             onValueChange = { newText: String ->
                 if (newText.isEmpty() || newText.all { it.isDigit() }) {
                     onValueChange(newText)
-
-                    if (newText.isNotEmpty()) {
-                        val pageNum = newText.toInt()
-                        isError = pageNum > bookTotalPage
-                        errorMessageRes = if (isError) {
-                            R.string.error_page_over
-                        } else {
-                            null
-                        }
-                    } else {
-                        isError = false
-                        errorMessageRes = null
-                    }
                 }
             },
             enabled = enabled,
@@ -111,8 +96,6 @@ fun BookPageTextField(
                     modifier = Modifier.clickable {
                         if (text.isNotEmpty()) {
                             onValueChange("")
-                            isError = false
-                            errorMessageRes = null
                         }
                     },
                     tint = Color.Unspecified
@@ -120,11 +103,11 @@ fun BookPageTextField(
             }
         )
 
-        Box(modifier = Modifier.height(22.dp)) {
-            if (isError && errorMessageRes != null) {
+        Box(modifier = Modifier.height(24.dp)) {
+            if (isError) {
                 Text(
                     modifier = Modifier.padding(start = 4.dp, top = 8.dp),
-                    text = stringResource(id = errorMessageRes!!),
+                    text = stringResource(id = R.string.error_page_over),
                     color = colors.Red,
                     style = typography.menu_r400_s14_h24.copy(lineHeight = 12.sp)
                 )
@@ -172,6 +155,7 @@ fun BookPageTextFieldPreviewEmpty() {
         BookPageTextField(
             bookTotalPage = 456,
             text = text,
+            isError = false,
             onValueChange = {
                 text = it
             }
