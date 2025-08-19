@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -85,6 +86,12 @@ fun MyPageContent(
     onDeleteAccount: () -> Unit
 ) {
     val context = LocalContext.current
+    val listState = rememberLazyListState()
+    
+    // 탭 전환 시 스크롤을 맨 위로 초기화
+    LaunchedEffect(Unit) {
+        listState.scrollToItem(0)
+    }
 
     Box(
         Modifier
@@ -102,6 +109,7 @@ fun MyPageContent(
                 rightIcon = painterResource(R.drawable.ic_plus)
             )
             LazyColumn(
+                state = listState,
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {

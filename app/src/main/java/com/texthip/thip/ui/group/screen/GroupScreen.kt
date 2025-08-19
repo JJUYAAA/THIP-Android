@@ -58,7 +58,7 @@ fun GroupScreen(
 ) {
     // 화면 재진입 시 데이터 새로고침
     LaunchedEffect(Unit) {
-        viewModel.refreshDataOnScreenEnter()
+        viewModel.resetToInitialState()
     }
     val uiState by viewModel.uiState.collectAsState()
 
@@ -95,6 +95,11 @@ fun GroupContent(
     onHideToast: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
+    
+    // 탭 전환 시 스크롤을 맨 위로 초기화
+    LaunchedEffect(Unit) {
+        scrollState.scrollTo(0)
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()

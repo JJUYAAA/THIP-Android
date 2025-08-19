@@ -267,6 +267,23 @@ class FeedViewModel @Inject constructor(
         fetchRecentWriters()
     }
 
+    fun resetToInitialState() {
+        // 탭과 데이터를 모두 초기 상태로 리셋
+        updateState { 
+            it.copy(
+                selectedTabIndex = 0,
+                allFeeds = emptyList(),
+                myFeeds = emptyList(),
+                isLastPageAllFeeds = false,
+                isLastPageMyFeeds = false
+            )
+        }
+        allFeedsNextCursor = null
+        myFeedsNextCursor = null
+        loadAllFeeds(isInitial = true)
+        fetchRecentWriters()
+    }
+
     private fun fetchRecentWriters() {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }

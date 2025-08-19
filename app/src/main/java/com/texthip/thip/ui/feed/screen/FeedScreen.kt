@@ -82,13 +82,19 @@ fun FeedScreen(
     
     val feedTabTitles = listOf(stringResource(R.string.feed), stringResource(R.string.my_feed))
 
-    // 무한 스크롤 로직
-    val listState = rememberLazyListState()
+    // 탭별로 별도의 스크롤 상태 관리
+    val allFeedListState = rememberLazyListState()
+    val myFeedListState = rememberLazyListState()
+    val currentListState = when (feedUiState.selectedTabIndex) {
+        0 -> allFeedListState
+        1 -> myFeedListState
+        else -> allFeedListState
+    }
 
     // 무한 스크롤 로직
-    val shouldLoadMore by remember(feedUiState.canLoadMoreCurrentTab, feedUiState.isLoadingMore) {
+    val shouldLoadMore by remember(feedUiState.canLoadMoreCurrentTab, feedUiState.isLoadingMore, feedUiState.selectedTabIndex) {
         derivedStateOf {
-            val layoutInfo = listState.layoutInfo
+            val layoutInfo = currentListState.layoutInfo
             val totalItems = layoutInfo.totalItemsCount
             val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
 
@@ -107,7 +113,15 @@ fun FeedScreen(
     }
     
     LaunchedEffect(Unit) {
-        feedViewModel.refreshData()
+        feedViewModel.resetToInitialState()
+        // 탭 전환 시 스크롤을 맨 위로 초기화
+        allFeedListState.scrollToItem(0)
+        myFeedListState.scrollToItem(0)
+    }
+
+    // 탭 변경 시 해당 탭의 스크롤을 최상단으로 부드럽게 이동
+    LaunchedEffect(feedUiState.selectedTabIndex) {
+        currentListState.scrollToItem(0)
     }
 
     LaunchedEffect(resultFeedId) {
@@ -125,8 +139,6 @@ fun FeedScreen(
                 if (showProgressBar) {
                     showProgressBar = false
                 }
-                
-                // 애니메이션이 완전히 끝난 후 새로고침 실행
                 feedViewModel.refreshData()
             }
         }
@@ -135,7 +147,6 @@ fun FeedScreen(
     LaunchedEffect(refreshFeed) {
         if (refreshFeed == true) {
             onRefreshConsumed()
-            // resultFeedId가 있을 때는 애니메이션 후에 새로고침하므로 여기서는 실행하지 않음
             if (resultFeedId == null) {
                 feedViewModel.refreshData()
             }
@@ -179,7 +190,7 @@ fun FeedScreen(
 
                 // 스크롤 영역 전체
                 LazyColumn(
-                    state = listState,
+                    state = currentListState,
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
