@@ -62,7 +62,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun FeedWriteScreen(
     modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit,
-    onFeedCreated: (Int) -> Unit = {},
+    onFeedCreated: (Long) -> Unit = {},
     viewModel: FeedWriteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()

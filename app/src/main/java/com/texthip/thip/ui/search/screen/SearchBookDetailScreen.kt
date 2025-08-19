@@ -73,7 +73,7 @@ fun SearchBookDetailScreen(
     onRightClick: () -> Unit = {},
     onRecruitingGroupClick: () -> Unit = {},
     onWriteFeedClick: () -> Unit = {},
-    onFeedClick: (Int) -> Unit = {},
+    onFeedClick: (Long) -> Unit = {},
     onBookmarkClick: (String, Boolean) -> Unit = { _, _ -> },
     viewModel: BookDetailViewModel = hiltViewModel()
 ) {
@@ -120,7 +120,7 @@ private fun SearchBookDetailScreenContent(
     onRightClick: () -> Unit = {},
     onRecruitingGroupClick: () -> Unit = {},
     onWriteFeedClick: () -> Unit = {},
-    onFeedClick: (Int) -> Unit = {},
+    onFeedClick: (Long) -> Unit = {},
     onBookmarkClick: (String, Boolean) -> Unit = { _, _ -> },
     onSortChange: (String) -> Unit = {},
     onLoadMore: () -> Unit = {}

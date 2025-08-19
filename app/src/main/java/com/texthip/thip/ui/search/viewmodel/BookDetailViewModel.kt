@@ -178,7 +178,7 @@ class BookDetailViewModel @Inject constructor(
 // RelatedFeedItem을 FeedItem으로 변환하는 확장 함수
 private fun RelatedFeedItem.toFeedItem(): FeedItem {
     return FeedItem(
-        id = this.feedId,
+        id = this.feedId.toLong(),
         userProfileImage = this.creatorProfileImageUrl,
         userName = this.creatorNickname,
         userRole = this.aliasName,

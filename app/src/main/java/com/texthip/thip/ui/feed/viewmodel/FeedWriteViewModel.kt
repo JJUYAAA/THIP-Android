@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.onFailure
 
 @HiltViewModel
 class FeedWriteViewModel @Inject constructor(
@@ -61,7 +62,7 @@ class FeedWriteViewModel @Inject constructor(
         }
     }
 
-    fun loadFeedForEdit(feedId: Int) {
+    fun loadFeedForEdit(feedId: Long) {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
 
@@ -117,7 +118,7 @@ class FeedWriteViewModel @Inject constructor(
     }
 
     fun setEditData(
-        feedId: Int,
+        feedId: Long,
         isbn: String,
         bookTitle: String,
         bookAuthor: String,
@@ -352,7 +353,7 @@ class FeedWriteViewModel @Inject constructor(
         }
     }
 
-    fun createOrUpdateFeed(onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
+    fun createOrUpdateFeed(onSuccess: (Long) -> Unit, onError: (String) -> Unit) {
         val currentState = _uiState.value
 
         if (currentState.isEditMode && currentState.editingFeedId != null) {
@@ -362,7 +363,7 @@ class FeedWriteViewModel @Inject constructor(
         }
     }
 
-    fun createFeed(onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
+    fun createFeed(onSuccess: (Long) -> Unit, onError: (String) -> Unit) {
         val currentState = _uiState.value
 
         if (!currentState.isFormValid) {
@@ -391,7 +392,7 @@ class FeedWriteViewModel @Inject constructor(
                 result.onSuccess { response ->
                     val feedId = response?.feedId
                     if (feedId != null) {
-                        onSuccess(feedId)
+                        onSuccess(feedId.toLong())
                     } else {
                         onError(stringResourceProvider.getString(R.string.error_feed_id_not_returned))
                     }
@@ -415,7 +416,7 @@ class FeedWriteViewModel @Inject constructor(
         }
     }
 
-    private fun updateFeed(feedId: Int, onSuccess: (Int) -> Unit, onError: (String) -> Unit) {
+    private fun updateFeed(feedId: Long, onSuccess: (Long) -> Unit, onError: (String) -> Unit) {
         val currentState = _uiState.value
 
         if (!currentState.isFormValid) {
@@ -437,7 +438,7 @@ class FeedWriteViewModel @Inject constructor(
 
                 result.onSuccess { response ->
                     val updatedFeedId = response?.feedId ?: feedId
-                    onSuccess(updatedFeedId)
+                    onSuccess(updatedFeedId.toLong())
                 }.onFailure { exception ->
                     onError(
                         exception.message

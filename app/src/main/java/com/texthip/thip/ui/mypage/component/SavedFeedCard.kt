@@ -111,6 +111,7 @@ fun SavedFeedCard(
             commentCount = feedItem.commentCount,
             isSaveVisible = true,
             isSaved = feedItem.isSaved,
+            isLockIcon = feedItem.isLocked,
             onLikeClick = onLikeClick,
             onCommentClick = onCommentClick,
             onBookmarkClick = onBookmarkClick
@@ -122,7 +123,7 @@ fun SavedFeedCard(
 @Composable
 private fun SavedFeedCardPrev() {
     val feed1 = FeedItem(
-        id = 1,
+        id = 1L,
         userProfileImage = "https://example.com/profile1.jpg",
         userName = "user.01",
         userRole = stringResource(R.string.influencer),
@@ -138,7 +139,7 @@ private fun SavedFeedCardPrev() {
     )
 
     val feed2 = FeedItem(
-        id = 2,
+        id = 2L,
         userProfileImage = "https://example.com/profile2.jpg",
         userName = "user.01",
         userRole = stringResource(R.string.influencer),

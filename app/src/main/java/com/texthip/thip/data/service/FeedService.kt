@@ -1,19 +1,24 @@
 package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
+import com.texthip.thip.data.model.feed.request.FeedLikeRequest
+import com.texthip.thip.data.model.feed.request.FeedSaveRequest
+import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
+import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
+import com.texthip.thip.data.model.feed.response.FeedLikeResponse
+import com.texthip.thip.data.model.feed.response.FeedMineInfoResponse
+import com.texthip.thip.data.model.feed.response.FeedSaveResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersInfoResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
-import com.texthip.thip.data.model.feed.response.FeedMineInfoResponse
-import com.texthip.thip.data.model.feed.response.RelatedBooksResponse
-import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
-import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
+import com.texthip.thip.data.model.feed.response.RelatedBooksResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
@@ -64,7 +69,7 @@ interface FeedService {
     /** 피드 상세 조회 */
     @GET("feeds/{feedId}")
     suspend fun getFeedDetail(
-        @Path("feedId") feedId: Int
+        @Path("feedId") feedId: Long
     ): BaseResponse<FeedDetailResponse>
 
     @GET("feeds/users/{userId}/info")
@@ -77,10 +82,30 @@ interface FeedService {
         @Path("userId") userId: Long
     ): BaseResponse<FeedUsersResponse>
 
+    /** 피드 삭제 */
+    @DELETE("feeds/{feedId}")
+    suspend fun deleteFeed(
+        @Path("feedId") feedId: Long
+    ): BaseResponse<String>
+
+    /** 피드 좋아요 상태 변경 */
+    @POST("feeds/{feedId}/likes")
+    suspend fun changeFeedLike(
+        @Path("feedId") feedId: Long,
+        @Body request: FeedLikeRequest
+    ): BaseResponse<FeedLikeResponse>
+
     /** 피드 수정 */
     @PATCH("feeds/{feedId}")
     suspend fun updateFeed(
-        @Path("feedId") feedId: Int,
+        @Path("feedId") feedId: Long,
         @Body request: UpdateFeedRequest
     ): BaseResponse<CreateFeedResponse>
+
+    /** 피드 저장 상태 변경 */
+    @POST("feeds/{feedId}/saved")
+    suspend fun changeFeedSave(
+        @Path("feedId") feedId: Long,
+        @Body request: FeedSaveRequest
+    ): BaseResponse<FeedSaveResponse>
 }
