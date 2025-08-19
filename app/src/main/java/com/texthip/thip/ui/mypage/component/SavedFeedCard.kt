@@ -1,7 +1,9 @@
 package com.texthip.thip.ui.mypage.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,10 +13,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,6 +49,7 @@ fun SavedFeedCard(
 ) {
     val hasImages = feedItem.imageUrls.isNotEmpty()
     val maxLines = if (hasImages) 3 else 8
+    var isTextTruncated by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -60,7 +68,7 @@ fun SavedFeedCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
+                .padding(vertical = 16.dp)
         ) {
             ActionBookButton(
                 bookTitle = feedItem.bookTitle,
@@ -71,24 +79,36 @@ fun SavedFeedCard(
 
         Column(
             modifier = Modifier
-                .clickable { onContentClick() },
+                .clickable { onContentClick() }, // 전체 영역 클릭 유지
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = feedItem.content,
-                style = typography.feedcopy_r400_s14_h20,
-                color = colors.White,
-                maxLines = maxLines,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp)
-            )
+            Box {
+                Text(
+                    text = feedItem.content,
+                    style = typography.feedcopy_r400_s14_h20,
+                    color = colors.White,
+                    maxLines = maxLines,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    onTextLayout = { textLayoutResult ->
+                        isTextTruncated = textLayoutResult.hasVisualOverflow
+                    }
+                )
+                if (isTextTruncated) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_text_more),
+                        contentDescription = null,
+                        modifier = Modifier.align(Alignment.BottomEnd)
+                    )
+                }
+            }
+
             if (hasImages) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp),
+                        .padding(vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     feedItem.imageUrls.take(3).forEach { imageUrl ->

@@ -1,16 +1,24 @@
 package com.texthip.thip.ui.feed.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +31,7 @@ import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.mypage.mock.FeedItem
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -36,6 +45,7 @@ fun MyFeedCard(
 ) {
     val hasImages = feedItem.imageUrls.isNotEmpty()
     val maxLines = if (hasImages) 3 else 8
+    var isTextTruncated by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -48,7 +58,7 @@ fun MyFeedCard(
             onClick = onBookClick
         )
 
-        Column(
+        /*Column(
             modifier = Modifier
                 .clickable { onContentClick() },
             verticalArrangement = Arrangement.Center,
@@ -83,10 +93,61 @@ fun MyFeedCard(
                     }
                 }
             }
+        }*/
+        Box(
+            modifier = Modifier
+                .clickable { onContentClick() }
+        ) {
+            Text(
+                text = feedItem.content,
+                style = typography.feedcopy_r400_s14_h20,
+                color = colors.White,
+                maxLines = maxLines,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                // 3. onTextLayout 콜백을 사용하여 텍스트가 잘렸는지 확인
+                onTextLayout = { textLayoutResult ->
+                    isTextTruncated = textLayoutResult.hasVisualOverflow
+                }
+            )
+
+            // 4. 텍스트가 잘렸을 경우에만 "...더보기" 이미지를 우측 하단에 표시
+            if (isTextTruncated) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_text_more),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .width(80.dp)
+                        .height(24.dp)
+                )
+            }
+        }
+        if (hasImages) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                feedItem.imageUrls.take(3).forEach { imageUrl ->
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .size(100.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
         }
 
+
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.padding(top = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 modifier = Modifier.clickable { onLikeClick() },
@@ -122,6 +183,7 @@ fun MyFeedCard(
             }
         }
     }
+
 }
 
 @Preview
@@ -157,15 +219,19 @@ private fun MyFeedCardPrev() {
         isLiked = false,
         isSaved = true,
         isLocked = false,
-        imageUrls = listOf("https://example.com/image1.jpg", "https://example.com/image2.jpg")
+        imageUrls = listOf(
+            "https://example.com/image1.jpg",
+            "https://example.com/image2.jpg"
+        )
     )
-
-    Column {
-        MyFeedCard(
-            feedItem = feed1
-        )
-        MyFeedCard(
-            feedItem = feed2
-        )
+    ThipTheme {
+        Column {
+            MyFeedCard(
+                feedItem = feed1
+            )
+            MyFeedCard(
+                feedItem = feed2
+            )
+        }
     }
 }
