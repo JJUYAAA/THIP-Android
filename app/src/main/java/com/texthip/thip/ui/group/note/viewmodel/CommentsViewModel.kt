@@ -137,20 +137,11 @@ class CommentsViewModel @Inject constructor(
                                 currentState.comments.indexOfFirst { it.commentId == parentId }
 
                             if (parentCommentIndex != -1) {
-                                val updatedParentComment = CommentList(
-                                    commentId = res.commentId,
-                                    creatorId = res.creatorId,
-                                    creatorProfileImageUrl = res.creatorProfileImageUrl,
-                                    creatorNickname = res.creatorNickname,
-                                    aliasName = res.aliasName,
-                                    aliasColor = res.aliasColor,
-                                    postDate = res.postDate,
-                                    content = res.content,
-                                    likeCount = res.likeCount,
-                                    isDeleted = res.isDeleted,
-                                    isWriter = res.isWriter,
-                                    isLike = res.isLike,
-                                    replyList = res.replyList
+                                val originalParentComment =
+                                    currentState.comments[parentCommentIndex]
+
+                                val updatedParentComment = originalParentComment.copy(
+                                    replyList = originalParentComment.replyList + res.replyList
                                 )
 
                                 val newCommentsList = currentState.comments.toMutableList().apply {
