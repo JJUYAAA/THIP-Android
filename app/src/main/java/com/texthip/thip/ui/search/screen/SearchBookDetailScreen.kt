@@ -69,7 +69,7 @@ fun SearchBookDetailScreen(
     onLeftClick: () -> Unit = {},
     onRightClick: () -> Unit = {},
     onRecruitingGroupClick: () -> Unit = {},
-    onWriteFeedClick: () -> Unit = {},
+    onWriteFeedClick: (BookDetailResponse) -> Unit = {},
     onFeedClick: (Int) -> Unit = {},
     onBookmarkClick: (String, Boolean) -> Unit = { _, _ -> },
     viewModel: BookDetailViewModel = hiltViewModel()
@@ -114,7 +114,7 @@ private fun SearchBookDetailScreenContent(
     uiState: BookDetailUiState? = null,
     onLeftClick: () -> Unit = {},
     onRecruitingGroupClick: () -> Unit = {},
-    onWriteFeedClick: () -> Unit = {},
+    onWriteFeedClick: (BookDetailResponse) -> Unit = {},
     onFeedClick: (Int) -> Unit = {},
     onBookmarkClick: (String, Boolean) -> Unit = { _, _ -> },
     onSortChange: (String) -> Unit = {},
@@ -316,7 +316,7 @@ private fun SearchBookDetailScreenContent(
                                                 hasRightIcon = true,
                                                 hasRightPlusIcon = true,
                                                 modifier = Modifier.weight(1f),
-                                                onClick = onWriteFeedClick
+                                                onClick = { onWriteFeedClick(bookDetail) }
                                             )
                                             Box(
                                                 modifier = Modifier
