@@ -157,6 +157,9 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             },
             onNavigateToUserProfile = { userId ->
                 navController.navigateToUserProfile(userId)
+            },
+            onNavigateToBookDetail = { isbn ->
+                navController.navigateToBookDetail(isbn)
             }
         )
     }

@@ -68,6 +68,7 @@ fun FeedCommentScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToFeedEdit: (Int) -> Unit = {},
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
+    onNavigateToBookDetail: (String) -> Unit = {},
     feedDetailViewModel: FeedDetailViewModel = hiltViewModel(),
     commentsViewModel: CommentsViewModel = hiltViewModel()
 ) {
@@ -189,7 +190,9 @@ fun FeedCommentScreen(
                                 ActionBookButton(
                                     bookTitle = feedDetail.bookTitle,
                                     bookAuthor = feedDetail.bookAuthor,
-                                    onClick = {}
+                                    onClick = {
+                                        onNavigateToBookDetail(feedDetail.isbn)
+                                    }
                                 )
                             }
                             Text(
