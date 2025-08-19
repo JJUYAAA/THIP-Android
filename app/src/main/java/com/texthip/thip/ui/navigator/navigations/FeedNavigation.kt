@@ -24,14 +24,15 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 // Feed
 fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBack: () -> Unit) {
     composable<MainTabRoutes.Feed> { backStackEntry ->
-        val resultFeedId = backStackEntry.savedStateHandle.get<Int>("feedId")
+        val resultFeedId = backStackEntry.savedStateHandle.get<Long>("feedId")
         val refreshFeed = backStackEntry.savedStateHandle.get<Boolean>("refreshFeed")
 
         FeedScreen(
+            navController = navController,
             resultFeedId = resultFeedId,
             refreshFeed = refreshFeed,
             onResultConsumed = {
-                backStackEntry.savedStateHandle.remove<Int>("feedId")
+                backStackEntry.savedStateHandle.remove<Long>("feedId")
             },
             onRefreshConsumed = {
                 backStackEntry.savedStateHandle.remove<Boolean>("refreshFeed")
@@ -79,7 +80,7 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
                 route.bookAuthor != null
             ) {
                 viewModel.setEditData(
-                    feedId = route.feedId,
+                    feedId = route.feedId.toLong(),
                     isbn = route.isbn,
                     bookTitle = route.bookTitle,
                     bookAuthor = route.bookAuthor,
@@ -90,7 +91,7 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
                 )
             } else if (route.feedId != null) {
                 // 수정 모드: 기존 방식 (API 호출)
-                viewModel.loadFeedForEdit(route.feedId)
+                viewModel.loadFeedForEdit(route.feedId.toLong())
             } else if (route.isbn != null &&
                 route.bookTitle != null &&
                 route.bookAuthor != null &&
@@ -143,12 +144,14 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         )
     }
     composable<FeedRoutes.Comment> { backStackEntry ->
-        val route = backStackEntry.arguments?.let {
-            FeedRoutes.Comment(it.getInt("feedId"))
-        } ?: return@composable
+        /*val route = backStackEntry.arguments?.let {
+            FeedRoutes.Comment(it.getLong("feedId"))
+        } ?: return@composable*/
+        val route = backStackEntry.toRoute<FeedRoutes.Comment>()
 
         FeedCommentScreen(
             feedId = route.feedId,
+            navController = navController,
             onNavigateBack = {
                 navController.popBackStack()
             },

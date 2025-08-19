@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
+import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.data.model.base.ThipApiFailureException
 import com.texthip.thip.data.model.users.request.SignupRequest
 import com.texthip.thip.data.repository.UserRepository
@@ -30,6 +31,7 @@ data class SignupUiState(
 @HiltViewModel
 class SignupViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignupUiState())
@@ -54,12 +56,30 @@ class SignupViewModel @Inject constructor(
             userRepository.checkNickname(_uiState.value.nickname)
                 .onSuccess { response ->
                     if (response?.isVerified == true) {
-                        _uiState.update { it.copy(isLoading = false, isNicknameVerified = true, navigateToGenreScreen = true) }
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                isNicknameVerified = true,
+                                navigateToGenreScreen = true
+                            )
+                        }
                     } else {
-                        _uiState.update { it.copy(isLoading = false, nicknameWarningMessageResId = R.string.nickname_warning) }
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                nicknameWarningMessageResId = R.string.nickname_warning
+                            )
+                        }
                     }
                 }
-                .onFailure { _uiState.update { it.copy(isLoading = false, nicknameWarningMessageResId = R.string.error_unknown) } }
+                .onFailure {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            nicknameWarningMessageResId = R.string.error_unknown
+                        )
+                    }
+                }
         }
     }
 
@@ -72,10 +92,24 @@ class SignupViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             userRepository.getAliasChoices()
                 .onSuccess { response ->
-                    val roleCards = response?.aliasChoices?.map { RoleItem(it.aliasName, it.categoryName, it.imageUrl, it.aliasColor) } ?: emptyList()
+                    val roleCards = response?.aliasChoices?.map {
+                        RoleItem(
+                            it.aliasName,
+                            it.categoryName,
+                            it.imageUrl,
+                            it.aliasColor
+                        )
+                    } ?: emptyList()
                     _uiState.update { it.copy(isLoading = false, roleCards = roleCards) }
                 }
-                .onFailure { exception -> _uiState.update { it.copy(isLoading = false, errorMessage = exception.message) } }
+                .onFailure { exception ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = exception.message
+                        )
+                    }
+                }
         }
     }
 
@@ -84,7 +118,6 @@ class SignupViewModel @Inject constructor(
     }
 
     fun signup() {
-        Log.d("SignupDebug", "signup() 호출됨. 닉네임: ${_uiState.value.nickname}, 인증됨: ${_uiState.value.isNicknameVerified}, 선택된 인덱스: ${_uiState.value.selectedIndex}")
         viewModelScope.launch {
             val currentState = _uiState.value
             val selectedRole = currentState.roleCards.getOrNull(currentState.selectedIndex)
@@ -101,18 +134,24 @@ class SignupViewModel @Inject constructor(
 
             _uiState.update { it.copy(isLoading = true) }
             userRepository.signup(request)
-                .onSuccess { authResponse ->
-                    // TODO: 성공 시 받은 토큰(authResponse) 저장 및 메인 화면으로 이동
-                    _uiState.update { it.copy(isLoading = false, isSignupSuccess = true) }
+                .onSuccess { signupResponse ->
+                    if (signupResponse != null) {
+                        tokenManager.saveToken(signupResponse.accessToken)
+                        tokenManager.deleteTempToken()
+
+                        _uiState.update { it.copy(isLoading = false, isSignupSuccess = true) }
+                    }
                 }
                 .onFailure { exception ->
                     Log.e("SignupDebug", "Signup 실패: ", exception)
 
-                    val errorMsg = if (exception is ThipApiFailureException) exception.message else "회원가입에 실패했습니다."
+                    val errorMsg =
+                        if (exception is ThipApiFailureException) exception.message else "회원가입에 실패했습니다."
                     _uiState.update { it.copy(isLoading = false, errorMessage = errorMsg) }
                 }
         }
     }
+
     // 소셜로그인과 연동 후 삭제 예정
     fun setInitialDataForTest(nickname: String) {
         _uiState.update {

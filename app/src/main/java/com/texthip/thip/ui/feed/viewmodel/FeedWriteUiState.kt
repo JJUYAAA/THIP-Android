@@ -24,7 +24,7 @@ data class FeedWriteUiState(
     val isBookPreselected: Boolean = false,
     val isLoadingCategories: Boolean = false,
     val isEditMode: Boolean = false,
-    val editingFeedId: Int? = null
+    val editingFeedId: Long? = null
 ) {
     // 유효성 검사 로직
     val isContentValid: Boolean

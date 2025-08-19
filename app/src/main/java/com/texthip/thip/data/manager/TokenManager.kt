@@ -62,6 +62,14 @@ class TokenManager @Inject constructor(
         }.first() // Flow에서 첫 번째 값을 한번만 읽어옴
     }
 
+    // 임시 토큰 삭제
+    suspend fun deleteTempToken() {
+        context.dataStore.edit { prefs ->
+            prefs.remove(TEMP_TOKEN_KEY)
+        }
+    }
+
+
     // 정식 토큰들(Access, Refresh) 저장
     suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
         context.dataStore.edit { prefs ->

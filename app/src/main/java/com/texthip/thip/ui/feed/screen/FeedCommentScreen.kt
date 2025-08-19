@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -42,10 +43,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.CommentActionMode
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
+import com.texthip.thip.ui.common.buttons.ActionBarButton
 import com.texthip.thip.ui.common.buttons.ActionBookButton
 import com.texthip.thip.ui.common.buttons.OptionChipButton
 import com.texthip.thip.ui.common.forms.CommentTextField
@@ -67,8 +71,9 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun FeedCommentScreen(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
-    feedId: Int,
+    feedId: Long,
     onNavigateBack: () -> Unit = {},
     onNavigateToFeedEdit: (Int) -> Unit = {},
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
@@ -79,6 +84,15 @@ fun FeedCommentScreen(
     val feedDetailUiState by feedDetailViewModel.uiState.collectAsState()
     val commentsUiState by commentsViewModel.uiState.collectAsState()
 
+    LaunchedEffect(feedDetailUiState.deleteSuccess) {
+        if (feedDetailUiState.deleteSuccess) {
+            navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.set("deleted_feed_id", feedId)
+
+            onNavigateBack()
+        }
+    }
     LaunchedEffect(feedId) {
         feedDetailViewModel.loadFeedDetail(feedId)
         commentsViewModel.initialize(postId = feedId.toLong(), postType = "FEED")
@@ -145,10 +159,11 @@ fun FeedCommentScreen(
             .advancedImePadding()
     ) {
         Box(
-            modifier = if (isBottomSheetVisible || showDialog) {
+            modifier = if (isBottomSheetVisible || showDialog || showImageViewer) {
                 Modifier
                     .fillMaxSize()
                     .blur(5.dp)
+                    .background(colors.Black800)
             } else {
                 Modifier.fillMaxSize()
             }
@@ -246,7 +261,32 @@ fun FeedCommentScreen(
                                     }
                                 }
                             }
-                            HorizontalDivider(color = colors.DarkGrey03, thickness = 10.dp)
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                                color = colors.DarkGrey02, thickness = 1.dp
+                            )
+
+                            ActionBarButton(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp),
+                                isLiked = feedDetail.isLiked,
+                                likeCount = feedDetail.likeCount,
+                                commentCount = feedDetail.commentCount,
+                                isSaveVisible = true,
+                                isSaved = feedDetail.isSaved,
+                                isPinVisible = false,
+                                onLikeClick = { feedDetailViewModel.changeFeedLike() },
+                                onCommentClick = { /* 스크롤 이동 or 포커스 처리 */ },
+                                onBookmarkClick = { feedDetailViewModel.changeFeedSave() },
+                                onPinClick = { /* TODO: pin 기능 */ }
+                            )
+
+                            HorizontalDivider(
+                                modifier = Modifier.padding(top = 16.dp),
+                                color = colors.DarkGrey03,
+                                thickness = 10.dp
+                            )
                         }
                     }
                     when {
@@ -403,7 +443,6 @@ fun FeedCommentScreen(
                     )
                 )
             }
-
             MenuBottomSheet(
                 items = menuItems,
                 onDismiss = { isBottomSheetVisible = false }
@@ -422,21 +461,20 @@ fun FeedCommentScreen(
                         onConfirm = {
                             showDialog = false
                             isBottomSheetVisible = false
-                            // TODO: 피드 삭제 API 호출
+                            feedDetailViewModel.deleteFeed(feedId)
                         },
                         onCancel = {
                             showDialog = false
                             isBottomSheetVisible = false
                         }
                     )
+                    LaunchedEffect(showToast) {
+                        if (showToast) {
+                            delay(3000)
+                            showToast = false
+                        }
+                    }
                 }
-            }
-        }
-
-        LaunchedEffect(showToast) {
-            if (showToast) {
-                delay(3000)
-                showToast = false
             }
         }
 
@@ -456,6 +494,7 @@ private fun FeedCommentScreenPrev() {
     ThipTheme {
         FeedCommentScreen(
             feedId = 1,
+            navController = rememberNavController()
         )
     }
 }

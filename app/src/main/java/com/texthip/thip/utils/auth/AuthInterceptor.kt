@@ -11,16 +11,17 @@ class AuthInterceptor @Inject constructor(
     private val tokenManager: TokenManager
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = runBlocking {
-            tokenManager.getToken().first()
-        }
+        val appToken = runBlocking { tokenManager.getToken().first() }
+        val tempToken = runBlocking { tokenManager.getTempToken() }
+
+        val tokenToSend = appToken ?: tempToken
 
         val requestBuilder = chain.request().newBuilder()
 
-        if (!token.isNullOrBlank()) {
+        if (!tokenToSend.isNullOrBlank()) {
             requestBuilder.addHeader(
                 "Authorization",
-                "Bearer $token"
+                "Bearer $tokenToSend"
             )
         }
 
