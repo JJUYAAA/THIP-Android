@@ -7,7 +7,7 @@ sealed class FeedRoutes : Routes() {
   
     @Serializable data object MySubscription : FeedRoutes()
     
-    @Serializable data class Comment(val feedId: Int) : FeedRoutes()
+    @Serializable data class Comment(val feedId: Long) : FeedRoutes()
 
     @Serializable
     data class Write(

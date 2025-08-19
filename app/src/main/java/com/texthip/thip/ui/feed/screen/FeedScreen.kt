@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.feed.screen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -41,6 +42,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.header.AuthorHeader
@@ -65,12 +68,13 @@ import kotlinx.coroutines.launch
 fun FeedScreen(
     onNavigateToMySubscription: () -> Unit = {},
     onNavigateToFeedWrite: () -> Unit = {},
-    onNavigateToFeedComment: (Int) -> Unit = {},
+    onNavigateToFeedComment: (Long) -> Unit = {},
     onNavigateToBookDetail: (String) -> Unit = {},
+    resultFeedId: Long? = null,
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
     onNavigateToOthersSubscription: (userId: Long) -> Unit = {},
-    resultFeedId: Int? = null,
     onResultConsumed: () -> Unit = {},
+    navController: NavHostController,
     feedViewModel: FeedViewModel = hiltViewModel(),
 ) {
     val feedUiState by feedViewModel.uiState.collectAsState()
@@ -95,6 +99,16 @@ fun FeedScreen(
                     feedUiState.currentTabFeeds.isNotEmpty() &&
                     totalItems > 0 &&
                     lastVisibleIndex >= totalItems - 3
+        }
+    }
+    LaunchedEffect(Unit) {
+        navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
+            handle.getLiveData<Long>("deleted_feed_id").observeForever { deletedId ->
+                if (deletedId != null) {
+                    feedViewModel.removeDeletedFeed(deletedId)
+                    handle.remove<Long>("deleted_feed_id")
+                }
+            }
         }
     }
 
@@ -211,7 +225,7 @@ fun FeedScreen(
                         // 내 피드
                         item {
                             Spacer(modifier = Modifier.height(32.dp))
-                            
+
                             val myFeedInfo = feedUiState.myFeedInfo
                             AuthorHeader(
                                 profileImage = myFeedInfo?.profileImageUrl,
@@ -269,7 +283,7 @@ fun FeedScreen(
 
                                 // MyFeedItem을 FeedItem으로 변환
                                 val feedItem = FeedItem(
-                                    id = myFeed.feedId,
+                                    id = myFeed.feedId.toLong(),
                                     userProfileImage = null,
                                     userName = "", // 내 피드이므로 고정값
                                     userRole = "", // 내 피드이므로 고정값
@@ -318,7 +332,7 @@ fun FeedScreen(
                         itemsIndexed(feedUiState.allFeeds, key = { _, item -> item.feedId }) { index, allFeed ->
                             // AllFeedItem을 FeedItem으로 변환
                             val feedItem = FeedItem(
-                                id = allFeed.feedId,
+                                id = allFeed.feedId.toLong(),
                                 userProfileImage = allFeed.creatorProfileImageUrl,
                                 userName = allFeed.creatorNickname,
                                 userRole = allFeed.aliasName,
@@ -341,10 +355,10 @@ fun FeedScreen(
                                 feedItem = feedItem,
                                 bottomTextColor = hexToColor(allFeed.aliasColor),
                                 onBookmarkClick = {
-                                    // TODO: API 호출로 북마크 상태 변경
+                                    feedViewModel.changeFeedSave(feedItem.id)
                                 },
                                 onLikeClick = {
-                                    // TODO: API 호출로 좋아요 상태 변경
+                                    feedViewModel.changeFeedLike(feedItem.id)
                                 },
                                 onContentClick = {
                                     onNavigateToFeedComment(feedItem.id)
@@ -400,7 +414,8 @@ private fun FeedScreenPreview() {
     ThipTheme {
         FeedScreen(
             onNavigateToFeedWrite = { },
-            onNavigateToBookDetail = { }
+            onNavigateToBookDetail = { },
+            navController = rememberNavController()
         )
     }
 }
@@ -411,7 +426,8 @@ private fun FeedScreenWithoutDataPreview() {
     ThipTheme {
         FeedScreen(
             onNavigateToFeedWrite = { },
-            onNavigateToBookDetail = { }
+            onNavigateToBookDetail = { },
+            navController = rememberNavController()
         )
     }
 }

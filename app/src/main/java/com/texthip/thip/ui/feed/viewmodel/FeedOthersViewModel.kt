@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.feed.response.FeedList
 import com.texthip.thip.data.model.feed.response.FeedUsersInfoResponse
 import com.texthip.thip.data.repository.FeedRepository
+import com.texthip.thip.ui.feed.usecase.ChangeFeedLikeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,9 +26,9 @@ data class FeedOthersUiState(
 @HiltViewModel
 class FeedOthersViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
+    private val changeFeedLikeUseCase: ChangeFeedLikeUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
     private val userId: Long = requireNotNull(savedStateHandle["userId"])
 
     private val _uiState = MutableStateFlow(FeedOthersUiState())
@@ -62,6 +63,33 @@ class FeedOthersViewModel @Inject constructor(
                         ?: feedsResult.exceptionOrNull()?.message
                 )
             }
+        }
+    }
+
+    fun changeFeedLike(feedId: Long) {
+        viewModelScope.launch {
+            val currentFeeds = _uiState.value.feeds
+            val feedToUpdate = currentFeeds.find { it.feedId == feedId } ?: return@launch
+
+            //ui 먼저 변경 ( 낙관적 업데이트 )
+            val newFeeds = currentFeeds.map {
+                if (it.feedId == feedId) {
+                    it.copy(
+                        isLiked = !it.isLiked,
+                        likeCount = if (it.isLiked) it.likeCount - 1 else it.likeCount + 1
+                    )
+                } else {
+                    it
+                }
+            }
+            _uiState.update { it.copy(feeds = newFeeds) }
+
+            //api 호출
+            val newLikeStatus = !feedToUpdate.isLiked
+            changeFeedLikeUseCase(feedId, newLikeStatus)
+                .onFailure {
+                    _uiState.update { it.copy(feeds = currentFeeds) }
+                }
         }
     }
 }

@@ -10,7 +10,7 @@ open class SavedFeedViewModel: ViewModel() {
     private val _feeds = MutableStateFlow(
         listOf(
             FeedItem(
-                id = 1,
+                id = 1L,
                 userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
@@ -24,7 +24,7 @@ open class SavedFeedViewModel: ViewModel() {
                 isSaved = true
             ),
             FeedItem(
-                id = 2,
+                id = 2L,
                 userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
@@ -39,7 +39,7 @@ open class SavedFeedViewModel: ViewModel() {
                 imageUrls = emptyList()
             ),
             FeedItem(
-                id = 3,
+                id = 3L,
                 userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
@@ -54,7 +54,7 @@ open class SavedFeedViewModel: ViewModel() {
                 imageUrls = listOf("https://example.com/image.jpg")
             ),
             FeedItem(
-                id = 4,
+                id = 4L,
                 userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
@@ -69,7 +69,7 @@ open class SavedFeedViewModel: ViewModel() {
                 imageUrls = listOf("https://example.com/image.jpg")
             ),
             FeedItem(
-                id = 5,
+                id = 5L,
                 userProfileImage = "https://example.com/profile.jpg",
                 userName = "user",
                 userRole = "학생",
@@ -90,13 +90,13 @@ open class SavedFeedViewModel: ViewModel() {
 
     open val feeds: StateFlow<List<FeedItem>> = _feeds
 
-    fun toggleBookmark(id: Int) {
+    fun toggleBookmark(id: Long) {
         _feeds.value = _feeds.value.map {
             if (it.id == id) it.copy(isSaved = !it.isSaved) else it
         }
     }
 
-    fun toggleLike(id: Int) {
+    fun toggleLike(id: Long) {
         _feeds.value = _feeds.value.map {
             if (it.id == id) it.copy(isLiked = !it.isLiked) else it
         }

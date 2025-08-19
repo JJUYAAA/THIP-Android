@@ -30,6 +30,7 @@ fun ActionBarButton(
     isSaveVisible: Boolean = false,
     isSaved: Boolean = false,
     isPinVisible: Boolean = false,
+    isLockIcon: Boolean = false,
     onLikeClick: () -> Unit = {},
     onCommentClick: () -> Unit = {},
     onBookmarkClick: () -> Unit = {},
@@ -88,12 +89,22 @@ fun ActionBarButton(
         }
 
         if (isSaveVisible) {
-            Icon(
-                modifier = Modifier.clickable { onBookmarkClick() },
-                painter = painterResource(if (isSaved) R.drawable.ic_save_filled else R.drawable.ic_save),
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
+            if (isLockIcon) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_lock),
+                    contentDescription = null,
+                    tint = Color.Unspecified
+                )
+            } else {
+                Icon(
+                    modifier = Modifier.clickable { onBookmarkClick() },
+                    painter = painterResource(
+                        if (isSaved) R.drawable.ic_save_filled else R.drawable.ic_save
+                    ),
+                    contentDescription = null,
+                    tint = Color.Unspecified
+                )
+            }
         }
     }
 }
@@ -110,10 +121,11 @@ private fun ActionBarButtonPreview() {
         commentCount = 45,
         isSaveVisible = true,
         isSaved = isSaved,
-        isPinVisible = true,
+        isPinVisible = false,
         onLikeClick = { isLiked = !isLiked },
         onCommentClick = {},
         onBookmarkClick = { isSaved = !isSaved },
-        onPinClick = {}
+        onPinClick = {},
+        isLockIcon = true
     )
 }
