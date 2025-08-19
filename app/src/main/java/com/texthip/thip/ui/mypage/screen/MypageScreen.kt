@@ -54,11 +54,17 @@ fun MyPageScreen(
     onNavigateToSavedFeeds: () -> Unit,
     onCustomerService: () -> Unit,
     onNavigateToNotificationSettings: () -> Unit,
-    onDeleteAccount: () -> Unit
+    onDeleteAccount: () -> Unit,
+    onNavigateToLogin: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.fetchMyPageInfo()
+    }
+    LaunchedEffect(uiState.isLogoutCompleted) {
+        if (uiState.isLogoutCompleted) {
+            onNavigateToLogin()
+        }
     }
     MyPageContent(
         uiState = uiState,
@@ -175,7 +181,6 @@ fun MyPageContent(
                             hasRightIcon = true,
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                              onCustomerServiceClick
                                 val intent =
                                     Intent(Intent.ACTION_VIEW, URL_CUSTOMER_SERVICE.toUri())
                                 context.startActivity(intent)
