@@ -63,5 +63,27 @@ fun NavGraphBuilder.authNavigation(navController: NavHostController) {
                 }
             )
         }
+        composable<CommonRoutes.SignupScreenRoutes.Done> { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry<CommonRoutes.SignupFlow>()
+            }
+            val signupViewModel = hiltViewModel<SignupViewModel>(parentEntry)
+            val uiState by signupViewModel.uiState.collectAsStateWithLifecycle()
+
+            val selectedRole = uiState.roleCards.getOrNull(uiState.selectedIndex)
+
+            val userInfo = SignupUserInfo(
+                nickname = uiState.nickname,
+                profileImage = selectedRole?.imageUrl,
+                role = selectedRole?.role ?: ""
+            )
+
+            SignupDoneScreen(
+                userInfo = userInfo,
+                onNavigateToMain = {
+                    navController.navigateToMainAfterSignup()
+                }
+            )
+        }
     }
 }
