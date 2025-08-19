@@ -124,6 +124,9 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             },
             onNavigateToSubscriptionList = { userId ->
                 navController.navigateToOthersSubscription(userId)
+            },
+            onNavigateToFeedComment = { feedId ->
+                navController.navigateToFeedComment(feedId)
             }
         )
     }
