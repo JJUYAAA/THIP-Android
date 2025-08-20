@@ -18,5 +18,6 @@ data class RecruitingRoomItem(
     @SerialName("roomName") val roomName: String = "",
     @SerialName("memberCount") val memberCount: Int = 0,
     @SerialName("recruitCount") val recruitCount: Int = 0,
-    @SerialName("deadlineEndDate") val deadlineEndDate: String = ""
+    @SerialName("deadlineEndDate") val deadlineEndDate: String = "",
+    @SerialName("isPublic") val isPublic: Boolean = true
 )

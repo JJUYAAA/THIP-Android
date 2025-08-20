@@ -86,7 +86,7 @@ fun FeedScreen(
     val scope = rememberCoroutineScope()
     var showProgressBar by remember { mutableStateOf(false) }
     val progress = remember { Animatable(0f) }
-    
+
     val feedTabTitles = listOf(stringResource(R.string.feed), stringResource(R.string.my_feed))
 
     // 탭별로 별도의 스크롤 상태 관리
@@ -103,7 +103,11 @@ fun FeedScreen(
     }
 
     // 무한 스크롤 로직
-    val shouldLoadMore by remember(feedUiState.canLoadMoreCurrentTab, feedUiState.isLoadingMore, feedUiState.selectedTabIndex) {
+    val shouldLoadMore by remember(
+        feedUiState.canLoadMoreCurrentTab,
+        feedUiState.isLoadingMore,
+        feedUiState.selectedTabIndex
+    ) {
         derivedStateOf {
             val layoutInfo = currentListState.layoutInfo
             val totalItems = layoutInfo.totalItemsCount
@@ -134,16 +138,17 @@ fun FeedScreen(
     }
 
     var isUserTabChange by remember { mutableStateOf(false) }
-    
+
     LaunchedEffect(Unit) {
         feedViewModel.refreshData()
-        val hasUpdatedFeedData = navController.currentBackStackEntry?.savedStateHandle?.get<Long>("updated_feed_id") != null
-        
+        val hasUpdatedFeedData =
+            navController.currentBackStackEntry?.savedStateHandle?.get<Long>("updated_feed_id") != null
+
         if (!hasUpdatedFeedData) {
             currentListState.scrollToItem(0)
         }
     }
-    
+
     LaunchedEffect(feedUiState.selectedTabIndex) {
         if (isUserTabChange) {
             currentListState.scrollToItem(0)
@@ -170,7 +175,7 @@ fun FeedScreen(
             }
         }
     }
-    
+
     LaunchedEffect(refreshFeed) {
         if (refreshFeed == true) {
             onRefreshConsumed()
@@ -287,7 +292,7 @@ fun FeedScreen(
                             }
                         }
                     }
-                    
+
                     if (feedUiState.selectedTabIndex == 1) {
                         // 내 피드
                         item {
@@ -298,7 +303,8 @@ fun FeedScreen(
                                 profileImage = myFeedInfo?.profileImageUrl,
                                 nickname = myFeedInfo?.nickname ?: "",
                                 badgeText = myFeedInfo?.aliasName ?: "",
-                                badgeTextColor = myFeedInfo?.aliasColor?.let { hexToColor(it) } ?: colors.NeonGreen,
+                                badgeTextColor = myFeedInfo?.aliasColor?.let { hexToColor(it) }
+                                    ?: colors.NeonGreen,
                                 buttonText = "",
                                 buttonWidth = 60.dp,
                                 showButton = false
@@ -306,7 +312,8 @@ fun FeedScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             FeedSubscribeBarlist(
                                 modifier = Modifier.padding(horizontal = 20.dp),
-                                followerProfileImageUrls = myFeedInfo?.latestFollowerProfileImageUrls ?: emptyList(),
+                                followerProfileImageUrls = myFeedInfo?.latestFollowerProfileImageUrls
+                                    ?: emptyList(),
                                 onClick = {
                                     myFeedInfo?.creatorId?.let { creatorId ->
                                         onNavigateToOthersSubscription(creatorId)
@@ -315,7 +322,10 @@ fun FeedScreen(
                             )
                             Spacer(modifier = Modifier.height(40.dp))
                             Text(
-                                text = stringResource(R.string.whole_num, myFeedInfo?.totalFeedCount ?: 0),
+                                text = stringResource(
+                                    R.string.whole_num,
+                                    myFeedInfo?.totalFeedCount ?: 0
+                                ),
                                 style = typography.menu_m500_s14_h24,
                                 color = colors.Grey,
                                 modifier = Modifier
@@ -345,7 +355,9 @@ fun FeedScreen(
                                 }
                             }
                         } else {
-                            itemsIndexed(feedUiState.myFeeds, key = { _, item -> item.feedId }) { index, myFeed ->
+                            itemsIndexed(
+                                feedUiState.myFeeds,
+                                key = { _, item -> item.feedId }) { index, myFeed ->
                                 Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
 
                                 // MyFeedItem을 FeedItem으로 변환
@@ -369,7 +381,7 @@ fun FeedScreen(
 
                                 MyFeedCard(
                                     feedItem = feedItem,
-                                    onLikeClick = {},
+                                    onLikeClick = { feedViewModel.changeFeedLike(feedItem.id) },
                                     onContentClick = {
                                         onNavigateToFeedComment(feedItem.id)
                                     },
@@ -396,7 +408,9 @@ fun FeedScreen(
                                 onClick = onNavigateToMySubscription
                             )
                         }
-                        itemsIndexed(feedUiState.allFeeds, key = { _, item -> item.feedId }) { index, allFeed ->
+                        itemsIndexed(
+                            feedUiState.allFeeds,
+                            key = { _, item -> item.feedId }) { index, allFeed ->
                             // AllFeedItem을 FeedItem으로 변환
                             val feedItem = FeedItem(
                                 id = allFeed.feedId.toLong(),
@@ -472,7 +486,7 @@ fun FeedScreen(
             icon = painterResource(id = R.drawable.ic_write),
             onClick = onNavigateToFeedWrite
         )
-        
+
         // 탭 전환 시 화면 가운데 로딩 인디케이터
         if (feedUiState.isRefreshing) {
             Box(
