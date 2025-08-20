@@ -1,5 +1,9 @@
 package com.texthip.thip.ui.group.room.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -242,8 +246,7 @@ fun GroupRoomRecruitContent(
 
                     Row(
                         Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         //모집 기간
                         Column {
@@ -278,7 +281,7 @@ fun GroupRoomRecruitContent(
                         //참여 인원
                         Column(
                             verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(end = 18.dp)
+                            modifier = Modifier.padding(start = 90.dp)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
@@ -296,7 +299,8 @@ fun GroupRoomRecruitContent(
                                 )
                             }
                             Row(
-                                modifier = Modifier.padding(top = 12.dp),
+                                modifier = Modifier
+                                    .padding(top = 12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
@@ -339,10 +343,7 @@ fun GroupRoomRecruitContent(
                                 )
                                 Spacer(Modifier.width(4.dp))
                                 Text(
-                                    text = detail.recruitEndDate.replace(
-                                        "뒤",
-                                        "남음"
-                                    ),
+                                    text = detail.recruitEndDate,
                                     style = typography.info_m500_s12,
                                     color = colors.NeonGreen
                                 )
@@ -402,7 +403,7 @@ fun GroupRoomRecruitContent(
                                     participants = rec.memberCount,
                                     maxParticipants = rec.recruitCount,
                                     endDate = rec.recruitEndDate,
-                                    imageUrl = rec.roomImageUrl,
+                                    imageUrl = rec.bookImageUrl,
                                     onClick = { onRecommendationClick(rec) }
                                 )
                             }
@@ -461,13 +462,23 @@ fun GroupRoomRecruitContent(
         }
 
         // 토스트 팝업
-        if (uiState.showToast && !uiState.shouldNavigateToGroupScreen) {
+        AnimatedVisibility(
+            visible = uiState.showToast && !uiState.shouldNavigateToGroupScreen,
+            enter = slideInVertically(
+                initialOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .zIndex(2f)
+        ) {
             ToastWithDate(
-                message = uiState.toastMessage,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
-                    .zIndex(2f)
+                message = uiState.toastMessage
             )
         }
 
@@ -529,7 +540,7 @@ fun GroupRoomRecruitScreenPreview() {
                     recommendRooms = listOf(
                         RecommendRoomResponse(
                             roomId = 2,
-                            roomImageUrl = "https://picsum.photos/300/400?rec1",
+                            bookImageUrl = "https://picsum.photos/300/400?rec1",
                             roomName = "📚 현대문학 깊이 탐구하기",
                             memberCount = 12,
                             recruitCount = 15,
@@ -537,7 +548,7 @@ fun GroupRoomRecruitScreenPreview() {
                         ),
                         RecommendRoomResponse(
                             roomId = 3,
-                            roomImageUrl = "https://picsum.photos/300/400?rec2",
+                            bookImageUrl = "https://picsum.photos/300/400?rec2",
                             roomName = "✨ 철학 소설로 삶을 되돌아보기",
                             memberCount = 8,
                             recruitCount = 12,
@@ -545,7 +556,7 @@ fun GroupRoomRecruitScreenPreview() {
                         ),
                         RecommendRoomResponse(
                             roomId = 4,
-                            roomImageUrl = "https://picsum.photos/300/400?rec3",
+                            bookImageUrl = "https://picsum.photos/300/400?rec3",
                             roomName = "🎭 인간 심리를 다룬 소설 읽기",
                             memberCount = 15,
                             recruitCount = 18,

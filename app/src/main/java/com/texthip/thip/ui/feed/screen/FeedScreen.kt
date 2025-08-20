@@ -72,8 +72,11 @@ fun FeedScreen(
     onNavigateToBookDetail: (String) -> Unit = {},
     resultFeedId: Long? = null,
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
+    onNavigateToNotification: () -> Unit = {},
+    refreshFeed: Boolean? = null,
     onNavigateToOthersSubscription: (userId: Long) -> Unit = {},
     onResultConsumed: () -> Unit = {},
+    onRefreshConsumed: () -> Unit = {},
     navController: NavHostController,
     feedViewModel: FeedViewModel = hiltViewModel(),
 ) {
@@ -84,13 +87,19 @@ fun FeedScreen(
     
     val feedTabTitles = listOf(stringResource(R.string.feed), stringResource(R.string.my_feed))
 
-    // 무한 스크롤 로직
-    val listState = rememberLazyListState()
+    // 탭별로 별도의 스크롤 상태 관리
+    val allFeedListState = rememberLazyListState()
+    val myFeedListState = rememberLazyListState()
+    val currentListState = when (feedUiState.selectedTabIndex) {
+        0 -> allFeedListState
+        1 -> myFeedListState
+        else -> allFeedListState
+    }
 
     // 무한 스크롤 로직
-    val shouldLoadMore by remember(feedUiState.canLoadMoreCurrentTab, feedUiState.isLoadingMore) {
+    val shouldLoadMore by remember(feedUiState.canLoadMoreCurrentTab, feedUiState.isLoadingMore, feedUiState.selectedTabIndex) {
         derivedStateOf {
-            val layoutInfo = listState.layoutInfo
+            val layoutInfo = currentListState.layoutInfo
             val totalItems = layoutInfo.totalItemsCount
             val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
 
@@ -119,7 +128,12 @@ fun FeedScreen(
     }
     
     LaunchedEffect(Unit) {
-        feedViewModel.refreshData()
+        feedViewModel.resetToInitialState()
+    }
+
+    // 탭 변경 시 해당 탭의 스크롤을 최상단으로 부드럽게 이동
+    LaunchedEffect(feedUiState.selectedTabIndex) {
+        currentListState.scrollToItem(0)
     }
 
     LaunchedEffect(resultFeedId) {
@@ -137,6 +151,16 @@ fun FeedScreen(
                 if (showProgressBar) {
                     showProgressBar = false
                 }
+                feedViewModel.refreshData()
+            }
+        }
+    }
+    
+    LaunchedEffect(refreshFeed) {
+        if (refreshFeed == true) {
+            onRefreshConsumed()
+            if (resultFeedId == null) {
+                feedViewModel.refreshData()
             }
         }
     }
@@ -157,8 +181,8 @@ fun FeedScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         PullToRefreshBox(
-            isRefreshing = feedUiState.isRefreshing,
-            onRefresh = { feedViewModel.refreshCurrentTab() }
+            isRefreshing = feedUiState.isPullToRefreshing,
+            onRefresh = { feedViewModel.pullToRefresh() }
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -167,7 +191,7 @@ fun FeedScreen(
                     leftIcon = painterResource(R.drawable.ic_plusfriend),
                     hasNotification = false,
                     onLeftClick = {},
-                    onRightClick = {},
+                    onRightClick = onNavigateToNotification,
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 HeaderMenuBarTab(
@@ -178,7 +202,7 @@ fun FeedScreen(
 
                 // 스크롤 영역 전체
                 LazyColumn(
-                    state = listState,
+                    state = currentListState,
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -405,6 +429,19 @@ fun FeedScreen(
             icon = painterResource(id = R.drawable.ic_write),
             onClick = onNavigateToFeedWrite
         )
+        
+        // 탭 전환 시 화면 가운데 로딩 인디케이터
+        if (feedUiState.isRefreshing) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = colors.White,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+        }
     }
 }
 

@@ -261,16 +261,32 @@ fun GroupRoomChatContent(
                 }
             }
 
-            when (activeToast) {
-                ToastType.DAILY_GREETING_LIMIT -> {
-                    ToastWithDate(color = colors.Red)
-                }
+            AnimatedVisibility(
+                visible = activeToast != null,
+                enter = slideInVertically(
+                    initialOffsetY = { -it },
+                    animationSpec = tween(durationMillis = 2000)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { -it },
+                    animationSpec = tween(durationMillis = 2000)
+                ),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 20.dp, vertical = 16.dp)
+                    .zIndex(3f)
+            ) {
+                when (activeToast) {
+                    ToastType.DAILY_GREETING_LIMIT -> {
+                        ToastWithDate(color = colors.Red)
+                    }
 
-                ToastType.FIRST_WRITE -> {
-                    ToastWithDate()
-                }
+                    ToastType.FIRST_WRITE -> {
+                        ToastWithDate()
+                    }
 
-                null -> {}
+                    null -> {}
+                }
             }
         }
     }

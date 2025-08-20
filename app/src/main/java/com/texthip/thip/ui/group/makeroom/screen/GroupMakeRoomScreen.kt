@@ -146,10 +146,11 @@ fun GroupMakeRoomContent(
                 )
                 Spacer(modifier = Modifier.padding(top = 12.dp))
                 GenreChipRow(
-                    modifier = Modifier.width(18.dp),
+                    modifier = Modifier.width(12.dp),
                     genres = uiState.genres.toDisplayStrings(),
                     selectedIndex = uiState.selectedGenreIndex,
-                    onSelect = onSelectGenre
+                    onSelect = onSelectGenre,
+                    horizontalArrangement = Arrangement.Start
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 

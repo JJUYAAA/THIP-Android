@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.utils.rooms.advancedImePadding
 import kotlinx.coroutines.launch
 
 private const val BOTTOM_SHEET_HIDDEN_OFFSET = 300f
@@ -93,6 +94,7 @@ fun CustomBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .offset(y = (offsetY + animatableOffset.value).dp)
+                .advancedImePadding()
                 .background(
                     color = colors.DarkGrey,
                     shape = RoundedCornerShape(topEnd = 12.dp, topStart = 12.dp)

@@ -1,5 +1,9 @@
 package com.texthip.thip.ui.feed.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -102,19 +106,25 @@ fun MySubscriptionContent(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (uiState.showToast) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .zIndex(1f)
-                    .align(Alignment.TopCenter)
-                    .padding(horizontal = 15.dp, vertical = 15.dp),
-            ) {
-                ToastWithDate(
-                    message = uiState.toastMessage,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+        AnimatedVisibility(
+            visible = uiState.showToast,
+            enter = slideInVertically(
+                initialOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .zIndex(1f)
+        ) {
+            ToastWithDate(
+                message = uiState.toastMessage,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
         Column(

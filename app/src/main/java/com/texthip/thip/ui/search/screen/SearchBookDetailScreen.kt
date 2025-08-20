@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.search.screen
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,7 +51,6 @@ import com.texthip.thip.R
 import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
 import com.texthip.thip.ui.common.modal.InfoPopup
-import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.common.topappbar.GradationTopAppBar
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.search.component.SearchFilterButton
@@ -62,7 +61,6 @@ import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.color.hexToColor
-import kotlinx.coroutines.delay
 
 
 @Composable
@@ -72,7 +70,7 @@ fun SearchBookDetailScreen(
     onLeftClick: () -> Unit = {},
     onRightClick: () -> Unit = {},
     onRecruitingGroupClick: () -> Unit = {},
-    onWriteFeedClick: () -> Unit = {},
+    onWriteFeedClick: (BookDetailResponse) -> Unit = {},
     onFeedClick: (Long) -> Unit = {},
     onBookmarkClick: (String, Boolean) -> Unit = { _, _ -> },
     viewModel: BookDetailViewModel = hiltViewModel()
@@ -91,7 +89,6 @@ fun SearchBookDetailScreen(
         bookDetail = uiState.bookDetail,
         uiState = uiState,
         onLeftClick = onLeftClick,
-        onRightClick = onRightClick,
         onRecruitingGroupClick = onRecruitingGroupClick,
         onWriteFeedClick = onWriteFeedClick,
         onFeedClick = onFeedClick,
@@ -117,20 +114,24 @@ private fun SearchBookDetailScreenContent(
     bookDetail: BookDetailResponse? = null,
     uiState: BookDetailUiState? = null,
     onLeftClick: () -> Unit = {},
-    onRightClick: () -> Unit = {},
     onRecruitingGroupClick: () -> Unit = {},
-    onWriteFeedClick: () -> Unit = {},
+    onWriteFeedClick: (BookDetailResponse) -> Unit = {},
     onFeedClick: (Long) -> Unit = {},
     onBookmarkClick: (String, Boolean) -> Unit = { _, _ -> },
     onSortChange: (String) -> Unit = {},
     onLoadMore: () -> Unit = {}
 ) {
-    var isAlarmVisible by remember { mutableStateOf(true) }
     var isIntroductionPopupVisible by remember { mutableStateOf(false) }
     var isBookmarked by remember { mutableStateOf(bookDetail?.isSaved ?: false) }
     var isFilterDropdownVisible by remember { mutableStateOf(false) }
     var filterButtonPosition by remember { mutableStateOf(IntOffset.Zero) }
     val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+    
+    // 화면 크기에 따른 최대 높이 설정 (태블릿 대응)
+    val maxImageHeight = remember(configuration.screenHeightDp) {
+        (configuration.screenHeightDp * 0.6f).dp.coerceAtMost(620.dp)
+    }
     val filterOptions = listOf(
         stringResource(R.string.sort_like),
         stringResource(R.string.sort_latest)
@@ -158,14 +159,6 @@ private fun SearchBookDetailScreenContent(
         }
     }
 
-    // 알림 5초간 노출
-    LaunchedEffect(bookDetail) {
-        if (bookDetail != null) {
-            isAlarmVisible = true
-            delay(5000)
-            isAlarmVisible = false
-        }
-    }
 
     // 북마크 상태 동기화
     LaunchedEffect(bookDetail?.isSaved) {
@@ -228,7 +221,7 @@ private fun SearchBookDetailScreenContent(
                                     contentDescription = bookDetail.title,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .heightIn(min = 420.dp)
+                                        .heightIn(min = 420.dp, max = maxImageHeight)
                                         .blur(4.dp),
                                     contentScale = ContentScale.Crop,
                                     fallback = painterResource(R.drawable.img_book_cover_sample),
@@ -241,9 +234,10 @@ private fun SearchBookDetailScreenContent(
                                             brush = Brush.verticalGradient(
                                                 colors = listOf(
                                                     Color.Transparent,
-                                                    colors.Black.copy(alpha = 0.3f),
-                                                    colors.Black.copy(alpha = 0.6f),
-                                                    colors.Black.copy(alpha = 0.9f),
+                                                    colors.Black.copy(alpha = 0.2f),
+                                                    colors.Black.copy(alpha = 0.5f),
+                                                    colors.Black.copy(alpha = 0.8f),
+                                                    colors.Black.copy(alpha = 0.95f),
                                                     colors.Black
                                                 ),
                                                 startY = 0f,
@@ -330,7 +324,7 @@ private fun SearchBookDetailScreenContent(
                                                 hasRightIcon = true,
                                                 hasRightPlusIcon = true,
                                                 modifier = Modifier.weight(1f),
-                                                onClick = onWriteFeedClick
+                                                onClick = { onWriteFeedClick(bookDetail) }
                                             )
                                             Box(
                                                 modifier = Modifier
@@ -398,6 +392,24 @@ private fun SearchBookDetailScreenContent(
                                     )
                                 }
                             }
+                        }
+
+                        // 피드 섹션 전환을 위한 추가 그라데이션
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(30.dp)
+                                    .background(
+                                        brush = Brush.verticalGradient(
+                                            colors = listOf(
+                                                colors.Black,
+                                                colors.Black.copy(alpha = 0.95f),
+                                                colors.Black.copy(alpha = 0.9f)
+                                            )
+                                        )
+                                    )
+                            )
                         }
 
                         // 피드 목록 (ViewModel에서 변환된 데이터 사용)
@@ -488,24 +500,13 @@ private fun SearchBookDetailScreenContent(
                 }
 
                 // TopAppBar 오버레이 (고정)
-                Column {
-                    AnimatedVisibility(visible = isAlarmVisible) {
-                        GradationTopAppBar(
-                            isImageVisible = true,
-                            count = bookDetail.readCount,
-                            onLeftClick = onLeftClick,
-                            onRightClick = {}
-                        )
-                    }
-                    AnimatedVisibility(visible = !isAlarmVisible) {
-                        DefaultTopAppBar(
-                            isRightIconVisible = true,
-                            isTitleVisible = false,
-                            onLeftClick = onLeftClick,
-                            onRightClick = onRightClick
-                        )
-                    }
-                }
+                GradationTopAppBar(
+                    count = bookDetail.readCount,
+                    autoHideCount = true,
+                    countDisplayDurationMs = 5000L,
+                    onLeftClick = onLeftClick,
+                    onRightClick = {}
+                )
 
                 if (isIntroductionPopupVisible) {
                     Box(

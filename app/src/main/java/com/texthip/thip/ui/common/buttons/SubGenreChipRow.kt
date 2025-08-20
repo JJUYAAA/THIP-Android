@@ -16,11 +16,12 @@ import com.texthip.thip.ui.theme.ThipTheme
 fun SubGenreChipGrid(
     subGenres: List<String>,
     selectedGenres: List<String>,
-    onGenreToggle: (String) -> Unit
+    onGenreToggle: (String) -> Unit,
+    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally
 ) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, horizontalAlignment),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         subGenres.forEach { genre ->

@@ -1,5 +1,9 @@
 package com.texthip.thip.ui.feed.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -79,6 +83,7 @@ fun FeedCommentScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToFeedEdit: (Int) -> Unit = {},
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
+    onNavigateToBookDetail: (String) -> Unit = {},
     feedDetailViewModel: FeedDetailViewModel = hiltViewModel(),
     commentsViewModel: CommentsViewModel = hiltViewModel()
 ) {
@@ -223,7 +228,9 @@ fun FeedCommentScreen(
                                 ActionBookButton(
                                     bookTitle = feedDetail.bookTitle,
                                     bookAuthor = feedDetail.bookAuthor,
-                                    onClick = {}
+                                    onClick = {
+                                        onNavigateToBookDetail(feedDetail.isbn)
+                                    }
                                 )
                             }
                             Text(
@@ -398,17 +405,27 @@ fun FeedCommentScreen(
                     }
                 )
             }
-        }
 
-        // 신고 완료 토스트
-        if (showToast) {
-            ToastWithDate(
-                message = "게시글 신고를 완료했어요.",
+            // 신고 완료 토스트
+            AnimatedVisibility(
+                visible = showToast,
+                enter = slideInVertically(
+                    initialOffsetY = { -it },
+                    animationSpec = tween(durationMillis = 2000)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { -it },
+                    animationSpec = tween(durationMillis = 2000)
+                ),
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(horizontal = 20.dp, vertical = 16.dp)
                     .zIndex(2f)
-            )
+            ) {
+                ToastWithDate(
+                    message = "게시글 신고를 완료했어요."
+                )
+            }
         }
 
         if (isBottomSheetVisible) {

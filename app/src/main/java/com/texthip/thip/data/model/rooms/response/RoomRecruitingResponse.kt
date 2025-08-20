@@ -31,7 +31,7 @@ data class RoomRecruitingResponse(
 @Serializable
 data class RecommendRoomResponse(
     @SerialName("roomId") val roomId: Int,
-    @SerialName("roomImageUrl") val roomImageUrl: String?,
+    @SerialName("bookImageUrl") val bookImageUrl: String?,
     @SerialName("roomName") val roomName: String,
     @SerialName("memberCount") val memberCount: Int,
     @SerialName("recruitCount") val recruitCount: Int,
