@@ -2,6 +2,7 @@ package com.texthip.thip.ui.mypage.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -26,16 +27,15 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun BookContent(
     bookList: List<BookItem>, viewModel: SavedBookViewModel
 ) {
-    //val books by viewModel.bookList.collectAsState()
-
     if (bookList.isEmpty()) {
         EmptyBookContent()
     } else {
-        LazyColumn (
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp),
-        ){
+            contentPadding = PaddingValues(bottom = 20.dp)
+        ) {
             itemsIndexed(bookList, key = { _, book -> book.id }) { index, book ->
                 if (index == 0) {
                     Spacer(Modifier.height(32.dp))
@@ -44,11 +44,11 @@ fun BookContent(
                 CardBookList(
                     title = book.title,
                     author = book.author,
-                    imageUrl = null,
+                    imageUrl = book.imageUrl,
                     publisher = book.publisher,
                     showBookmark = true,
                     isBookmarked = book.isSaved,
-                    onBookmarkClick = { viewModel.toggleBookmark(book.id) }
+                    onBookmarkClick = { viewModel.toggleBookmark(book.isbn) }
                 )
 
                 if (index != bookList.lastIndex) {

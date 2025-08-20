@@ -6,6 +6,7 @@ import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.data.model.book.response.BookListResponse
 import com.texthip.thip.data.model.book.response.BookSaveResponse
 import com.texthip.thip.data.model.book.response.BookSearchResponse
+import com.texthip.thip.data.model.book.response.BookUserSaveResponse
 import com.texthip.thip.data.model.book.response.MostSearchedBooksResponse
 import com.texthip.thip.data.model.book.response.RecruitingRoomsResponse
 import retrofit2.http.Body
@@ -53,4 +54,7 @@ interface BookService {
         @Path("isbn") isbn: String,
         @Query("cursor") cursor: String? = null
     ): BaseResponse<RecruitingRoomsResponse>
+
+    @GET("books/saved")
+    suspend fun getSavedBooks(): BaseResponse<BookUserSaveResponse>
 }
