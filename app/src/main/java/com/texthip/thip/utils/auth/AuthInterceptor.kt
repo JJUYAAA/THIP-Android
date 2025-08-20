@@ -11,11 +11,17 @@ class AuthInterceptor @Inject constructor(
     private val tokenManager: TokenManager
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
+        val originalRequest = chain.request()
+
+        // 1. 요청에 이미 Authorization 헤더가 있는지 확인합니다.
+        if (originalRequest.header("Authorization") != null) {
+            // 이미 헤더가 있다면, 아무 작업도 하지 않고 그대로 보냅니다.
+            return chain.proceed(originalRequest)
+        }
+
         val appToken = runBlocking { tokenManager.getToken().first() }
         val tempToken = runBlocking { tokenManager.getTempToken() }
-
         val tokenToSend = appToken ?: tempToken
-
         val requestBuilder = chain.request().newBuilder()
 
         if (!tokenToSend.isNullOrBlank()) {
