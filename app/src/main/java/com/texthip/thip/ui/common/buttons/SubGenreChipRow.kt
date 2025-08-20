@@ -24,11 +24,17 @@ fun SubGenreChipGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp, horizontalAlignment),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        val isLimitReached = selectedGenres.size >= 5
+
         subGenres.forEach { genre ->
+            val isSelected = selectedGenres.contains(genre)
+            val isEnabled = isSelected || !isLimitReached
+
             OptionChipButton(
                 text = genre,
-                isSelected = selectedGenres.contains(genre),
+                isSelected = isSelected,
                 isFilled = false,
+                enabled = isEnabled,
                 onClick = { onGenreToggle(genre) }
             )
         }
