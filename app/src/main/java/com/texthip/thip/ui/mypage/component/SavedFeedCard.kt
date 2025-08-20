@@ -79,6 +79,7 @@ fun SavedFeedCard(
 
         Column(
             modifier = Modifier
+                .padding(bottom = 16.dp)
                 .clickable { onContentClick() }, // 전체 영역 클릭 유지
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -89,8 +90,7 @@ fun SavedFeedCard(
                     style = typography.feedcopy_r400_s14_h20,
                     color = colors.White,
                     maxLines = maxLines,
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     onTextLayout = { textLayoutResult ->
                         isTextTruncated = textLayoutResult.hasVisualOverflow
                     }
