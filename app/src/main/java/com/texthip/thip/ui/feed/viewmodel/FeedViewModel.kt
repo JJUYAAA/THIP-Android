@@ -32,8 +32,8 @@ data class FeedUiState(
     val isLastPageMyFeeds: Boolean = false,
     val error: String? = null
 ) {
-    val canLoadMoreAllFeeds: Boolean get() = !isLoading && !isLoadingMore && !isRefreshing && !isLastPageAllFeeds
-    val canLoadMoreMyFeeds: Boolean get() = !isLoading && !isLoadingMore && !isRefreshing && !isLastPageMyFeeds
+    val canLoadMoreAllFeeds: Boolean get() = !isLoading && !isLoadingMore && !isRefreshing && !isPullToRefreshing && !isLastPageAllFeeds
+    val canLoadMoreMyFeeds: Boolean get() = !isLoading && !isLoadingMore && !isRefreshing && !isPullToRefreshing && !isLastPageMyFeeds
     val currentTabFeeds: List<Any>
         get() = when (selectedTabIndex) {
             0 -> allFeeds
