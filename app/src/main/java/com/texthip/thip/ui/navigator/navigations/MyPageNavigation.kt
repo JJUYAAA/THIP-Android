@@ -9,8 +9,10 @@ import com.texthip.thip.ui.mypage.screen.MyPageScreen
 import com.texthip.thip.ui.mypage.screen.MypageCustomerServiceScreen
 import com.texthip.thip.ui.mypage.screen.MypageSaveScreen
 import com.texthip.thip.ui.mypage.screen.NotificationScreen
+import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
 import com.texthip.thip.ui.navigator.extensions.navigateToCustomerService
 import com.texthip.thip.ui.navigator.extensions.navigateToEditProfile
+import com.texthip.thip.ui.navigator.extensions.navigateToFeedComment
 import com.texthip.thip.ui.navigator.extensions.navigateToLeaveThipScreen
 import com.texthip.thip.ui.navigator.extensions.navigateToNotificationSettings
 import com.texthip.thip.ui.navigator.extensions.navigateToSavedFeeds
@@ -41,7 +43,13 @@ fun NavGraphBuilder.myPageNavigation(
     }
     composable<MyPageRoutes.Save> {
         MypageSaveScreen(
-            onNavigateBack = { navController.popBackStack() }
+            onNavigateBack = { navController.popBackStack() },
+            onBookClick = { isbn ->
+                navController.navigateToBookDetail(isbn)
+            },
+            onFeedClick = { feedId ->
+                navController.navigateToFeedComment(feedId)
+            }
         )
     }
     composable<MyPageRoutes.NotificationEdit> {

@@ -25,7 +25,9 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun BookContent(
-    bookList: List<BookItem>, viewModel: SavedBookViewModel
+    bookList: List<BookItem>,
+    viewModel: SavedBookViewModel,
+    onBookClick: (isbn: String) -> Unit
 ) {
     if (bookList.isEmpty()) {
         EmptyBookContent()
@@ -48,7 +50,8 @@ fun BookContent(
                     publisher = book.publisher,
                     showBookmark = true,
                     isBookmarked = book.isSaved,
-                    onBookmarkClick = { viewModel.toggleBookmark(book.isbn) }
+                    onBookmarkClick = { viewModel.toggleBookmark(book.isbn) },
+                    onClick = { onBookClick(book.isbn) }
                 )
 
                 if (index != bookList.lastIndex) {

@@ -44,6 +44,8 @@ import com.texthip.thip.ui.theme.White
 @Composable
 fun MypageSaveScreen(
     onNavigateBack: () -> Unit,
+    onBookClick: (isbn: String) -> Unit = {},
+    onFeedClick: (feedId: Long) -> Unit = {},
     feedViewModel: SavedFeedViewModel = hiltViewModel(),
     bookViewModel: SavedBookViewModel = hiltViewModel()
 ) {
@@ -115,12 +117,23 @@ fun MypageSaveScreen(
                     }
                 }
             }
-            Box(modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
                 when (selectedTabIndex) {
-                    0 -> FeedContent(feedList = feedList, viewModel = feedViewModel)
-                    1 -> BookContent(bookList = bookList, viewModel = bookViewModel)
+                    0 -> FeedContent(
+                        feedList = feedList,
+                        onFeedClick = onFeedClick,
+                        viewModel = feedViewModel,
+                    )
+
+                    1 -> BookContent(
+                        bookList = bookList,
+                        onBookClick = onBookClick,
+                        viewModel = bookViewModel,
+                    )
                 }
             }
         }
