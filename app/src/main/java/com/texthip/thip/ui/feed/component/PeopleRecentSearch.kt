@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.GenreChipButton
+import com.texthip.thip.ui.feed.viewmodel.RecentSearchUiItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -27,9 +28,9 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun PeopleRecentSearch(
     modifier: Modifier = Modifier,
-    recentSearches: List<String>,
+    recentSearches: List<RecentSearchUiItem>,
     onSearchClick: (String) -> Unit,
-    onRemove: (String) -> Unit
+    onRemove: (Long) -> Unit
 ) {
     Column (modifier = modifier){
         Text(
@@ -50,11 +51,11 @@ fun PeopleRecentSearch(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 maxLines = 2,
             ) {
-                recentSearches.take(9).forEach { keyword ->
+                recentSearches.take(5).forEach { item ->
                     GenreChipButton(
-                        text = keyword,
-                        onClick = { onSearchClick(keyword) },
-                        onCloseClick = { onRemove(keyword) }
+                        text = item.term,
+                        onClick = { onSearchClick(item.term) },
+                        onCloseClick = { onRemove(item.id) }
                     )
                 }
             }
@@ -71,15 +72,23 @@ fun PeopleRecentSearchPrev() {
                 .padding(16.dp)
         ) {
             var searches by remember {
-                mutableStateOf(listOf("thip", "걔누구더라", "으아아아", "ㅇㅇ", "user.02"))
+                mutableStateOf(
+                    listOf(
+                        RecentSearchUiItem(id = 1, term = "thip"),
+                        RecentSearchUiItem(id = 2, term = "걔누구더라"),
+                        RecentSearchUiItem(id = 3, term = "으아아아"),
+                        RecentSearchUiItem(id = 4, term = "ㅇㅇ"),
+                        RecentSearchUiItem(id = 5, term = "user.02")
+                    )
+                )
             }
 
             PeopleRecentSearch(
                 recentSearches = searches,
-                onSearchClick = { keyword ->
+                onSearchClick = { searchTerm ->
                 },
-                onRemove = { keyword ->
-                    searches = searches.filter { it != keyword }
+                onRemove = { searchId ->
+                    searches = searches.filterNot { it.id == searchId }
                 }
             )
         }

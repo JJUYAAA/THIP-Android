@@ -45,13 +45,13 @@ fun ImageViewerModal(
             .fillMaxSize()
             .clickable { onDismiss() }
     ) {
-        // 닫기 버튼
+        // 이전 버튼
         Icon(
-            painter = painterResource(R.drawable.ic_x),
+            painter = painterResource(R.drawable.ic_arrow_back),
             contentDescription = "닫기",
             tint = colors.White,
             modifier = Modifier
-                .align(Alignment.TopEnd)
+                .align(Alignment.TopStart)
                 .padding(20.dp)
                 .size(24.dp)
                 .clickable { onDismiss() }

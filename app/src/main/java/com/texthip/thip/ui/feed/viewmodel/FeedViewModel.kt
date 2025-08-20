@@ -8,6 +8,7 @@ import com.texthip.thip.data.model.feed.response.MyFeedItem
 import com.texthip.thip.data.model.users.response.RecentWriterList
 import com.texthip.thip.data.repository.FeedRepository
 import com.texthip.thip.data.repository.UserRepository
+import com.texthip.thip.ui.feed.mock.FeedStateUpdateResult
 import com.texthip.thip.ui.feed.usecase.ChangeFeedLikeUseCase
 import com.texthip.thip.ui.feed.usecase.ChangeFeedSaveUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -360,7 +361,10 @@ class FeedViewModel @Inject constructor(
 
             //api 호출
             val newLikeStatus = !feedToUpdate.isLiked
-            changeFeedLikeUseCase(feedId, newLikeStatus)
+            changeFeedLikeUseCase(
+                feedId, newLikeStatus, feedToUpdate.likeCount,
+                feedToUpdate.isSaved
+            )
                 .onFailure {
                     _uiState.update { it.copy(allFeeds = currentFeeds) }
                 }
@@ -384,12 +388,32 @@ class FeedViewModel @Inject constructor(
 
             // API 호출
             val newSaveStatus = !feedToUpdate.isSaved
-            changeFeedSaveUseCase(feedId, newSaveStatus)
-                .onFailure {
-                    updateState { it.copy(allFeeds = currentFeeds) }
-                }
+            changeFeedSaveUseCase(
+                feedId = feedId,
+                newSaveStatus = newSaveStatus,
+                currentIsLiked = feedToUpdate.isLiked,
+                currentLikeCount = feedToUpdate.likeCount
+            ).onFailure {
+                _uiState.update { it.copy(allFeeds = currentFeeds) }
+            }
         }
     }
+
+    fun updateFeedStateFromResult(result: FeedStateUpdateResult) {
+        val updatedFeeds = _uiState.value.allFeeds.map { feed ->
+            if (feed.feedId.toLong() == result.feedId) {
+                feed.copy(
+                    isLiked = result.isLiked,
+                    likeCount = result.likeCount,
+                    isSaved = result.isSaved
+                )
+            } else {
+                feed
+            }
+        }
+        _uiState.update { it.copy(allFeeds = updatedFeeds) }
+    }
+
     fun removeDeletedFeed(feedId: Long) {
         val currentAllFeeds = _uiState.value.allFeeds.filterNot { it.feedId.toLong() == feedId }
         val currentMyFeeds = _uiState.value.myFeeds.filterNot { it.feedId.toLong() == feedId }

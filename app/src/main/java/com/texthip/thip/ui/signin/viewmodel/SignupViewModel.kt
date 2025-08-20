@@ -151,14 +151,4 @@ class SignupViewModel @Inject constructor(
                 }
         }
     }
-
-    // 소셜로그인과 연동 후 삭제 예정
-    fun setInitialDataForTest(nickname: String) {
-        _uiState.update {
-            it.copy(
-                nickname = nickname,
-                isNicknameVerified = true // 닉네임이 검증되었다고 가정
-            )
-        }
-    }
 }

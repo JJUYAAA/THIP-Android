@@ -64,6 +64,7 @@ import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.feed.component.ImageViewerModal
+import com.texthip.thip.ui.feed.mock.FeedStateUpdateResult
 import com.texthip.thip.ui.feed.viewmodel.FeedDetailViewModel
 import com.texthip.thip.ui.group.note.component.CommentSection
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
@@ -89,6 +90,18 @@ fun FeedCommentScreen(
 ) {
     val feedDetailUiState by feedDetailViewModel.uiState.collectAsState()
     val commentsUiState by commentsViewModel.uiState.collectAsState()
+
+    LaunchedEffect(feedDetailUiState.feedDetail) {
+        feedDetailUiState.feedDetail?.let { detail ->
+            //커스텀객체 타입 인식오류 -> 직렬화가 아닌 잘게 쪼개어 전달
+                navController.previousBackStackEntry?.savedStateHandle?.let { handle ->
+                handle.set("updated_feed_id", detail.feedId.toLong())
+                handle.set("updated_feed_isLiked", detail.isLiked)
+                handle.set("updated_feed_likeCount", detail.likeCount)
+                handle.set("updated_feed_isSaved", detail.isSaved)
+            }
+        }
+    }
 
     LaunchedEffect(feedDetailUiState.deleteSuccess) {
         if (feedDetailUiState.deleteSuccess) {

@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ActionMediumButton
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
@@ -33,11 +34,13 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 
-
 @Composable
-fun SignupDoneScreen(userInfo: SignupUserInfo) {
+fun SignupDoneScreen(
+    userInfo: SignupUserInfo,
+    onNavigateToMain: () -> Unit
+) {
     val nickname = userInfo.nickname
-    val profileImageResId = userInfo.profileImageResId
+    val profileImage = userInfo.profileImage
     val role = userInfo.role
     Column(
         Modifier
@@ -77,7 +80,7 @@ fun SignupDoneScreen(userInfo: SignupUserInfo) {
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (profileImageResId != null) {
+                if (profileImage != null) {
                     Box(
                         modifier = Modifier
                             .size(54.dp)
@@ -86,8 +89,8 @@ fun SignupDoneScreen(userInfo: SignupUserInfo) {
                             .background(colors.Black),
                         contentAlignment = Alignment.BottomCenter
                     ) {
-                        Image(
-                            painter = painterResource(id = profileImageResId),
+                        AsyncImage(
+                            model = userInfo.profileImage,
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
@@ -125,7 +128,7 @@ fun SignupDoneScreen(userInfo: SignupUserInfo) {
                     contentColor = colors.White,
                     backgroundColor = colors.Purple,
                     modifier = Modifier.width(180.dp),
-                    onClick = {},
+                    onClick = onNavigateToMain,
                 )
             }
 
@@ -137,9 +140,12 @@ fun SignupDoneScreen(userInfo: SignupUserInfo) {
 @Preview
 @Composable
 private fun SignupDoneScreenPrev() {
-    SignupDoneScreen(userInfo = SignupUserInfo(
-        nickname = "JJUYAA",
-        profileImageResId = R.drawable.character_sociology,
-        role = "칭호칭호"
-    ))
+    SignupDoneScreen(
+        userInfo = SignupUserInfo(
+            nickname = "JJUYAA",
+            profileImage = "",
+            role = "칭호칭호"
+        ),
+        onNavigateToMain = {}
+    )
 }

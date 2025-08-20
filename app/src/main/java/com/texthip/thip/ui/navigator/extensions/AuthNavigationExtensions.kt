@@ -23,7 +23,7 @@ fun NavHostController.navigateToSignup() {
  * 장르 선택(회원가입) 화면으로 이동
  */
 fun NavHostController.navigateToSignupGenre() {
-    navigate(CommonRoutes.Genre)
+    navigate(CommonRoutes.SignupScreenRoutes.Genre)
 }
 
 

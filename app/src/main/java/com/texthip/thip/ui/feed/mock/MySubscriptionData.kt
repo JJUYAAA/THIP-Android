@@ -6,6 +6,7 @@ import com.texthip.thip.data.model.users.response.UserItem
 import com.texthip.thip.utils.color.hexToColor
 
 data class MySubscriptionData(
+    val userId: Long? =null,
     val profileImageUrl: String? = null,
     val nickname: String,
     val role: String,
@@ -16,6 +17,7 @@ data class MySubscriptionData(
 
 fun UserItem.toMySubscriptionData(): MySubscriptionData {
     return MySubscriptionData(
+        userId = this.userId.toLong(),
         profileImageUrl = this.profileImageUrl,
         nickname = this.nickname,
         role = this.aliasName,

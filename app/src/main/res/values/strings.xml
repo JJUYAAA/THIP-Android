@@ -299,6 +299,16 @@
     <string name="splash_thip">띱!</string>
     <string name="splash_ment">하고 떠오른 그 문장을 나눠요</string>
 
+    <!--    tutorial screen   -->
+    <string name="tutorial_1">피드에서 책과 독서에 대한 생각을\n자유롭게 나누어 보세요!</string>
+    <string name="tutorial_2">칭호를 통해 내 독서 취향을 드러내고,\n마음에 드는 유저를 \'띱\'하고 감상을 공유해 보세요!</string>
+    <string name="tutorial_3">모임방에서는 글은 물론 투표 기능을 통해\n감상과 의견을 나눌 수 있어요.</string>
+    <string name="tutorial_4">읽고 싶은 책으로 나만의 독서 모임을 만들고,\n독서메이트와 함께 기록을 나눌 수 있어요.</string>
+    <string name="tutorial_5">기록은 자유롭게, 감상은 방해 없이.\n읽지 않은 페이지에 대한 기록은 블라인드 되어\n스포일러 걱정 없이 몰입할 수 있어요</string>
+    <string name="tutorial_6">모임방의 인상깊은 기록을\n\'핀하기\'로 피드에 다시 공유해 보세요.</string>
+    <string name="thip_plus">Thip+</string>
+
+
     <!--    signin   -->
     <string name="kakao_login">카카오계정 로그인</string>
     <string name="google_login">구글계정 로그인</string>
@@ -312,6 +322,7 @@
     <string name="start_thip">지금 바로 Thip 시작하기</string>
     <string name="select_genre">관심있는 장르를 하나 선택해주세요.</string>
     <string name="genre_can_be_changed">이후 내 정보에서 변경이 가능해요.</string>
+    <string name="skip">건너뛰기</string>
 
     <!--    feed   -->
     <string name="my_thip_list">내 띱 목록</string>

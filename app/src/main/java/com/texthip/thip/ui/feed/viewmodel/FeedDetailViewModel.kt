@@ -33,8 +33,30 @@ class FeedDetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FeedDetailUiState())
     val uiState: StateFlow<FeedDetailUiState> = _uiState.asStateFlow()
 
+    init {
+        observeFeedUpdates()
+    }
+
     private fun updateState(update: (FeedDetailUiState) -> FeedDetailUiState) {
         _uiState.value = update(_uiState.value)
+    }
+    private fun observeFeedUpdates() {
+        viewModelScope.launch {
+            feedRepository.feedStateUpdateResult.collect { update ->
+                val currentFeed = _uiState.value.feedDetail
+                if (currentFeed != null && currentFeed.feedId.toLong() == update.feedId) {
+                    updateState {
+                        it.copy(
+                            feedDetail = currentFeed.copy(
+                                isLiked = update.isLiked,
+                                likeCount = update.likeCount,
+                                isSaved = update.isSaved
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun loadFeedDetail(feedId: Long) {
@@ -91,10 +113,14 @@ class FeedDetailViewModel @Inject constructor(
             updateState { it.copy(feedDetail = updatedFeed) }
 
             val newLikeStatus = !originalFeed.isLiked
-            changeFeedLikeUseCase(originalFeed.feedId.toLong(), newLikeStatus)
-                .onFailure {
-                    updateState { it.copy(feedDetail = originalFeed) }
-                }
+            changeFeedLikeUseCase(
+                feedId = originalFeed.feedId.toLong(),
+                newLikeStatus = newLikeStatus,
+                currentLikeCount = originalFeed.likeCount,
+                currentIsSaved = originalFeed.isSaved
+            ).onFailure {
+                updateState { it.copy(feedDetail = originalFeed) }
+            }
         }
     }
 
@@ -108,10 +134,14 @@ class FeedDetailViewModel @Inject constructor(
             updateState { it.copy(feedDetail = updatedFeed) }
 
             val newSaveStatus = !originalFeed.isSaved
-            changeFeedSaveUseCase(originalFeed.feedId.toLong(), newSaveStatus)
-                .onFailure {
-                    updateState { it.copy(feedDetail = originalFeed) }
-                }
+            changeFeedSaveUseCase(
+                feedId = originalFeed.feedId.toLong(),
+                newSaveStatus = newSaveStatus,
+                currentIsLiked = originalFeed.isLiked,
+                currentLikeCount = originalFeed.likeCount
+            ).onFailure {
+                updateState { it.copy(feedDetail = originalFeed) }
+            }
         }
     }
 

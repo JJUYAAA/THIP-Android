@@ -2,6 +2,7 @@ package com.texthip.thip.ui.mypage.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,11 +18,13 @@ data class MyPageUiState(
     val aliasName: String = "",
     val aliasColor: String = "#0XFFFFFF",
     val errorMessage: String? = null,
-    val showLogoutDialog: Boolean = false
+    val showLogoutDialog: Boolean = false,
+    val isLogoutCompleted: Boolean = false
 )
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MyPageUiState())
@@ -60,7 +63,9 @@ class MyPageViewModel @Inject constructor(
     }
 
     fun confirmLogout() {
-        _uiState.update { it.copy(showLogoutDialog = false) }
-        // TODO: 실제 로그아웃 로직 구현
+        viewModelScope.launch {
+            tokenManager.clearTokens()
+            _uiState.update { it.copy(showLogoutDialog = false, isLogoutCompleted = true) }
+        }
     }
 }

@@ -60,14 +60,17 @@ fun SearchPeopleResultPreview() {
             SearchPeopleResult(
                 peopleList = listOf(
                     MySubscriptionData(
+                        userId = 1L,
                         profileImageUrl = null,
                         nickname = "Thiper_Official",
                         role = "공식 인플루언서",
                         roleColor = colors.NeonGreen,
                         subscriberCount = 50,
-                        isSubscribed = false
+                        isSubscribed = false,
+
                     ),
                     MySubscriptionData(
+                        userId = 1L,
                         profileImageUrl = null,
                         nickname = "Thiper_Writer",
                         role = "작가",
@@ -76,6 +79,7 @@ fun SearchPeopleResultPreview() {
                         isSubscribed = true
                     ),
                     MySubscriptionData(
+                        userId = 1L,
                         profileImageUrl = null,
                         nickname = "Thiper_Newbie",
                         role = "칭호칭호",

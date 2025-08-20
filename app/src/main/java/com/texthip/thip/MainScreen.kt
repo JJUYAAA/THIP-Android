@@ -14,7 +14,9 @@ import com.texthip.thip.ui.navigator.MainNavHost
 import com.texthip.thip.ui.navigator.extensions.isMainTabRoute
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    onNavigateToLogin: () -> Unit
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -28,7 +30,10 @@ fun MainScreen() {
         containerColor = Color.Transparent
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-            MainNavHost(navController)
+            MainNavHost(
+                navController = navController,
+                onNavigateToLogin = onNavigateToLogin
+            )
         }
     }
 }

@@ -6,6 +6,13 @@ import javax.inject.Inject
 class ChangeFeedLikeUseCase @Inject constructor(
     private val feedRepository: FeedRepository
 ) {
-    suspend operator fun invoke(feedId: Long, newLikeStatus: Boolean) =
-        feedRepository.changeFeedLike(feedId, newLikeStatus)
+    suspend operator fun invoke(
+        feedId: Long, newLikeStatus: Boolean, currentLikeCount: Int,
+        currentIsSaved: Boolean
+    ) =
+        feedRepository.changeFeedLike(
+            feedId, newLikeStatus,
+            currentLikeCount,
+            currentIsSaved
+        )
 }
