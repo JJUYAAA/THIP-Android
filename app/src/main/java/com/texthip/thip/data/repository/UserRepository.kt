@@ -63,46 +63,11 @@ class UserRepository @Inject constructor(
             .getOrThrow()
     }
 
-    /*suspend fun checkNickname(nickname: String): Result<NicknameResponse?> = runCatching {
-        val tempToken = tokenManager.getTempToken()
-
-        Log.d("SignupDebug", "가져온 임시 토큰: $tempToken")
-
-        if (tempToken.isNullOrBlank()) {
-            return Result.failure(Exception("임시 토큰이 없습니다. 로그인을 다시 시도해주세요."))
-        }
-        userService.checkNickname("Bearer $tempToken",NicknameRequest(nickname))
-            .handleBaseResponse()
-            .getOrThrow()
-    }*/
-    /*suspend fun checkNickname(nickname: String): Result<NicknameResponse?> = runCatching {
-        val tempToken = tokenManager.getTempToken() // <-- runCatching 안으로 이동
-
-        if (tempToken.isNullOrBlank()) {
-            throw Exception("임시 토큰이 없습니다. 로그인을 다시 시도해주세요.")
-        }
-
-        userService.checkNickname("Bearer $tempToken", NicknameRequest(nickname))
-            .handleBaseResponse()
-            .getOrThrow()
-    }*/
     suspend fun checkNickname(nickname: String): Result<NicknameResponse?> = runCatching {
         userService.checkNickname(NicknameRequest(nickname))
             .handleBaseResponse()
             .getOrThrow()
     }
-    /*suspend fun getAliasChoices(): Result<AliasChoiceResponse?> = runCatching {
-        val tempToken = tokenManager.getTempToken()
-
-        Log.d("SignupDebug", "가져온 임시 토큰: $tempToken")
-
-        if (tempToken.isNullOrBlank()) {
-            return Result.failure(Exception("임시 토큰이 없습니다. 로그인을 다시 시도해주세요."))
-        }
-        userService.getAliasChoices("Bearer $tempToken")
-            .handleBaseResponse()
-            .getOrThrow()
-    }*/
     suspend fun getAliasChoices(): Result<AliasChoiceResponse?> = runCatching {
         userService.getAliasChoices()
             .handleBaseResponse()
