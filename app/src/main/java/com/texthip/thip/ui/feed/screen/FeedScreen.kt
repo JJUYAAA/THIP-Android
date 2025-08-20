@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.feed.screen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -317,7 +316,7 @@ fun FeedScreen(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 244.dp),
+                                        .padding(top = 110.dp),
                                     contentAlignment = Alignment.TopCenter
                                 ) {
                                     Text(
