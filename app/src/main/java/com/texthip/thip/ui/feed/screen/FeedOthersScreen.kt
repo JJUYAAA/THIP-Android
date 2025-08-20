@@ -1,5 +1,9 @@
 package com.texthip.thip.ui.feed.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,15 +54,17 @@ fun FeedOthersScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    
+
     FeedOthersContent(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
         onLikeClick = { feedId -> viewModel.changeFeedLike(feedId) },
         onBookmarkClick = { feedId -> viewModel.changeFeedSave(feedId) },
         onToggleFollow = {
-            val followedMessage = context.getString(R.string.toast_thip, uiState.userInfo?.nickname ?: "")
-            val unfollowedMessage = context.getString(R.string.toast_thip_cancel, uiState.userInfo?.nickname ?: "")
+            val followedMessage =
+                context.getString(R.string.toast_thip, uiState.userInfo?.nickname ?: "")
+            val unfollowedMessage =
+                context.getString(R.string.toast_thip_cancel, uiState.userInfo?.nickname ?: "")
             viewModel.toggleFollow(followedMessage, unfollowedMessage)
         },
         onHideToast = viewModel::hideToast,
@@ -180,19 +186,25 @@ fun FeedOthersContent(
                 }
             }
         }
-        if (uiState.showToast) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .zIndex(1f)
-                    .align(Alignment.TopCenter)
-                    .padding(horizontal = 15.dp, vertical = 15.dp),
-            ) {
-                ToastWithDate(
-                    message = uiState.toastMessage,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+        AnimatedVisibility(
+            visible = uiState.showToast,
+            enter = slideInVertically(
+                initialOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .zIndex(2f)
+        ) {
+            ToastWithDate(
+                message = uiState.toastMessage,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
