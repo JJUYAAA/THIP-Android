@@ -96,6 +96,7 @@ fun FeedCommentScreen(
                 handle.set("updated_feed_isLiked", detail.isLiked)
                 handle.set("updated_feed_likeCount", detail.likeCount)
                 handle.set("updated_feed_isSaved", detail.isSaved)
+                handle.set("updated_feed_commentCount", detail.commentCount)
             }
         }
     }
@@ -112,6 +113,14 @@ fun FeedCommentScreen(
     LaunchedEffect(feedId) {
         feedDetailViewModel.loadFeedDetail(feedId)
         commentsViewModel.initialize(postId = feedId.toLong(), postType = "FEED")
+    }
+
+    // 댓글이 생성되면 피드 상세 정보를 다시 로드
+    LaunchedEffect(commentsUiState.isCommentCreated) {
+        if (commentsUiState.isCommentCreated) {
+            feedDetailViewModel.loadFeedDetail(feedId)
+            commentsViewModel.resetCommentCreatedState()
+        }
     }
 
     // 로딩 상태 처리

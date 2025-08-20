@@ -432,18 +432,33 @@ class FeedViewModel @Inject constructor(
     }
 
     fun updateFeedStateFromResult(result: FeedStateUpdateResult) {
-        val updatedFeeds = _uiState.value.allFeeds.map { feed ->
+        val updatedAllFeeds = _uiState.value.allFeeds.map { feed ->
             if (feed.feedId.toLong() == result.feedId) {
                 feed.copy(
                     isLiked = result.isLiked,
                     likeCount = result.likeCount,
-                    isSaved = result.isSaved
+                    isSaved = result.isSaved,
+                    commentCount = result.commentCount
                 )
             } else {
                 feed
             }
         }
-        _uiState.update { it.copy(allFeeds = updatedFeeds) }
+        
+        val updatedMyFeeds = _uiState.value.myFeeds.map { feed ->
+            if (feed.feedId.toLong() == result.feedId) {
+                feed.copy(
+                    isLiked = result.isLiked,
+                    likeCount = result.likeCount,
+                    isSaved = result.isSaved,
+                    commentCount = result.commentCount
+                )
+            } else {
+                feed
+            }
+        }
+        
+        _uiState.update { it.copy(allFeeds = updatedAllFeeds, myFeeds = updatedMyFeeds) }
     }
 
     fun removeDeletedFeed(feedId: Long) {

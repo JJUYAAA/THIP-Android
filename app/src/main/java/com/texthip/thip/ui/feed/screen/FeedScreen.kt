@@ -195,12 +195,14 @@ fun FeedScreen(
                     val isLiked = handle.get<Boolean>("updated_feed_isLiked") ?: false
                     val likeCount = handle.get<Int>("updated_feed_likeCount") ?: 0
                     val isSaved = handle.get<Boolean>("updated_feed_isSaved") ?: false
+                    val commentCount = handle.get<Int>("updated_feed_commentCount") ?: 0
 
                     val result = FeedStateUpdateResult(
                         feedId = feedId,
                         isLiked = isLiked,
                         likeCount = likeCount,
-                        isSaved = isSaved
+                        isSaved = isSaved,
+                        commentCount = commentCount
                     )
 
                     feedViewModel.updateFeedStateFromResult(result)
@@ -209,6 +211,7 @@ fun FeedScreen(
                     handle.remove<Boolean>("updated_feed_isLiked")
                     handle.remove<Int>("updated_feed_likeCount")
                     handle.remove<Boolean>("updated_feed_isSaved")
+                    handle.remove<Int>("updated_feed_commentCount")
                 }
             }
         }
