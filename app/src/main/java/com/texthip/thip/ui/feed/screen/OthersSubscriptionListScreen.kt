@@ -164,7 +164,8 @@ private fun OthersSubscriptionListScreenPrev() {
             nickname = "문학소년 $it",
             aliasName = if (it % 3 == 0) "공식 인플루언서" else "글쓰는 탐험가",
             aliasColor = if (it % 3 == 0) "#00C7B2" else "#FFD600",
-            followerCount = it * 10
+            followerCount = it * 10,
+            isMyself = true
         )
     }
 
