@@ -108,7 +108,7 @@ fun SavedFeedCard(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                        .padding(top = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     feedItem.imageUrls.take(3).forEach { imageUrl ->
@@ -126,6 +126,7 @@ fun SavedFeedCard(
         }
 
         ActionBarButton(
+            modifier = Modifier.padding(top = 16.dp),
             isLiked = feedItem.isLiked,
             likeCount = feedItem.likeCount,
             commentCount = feedItem.commentCount,
