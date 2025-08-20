@@ -44,15 +44,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.texthip.thip.R
-import com.texthip.thip.ui.common.CommentActionMode
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.buttons.ActionBarButton
 import com.texthip.thip.ui.common.buttons.ActionBookButton
@@ -68,11 +65,12 @@ import com.texthip.thip.ui.group.note.component.CommentSection
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
 import com.texthip.thip.ui.group.note.viewmodel.CommentsViewModel
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
-import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.rooms.advancedImePadding
 import kotlinx.coroutines.delay
+
+private data class CommentActionTarget(val commentId: Int, val isWriter: Boolean)
 
 @Composable
 fun FeedCommentScreen(
@@ -154,8 +152,10 @@ fun FeedCommentScreen(
 
     // 피드 데이터가 없으면 리턴
     val feedDetail = feedDetailUiState.feedDetail ?: return
-    var isBottomSheetVisible by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) } // 피드 삭제
+    var isPostMenuVisible by remember { mutableStateOf(false) }
+    var isCommentMenuVisible by remember { mutableStateOf(false) }
+    var selectedCommentForMenu by remember { mutableStateOf<CommentActionTarget?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     var showToast by remember { mutableStateOf(false) }
 
     LaunchedEffect(showToast) {
@@ -173,8 +173,6 @@ fun FeedCommentScreen(
     var replyingToCommentId by remember { mutableStateOf<Int?>(null) }
     var replyingToNickname by remember { mutableStateOf<String?>(null) }
 
-    var selectedCommentId by remember { mutableStateOf<Int?>(null) }
-
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
@@ -189,13 +187,15 @@ fun FeedCommentScreen(
         }
     }
 
+    val isOverlayVisible = isPostMenuVisible || isCommentMenuVisible || showDeleteDialog || showImageViewer
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .advancedImePadding()
     ) {
         Box(
-            modifier = if (isBottomSheetVisible || showDialog || showImageViewer) {
+            modifier = if (isOverlayVisible) {
                 Modifier
                     .fillMaxSize()
                     .blur(5.dp)
@@ -206,7 +206,6 @@ fun FeedCommentScreen(
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
                         focusManager.clearFocus()
-                        selectedCommentId = null
                     })
                 }
         ) {
@@ -215,7 +214,7 @@ fun FeedCommentScreen(
                     isRightIconVisible = true,
                     isTitleVisible = false,
                     onLeftClick = onNavigateBack,
-                    onRightClick = { isBottomSheetVisible = true },
+                    onRightClick = { isPostMenuVisible = true },
                 )
 
                 LazyColumn(
@@ -314,9 +313,7 @@ fun FeedCommentScreen(
                                 isPinVisible = false,
                                 isLockIcon = feedDetail.isPublic == false,
                                 onLikeClick = { feedDetailViewModel.changeFeedLike() },
-                                onCommentClick = { /* 스크롤 이동 or 포커스 처리 */ },
                                 onBookmarkClick = { feedDetailViewModel.changeFeedSave() },
-                                onPinClick = { /* TODO: pin 기능 */ }
                             )
 
                             HorizontalDivider(
@@ -371,23 +368,19 @@ fun FeedCommentScreen(
                             ) { commentItem ->
                                 CommentSection(
                                     commentItem = commentItem,
-                                    actionMode = CommentActionMode.POPUP,
-                                    selectedCommentId = selectedCommentId,
                                     onEvent = commentsViewModel::onEvent,
                                     onReplyClick = { commentId, nickname ->
                                         replyingToCommentId = commentId
                                         replyingToNickname = nickname
-                                        selectedCommentId = null
                                         focusRequester.requestFocus()
                                     },
                                     onCommentLongPress = { comment ->
-                                        selectedCommentId = comment.commentId
+                                        selectedCommentForMenu = CommentActionTarget(comment.commentId!!, comment.isWriter)
+                                        isCommentMenuVisible = true
                                     },
                                     onReplyLongPress = { reply ->
-                                        selectedCommentId = reply.commentId
-                                    },
-                                    onDismissPopup = {
-                                        selectedCommentId = null
+                                        selectedCommentForMenu = CommentActionTarget(reply.commentId, reply.isWriter)
+                                        isCommentMenuVisible = true
                                     },
                                     onProfileClick = onNavigateToUserProfile
                                 )
@@ -429,16 +422,16 @@ fun FeedCommentScreen(
                 visible = showToast,
                 enter = slideInVertically(
                     initialOffsetY = { -it },
-                    animationSpec = tween(durationMillis = 2000)
+                    animationSpec = tween(durationMillis = 1000)
                 ),
                 exit = slideOutVertically(
                     targetOffsetY = { -it },
-                    animationSpec = tween(durationMillis = 2000)
+                    animationSpec = tween(durationMillis = 1000)
                 ),
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(horizontal = 20.dp, vertical = 16.dp)
-                    .zIndex(2f)
+                    .zIndex(3f)
             ) {
                 ToastWithDate(
                     message = stringResource(R.string.report_complete_feed)
@@ -446,7 +439,7 @@ fun FeedCommentScreen(
             }
         }
 
-        if (isBottomSheetVisible) {
+        if (isPostMenuVisible) {
             val menuItems = if (feedDetail.isWriter) {
                 // 내 피드인 경우: 수정, 삭제
                 listOf(
@@ -454,7 +447,7 @@ fun FeedCommentScreen(
                         text = stringResource(R.string.edit_feed),
                         color = colors.White,
                         onClick = {
-                            isBottomSheetVisible = false
+                            isPostMenuVisible = false
                             onNavigateToFeedEdit(feedDetail.feedId)
                         }
                     ),
@@ -462,8 +455,39 @@ fun FeedCommentScreen(
                         text = stringResource(R.string.delete_feed),
                         color = colors.Red,
                         onClick = {
-                            isBottomSheetVisible = false
-                            showDialog = true
+                            isPostMenuVisible = false
+                            showDeleteDialog = true
+                        }
+                    )
+                )
+            } else {
+                listOf(
+                    MenuBottomSheetItem(
+                        text = stringResource(R.string.report),
+                        color = colors.Red,
+                        onClick = {
+                            isPostMenuVisible = false
+                            showToast = true
+                        }
+                    )
+                )
+            }
+            MenuBottomSheet(
+                items = menuItems,
+                onDismiss = { isPostMenuVisible = false }
+            )
+        }
+
+        if (isCommentMenuVisible && selectedCommentForMenu != null) {
+            val comment = selectedCommentForMenu!!
+            val menuItems = if (comment.isWriter) {
+                listOf(
+                    MenuBottomSheetItem(
+                        text = stringResource(R.string.delete),
+                        color = colors.Red,
+                        onClick = {
+                            commentsViewModel.onEvent(CommentsEvent.DeleteComment(comment.commentId))
+                            isCommentMenuVisible = false
                         }
                     )
                 )
@@ -474,36 +498,35 @@ fun FeedCommentScreen(
                         text = stringResource(R.string.report),
                         color = colors.Red,
                         onClick = {
-                            isBottomSheetVisible = false
-                            // TODO: 피드 신고 API 호출
                             showToast = true
+                            isCommentMenuVisible = false
                         }
                     )
                 )
             }
+
             MenuBottomSheet(
                 items = menuItems,
-                onDismiss = { isBottomSheetVisible = false }
+                onDismiss = { isCommentMenuVisible = false }
             )
         }
 
-        if (showDialog) {
+        if (showDeleteDialog) {
             Box(
                 Modifier
                     .fillMaxSize()
-                    .clickable { showDialog = false }) {
+                    .clickable(enabled = false, onClick = {})
+            ) {
                 Box(Modifier.align(Alignment.Center)) {
                     DialogPopup(
                         title = stringResource(R.string.delete_feed_dialog_title),
                         description = stringResource(R.string.delete_feed_dialog_description),
                         onConfirm = {
-                            showDialog = false
-                            isBottomSheetVisible = false
+                            showDeleteDialog = false
                             feedDetailViewModel.deleteFeed(feedId)
                         },
                         onCancel = {
-                            showDialog = false
-                            isBottomSheetVisible = false
+                            showDeleteDialog = false
                         }
                     )
                 }
@@ -517,16 +540,5 @@ fun FeedCommentScreen(
                 onDismiss = { showImageViewer = false }
             )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun FeedCommentScreenPrev() {
-    ThipTheme {
-        FeedCommentScreen(
-            feedId = 1,
-            navController = rememberNavController()
-        )
     }
 }
