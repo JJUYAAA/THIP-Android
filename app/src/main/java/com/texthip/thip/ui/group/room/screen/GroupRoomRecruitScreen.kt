@@ -201,10 +201,10 @@ fun GroupRoomRecruitContent(
                 Column(
                     Modifier
                         .fillMaxSize()
-                        .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
-                        .verticalScroll(scrollState)
+                        .verticalScroll(scrollState),
                 ) {
                     Row(
+                        modifier = Modifier.padding(horizontal = 20.dp).padding(top = 20.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -230,7 +230,9 @@ fun GroupRoomRecruitContent(
                     }
 
                     Text(
-                        modifier = Modifier.padding(top = 40.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .padding(top = 40.dp),
                         text = stringResource(R.string.group_room_desc),
                         style = typography.menu_sb600_s14_h24,
                         color = colors.White,
@@ -241,11 +243,14 @@ fun GroupRoomRecruitContent(
                         style = typography.copy_r400_s12_h20,
                         color = colors.Grey,
                         modifier = Modifier
+                            .padding(horizontal = 20.dp)
                             .padding(top = 5.dp, bottom = 20.dp)
                     )
 
                     Row(
-                        Modifier.fillMaxWidth(),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         //모집 기간
@@ -327,6 +332,7 @@ fun GroupRoomRecruitContent(
                     Row(
                         Modifier
                             .fillMaxWidth()
+                            .padding(horizontal = 20.dp)
                             .padding(top = 22.dp, bottom = 30.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -373,6 +379,7 @@ fun GroupRoomRecruitContent(
 
                     //읽을 책 정보
                     CardRoomBook(
+                        modifier = Modifier.padding(horizontal = 20.dp),
                         title = detail.bookTitle,
                         author = detail.authorName,
                         publisher = detail.publisher,
@@ -384,7 +391,7 @@ fun GroupRoomRecruitContent(
                     // 추천 모임방이 있을 때만 표시
                     if (detail.recommendRooms.isNotEmpty()) {
                         Text(
-                            modifier = Modifier.padding(top = 40.dp),
+                            modifier = Modifier.padding(top = 40.dp, start = 20.dp),
                             text = stringResource(R.string.group_recommend),
                             style = typography.smalltitle_sb600_s18_h24,
                             color = colors.White
@@ -393,7 +400,7 @@ fun GroupRoomRecruitContent(
                         //추천 모임방
                         LazyRow(
                             modifier = Modifier
-                                .padding(top = 24.dp)
+                                .padding(top = 24.dp, start = 20.dp)
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
@@ -409,6 +416,8 @@ fun GroupRoomRecruitContent(
                             }
                         }
                     }
+
+                    Spacer(Modifier.height(70.dp))
                 }
             }
         }
