@@ -2,6 +2,7 @@ package com.texthip.thip.ui.mypage.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -31,7 +32,8 @@ fun FeedContent(
     } else {
         LazyColumn (
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 20.dp)
         ){
             itemsIndexed(feedList, key = { _,feed -> feed.id }) { index,feed ->
                 if (index == 0) {

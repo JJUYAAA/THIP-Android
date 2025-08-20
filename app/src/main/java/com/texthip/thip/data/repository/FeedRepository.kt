@@ -293,4 +293,9 @@ class FeedRepository @Inject constructor(
             }
         }
 
+    suspend fun getSavedFeeds(cursor: String? = null): Result<AllFeedResponse?> = runCatching {
+        feedService.getSavedFeeds(cursor)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
 }
