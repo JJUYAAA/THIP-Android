@@ -41,6 +41,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -157,6 +158,8 @@ fun FeedCommentScreen(
     var selectedCommentForMenu by remember { mutableStateOf<CommentActionTarget?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showToast by remember { mutableStateOf(false) }
+    var toastMessage by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     LaunchedEffect(showToast) {
         if (showToast) {
@@ -434,14 +437,13 @@ fun FeedCommentScreen(
                     .zIndex(3f)
             ) {
                 ToastWithDate(
-                    message = stringResource(R.string.report_complete_feed)
+                    message = toastMessage
                 )
             }
         }
 
         if (isPostMenuVisible) {
             val menuItems = if (feedDetail.isWriter) {
-                // 내 피드인 경우: 수정, 삭제
                 listOf(
                     MenuBottomSheetItem(
                         text = stringResource(R.string.edit_feed),
@@ -466,8 +468,9 @@ fun FeedCommentScreen(
                         text = stringResource(R.string.report),
                         color = colors.Red,
                         onClick = {
-                            isPostMenuVisible = false
+                            toastMessage = "피드 신고를 완료했습니다."
                             showToast = true
+                            isPostMenuVisible = false
                         }
                     )
                 )
@@ -492,12 +495,12 @@ fun FeedCommentScreen(
                     )
                 )
             } else {
-                // 다른 사람 피드인 경우: 신고만
                 listOf(
                     MenuBottomSheetItem(
                         text = stringResource(R.string.report),
                         color = colors.Red,
                         onClick = {
+                            toastMessage = "댓글 신고를 완료했습니다."
                             showToast = true
                             isCommentMenuVisible = false
                         }
