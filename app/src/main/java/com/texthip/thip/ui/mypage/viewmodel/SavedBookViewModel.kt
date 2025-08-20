@@ -1,95 +1,54 @@
 package com.texthip.thip.ui.mypage.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.texthip.thip.data.model.book.response.BookUserSaveList
+import com.texthip.thip.data.repository.BookRepository
 import com.texthip.thip.ui.mypage.mock.BookItem
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-open class SavedBookViewModel : ViewModel() {
+@HiltViewModel
+class SavedBookViewModel @Inject constructor(
+    private val bookRepository: BookRepository
+) : ViewModel() {
 
-    protected val _books = MutableStateFlow<List<BookItem>>(emptyList())
-    open val books: StateFlow<List<BookItem>> = _books
+    private val _books = MutableStateFlow<List<BookItem>>(emptyList())
+    val books = _books.asStateFlow()
 
-    init {
-        loadMockBooks()
+    fun loadSavedBooks() {
+        viewModelScope.launch {
+            bookRepository.getSavedBooks()
+                .onSuccess { response ->
+                    _books.value = response?.bookList?.map { it.toBookItem() } ?: emptyList()
+                }
+                .onFailure {
+                    it.printStackTrace()
+                }
+        }
     }
 
-    open fun loadMockBooks() {
-        _books.value = listOf(
-            BookItem(
-                id = 1,
-                title = "이기적 유전자",
-                author = "리처드 도킨스",
-                publisher = "을유문화사",
-                imageUrl = null,
-                isSaved = true
-            ),
-            BookItem(
-                id = 2,
-                title = "이기적 유전자",
-                author = "리처드 도킨스",
-                publisher = "을유문화사",
-                imageUrl = null,
-                isSaved = true
-            ),
-            BookItem(
-                id = 3,
-                title = "이기적 유전자",
-                author = "리처드 도킨스",
-                publisher = "을유문화사",
-                imageUrl = null,
-                isSaved = true
-            ),
-            BookItem(
-                id = 4,
-                title = "이기적 유전자",
-                author = "리처드 도킨스",
-                publisher = "을유문화사",
-                imageUrl = null,
-                isSaved = true
-            ),
-            BookItem(
-                id = 5,
-                title = "이기적 유전자",
-                author = "리처드 도킨스",
-                publisher = "을유문화사",
-                imageUrl = null,
-                isSaved = true
-            ),
-            BookItem(
-                id = 6,
-                title = "이기적 유전자",
-                author = "리처드 도킨스",
-                publisher = "을유문화사",
-                imageUrl = null,
-                isSaved = true
-            ),
-            BookItem(
-                id = 7,
-                title = "이기적 유전자",
-                author = "리처드 도킨스",
-                publisher = "을유문화사",
-                imageUrl = null,
-                isSaved = true
-            ),
-            BookItem(
-                id = 8,
-                title = "이기적 유전자",
-                author = "리처드 도킨스",
-                publisher = "을유문화사",
-                imageUrl = null,
-                isSaved = true
-            )
-        )
-    }
-    fun toggleBookmark(id: Int) {
-        _books.value = _books.value.map {
-            if (it.id == id) it.copy(isSaved = !it.isSaved) else it
+    fun toggleBookmark(isbn: String) {
+        viewModelScope.launch {
+            bookRepository.saveBook(isbn, type = false)
+                .onSuccess {
+                    loadSavedBooks()
+                }
         }
     }
 }
 
-class EmptySavedBookViewModel : SavedBookViewModel() {
-    override fun loadMockBooks() {}
-
+private fun BookUserSaveList.toBookItem(): BookItem {
+    return BookItem(
+        id = this.bookId,
+        title = this.bookTitle,
+        author = this.authorName,
+        publisher = this.publisher,
+        imageUrl = this.bookImageUrl,
+        isSaved = this.isSaved,
+        isbn = this.isbn,
+    )
 }

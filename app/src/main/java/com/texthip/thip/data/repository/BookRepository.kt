@@ -6,6 +6,7 @@ import com.texthip.thip.data.model.book.response.BookDetailResponse
 import com.texthip.thip.data.model.book.response.BookListResponse
 import com.texthip.thip.data.model.book.response.BookSaveResponse
 import com.texthip.thip.data.model.book.response.BookSearchResponse
+import com.texthip.thip.data.model.book.response.BookUserSaveResponse
 import com.texthip.thip.data.model.book.response.MostSearchedBooksResponse
 import com.texthip.thip.data.model.book.response.RecruitingRoomsResponse
 import com.texthip.thip.data.service.BookService
@@ -25,7 +26,11 @@ class BookRepository @Inject constructor(
     }
 
     /** 책 검색 */
-    suspend fun searchBooks(keyword: String, page: Int = 1, isFinalized: Boolean = false): Result<BookSearchResponse?> = runCatching {
+    suspend fun searchBooks(
+        keyword: String,
+        page: Int = 1,
+        isFinalized: Boolean = false
+    ): Result<BookSearchResponse?> = runCatching {
         bookService.searchBooks(keyword, page, isFinalized)
             .handleBaseResponse()
             .getOrThrow()
@@ -53,8 +58,17 @@ class BookRepository @Inject constructor(
     }
 
     /** 모집중인 방 조회 */
-    suspend fun getRecruitingRooms(isbn: String, cursor: String? = null): Result<RecruitingRoomsResponse?> = runCatching {
+    suspend fun getRecruitingRooms(
+        isbn: String,
+        cursor: String? = null
+    ): Result<RecruitingRoomsResponse?> = runCatching {
         bookService.getRecruitingRooms(isbn, cursor)
+            .handleBaseResponse()
+            .getOrThrow()
+    }
+
+    suspend fun getSavedBooks(): Result<BookUserSaveResponse?> = runCatching {
+        bookService.getSavedBooks()
             .handleBaseResponse()
             .getOrThrow()
     }

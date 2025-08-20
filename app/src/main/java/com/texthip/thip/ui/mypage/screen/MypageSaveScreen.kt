@@ -15,6 +15,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,14 +29,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.mypage.component.BookContent
-import com.texthip.thip.ui.mypage.component.EmptyBookContent
 import com.texthip.thip.ui.mypage.component.FeedContent
-import com.texthip.thip.ui.mypage.viewmodel.EmptySavedBookViewModel
-import com.texthip.thip.ui.mypage.viewmodel.EmptySavedFeedViewModel
 import com.texthip.thip.ui.mypage.viewmodel.SavedBookViewModel
 import com.texthip.thip.ui.mypage.viewmodel.SavedFeedViewModel
 import com.texthip.thip.ui.theme.ThipTheme
@@ -44,16 +42,22 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.ui.theme.White
 
 @Composable
-fun SavedScreen(
+fun MypageSaveScreen(
     onNavigateBack: () -> Unit,
-    feedViewModel: SavedFeedViewModel = viewModel(),
-    bookViewModel: SavedBookViewModel = viewModel()
-
+    feedViewModel: SavedFeedViewModel = hiltViewModel(),
+    bookViewModel: SavedBookViewModel = hiltViewModel()
 ) {
     val tabs = listOf(stringResource(R.string.feed), stringResource(R.string.book))
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val feedList by feedViewModel.feeds.collectAsState()
     val bookList by bookViewModel.books.collectAsState()
+
+    LaunchedEffect(selectedTabIndex) {
+        when (selectedTabIndex) {
+            0 -> feedViewModel.loadSavedFeeds()
+            1 -> bookViewModel.loadSavedBooks()
+        }
+    }
 
     Column(
         Modifier
@@ -68,9 +72,11 @@ fun SavedScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Box(modifier = Modifier
-                .width(160.dp)
-                .padding(start = 20.dp)) {
+            Box(
+                modifier = Modifier
+                    .width(160.dp)
+                    .padding(start = 20.dp)
+            ) {
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
                     containerColor = Color.Transparent,
@@ -109,7 +115,9 @@ fun SavedScreen(
                     }
                 }
             }
-            Box(modifier = Modifier .weight(1f) .fillMaxWidth()) {
+            Box(modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()) {
                 when (selectedTabIndex) {
                     0 -> FeedContent(feedList = feedList, viewModel = feedViewModel)
                     1 -> BookContent(bookList = bookList, viewModel = bookViewModel)
@@ -124,10 +132,8 @@ fun SavedScreen(
 @Preview
 @Composable
 private fun SavedScreenPrev() {
-    SavedScreen(
+    MypageSaveScreen(
         onNavigateBack = {},
-        feedViewModel = SavedFeedViewModel(),
-        bookViewModel = SavedBookViewModel()
     )
 }
 
@@ -136,10 +142,8 @@ private fun SavedScreenPrev() {
 @Composable
 private fun SavedScreenWithoutFeedPrev() {
     ThipTheme {
-        SavedScreen(
+        MypageSaveScreen(
             onNavigateBack = {},
-            feedViewModel = EmptySavedFeedViewModel(),
-            bookViewModel = EmptySavedBookViewModel()
         )
     }
 }

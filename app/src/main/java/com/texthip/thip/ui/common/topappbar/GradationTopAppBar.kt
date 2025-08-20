@@ -2,13 +2,14 @@ package com.texthip.thip.ui.common.topappbar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +36,7 @@ fun GradationTopAppBar(
     autoHideCount: Boolean? = null,
     countDisplayDurationMs: Long = 5000L,
     onLeftClick: () -> Unit,
+    isRightIconVisible: Boolean = false,
     onRightClick: () -> Unit = {},
 ) {
     var isCountVisible by remember { mutableStateOf(isImageVisible) }
@@ -49,9 +51,11 @@ fun GradationTopAppBar(
                     isCountVisible = false
                 }
             }
+
             false -> {
                 isCountVisible = true
             }
+
             null -> {
                 // 기존 동작 유지: isImageVisible 파라미터 사용
                 isCountVisible = isImageVisible
@@ -74,16 +78,18 @@ fun GradationTopAppBar(
             .height(56.dp),
         contentAlignment = Alignment.Center,
     ) {
-        IconButton(
-            onClick = onLeftClick,
-            modifier = Modifier.align(Alignment.CenterStart)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_back),
-                contentDescription = "Back Button",
-                tint = Color.Unspecified
-            )
-        }
+        Icon(
+            painter = painterResource(R.drawable.ic_arrow_back),
+            contentDescription = "Back Button",
+            tint = Color.Unspecified,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onLeftClick
+                )
+        )
 
         Column {
             AnimatedVisibility(
@@ -95,16 +101,20 @@ fun GradationTopAppBar(
             }
         }
 
-        /*IconButton(
-            onClick = onRightClick,
-            modifier = Modifier.align(Alignment.CenterEnd)
-        ) {
+        if (isRightIconVisible) {
             Icon(
                 painter = painterResource(R.drawable.ic_more),
                 contentDescription = "More Options",
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = onRightClick
+                    )
             )
-        }*/
+        }
     }
 }
 

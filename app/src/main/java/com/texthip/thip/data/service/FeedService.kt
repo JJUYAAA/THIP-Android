@@ -108,4 +108,9 @@ interface FeedService {
         @Path("feedId") feedId: Long,
         @Body request: FeedSaveRequest
     ): BaseResponse<FeedSaveResponse>
+
+    @GET("feeds/saved")
+    suspend fun getSavedFeeds(
+        @Query("cursor") cursor: String? = null
+    ): BaseResponse<AllFeedResponse>
 }

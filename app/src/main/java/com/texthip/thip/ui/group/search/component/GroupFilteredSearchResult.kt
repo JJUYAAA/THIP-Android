@@ -3,6 +3,7 @@ package com.texthip.thip.ui.group.search.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,9 +28,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
+import com.texthip.thip.data.model.rooms.response.SearchRoomItem
 import com.texthip.thip.ui.common.buttons.GenreChipRow
 import com.texthip.thip.ui.common.cards.CardItemRoomSmall
-import com.texthip.thip.data.model.rooms.response.SearchRoomItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -48,7 +49,7 @@ fun GroupFilteredSearchResult(
 ) {
     Column {
         GenreChipRow(
-            modifier = Modifier.width(20.dp),
+            modifier = Modifier.width(12.dp),
             genres = genres,
             selectedIndex = selectedGenreIndex,
             onSelect = onGenreSelect
@@ -94,7 +95,7 @@ fun GroupFilteredSearchResult(
                 }
             }
 
-            LazyColumn(state = listState) {
+            LazyColumn(state = listState, contentPadding = PaddingValues(bottom = 20.dp)) {
                 itemsIndexed(roomList) { index, room ->
                     CardItemRoomSmall(
                         title = room.roomName,

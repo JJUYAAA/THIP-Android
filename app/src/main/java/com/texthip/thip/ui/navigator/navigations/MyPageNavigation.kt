@@ -1,6 +1,5 @@
 package com.texthip.thip.ui.navigator.navigations
 
-import androidx.compose.material3.Text
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -8,8 +7,8 @@ import com.texthip.thip.ui.mypage.screen.DeleteAccountScreen
 import com.texthip.thip.ui.mypage.screen.EditProfileScreen
 import com.texthip.thip.ui.mypage.screen.MyPageScreen
 import com.texthip.thip.ui.mypage.screen.MypageCustomerServiceScreen
+import com.texthip.thip.ui.mypage.screen.MypageSaveScreen
 import com.texthip.thip.ui.mypage.screen.NotificationScreen
-import com.texthip.thip.ui.mypage.screen.SavedScreen
 import com.texthip.thip.ui.navigator.extensions.navigateToCustomerService
 import com.texthip.thip.ui.navigator.extensions.navigateToEditProfile
 import com.texthip.thip.ui.navigator.extensions.navigateToLeaveThipScreen
@@ -41,7 +40,7 @@ fun NavGraphBuilder.myPageNavigation(
         )
     }
     composable<MyPageRoutes.Save> {
-        SavedScreen(
+        MypageSaveScreen(
             onNavigateBack = { navController.popBackStack() }
         )
     }

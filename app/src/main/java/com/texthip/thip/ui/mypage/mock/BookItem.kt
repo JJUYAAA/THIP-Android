@@ -6,5 +6,6 @@ data class BookItem(
     val author: String,
     val publisher: String,
     val imageUrl: String? = null,
+    val isbn: String = "",
     val isSaved: Boolean
 )
