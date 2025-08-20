@@ -140,12 +140,15 @@ fun FeedScreen(
     var isUserTabChange by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        feedViewModel.refreshData()
+        // 최초 진입시에만 데이터 로딩
+        if (feedUiState.allFeeds.isEmpty() && feedUiState.myFeeds.isEmpty()) {
+            feedViewModel.refreshData()
+        }
         val hasUpdatedFeedData =
             navController.currentBackStackEntry?.savedStateHandle?.get<Long>("updated_feed_id") != null
 
         if (!hasUpdatedFeedData) {
-            currentListState.scrollToItem(0)
+            allFeedListState.scrollToItem(0)
         }
     }
 
