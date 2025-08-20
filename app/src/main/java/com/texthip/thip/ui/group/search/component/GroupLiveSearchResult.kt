@@ -2,6 +2,7 @@ package com.texthip.thip.ui.group.search.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,8 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.data.model.rooms.response.SearchRoomItem
+import com.texthip.thip.ui.common.cards.CardItemRoomSmall
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
@@ -48,7 +49,7 @@ fun GroupLiveSearchResult(
         }
     }
 
-    LazyColumn(state = listState) {
+    LazyColumn(state = listState, contentPadding = PaddingValues(bottom = 20.dp)) {
         itemsIndexed(roomList) { index, room ->
             CardItemRoomSmall(
                 title = room.roomName,

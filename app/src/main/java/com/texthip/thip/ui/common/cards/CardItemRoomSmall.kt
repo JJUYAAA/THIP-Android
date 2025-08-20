@@ -61,7 +61,6 @@ fun CardItemRoomSmall(
         colors = CardDefaults.cardColors(
             containerColor = bgColor
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
