@@ -201,6 +201,7 @@ fun GroupRoomContent(
 
         GradationTopAppBar(
             onLeftClick = onBackClick,
+            isRightIconVisible = true,
             onRightClick = { isBottomSheetVisible = true },
         )
     }
