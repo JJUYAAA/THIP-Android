@@ -64,7 +64,6 @@ import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.feed.component.ImageViewerModal
-import com.texthip.thip.ui.feed.mock.FeedStateUpdateResult
 import com.texthip.thip.ui.feed.viewmodel.FeedDetailViewModel
 import com.texthip.thip.ui.group.note.component.CommentSection
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
@@ -159,6 +158,13 @@ fun FeedCommentScreen(
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) } // 피드 삭제
     var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(showToast) {
+        if (showToast) {
+            delay(3000)
+            showToast = false
+        }
+    }
 
     val images = feedDetail.contentUrls
     var showImageViewer by remember { mutableStateOf(false) }
@@ -437,7 +443,7 @@ fun FeedCommentScreen(
                     .zIndex(2f)
             ) {
                 ToastWithDate(
-                    message = "게시글 신고를 완료했어요."
+                    message = stringResource(R.string.report_complete_feed)
                 )
             }
         }
@@ -502,12 +508,6 @@ fun FeedCommentScreen(
                             isBottomSheetVisible = false
                         }
                     )
-                    LaunchedEffect(showToast) {
-                        if (showToast) {
-                            delay(3000)
-                            showToast = false
-                        }
-                    }
                 }
             }
         }
