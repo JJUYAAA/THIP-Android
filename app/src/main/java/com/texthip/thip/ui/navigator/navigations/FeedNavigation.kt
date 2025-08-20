@@ -1,26 +1,30 @@
 package com.texthip.thip.ui.navigator.navigations
 
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.texthip.thip.ui.feed.screen.FeedCommentScreen
+import com.texthip.thip.ui.feed.screen.FeedMyScreen
 import com.texthip.thip.ui.feed.screen.FeedOthersScreen
 import com.texthip.thip.ui.feed.screen.FeedScreen
 import com.texthip.thip.ui.feed.screen.FeedWriteScreen
 import com.texthip.thip.ui.feed.screen.MySubscriptionScreen
-import com.texthip.thip.ui.feed.screen.SearchPeopleScreen
 import com.texthip.thip.ui.feed.screen.OthersSubscriptionListScreen
+import com.texthip.thip.ui.feed.screen.SearchPeopleScreen
+import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
 import com.texthip.thip.ui.feed.viewmodel.FeedWriteViewModel
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
 import com.texthip.thip.ui.navigator.extensions.navigateToFeedComment
 import com.texthip.thip.ui.navigator.extensions.navigateToFeedWrite
 import com.texthip.thip.ui.navigator.extensions.navigateToMySubscription
-import com.texthip.thip.ui.navigator.extensions.navigateToSearchPeople
 import com.texthip.thip.ui.navigator.extensions.navigateToOthersSubscription
+import com.texthip.thip.ui.navigator.extensions.navigateToSearchPeople
 import com.texthip.thip.ui.navigator.extensions.navigateToUserProfile
 import com.texthip.thip.ui.navigator.routes.FeedRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
@@ -28,10 +32,25 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 // Feed
 fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBack: () -> Unit) {
     composable<MainTabRoutes.Feed> { backStackEntry ->
+        val feedViewModel: FeedViewModel = hiltViewModel(backStackEntry)
+        val uiState by feedViewModel.uiState.collectAsState()
+        val myUserId = uiState.myFeedInfo?.creatorId
+
+        val onNavigateToUserProfile: (Long) -> Unit = { clickedUserId ->
+            if (myUserId != null && myUserId == clickedUserId) {
+                // 내 프로필일 경우 FeedMyScreen으로 이동
+                navController.navigate(FeedRoutes.My)
+            } else {
+                // 다른 사람 프로필일 경우 FeedOthersScreen으로 이동
+                navController.navigate(FeedRoutes.Others(clickedUserId))
+            }
+        }
+
         val resultFeedId = backStackEntry.savedStateHandle.get<Long>("feedId")
         val refreshFeed = backStackEntry.savedStateHandle.get<Boolean>("refreshFeed")
 
         FeedScreen(
+            feedViewModel = feedViewModel,
             navController = navController,
             resultFeedId = resultFeedId,
             refreshFeed = refreshFeed,
@@ -53,9 +72,7 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             onNavigateToBookDetail = { isbn ->
                 navController.navigateToBookDetail(isbn)
             },
-            onNavigateToUserProfile = { userId ->
-                navController.navigateToUserProfile(userId)
-            },
+            onNavigateToUserProfile = onNavigateToUserProfile,
             onNavigateToSearchPeople = {
                 navController.navigateToSearchPeople()
             },
@@ -68,12 +85,20 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         )
     }
     composable<FeedRoutes.MySubscription> {
+        val feedViewModel: FeedViewModel = hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Feed))
+        val uiState by feedViewModel.uiState.collectAsState()
+        val myUserId = uiState.myFeedInfo?.creatorId
+
         MySubscriptionScreen(
             onNavigateBack = {
                 navigateBack()
             },
             onNavigateToUserProfile = { userId ->
-                navController.navigate(FeedRoutes.Others(userId))
+                if (myUserId != null && myUserId == userId) {
+                    navController.navigate(FeedRoutes.My)
+                } else {
+                    navController.navigate(FeedRoutes.Others(userId))
+                }
             }
         )
     }
@@ -145,6 +170,19 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             }
         )
     }
+    composable<FeedRoutes.My> {
+        val feedViewModel: FeedViewModel = hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Feed))
+        FeedMyScreen(
+            viewModel = feedViewModel,
+            onNavigateBack = navigateBack,
+            onNavigateToSubscriptionList = { userId ->
+                navController.navigateToOthersSubscription(userId)
+            },
+            onNavigateToFeedComment = { feedId ->
+                navController.navigateToFeedComment(feedId)
+            }
+        )
+    }
     composable<FeedRoutes.Others> { backStackEntry ->
         // 다른 유저의 피드 화면
         FeedOthersScreen(
@@ -160,10 +198,10 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         )
     }
     composable<FeedRoutes.Comment> { backStackEntry ->
-        /*val route = backStackEntry.arguments?.let {
-            FeedRoutes.Comment(it.getLong("feedId"))
-        } ?: return@composable*/
         val route = backStackEntry.toRoute<FeedRoutes.Comment>()
+        val feedViewModel: FeedViewModel = hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Feed))
+        val uiState by feedViewModel.uiState.collectAsState()
+        val myUserId = uiState.myFeedInfo?.creatorId
 
         FeedCommentScreen(
             feedId = route.feedId,
@@ -175,7 +213,11 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
                 navController.navigate(FeedRoutes.Write(feedId = feedId))
             },
             onNavigateToUserProfile = { userId ->
-                navController.navigateToUserProfile(userId)
+                if (myUserId != null && myUserId == userId) {
+                    navController.navigate(FeedRoutes.My)
+                } else {
+                    navController.navigate(FeedRoutes.Others(userId))
+                }
             },
             onNavigateToBookDetail = { isbn ->
                 navController.navigateToBookDetail(isbn)
@@ -186,8 +228,12 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
     composable<FeedRoutes.OthersSubscription> {
         OthersSubscriptionListScreen(
             onNavigateBack = navigateBack,
-            onNavigateToUserProfile = { userId ->
-                navController.navigateToUserProfile(userId)
+            onProfileClick = { userId, isMyself ->
+                if (isMyself) {
+                    navController.navigate(FeedRoutes.My)
+                } else {
+                    navController.navigate(FeedRoutes.Others(userId))
+                }
             }
         )
     }
