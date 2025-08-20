@@ -39,6 +39,8 @@ import com.texthip.thip.utils.color.hexToColor
 @Composable
 fun FeedOthersScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToSubscriptionList: (userId: Long) -> Unit = {},
+    onNavigateToFeedComment: (feedId: Long) -> Unit = {},
     viewModel: FeedOthersViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -46,7 +48,9 @@ fun FeedOthersScreen(
     FeedOthersContent(
         uiState = uiState,
         onNavigateBack = onNavigateBack,
-        onLikeClick = { feedId -> viewModel.changeFeedLike(feedId) }
+        onLikeClick = { feedId -> viewModel.changeFeedLike(feedId) },
+        onNavigateToSubscriptionList = onNavigateToSubscriptionList,
+        onNavigateToFeedComment = onNavigateToFeedComment
     )
 }
 
@@ -54,7 +58,9 @@ fun FeedOthersScreen(
 fun FeedOthersContent(
     uiState: FeedOthersUiState,
     onNavigateBack: () -> Unit,
-    onLikeClick: (Long) -> Unit
+    onLikeClick: (Long) -> Unit,
+    onNavigateToSubscriptionList: (userId: Long) -> Unit,
+    onNavigateToFeedComment: (feedId: Long) -> Unit = {},
 ) {
     val userInfo = uiState.userInfo
 
@@ -96,7 +102,7 @@ fun FeedOthersContent(
                         FeedSubscribeBarlist(
                             modifier = Modifier.padding(horizontal = 20.dp),
                             followerProfileImageUrls = userInfo.latestFollowerProfileImageUrls,
-                            onClick = {}
+                            onClick = { onNavigateToSubscriptionList(userInfo.creatorId) }
                         )
                         Spacer(modifier = Modifier.height(40.dp))
                         Text(
@@ -137,7 +143,7 @@ fun FeedOthersContent(
                             OthersFeedCard(
                                 feedItem = feed,
                                 onLikeClick = { onLikeClick(feed.feedId) },
-                                onContentClick = { /* TODO: 피드 상세 댓글 화면으로 이동 */ }
+                                onContentClick = { onNavigateToFeedComment(feed.feedId) }
                             )
                             Spacer(modifier = Modifier.height(40.dp))
                             if (index < uiState.feeds.lastIndex) {
@@ -187,7 +193,8 @@ private fun FeedOthersScreenPrev() {
                 feeds = mockFeeds
             ),
             onNavigateBack = {},
-            onLikeClick = {}
+            onLikeClick = {},
+            onNavigateToSubscriptionList = {}
         )
     }
 }

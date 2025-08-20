@@ -57,7 +57,6 @@ import com.texthip.thip.ui.group.note.component.CommentBottomSheet
 import com.texthip.thip.ui.group.note.component.FilterHeaderSection
 import com.texthip.thip.ui.group.note.component.TextCommentCard
 import com.texthip.thip.ui.group.note.component.VoteCommentCard
-import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
 import com.texthip.thip.ui.group.note.viewmodel.CommentsViewModel
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteEvent
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteSideEffect
@@ -503,22 +502,12 @@ fun GroupNoteContent(
         }
 
         CommentBottomSheet(
+            viewModel = commentsViewModel,
             uiState = commentsUiState,
-            onEvent = commentsViewModel::onEvent,
             onDismiss = {
                 isCommentBottomSheetVisible = false
                 selectedPostForComment = null
                 onEvent(GroupNoteEvent.RefreshPosts)
-            },
-            onSendReply = { text, parentId, _ ->
-                if (text.isNotBlank()) {
-                    commentsViewModel.onEvent(
-                        CommentsEvent.CreateComment(
-                            content = text,
-                            parentId = parentId
-                        )
-                    )
-                }
             },
             onProfileClick = onNavigateToUserProfile
         )

@@ -6,7 +6,9 @@ import com.texthip.thip.data.model.comments.response.CommentList
 import com.texthip.thip.data.model.comments.response.ReplyList
 import com.texthip.thip.data.repository.CommentsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,6 +21,10 @@ data class CommentsUiState(
     val isLast: Boolean = false,
     val comments: List<CommentList> = emptyList()
 )
+
+sealed interface CommentSideEffect {
+    data class ScrollToItem(val parentCommentId: Int?) : CommentSideEffect
+}
 
 sealed interface CommentsEvent {
     data object LoadMoreComments : CommentsEvent
@@ -35,6 +41,9 @@ class CommentsViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(CommentsUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<CommentSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
 
     private var nextCursor: String? = null
     private var currentPostId: Long = -1L
@@ -137,20 +146,11 @@ class CommentsViewModel @Inject constructor(
                                 currentState.comments.indexOfFirst { it.commentId == parentId }
 
                             if (parentCommentIndex != -1) {
-                                val updatedParentComment = CommentList(
-                                    commentId = res.commentId,
-                                    creatorId = res.creatorId,
-                                    creatorProfileImageUrl = res.creatorProfileImageUrl,
-                                    creatorNickname = res.creatorNickname,
-                                    aliasName = res.aliasName,
-                                    aliasColor = res.aliasColor,
-                                    postDate = res.postDate,
-                                    content = res.content,
-                                    likeCount = res.likeCount,
-                                    isDeleted = res.isDeleted,
-                                    isWriter = res.isWriter,
-                                    isLike = res.isLike,
-                                    replyList = res.replyList
+                                val originalParentComment =
+                                    currentState.comments[parentCommentIndex]
+
+                                val updatedParentComment = originalParentComment.copy(
+                                    replyList = originalParentComment.replyList + res.replyList
                                 )
 
                                 val newCommentsList = currentState.comments.toMutableList().apply {
@@ -162,6 +162,8 @@ class CommentsViewModel @Inject constructor(
                             }
                         }
                     }
+
+                    _sideEffect.emit(CommentSideEffect.ScrollToItem(parentId))
                 }
             }.onFailure { throwable ->
                 _uiState.update { it.copy(error = "댓글 작성 실패: ${throwable.message}") }
