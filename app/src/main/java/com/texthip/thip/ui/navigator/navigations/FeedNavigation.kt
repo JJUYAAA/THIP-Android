@@ -12,12 +12,15 @@ import com.texthip.thip.ui.feed.screen.FeedScreen
 import com.texthip.thip.ui.feed.screen.FeedWriteScreen
 import com.texthip.thip.ui.feed.screen.MySubscriptionScreen
 import com.texthip.thip.ui.feed.screen.SearchPeopleScreen
+import com.texthip.thip.ui.feed.screen.OthersSubscriptionListScreen
 import com.texthip.thip.ui.feed.viewmodel.FeedWriteViewModel
+import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
 import com.texthip.thip.ui.navigator.extensions.navigateToFeedComment
 import com.texthip.thip.ui.navigator.extensions.navigateToFeedWrite
 import com.texthip.thip.ui.navigator.extensions.navigateToMySubscription
 import com.texthip.thip.ui.navigator.extensions.navigateToSearchPeople
+import com.texthip.thip.ui.navigator.extensions.navigateToOthersSubscription
 import com.texthip.thip.ui.navigator.extensions.navigateToUserProfile
 import com.texthip.thip.ui.navigator.routes.FeedRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
@@ -26,12 +29,17 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBack: () -> Unit) {
     composable<MainTabRoutes.Feed> { backStackEntry ->
         val resultFeedId = backStackEntry.savedStateHandle.get<Long>("feedId")
+        val refreshFeed = backStackEntry.savedStateHandle.get<Boolean>("refreshFeed")
 
         FeedScreen(
             navController = navController,
             resultFeedId = resultFeedId,
+            refreshFeed = refreshFeed,
             onResultConsumed = {
                 backStackEntry.savedStateHandle.remove<Long>("feedId")
+            },
+            onRefreshConsumed = {
+                backStackEntry.savedStateHandle.remove<Boolean>("refreshFeed")
             },
             onNavigateToMySubscription = {
                 navController.navigateToMySubscription()
@@ -50,6 +58,12 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             },
             onNavigateToSearchPeople = {
                 navController.navigateToSearchPeople()
+            },
+            onNavigateToNotification = {
+                navController.navigateToAlarm()
+            },
+            onNavigateToOthersSubscription = { userId ->
+                navController.navigateToOthersSubscription(userId)
             }
         )
     }
@@ -102,6 +116,19 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
                     bookImageUrl = route.bookImageUrl,
                     recordContent = route.recordContent
                 )
+            } else if (route.isbn != null &&
+                route.bookTitle != null &&
+                route.bookAuthor != null
+            ) {
+                // 새 글 작성 모드: 책 정보만 있는 경우 (책 상세 페이지에서 온 경우)
+                viewModel.selectBook(
+                    com.texthip.thip.ui.group.makeroom.mock.BookData(
+                        title = route.bookTitle,
+                        imageUrl = route.bookImageUrl ?: "",
+                        author = route.bookAuthor,
+                        isbn = route.isbn
+                    )
+                )
             }
         }
 
@@ -112,6 +139,8 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
                 // 피드 생성 성공 시 결과를 저장하고 피드 목록으로 돌아가기
                 navController.getBackStackEntry(MainTabRoutes.Feed)
                     .savedStateHandle["feedId"] = feedId
+                navController.getBackStackEntry(MainTabRoutes.Feed)
+                    .savedStateHandle["refreshFeed"] = true
                 navController.popBackStack(MainTabRoutes.Feed, inclusive = false)
             }
         )
@@ -121,6 +150,12 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
         FeedOthersScreen(
             onNavigateBack = {
                 navigateBack()
+            },
+            onNavigateToSubscriptionList = { userId ->
+                navController.navigateToOthersSubscription(userId)
+            },
+            onNavigateToFeedComment = { feedId ->
+                navController.navigateToFeedComment(feedId)
             }
         )
     }
@@ -139,6 +174,18 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             onNavigateToFeedEdit = { feedId ->
                 navController.navigate(FeedRoutes.Write(feedId = feedId))
             },
+            onNavigateToUserProfile = { userId ->
+                navController.navigateToUserProfile(userId)
+            },
+            onNavigateToBookDetail = { isbn ->
+                navController.navigateToBookDetail(isbn)
+            }
+        )
+    }
+
+    composable<FeedRoutes.OthersSubscription> {
+        OthersSubscriptionListScreen(
+            onNavigateBack = navigateBack,
             onNavigateToUserProfile = { userId ->
                 navController.navigateToUserProfile(userId)
             }

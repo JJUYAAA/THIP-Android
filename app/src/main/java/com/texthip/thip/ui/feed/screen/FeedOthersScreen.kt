@@ -44,6 +44,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun FeedOthersScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToSubscriptionList: (userId: Long) -> Unit = {},
+    onNavigateToFeedComment: (feedId: Long) -> Unit = {},
     viewModel: FeedOthersViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -59,7 +61,9 @@ fun FeedOthersScreen(
             val unfollowedMessage = context.getString(R.string.toast_thip_cancel, uiState.userInfo?.nickname ?: "")
             viewModel.toggleFollow(followedMessage, unfollowedMessage)
         },
-        onHideToast = viewModel::hideToast
+        onHideToast = viewModel::hideToast,
+        onNavigateToSubscriptionList = onNavigateToSubscriptionList,
+        onNavigateToFeedComment = onNavigateToFeedComment
     )
 }
 
@@ -70,7 +74,9 @@ fun FeedOthersContent(
     onLikeClick: (Long) -> Unit,
     onBookmarkClick: (Long) -> Unit,
     onToggleFollow: () -> Unit,
-    onHideToast: () -> Unit
+    onHideToast: () -> Unit,
+    onNavigateToSubscriptionList: (userId: Long) -> Unit,
+    onNavigateToFeedComment: (feedId: Long) -> Unit = {},
 ) {
     val userInfo = uiState.userInfo
     LaunchedEffect(uiState.showToast) {
@@ -118,7 +124,7 @@ fun FeedOthersContent(
                         FeedSubscribeBarlist(
                             modifier = Modifier.padding(horizontal = 20.dp),
                             followerProfileImageUrls = userInfo.latestFollowerProfileImageUrls,
-                            onClick = {}
+                            onClick = { onNavigateToSubscriptionList(userInfo.creatorId) }
                         )
                         Spacer(modifier = Modifier.height(40.dp))
                         Text(
@@ -159,8 +165,8 @@ fun FeedOthersContent(
                             OthersFeedCard(
                                 feedItem = feed,
                                 onLikeClick = { onLikeClick(feed.feedId) },
-                                onContentClick = { /* TODO: 피드 상세 댓글 화면으로 이동 */ },
-                                onBookmarkClick = { onBookmarkClick(feed.feedId) }
+                                onBookmarkClick = { onBookmarkClick(feed.feedId) },
+                                onContentClick = { onNavigateToFeedComment(feed.feedId) }
                             )
                             Spacer(modifier = Modifier.height(40.dp))
                             if (index < uiState.feeds.lastIndex) {
@@ -227,7 +233,8 @@ private fun FeedOthersScreenPrev() {
             onLikeClick = {},
             onToggleFollow = {},
             onHideToast = {},
-            onBookmarkClick = {}
+            onBookmarkClick = {},
+            onNavigateToSubscriptionList = {}
         )
     }
 }

@@ -96,6 +96,7 @@ fun SearchBookFilteredResult(
                         if (index < bookList.size - 1) {
                             Spacer(
                                 modifier = Modifier
+                                    .padding(top = 12.dp)
                                     .fillMaxWidth()
                                     .height(1.dp)
                                     .background(colors.DarkGrey02)

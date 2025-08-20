@@ -49,9 +49,7 @@ fun GroupDatePicker(
     }
 
     Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -72,6 +70,7 @@ fun GroupDatePicker(
             )
             Spacer(modifier = Modifier.width(2.dp))
             Text(
+                modifier = Modifier.padding(end = 8.dp),
                 text = stringResource(R.string.group_year),
                 style = typography.info_r400_s12,
                 color = colors.White
@@ -97,6 +96,7 @@ fun GroupDatePicker(
             )
             Spacer(modifier = Modifier.width(2.dp))
             Text(
+                modifier = Modifier.padding(end = 8.dp),
                 text = stringResource(R.string.group_month),
                 style = typography.info_r400_s12,
                 color = colors.White

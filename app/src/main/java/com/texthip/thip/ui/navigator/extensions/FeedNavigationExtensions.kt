@@ -43,10 +43,14 @@ fun NavHostController.navigateToFeedWrite(
 // 유저 프로필(피드)로
 fun NavHostController.navigateToUserProfile(userId: Long) {
     navigate(FeedRoutes.Others(userId))
-
 }
 
 //사용자 찾기 화면으로
 fun NavHostController.navigateToSearchPeople() {
     navigate(FeedRoutes.SearchPeople)
+}
+
+// 띱 목록으로 이동
+fun NavHostController.navigateToOthersSubscription(userId: Long) {
+    navigate(FeedRoutes.OthersSubscription(userId))
 }

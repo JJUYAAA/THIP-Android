@@ -206,4 +206,18 @@ class GroupViewModel @Inject constructor(
         refreshGroupData()
     }
 
+    fun resetToInitialState() {
+        // 장르 선택을 초기화하고 모든 데이터를 새로고침
+        updateState { 
+            it.copy(
+                selectedGenreIndex = 0,
+                roomMainList = it.roomMainList?.copy(
+                    deadlineRoomList = emptyList(),
+                    popularRoomList = emptyList()
+                )
+            )
+        }
+        refreshGroupData()
+    }
+
 }

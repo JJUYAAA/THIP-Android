@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FeedUsersInfoResponse(
-    val creatorId: Int,
+    val creatorId: Long,
     val profileImageUrl: String,
     val nickname: String,
     val aliasName: String,

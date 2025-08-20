@@ -1,5 +1,9 @@
 package com.texthip.thip.ui.group.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,7 +58,7 @@ fun GroupScreen(
 ) {
     // 화면 재진입 시 데이터 새로고침
     LaunchedEffect(Unit) {
-        viewModel.refreshDataOnScreenEnter()
+        viewModel.resetToInitialState()
     }
     val uiState by viewModel.uiState.collectAsState()
 
@@ -91,6 +95,11 @@ fun GroupContent(
     onHideToast: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
+    
+    // 탭 전환 시 스크롤을 맨 위로 초기화
+    LaunchedEffect(Unit) {
+        scrollState.scrollTo(0)
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -165,13 +174,23 @@ fun GroupContent(
         )
 
         // 토스트 팝업
-        if (uiState.showToast) {
+        AnimatedVisibility(
+            visible = uiState.showToast,
+            enter = slideInVertically(
+                initialOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .zIndex(2f)
+        ) {
             ToastWithDate(
-                message = uiState.toastMessage,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
-                    .zIndex(2f)
+                message = uiState.toastMessage
             )
         }
     }

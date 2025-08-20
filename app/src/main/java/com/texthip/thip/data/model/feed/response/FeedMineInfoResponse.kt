@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FeedMineInfoResponse(
-    @SerialName("creatorId") val creatorId: Int,
+    @SerialName("creatorId") val creatorId: Long,
     @SerialName("profileImageUrl") val profileImageUrl: String?,
     @SerialName("nickname") val nickname: String,
     @SerialName("aliasName") val aliasName: String,

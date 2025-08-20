@@ -326,8 +326,7 @@ class FeedWriteViewModel @Inject constructor(
     fun selectCategory(index: Int) {
         updateState {
             it.copy(
-                selectedCategoryIndex = index,
-                selectedTags = emptyList() // 카테고리 변경 시 태그 초기화
+                selectedCategoryIndex = index
             )
         }
     }

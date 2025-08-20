@@ -3,11 +3,14 @@ package com.texthip.thip.ui.group.note.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -22,9 +25,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.data.model.comments.response.CommentList
 import com.texthip.thip.data.model.comments.response.ReplyList
@@ -34,6 +42,7 @@ import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.forms.CommentTextField
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
 import com.texthip.thip.ui.group.note.viewmodel.CommentsUiState
+import com.texthip.thip.ui.group.note.viewmodel.CommentsViewModel
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -43,10 +52,9 @@ import com.texthip.thip.utils.rooms.advancedImePadding
 @Composable
 fun CommentBottomSheet(
     uiState: CommentsUiState,
-    onEvent: (CommentsEvent) -> Unit,
     onDismiss: () -> Unit,
-    onSendReply: (text: String, parentCommentId: Int?, replyToNickname: String?) -> Unit,
-    onProfileClick: (userId: Long) -> Unit = {}
+    onProfileClick: (userId: Long) -> Unit = {},
+    viewModel: CommentsViewModel = hiltViewModel(),
 ) {
     var inputText by remember { mutableStateOf("") }
     var replyingToCommentId by remember { mutableStateOf<Int?>(null) }
@@ -56,6 +64,21 @@ fun CommentBottomSheet(
     var selectedReplyForMenu by remember { mutableStateOf<ReplyList?>(null) }
 
     val isOverlayVisible = selectedCommentForMenu != null || selectedReplyForMenu != null
+
+    val focusRequester = remember { FocusRequester() }
+    val listState = rememberLazyListState()
+
+    val focusManager = LocalFocusManager.current
+
+    val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+
+    LaunchedEffect(isKeyboardVisible) {
+        if (!isKeyboardVisible) {
+            replyingToCommentId = null
+            replyingToNickname = null
+            focusManager.clearFocus()
+        }
+    }
 
     Box(
         if (isOverlayVisible) {
@@ -98,15 +121,18 @@ fun CommentBottomSheet(
                             EmptyCommentView()
                         } else {
                             CommentLazyList(
+                                listState = listState,
                                 commentList = uiState.comments,
                                 isLoadingMore = uiState.isLoadingMore,
                                 isLastPage = uiState.isLast,
-                                onLoadMore = { onEvent(CommentsEvent.LoadMoreComments) },
+                                onLoadMore = { viewModel.onEvent(CommentsEvent.LoadMoreComments) },
                                 onReplyClick = { commentId, nickname ->
                                     replyingToCommentId = commentId
                                     replyingToNickname = nickname
+
+                                    focusRequester.requestFocus()
                                 },
-                                onEvent = onEvent,
+                                onEvent = viewModel::onEvent,
                                 onCommentLongPress = { comment ->
                                     selectedCommentForMenu = comment
                                 },
@@ -118,19 +144,23 @@ fun CommentBottomSheet(
                 }
 
                 CommentTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
                     hint = stringResource(R.string.reply_to),
                     input = inputText,
                     onInputChange = { inputText = it },
                     onSendClick = {
-                        onSendReply(
-                            inputText,
-                            replyingToCommentId,
-                            replyingToNickname
+                        viewModel.onEvent(
+                            CommentsEvent.CreateComment(
+                                content = inputText,
+                                parentId = replyingToCommentId
+                            )
                         )
                         inputText = ""
                         replyingToCommentId = null
                         replyingToNickname = null
+                        focusManager.clearFocus()
                     },
                     replyTo = replyingToNickname,
                     onCancelReply = {
@@ -162,7 +192,7 @@ fun CommentBottomSheet(
                                 is ReplyList -> item.commentId
                                 else -> null
                             }
-                            commentId?.let { onEvent(CommentsEvent.DeleteComment(it)) }
+                            commentId?.let { viewModel.onEvent(CommentsEvent.DeleteComment(it)) }
 
                             selectedCommentForMenu = null
                             selectedReplyForMenu = null
@@ -192,6 +222,7 @@ fun CommentBottomSheet(
 
 @Composable
 private fun CommentLazyList(
+    listState: LazyListState,
     commentList: List<CommentList>,
     isLoadingMore: Boolean,
     isLastPage: Boolean,
@@ -202,11 +233,9 @@ private fun CommentLazyList(
     onReplyLongPress: (ReplyList) -> Unit,
     onProfileClick: (userId: Long) -> Unit
 ) {
-    val lazyListState = rememberLazyListState()
-
     val isScrolledToEnd by remember {
         derivedStateOf {
-            val layoutInfo = lazyListState.layoutInfo
+            val layoutInfo = listState.layoutInfo
             if (layoutInfo.totalItemsCount == 0) return@derivedStateOf false
             val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
             lastVisibleItemIndex >= layoutInfo.totalItemsCount - 1
@@ -219,7 +248,7 @@ private fun CommentLazyList(
         }
     }
 
-    LazyColumn(state = lazyListState) {
+    LazyColumn(state = listState) {
         items(
             items = commentList,
             key = { comment ->
@@ -310,9 +339,7 @@ private fun CommentBottomSheetPreview() {
                     isLoadingMore = false,
                     isLast = false
                 ),
-                onEvent = {},
                 onDismiss = { showSheet = false },
-                onSendReply = { _, _, _ -> }
             )
         }
     }

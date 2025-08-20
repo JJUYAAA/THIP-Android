@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.texthip.thip.R
 import com.texthip.thip.data.model.users.response.FollowerList
 import com.texthip.thip.ui.common.header.AuthorHeader
@@ -42,8 +41,9 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.color.hexToColor
 
 @Composable
-fun OthersSubsciptionListScreen(
-    navController: NavController,
+fun OthersSubscriptionListScreen(
+    onNavigateBack: () -> Unit,
+    onNavigateToUserProfile: (userId: Long) -> Unit = {},
     viewModel: OthersSubscriptionViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -64,17 +64,19 @@ fun OthersSubsciptionListScreen(
         }
     }
 
-    OthersSubsciptionContent(
+    OthersSubscriptionContent(
         uiState = uiState,
         lazyListState = lazyListState,
-        onNavigateBack = { navController.popBackStack() }
+        onNavigateBack = onNavigateBack,
+        onProfileClick = onNavigateToUserProfile
     )
 }
 @Composable
-fun OthersSubsciptionContent(
+fun OthersSubscriptionContent(
     uiState: OthersSubscriptionUiState,
     lazyListState: LazyListState,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onProfileClick: (userId: Long) -> Unit
 ) {
     Column(
         Modifier
@@ -120,7 +122,7 @@ fun OthersSubsciptionContent(
                             showThipNum = true,
                             profileImageSize = 36.dp,
                             thipNum = user.followerCount,
-                            onThipNumClick = {}
+                            onClick = { onProfileClick(user.userId) }
                         )
 
                         if (index < uiState.followers.lastIndex) {
@@ -154,7 +156,7 @@ fun OthersSubsciptionContent(
 }
 @Preview
 @Composable
-private fun OthersSubsciptionListScreenPrev() {
+private fun OthersSubscriptionListScreenPrev() {
     val mockUsers = (1..10).map {
         FollowerList(
             userId = it.toLong(),
@@ -167,7 +169,7 @@ private fun OthersSubsciptionListScreenPrev() {
     }
 
     ThipTheme {
-        OthersSubsciptionContent(
+        OthersSubscriptionContent(
             uiState = OthersSubscriptionUiState(
                 isLoading = false,
                 followers = mockUsers,
@@ -175,7 +177,8 @@ private fun OthersSubsciptionListScreenPrev() {
                 isLastPage = false
             ),
             lazyListState = rememberLazyListState(),
-            onNavigateBack = {}
+            onNavigateBack = {},
+            onProfileClick = {}
         )
     }
 }

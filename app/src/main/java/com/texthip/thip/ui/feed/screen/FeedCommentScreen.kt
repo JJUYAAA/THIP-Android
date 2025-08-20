@@ -1,5 +1,9 @@
 package com.texthip.thip.ui.feed.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -9,15 +13,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -31,8 +38,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,6 +84,7 @@ fun FeedCommentScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToFeedEdit: (Int) -> Unit = {},
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
+    onNavigateToBookDetail: (String) -> Unit = {},
     feedDetailViewModel: FeedDetailViewModel = hiltViewModel(),
     commentsViewModel: CommentsViewModel = hiltViewModel()
 ) {
@@ -160,6 +171,18 @@ fun FeedCommentScreen(
     var selectedCommentId by remember { mutableStateOf<Int?>(null) }
 
     val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+    val listState = rememberLazyListState()
+
+    val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+
+    LaunchedEffect(isKeyboardVisible) {
+        if (!isKeyboardVisible) {
+            replyingToCommentId = null
+            replyingToNickname = null
+            focusManager.clearFocus()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -192,6 +215,7 @@ fun FeedCommentScreen(
                 )
 
                 LazyColumn(
+                    state = listState,
                     modifier = modifier
                         .fillMaxWidth()
                         .weight(1f),
@@ -217,7 +241,9 @@ fun FeedCommentScreen(
                                 ActionBookButton(
                                     bookTitle = feedDetail.bookTitle,
                                     bookAuthor = feedDetail.bookAuthor,
-                                    onClick = {}
+                                    onClick = {
+                                        onNavigateToBookDetail(feedDetail.isbn)
+                                    }
                                 )
                             }
                             Text(
@@ -347,6 +373,7 @@ fun FeedCommentScreen(
                                         replyingToCommentId = commentId
                                         replyingToNickname = nickname
                                         selectedCommentId = null
+                                        focusRequester.requestFocus()
                                     },
                                     onCommentLongPress = { comment ->
                                         selectedCommentId = comment.commentId
@@ -366,7 +393,7 @@ fun FeedCommentScreen(
 
                 // 댓글 입력창
                 CommentTextField(
-//                modifier = Modifier.align(Alignment.BottomCenter),
+                    modifier = Modifier.focusRequester(focusRequester),
                     input = commentInput,
                     hint = stringResource(R.string.reply_to),
                     onInputChange = { commentInput = it },
@@ -391,17 +418,27 @@ fun FeedCommentScreen(
                     }
                 )
             }
-        }
 
-        // 신고 완료 토스트
-        if (showToast) {
-            ToastWithDate(
-                message = "게시글 신고를 완료했어요.",
+            // 신고 완료 토스트
+            AnimatedVisibility(
+                visible = showToast,
+                enter = slideInVertically(
+                    initialOffsetY = { -it },
+                    animationSpec = tween(durationMillis = 2000)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { -it },
+                    animationSpec = tween(durationMillis = 2000)
+                ),
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(horizontal = 20.dp, vertical = 16.dp)
                     .zIndex(2f)
-            )
+            ) {
+                ToastWithDate(
+                    message = "게시글 신고를 완료했어요."
+                )
+            }
         }
 
         if (isBottomSheetVisible) {
