@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,6 +37,7 @@ import com.texthip.thip.ui.group.note.viewmodel.GroupNoteCreateEvent
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteCreateUiState
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteCreateViewModel
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.utils.rooms.advancedImePadding
 
 @Composable
 fun GroupNoteCreateScreen(
@@ -78,7 +81,9 @@ fun GroupNoteCreateContent(
     val iconCoordinates = remember { mutableStateOf<LayoutCoordinates?>(null) }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .advancedImePadding()
     ) {
         Column {
             InputTopAppBar(
@@ -90,6 +95,8 @@ fun GroupNoteCreateContent(
 
             Column(
                 modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
                     .padding(vertical = 32.dp, horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(32.dp),
             ) {

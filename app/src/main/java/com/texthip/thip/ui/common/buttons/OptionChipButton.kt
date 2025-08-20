@@ -42,7 +42,7 @@ fun OptionChipButton(
     val checked = isSelected ?: isClicked
 
     val textColor = when {
-        !enabled && isFilled -> colors.Grey02
+        !enabled -> colors.DarkGrey
         isFilled -> colors.White
         checked -> colors.Purple
         else -> colors.Grey01
@@ -54,6 +54,7 @@ fun OptionChipButton(
         else -> Color.Transparent
     }
     val borderColor = when {
+        !enabled -> colors.DarkGrey02
         !isFilled && checked -> colors.Purple
         !isFilled -> colors.Grey02
         else -> Color.Transparent

@@ -43,7 +43,7 @@ import com.texthip.thip.utils.color.hexToColor
 @Composable
 fun OthersSubscriptionListScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToUserProfile: (userId: Long) -> Unit = {},
+    onProfileClick: (userId: Long, isMyself: Boolean) -> Unit = { _, _ -> },
     viewModel: OthersSubscriptionViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -68,7 +68,7 @@ fun OthersSubscriptionListScreen(
         uiState = uiState,
         lazyListState = lazyListState,
         onNavigateBack = onNavigateBack,
-        onProfileClick = onNavigateToUserProfile
+        onProfileClick = onProfileClick
     )
 }
 @Composable
@@ -76,7 +76,7 @@ fun OthersSubscriptionContent(
     uiState: OthersSubscriptionUiState,
     lazyListState: LazyListState,
     onNavigateBack: () -> Unit,
-    onProfileClick: (userId: Long) -> Unit
+    onProfileClick: (userId: Long, isMyself: Boolean) -> Unit
 ) {
     Column(
         Modifier
@@ -122,7 +122,7 @@ fun OthersSubscriptionContent(
                             showThipNum = true,
                             profileImageSize = 36.dp,
                             thipNum = user.followerCount,
-                            onClick = { onProfileClick(user.userId) }
+                            onClick = { onProfileClick(user.userId, user.isMyself) }
                         )
 
                         if (index < uiState.followers.lastIndex) {
@@ -164,7 +164,8 @@ private fun OthersSubscriptionListScreenPrev() {
             nickname = "문학소년 $it",
             aliasName = if (it % 3 == 0) "공식 인플루언서" else "글쓰는 탐험가",
             aliasColor = if (it % 3 == 0) "#00C7B2" else "#FFD600",
-            followerCount = it * 10
+            followerCount = it * 10,
+            isMyself = true
         )
     }
 
@@ -178,7 +179,7 @@ private fun OthersSubscriptionListScreenPrev() {
             ),
             lazyListState = rememberLazyListState(),
             onNavigateBack = {},
-            onProfileClick = {}
+            onProfileClick = { _, _ -> }
         )
     }
 }

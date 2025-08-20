@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.texthip.thip.R
 import com.texthip.thip.ui.common.cards.CardBookSearch
 import com.texthip.thip.ui.common.modal.drawVerticalScrollbar
 import com.texthip.thip.ui.group.makeroom.mock.BookData
@@ -31,7 +30,6 @@ fun GroupBookListWithScrollbar(
     Box(
         Modifier
             .fillMaxWidth()
-            .height(320.dp)
     ) {
         Column(
             Modifier
@@ -45,14 +43,14 @@ fun GroupBookListWithScrollbar(
                     imageUrl = book.imageUrl,
                     onClick = { onBookClick(book) }
                 )
-
+                Spacer(modifier = Modifier.height(12.dp))
                 if (index < books.size - 1) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Spacer(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 6.dp)
-                        .height(1.dp)
-                        .background(color = colors.Grey02)
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 6.dp)
+                            .height(1.dp)
+                            .background(color = colors.Grey02)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }

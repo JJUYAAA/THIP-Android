@@ -24,18 +24,20 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun FeedContent(
-    feedList: List<FeedItem>, viewModel: SavedFeedViewModel
+    feedList: List<FeedItem>,
+    viewModel: SavedFeedViewModel,
+    onFeedClick: (feedId: Long) -> Unit
 
 ) {
     if (feedList.isEmpty()) {
         EmptyFeedContent()
     } else {
-        LazyColumn (
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
             contentPadding = PaddingValues(bottom = 20.dp)
-        ){
-            itemsIndexed(feedList, key = { _,feed -> feed.id }) { index,feed ->
+        ) {
+            itemsIndexed(feedList, key = { _, feed -> feed.id }) { index, feed ->
                 if (index == 0) {
                     Spacer(Modifier.height(32.dp))
                 }
@@ -43,7 +45,8 @@ fun FeedContent(
                 SavedFeedCard(
                     feedItem = feed,
                     onBookmarkClick = { viewModel.toggleBookmark(feed.id) },
-                    onLikeClick = { viewModel.toggleLike(feed.id) }
+                    onLikeClick = { viewModel.toggleLike(feed.id) },
+                    onContentClick = { onFeedClick(feed.id) }
                 )
 
                 if (index != feedList.lastIndex) {

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,6 +37,7 @@ import com.texthip.thip.ui.group.note.viewmodel.GroupVoteCreateEvent
 import com.texthip.thip.ui.group.note.viewmodel.GroupVoteCreateUiState
 import com.texthip.thip.ui.group.note.viewmodel.GroupVoteCreateViewModel
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.utils.rooms.advancedImePadding
 
 @Composable
 fun GroupVoteCreateScreen(
@@ -75,7 +78,11 @@ fun GroupVoteCreateContent(
     var showTooltip by rememberSaveable { mutableStateOf(false) }
     val iconCoordinates = remember { mutableStateOf<LayoutCoordinates?>(null) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .advancedImePadding()
+    ) {
         Column {
             InputTopAppBar(
                 title = stringResource(R.string.create_vote),
@@ -86,6 +93,8 @@ fun GroupVoteCreateContent(
 
             Column(
                 modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
                     .padding(vertical = 32.dp, horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(32.dp),
             ) {

@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
 import com.texthip.thip.ui.group.done.screen.GroupDoneScreen
 import com.texthip.thip.ui.group.makeroom.screen.GroupMakeRoomScreen
 import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
@@ -44,7 +45,7 @@ import com.texthip.thip.ui.navigator.extensions.navigateToGroupRoomUnlock
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupSearch
 import com.texthip.thip.ui.navigator.extensions.navigateToGroupVoteCreate
 import com.texthip.thip.ui.navigator.extensions.navigateToRecommendedGroupRecruit
-import com.texthip.thip.ui.navigator.extensions.navigateToUserProfile
+import com.texthip.thip.ui.navigator.routes.FeedRoutes
 import com.texthip.thip.ui.navigator.routes.GroupRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
@@ -281,13 +282,27 @@ fun NavGraphBuilder.groupNavigation(
         val route = backStackEntry.toRoute<GroupRoutes.RoomMates>()
         val roomId = route.roomId
 
+        val feedViewModel: FeedViewModel = hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Group))
+        val feedUiState by feedViewModel.uiState.collectAsState()
+        val myUserId = feedUiState.myFeedInfo?.creatorId
+
+        LaunchedEffect(Unit) {
+            if (feedUiState.myFeedInfo == null) {
+                feedViewModel.onTabSelected(1)
+            }
+        }
+
         GroupRoomMatesScreen(
             roomId = roomId,
             onBackClick = {
                 navigateBack()
             },
             onUserClick = { userId ->
-                navController.navigateToUserProfile(userId)
+                if (myUserId != null && myUserId == userId) {
+                    navController.navigate(FeedRoutes.My)
+                } else {
+                    navController.navigate(FeedRoutes.Others(userId))
+                }
             }
         )
     }
@@ -308,6 +323,16 @@ fun NavGraphBuilder.groupNavigation(
         val result = backStackEntry.savedStateHandle.get<Int>("selected_tab_index")
 
         val viewModel: GroupNoteViewModel = hiltViewModel(backStackEntry)
+
+        val feedViewModel: FeedViewModel = hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Group))
+        val feedUiState by feedViewModel.uiState.collectAsState()
+        val myUserId = feedUiState.myFeedInfo?.creatorId
+
+        LaunchedEffect(Unit) {
+            if (feedUiState.myFeedInfo == null) {
+                feedViewModel.onTabSelected(1)
+            }
+        }
 
         GroupNoteScreen(
             roomId = roomId,
@@ -344,7 +369,11 @@ fun NavGraphBuilder.groupNavigation(
                 )
             },
             onNavigateToUserProfile = { userId ->
-                navController.navigateToUserProfile(userId)
+                if (myUserId != null && myUserId == userId) {
+                    navController.navigate(FeedRoutes.My)
+                } else {
+                    navController.navigate(FeedRoutes.Others(userId))
+                }
             },
             viewModel = viewModel
         )

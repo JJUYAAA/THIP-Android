@@ -36,7 +36,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.data.model.comments.response.CommentList
 import com.texthip.thip.data.model.comments.response.ReplyList
-import com.texthip.thip.ui.common.CommentActionMode
 import com.texthip.thip.ui.common.bottomsheet.CustomBottomSheet
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.forms.CommentTextField
@@ -262,7 +261,6 @@ private fun CommentLazyList(
         ) { comment ->
             CommentSection(
                 commentItem = comment,
-                actionMode = CommentActionMode.BOTTOM_SHEET,
                 onReplyClick = onReplyClick,
                 onEvent = onEvent,
                 onCommentLongPress = onCommentLongPress,

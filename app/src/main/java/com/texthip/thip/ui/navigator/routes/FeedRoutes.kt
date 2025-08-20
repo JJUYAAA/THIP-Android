@@ -30,4 +30,7 @@ sealed class FeedRoutes : Routes() {
 
     @Serializable
     data class OthersSubscription(val userId: Long) : FeedRoutes()
+
+    @Serializable
+    data object My : FeedRoutes()
 }

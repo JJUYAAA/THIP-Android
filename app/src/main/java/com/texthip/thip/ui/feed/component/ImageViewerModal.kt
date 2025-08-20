@@ -43,6 +43,7 @@ fun ImageViewerModal(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(colors.Black80)
             .clickable { onDismiss() }
     ) {
         // 이전 버튼
@@ -66,7 +67,8 @@ fun ImageViewerModal(
                 .clickable { /* HorizontalPager 내부 클릭 시 모달 닫기 방지 */ }
         ) { page ->
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
@@ -103,7 +105,11 @@ fun ImageViewerModal(
         // 이미지 카운터 (예: 1/3)
         if (imageUrls.size > 1) {
             Text(
-                text = stringResource(id = R.string.tag_count, pagerState.currentPage + 1, imageUrls.size),
+                text = stringResource(
+                    id = R.string.tag_count,
+                    pagerState.currentPage + 1,
+                    imageUrls.size
+                ),
                 style = typography.copy_r400_s14,
                 color = colors.White,
                 modifier = Modifier
