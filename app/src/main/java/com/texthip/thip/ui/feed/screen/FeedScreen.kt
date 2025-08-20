@@ -372,8 +372,8 @@ fun FeedScreen(
                                     content = myFeed.contentBody,
                                     likeCount = myFeed.likeCount,
                                     commentCount = myFeed.commentCount,
-                                    isLiked = false, // 내 피드는 좋아요 개념 없음
-                                    isSaved = false, // 내 피드는 저장 개념 없음
+                                    isLiked = myFeed.isLiked,
+                                    isSaved = myFeed.isSaved,
                                     isLocked = !myFeed.isPublic, // isPublic의 반대값
                                     tags = emptyList(),
                                     imageUrls = myFeed.contentUrls

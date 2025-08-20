@@ -329,11 +329,16 @@ class FeedViewModel @Inject constructor(
 
     fun changeFeedLike(feedId: Long) {
         viewModelScope.launch {
-            val currentFeeds = _uiState.value.allFeeds
-            val feedToUpdate = currentFeeds.find { it.feedId.toLong() == feedId } ?: return@launch
+            val currentAllFeeds = _uiState.value.allFeeds
+            val currentMyFeeds = _uiState.value.myFeeds
+            
+            val allFeedToUpdate = currentAllFeeds.find { it.feedId.toLong() == feedId }
+            val myFeedToUpdate = currentMyFeeds.find { it.feedId.toLong() == feedId }
+            
+            if (allFeedToUpdate == null && myFeedToUpdate == null) return@launch
 
             //ui 먼저 변경 ( 낙관적 업데이트 )
-            val newFeeds = currentFeeds.map {
+            val newAllFeeds = currentAllFeeds.map {
                 if (it.feedId.toLong() == feedId) {
                     it.copy(
                         isLiked = !it.isLiked,
@@ -343,44 +348,85 @@ class FeedViewModel @Inject constructor(
                     it
                 }
             }
-            _uiState.update { it.copy(allFeeds = newFeeds) }
+            
+            val newMyFeeds = currentMyFeeds.map {
+                if (it.feedId.toLong() == feedId) {
+                    it.copy(
+                        isLiked = !it.isLiked,
+                        likeCount = if (it.isLiked) it.likeCount - 1 else it.likeCount + 1
+                    )
+                } else {
+                    it
+                }
+            }
+            
+            _uiState.update { it.copy(allFeeds = newAllFeeds, myFeeds = newMyFeeds) }
 
             //api 호출
-            val newLikeStatus = !feedToUpdate.isLiked
+            val newLikeStatus = if (allFeedToUpdate != null) {
+                !allFeedToUpdate.isLiked
+            } else {
+                !myFeedToUpdate!!.isLiked
+            }
+            
+            val currentLikeCount = allFeedToUpdate?.likeCount ?: myFeedToUpdate!!.likeCount
+            val currentIsSaved = allFeedToUpdate?.isSaved ?: myFeedToUpdate!!.isSaved
+            
             changeFeedLikeUseCase(
-                feedId, newLikeStatus, feedToUpdate.likeCount,
-                feedToUpdate.isSaved
+                feedId, newLikeStatus, currentLikeCount, currentIsSaved
             )
                 .onFailure {
-                    _uiState.update { it.copy(allFeeds = currentFeeds) }
+                    _uiState.update { it.copy(allFeeds = currentAllFeeds, myFeeds = currentMyFeeds) }
                 }
         }
     }
 
     fun changeFeedSave(feedId: Long) {
         viewModelScope.launch {
-            val currentFeeds = _uiState.value.allFeeds
-            val feedToUpdate = currentFeeds.find { it.feedId.toLong() == feedId } ?: return@launch
+            val currentAllFeeds = _uiState.value.allFeeds
+            val currentMyFeeds = _uiState.value.myFeeds
+            
+            val allFeedToUpdate = currentAllFeeds.find { it.feedId.toLong() == feedId }
+            val myFeedToUpdate = currentMyFeeds.find { it.feedId.toLong() == feedId }
+            
+            if (allFeedToUpdate == null && myFeedToUpdate == null) return@launch
 
             // (낙관적 업데이트) UI 즉시 변경
-            val newFeeds = currentFeeds.map {
+            val newAllFeeds = currentAllFeeds.map {
                 if (it.feedId.toLong() == feedId) {
-                    it.copy(isSaved = !it.isSaved) // isSaved 상태 반전
+                    it.copy(isSaved = !it.isSaved)
                 } else {
                     it
                 }
             }
-            updateState { it.copy(allFeeds = newFeeds) }
+            
+            val newMyFeeds = currentMyFeeds.map {
+                if (it.feedId.toLong() == feedId) {
+                    it.copy(isSaved = !it.isSaved)
+                } else {
+                    it
+                }
+            }
+            
+            updateState { it.copy(allFeeds = newAllFeeds, myFeeds = newMyFeeds) }
 
             // API 호출
-            val newSaveStatus = !feedToUpdate.isSaved
+            val newSaveStatus = if (allFeedToUpdate != null) {
+                !allFeedToUpdate.isSaved
+            } else {
+                !myFeedToUpdate!!.isSaved
+            }
+            
+            val currentIsLiked = allFeedToUpdate?.isLiked ?: myFeedToUpdate!!.isLiked
+            val currentLikeCount = allFeedToUpdate?.likeCount ?: myFeedToUpdate!!.likeCount
+            
             changeFeedSaveUseCase(
                 feedId = feedId,
                 newSaveStatus = newSaveStatus,
-                currentIsLiked = feedToUpdate.isLiked,
-                currentLikeCount = feedToUpdate.likeCount
+                currentIsLiked = currentIsLiked,
+                currentLikeCount = currentLikeCount
             ).onFailure {
-                _uiState.update { it.copy(allFeeds = currentFeeds) }
+                _uiState.update { it.copy(allFeeds = currentAllFeeds, myFeeds = currentMyFeeds) }
             }
         }
     }
