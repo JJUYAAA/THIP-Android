@@ -301,7 +301,7 @@ private fun GroupRoomScreenPreview() {
                 bookTitle = "호르몬 체인지",
                 authorName = "최정화",
                 currentPage = 100,
-                userPercentage = 5.0,
+                userPercentage = 5,
                 currentVotes = emptyList()
             ),
             onBackClick = {}
