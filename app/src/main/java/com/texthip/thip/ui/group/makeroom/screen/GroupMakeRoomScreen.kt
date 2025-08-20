@@ -43,6 +43,7 @@ import com.texthip.thip.ui.group.makeroom.viewmodel.GroupMakeRoomViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.rooms.advancedImePadding
 import com.texthip.thip.utils.rooms.toDisplayStrings
 
 
@@ -106,7 +107,7 @@ fun GroupMakeRoomContent(
 ) {
     val scrollState = rememberScrollState()
 
-    Box {
+    Box(modifier = Modifier.advancedImePadding()) {
         Column(
             modifier = modifier
                 .fillMaxSize()

@@ -308,6 +308,7 @@ fun FeedCommentScreen(
                                 isSaveVisible = true,
                                 isSaved = feedDetail.isSaved,
                                 isPinVisible = false,
+                                isLockIcon = feedDetail.isPublic == false,
                                 onLikeClick = { feedDetailViewModel.changeFeedLike() },
                                 onCommentClick = { /* 스크롤 이동 or 포커스 처리 */ },
                                 onBookmarkClick = { feedDetailViewModel.changeFeedSave() },

@@ -114,7 +114,6 @@ fun GroupRoomDurationPicker(
                     startDate = newDate
                 },
                 modifier = Modifier
-                    .weight(1f)
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onPress = { isPickerTouched = true }
@@ -139,7 +138,6 @@ fun GroupRoomDurationPicker(
                     endDate = newDate
                 },
                 modifier = Modifier
-                    .weight(1f)
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onPress = { isPickerTouched = true }

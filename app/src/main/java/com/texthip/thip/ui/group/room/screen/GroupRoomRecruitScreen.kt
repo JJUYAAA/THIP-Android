@@ -281,7 +281,7 @@ fun GroupRoomRecruitContent(
                         //참여 인원
                         Column(
                             verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(start = 90.dp)
+                            modifier = Modifier.padding(start = 50.dp)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically

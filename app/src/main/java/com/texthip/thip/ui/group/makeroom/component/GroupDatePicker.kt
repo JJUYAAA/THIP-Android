@@ -28,11 +28,11 @@ import java.time.LocalDate
 
 @Composable
 fun GroupDatePicker(
+    modifier: Modifier = Modifier,
     selectedDate: LocalDate,
     minDate: LocalDate,
     maxDate: LocalDate,
-    onDateSelected: (LocalDate) -> Unit,
-    modifier: Modifier = Modifier
+    onDateSelected: (LocalDate) -> Unit
 ) {
     // 선택된 날짜에서 년/월/일 추출
     val year = selectedDate.year
@@ -55,7 +55,7 @@ fun GroupDatePicker(
             verticalAlignment = Alignment.CenterVertically
         ) {
             GroupWheelPicker(
-                modifier = Modifier.width(48.dp),
+                modifier = modifier.width(48.dp),
                 items = years,
                 selectedItem = year,
                 onItemSelected = { newYear ->

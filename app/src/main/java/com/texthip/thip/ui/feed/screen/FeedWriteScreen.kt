@@ -1,8 +1,12 @@
 package com.texthip.thip.ui.feed.screen
 
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -113,14 +117,27 @@ fun FeedWriteContent(
     onSearchBooks: (String) -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
-    val imagePickerLauncher = rememberLauncherForActivityResult(
+    val focusManager = LocalFocusManager.current
+    
+    val remainingSlots = 3 - uiState.currentImageCount
+    
+    // Android 13+ Photo Picker (개수 제한 지원) - 최소 2로 설정하여 API 제약 회피
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = maxOf(2, remainingSlots))
+    ) { uris ->
+        if (uris.isNotEmpty() && remainingSlots > 0) {
+            onAddImages(uris.take(remainingSlots))
+        }
+    }
+    
+    // Fallback for older Android versions
+    val legacyImagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
-    ) { uris: List<Uri> ->
+    ) { uris ->
         if (uris.isNotEmpty()) {
             onAddImages(uris)
         }
     }
-    val focusManager = LocalFocusManager.current
 
     Box {
         Column(
@@ -197,7 +214,13 @@ fun FeedWriteContent(
                                 )
                                 .let {
                                     if (uiState.canAddMoreImages) it.clickable {
-                                        imagePickerLauncher.launch("image/*")
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && remainingSlots > 1) {
+                                            photoPickerLauncher.launch(
+                                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                            )
+                                        } else {
+                                            legacyImagePickerLauncher.launch("image/*")
+                                        }
                                     } else it // 클릭 비활성화
                                 },
 
