@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -200,7 +199,6 @@ fun FeedCommentScreen(
                 Modifier
                     .fillMaxSize()
                     .blur(5.dp)
-                    .background(colors.Black800)
             } else {
                 Modifier.fillMaxSize()
             }
