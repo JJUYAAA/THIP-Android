@@ -42,7 +42,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.ui.theme.White
 
 @Composable
-fun SavedScreen(
+fun MypageSaveScreen(
     onNavigateBack: () -> Unit,
     feedViewModel: SavedFeedViewModel = hiltViewModel(),
     bookViewModel: SavedBookViewModel = hiltViewModel()
@@ -132,7 +132,7 @@ fun SavedScreen(
 @Preview
 @Composable
 private fun SavedScreenPrev() {
-    SavedScreen(
+    MypageSaveScreen(
         onNavigateBack = {},
     )
 }
@@ -142,7 +142,7 @@ private fun SavedScreenPrev() {
 @Composable
 private fun SavedScreenWithoutFeedPrev() {
     ThipTheme {
-        SavedScreen(
+        MypageSaveScreen(
             onNavigateBack = {},
         )
     }
