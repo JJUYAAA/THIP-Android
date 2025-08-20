@@ -73,6 +73,7 @@ fun WarningTextField(
                 modifier = Modifier.fillMaxSize(),
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.colors(
+                    unfocusedTextColor = colors.White,
                     focusedTextColor = colors.White,
                     focusedIndicatorColor = if (showWarning) colors.Red else Color.Transparent,
                     unfocusedIndicatorColor = if (showWarning) colors.Red else Color.Transparent,

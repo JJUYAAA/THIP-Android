@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -162,7 +161,7 @@ fun MySubscriptionContent(
                         items = uiState.followings,
                         key = { _, user -> user.userId }
                     ) { index, user ->
-                        Column(modifier = Modifier.padding(horizontal = 20.dp).clickable { onUserClick(user.userId) }) {
+                        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                             AuthorHeader(
                                 profileImage = user.profileImageUrl,
                                 nickname = user.nickname,
@@ -172,6 +171,7 @@ fun MySubscriptionContent(
                                 buttonWidth = 64.dp,
                                 profileImageSize = 36.dp,
                                 onButtonClick = { onToggleFollow(user.userId, user.nickname) },
+                                onClick = { onUserClick(user.userId) }
                             )
 
                             if (index < uiState.followings.lastIndex) {

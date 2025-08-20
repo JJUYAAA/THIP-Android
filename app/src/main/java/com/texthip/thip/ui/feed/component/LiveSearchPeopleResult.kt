@@ -34,7 +34,7 @@ fun SearchPeopleResult(
                 showButton = false,
                 showThipNum = true,
                 thipNum = user.subscriberCount,
-                onThipNumClick = { onThipNumClick(user) }
+                onClick = { onThipNumClick(user) }
             )
             if (index < peopleList.size - 1) {
                 Spacer(

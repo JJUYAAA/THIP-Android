@@ -74,6 +74,7 @@ fun FeedScreen(
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
     onNavigateToNotification: () -> Unit = {},
     refreshFeed: Boolean? = null,
+    onNavigateToOthersSubscription: (userId: Long) -> Unit = {},
     onResultConsumed: () -> Unit = {},
     onRefreshConsumed: () -> Unit = {},
     navController: NavHostController,
@@ -264,6 +265,9 @@ fun FeedScreen(
                                 modifier = Modifier.padding(horizontal = 20.dp),
                                 followerProfileImageUrls = myFeedInfo?.latestFollowerProfileImageUrls ?: emptyList(),
                                 onClick = {
+                                    myFeedInfo?.creatorId?.let { creatorId ->
+                                        onNavigateToOthersSubscription(creatorId)
+                                    }
                                 }
                             )
                             Spacer(modifier = Modifier.height(40.dp))

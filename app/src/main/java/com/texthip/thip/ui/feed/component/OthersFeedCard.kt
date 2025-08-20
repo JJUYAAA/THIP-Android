@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -35,12 +31,11 @@ fun OthersFeedCard(
     val hasImages = images.isNotEmpty()
     val maxLines = if (hasImages) 3 else 8
 
-    var isLiked by remember { mutableStateOf(false) }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
+            .clickable { onContentClick() }
     ) {
         ActionBookButton(
             bookTitle = feedItem.bookTitle,
@@ -56,7 +51,6 @@ fun OthersFeedCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp)
-                .clickable { onContentClick() }
         )
 
         if (hasImages) {
@@ -86,9 +80,6 @@ fun OthersFeedCard(
             isSaveVisible = true,
             onLikeClick = {
 //                onLikeClick(feedItem.feedId)
-            },
-            onCommentClick = {
-//                onCommentClick()
             },
             onBookmarkClick = {
 
