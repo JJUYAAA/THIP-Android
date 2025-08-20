@@ -68,7 +68,6 @@ class UserRepository @Inject constructor(
             .handleBaseResponse()
             .getOrThrow()
     }
-
     suspend fun getAliasChoices(): Result<AliasChoiceResponse?> = runCatching {
         userService.getAliasChoices()
             .handleBaseResponse()
