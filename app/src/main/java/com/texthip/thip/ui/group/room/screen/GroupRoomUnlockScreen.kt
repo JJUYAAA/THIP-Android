@@ -36,6 +36,7 @@ import com.texthip.thip.ui.group.room.viewmodel.GroupRoomUnlockViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.rooms.advancedImePadding
 import kotlinx.coroutines.delay
 
 @Composable
@@ -96,7 +97,7 @@ fun GroupRoomUnlockScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().advancedImePadding()) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
