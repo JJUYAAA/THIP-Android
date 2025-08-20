@@ -3,7 +3,7 @@ package com.texthip.thip.ui.group.makeroom.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,6 +28,7 @@ import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.group.makeroom.mock.dummyGroupBooks
 import com.texthip.thip.ui.group.makeroom.mock.dummySavedBooks
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.utils.rooms.advancedImePadding
 
 @Composable
 fun GroupBookSearchBottomSheet(
@@ -65,7 +66,8 @@ fun GroupBookSearchBottomSheet(
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(bottom = 90.dp)
+                .fillMaxHeight(0.8f)
+                .advancedImePadding()
         ) {
             Column(Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp)) {
                 SearchBookTextField(
