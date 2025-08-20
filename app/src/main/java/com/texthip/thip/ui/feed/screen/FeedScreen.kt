@@ -16,8 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -89,8 +90,12 @@ fun FeedScreen(
     val feedTabTitles = listOf(stringResource(R.string.feed), stringResource(R.string.my_feed))
 
     // 탭별로 별도의 스크롤 상태 관리
-    val allFeedListState = rememberLazyListState()
-    val myFeedListState = rememberLazyListState()
+    val allFeedListState = rememberSaveable(saver = LazyListState.Saver) {
+        LazyListState()
+    }
+    val myFeedListState = rememberSaveable(saver = LazyListState.Saver) {
+        LazyListState()
+    }
     val currentListState = when (feedUiState.selectedTabIndex) {
         0 -> allFeedListState
         1 -> myFeedListState
@@ -127,14 +132,23 @@ fun FeedScreen(
             feedViewModel.loadMoreFeeds()
         }
     }
+
+    var isUserTabChange by remember { mutableStateOf(false) }
     
     LaunchedEffect(Unit) {
-        feedViewModel.resetToInitialState()
+        feedViewModel.refreshData()
+        val hasUpdatedFeedData = navController.currentBackStackEntry?.savedStateHandle?.get<Long>("updated_feed_id") != null
+        
+        if (!hasUpdatedFeedData) {
+            currentListState.scrollToItem(0)
+        }
     }
-
-    // 탭 변경 시 해당 탭의 스크롤을 최상단으로 부드럽게 이동
+    
     LaunchedEffect(feedUiState.selectedTabIndex) {
-        currentListState.scrollToItem(0)
+        if (isUserTabChange) {
+            currentListState.scrollToItem(0)
+            isUserTabChange = false
+        }
     }
 
     LaunchedEffect(resultFeedId) {
@@ -162,6 +176,7 @@ fun FeedScreen(
             onRefreshConsumed()
             if (resultFeedId == null) {
                 feedViewModel.refreshData()
+                currentListState.scrollToItem(0)
             }
         }
     }
@@ -222,7 +237,10 @@ fun FeedScreen(
                 HeaderMenuBarTab(
                     titles = feedTabTitles,
                     selectedTabIndex = feedUiState.selectedTabIndex,
-                    onTabSelected = feedViewModel::onTabSelected
+                    onTabSelected = { index ->
+                        isUserTabChange = true
+                        feedViewModel.onTabSelected(index)
+                    }
                 )
 
                 // 스크롤 영역 전체
