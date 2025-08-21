@@ -19,7 +19,8 @@ data class CommentsUiState(
     val isLoadingMore: Boolean = false,
     val error: String? = null,
     val isLast: Boolean = false,
-    val comments: List<CommentList> = emptyList()
+    val comments: List<CommentList> = emptyList(),
+    val isCommentCreated: Boolean = false
 )
 
 sealed interface CommentSideEffect {
@@ -140,7 +141,10 @@ class CommentsViewModel @Inject constructor(
                                 isLike = res.isLike,
                                 replyList = res.replyList
                             )
-                            currentState.copy(comments = listOf(newComment) + currentState.comments)
+                            currentState.copy(
+                                comments = listOf(newComment) + currentState.comments,
+                                isCommentCreated = true
+                            )
                         } else {
                             val parentCommentIndex =
                                 currentState.comments.indexOfFirst { it.commentId == parentId }
@@ -156,7 +160,10 @@ class CommentsViewModel @Inject constructor(
                                 val newCommentsList = currentState.comments.toMutableList().apply {
                                     this[parentCommentIndex] = updatedParentComment
                                 }
-                                currentState.copy(comments = newCommentsList)
+                                currentState.copy(
+                                    comments = newCommentsList,
+                                    isCommentCreated = true
+                                )
                             } else {
                                 currentState
                             }
@@ -284,5 +291,9 @@ class CommentsViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun resetCommentCreatedState() {
+        _uiState.update { it.copy(isCommentCreated = false) }
     }
 }

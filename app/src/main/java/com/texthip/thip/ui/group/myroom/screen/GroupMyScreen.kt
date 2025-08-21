@@ -162,6 +162,7 @@ fun GroupMyContent(
                                 isRecruiting = RoomUtils.isRecruitingByType(room.type),
                                 endDate = room.endDate,
                                 imageUrl = room.bookImageUrl,
+                                isSecret = !room.isPublic,
                                 onClick = { onCardClick(room) }
                             )
                         }
@@ -206,7 +207,8 @@ fun GroupMyScreenPreview() {
                         memberCount = 18,
                         recruitCount = 20,
                         type = "RECRUITING",
-                        endDate = "2025-02-15"
+                        endDate = "2025-02-15",
+                        isPublic = true
                     ),
                     MyRoomResponse(
                         roomId = 2,
@@ -215,7 +217,8 @@ fun GroupMyScreenPreview() {
                         memberCount = 12,
                         recruitCount = 15,
                         type = "PLAYING",
-                        endDate = "2025-01-28"
+                        endDate = "2025-01-28",
+                        isPublic = false
                     ),
                     MyRoomResponse(
                         roomId = 3,
@@ -224,7 +227,8 @@ fun GroupMyScreenPreview() {
                         memberCount = 25,
                         recruitCount = 30,
                         type = "RECRUITING",
-                        endDate = "2025-03-01"
+                        endDate = "2025-03-01",
+                        isPublic = true
                     ),
                     MyRoomResponse(
                         roomId = 4,
@@ -233,7 +237,8 @@ fun GroupMyScreenPreview() {
                         memberCount = 8,
                         recruitCount = 12,
                         type = "PLAYING",
-                        endDate = "2025-02-10"
+                        endDate = "2025-02-10",
+                        isPublic = false
                     ),
                     MyRoomResponse(
                         roomId = 5,
@@ -242,7 +247,8 @@ fun GroupMyScreenPreview() {
                         memberCount = 6,
                         recruitCount = 10,
                         type = "RECRUITING",
-                        endDate = "2025-02-20"
+                        endDate = "2025-02-20",
+                        isPublic = true
                     ),
                     MyRoomResponse(
                         roomId = 6,
@@ -251,7 +257,8 @@ fun GroupMyScreenPreview() {
                         memberCount = 14,
                         recruitCount = 18,
                         type = "PLAYING",
-                        endDate = "2025-01-30"
+                        endDate = "2025-01-30",
+                        isPublic = false
                     )
                 ),
                 currentRoomType = RoomType.PLAYING_AND_RECRUITING,

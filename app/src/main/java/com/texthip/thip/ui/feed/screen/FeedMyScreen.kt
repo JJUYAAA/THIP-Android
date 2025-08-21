@@ -83,9 +83,9 @@ fun FeedMyContent(
             likeCount = this.likeCount,
             commentCount = this.commentCount,
             isPublic = this.isPublic,
-            isSaved = false,
-            isLiked = false,
-            isWriter = true
+            isSaved = this.isSaved,
+            isLiked = this.isLiked,
+            isWriter = this.isWriter
         )
     }
 
@@ -203,8 +203,8 @@ private fun FeedMyScreenPreview() {
             bookTitle = "나의 책 제목 ${it + 1}", bookAuthor = "나",
             contentBody = "내가 작성한 피드 내용입니다. 내용은 여기에 표시됩니다.",
             contentUrls = emptyList(), likeCount = 15, commentCount = 3,
-            isPublic = true,
-            isWriter = false
+            isPublic = true, isSaved = false, isLiked = it % 2 == 0,
+            isWriter = true
         )
     }
 

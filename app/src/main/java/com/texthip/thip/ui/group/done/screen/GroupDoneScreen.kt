@@ -117,6 +117,7 @@ fun GroupDoneContent(
                             participants = room.memberCount,
                             maxParticipants = room.recruitCount, // 모집 인원 수 사용
                             isRecruiting = RoomUtils.isRecruitingByType(room.type),
+                            isSecret = !room.isPublic,
                             onClick = { /* 완료된 모임방은 클릭 불가 */ }
                         )
                     }
@@ -142,7 +143,8 @@ fun GroupDoneScreenPreview() {
                         memberCount = 18,
                         recruitCount = 20,
                         endDate = "2025-01-31",
-                        type = "EXPIRED"
+                        type = "EXPIRED",
+                        isPublic = true
                     ),
                     MyRoomResponse(
                         roomId = 2,
@@ -151,7 +153,8 @@ fun GroupDoneScreenPreview() {
                         memberCount = 12,
                         recruitCount = 15,
                         endDate = "2024-12-28",
-                        type = "EXPIRED"
+                        type = "EXPIRED",
+                        isPublic = false
                     ),
                     MyRoomResponse(
                         roomId = 3,
@@ -160,7 +163,8 @@ fun GroupDoneScreenPreview() {
                         memberCount = 25,
                         recruitCount = 30,
                         endDate = "2024-12-15",
-                        type = "EXPIRED"
+                        type = "EXPIRED",
+                        isPublic = true
                     ),
                     MyRoomResponse(
                         roomId = 4,
@@ -169,7 +173,8 @@ fun GroupDoneScreenPreview() {
                         memberCount = 10,
                         recruitCount = 12,
                         endDate = "2024-11-20",
-                        type = "EXPIRED"
+                        type = "EXPIRED",
+                        isPublic = true
                     ),
                     MyRoomResponse(
                         roomId = 5,
@@ -178,7 +183,8 @@ fun GroupDoneScreenPreview() {
                         memberCount = 16,
                         recruitCount = 20,
                         endDate = "2024-10-31",
-                        type = "EXPIRED"
+                        type = "EXPIRED",
+                        isPublic = false
                     )
                 ),
                 isLoading = false,
