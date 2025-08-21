@@ -7,5 +7,6 @@ data class FeedStateUpdateResult(
     val feedId: Long,
     val isLiked: Boolean,
     val likeCount: Int,
-    val isSaved: Boolean
+    val isSaved: Boolean,
+    val commentCount: Int
 )

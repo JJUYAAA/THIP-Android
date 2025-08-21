@@ -22,10 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.data.model.comments.response.ReplyList
-import com.texthip.thip.ui.common.CommentActionMode
 import com.texthip.thip.ui.common.header.ProfileBarFeed
-import com.texthip.thip.ui.feed.component.CommentActionPopup
-import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -38,11 +35,7 @@ fun ReplyItem(
     onReplyClick: () -> Unit = { },
     onLikeClick: () -> Unit = {},
     onLongPress: () -> Unit = {},
-    onProfileClick: () -> Unit = {},
-    actionMode: CommentActionMode,
-    isSelected: Boolean = false,
-    onDismissPopup: () -> Unit = {},
-    onEvent: (CommentsEvent) -> Unit = { _ -> }
+    onProfileClick: () -> Unit = {}
 ) {
     Box {
         Row(
@@ -121,21 +114,6 @@ fun ReplyItem(
                 }
             }
         }
-        if (actionMode == CommentActionMode.POPUP && isSelected) {
-            CommentActionPopup(
-                text = if (data.isWriter) stringResource(R.string.delete) else stringResource(R.string.report),
-                textColor = if (data.isWriter) colors.Red else colors.White,
-                onClick = {
-                    if (data.isWriter) {
-                        onEvent(CommentsEvent.DeleteComment(data.commentId))
-                    } else {
-                        // TODO: 신고 로직
-                    }
-                    onDismissPopup()
-                },
-                onDismissRequest = onDismissPopup // 바깥 클릭 시 팝업 닫기
-            )
-        }
     }
 }
 
@@ -164,7 +142,6 @@ private fun ReplyItemPreview() {
                     isWriter = false,
                     likeCount = 5
                 ),
-                actionMode = CommentActionMode.POPUP,
             )
         }
     }

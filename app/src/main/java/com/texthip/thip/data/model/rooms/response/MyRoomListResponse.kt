@@ -18,5 +18,6 @@ data class MyRoomResponse(
     @SerialName("recruitCount") val recruitCount: Int,
     @SerialName("memberCount") val memberCount: Int,
     @SerialName("endDate") val endDate: String,
-    @SerialName("type") val type: String
+    @SerialName("type") val type: String,
+    @SerialName("isPublic") val isPublic: Boolean
 )

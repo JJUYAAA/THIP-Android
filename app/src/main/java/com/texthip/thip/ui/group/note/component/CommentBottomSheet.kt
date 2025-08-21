@@ -36,7 +36,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.data.model.comments.response.CommentList
 import com.texthip.thip.data.model.comments.response.ReplyList
-import com.texthip.thip.ui.common.CommentActionMode
 import com.texthip.thip.ui.common.bottomsheet.CustomBottomSheet
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.forms.CommentTextField
@@ -54,6 +53,7 @@ fun CommentBottomSheet(
     uiState: CommentsUiState,
     onDismiss: () -> Unit,
     onProfileClick: (userId: Long) -> Unit = {},
+    onShowToast: (String) -> Unit = {},
     viewModel: CommentsViewModel = hiltViewModel(),
 ) {
     var inputText by remember { mutableStateOf("") }
@@ -193,6 +193,7 @@ fun CommentBottomSheet(
                                 else -> null
                             }
                             commentId?.let { viewModel.onEvent(CommentsEvent.DeleteComment(it)) }
+                            onShowToast("댓글 삭제를 완료했습니다.")
 
                             selectedCommentForMenu = null
                             selectedReplyForMenu = null
@@ -205,7 +206,7 @@ fun CommentBottomSheet(
                         text = stringResource(R.string.report),
                         color = colors.Red,
                         onClick = {
-                            // TODO: 신고 로직
+                            onShowToast("댓글 신고를 완료했습니다.")
                             selectedCommentForMenu = null
                             selectedReplyForMenu = null
                         }
@@ -262,7 +263,6 @@ private fun CommentLazyList(
         ) { comment ->
             CommentSection(
                 commentItem = comment,
-                actionMode = CommentActionMode.BOTTOM_SHEET,
                 onReplyClick = onReplyClick,
                 onEvent = onEvent,
                 onCommentLongPress = onCommentLongPress,

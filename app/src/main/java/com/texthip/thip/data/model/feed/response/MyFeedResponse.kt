@@ -23,5 +23,7 @@ data class MyFeedItem(
     @SerialName("likeCount") val likeCount: Int,
     @SerialName("commentCount") val commentCount: Int,
     @SerialName("isPublic") val isPublic: Boolean,
+    @SerialName("isSaved") val isSaved: Boolean,
+    @SerialName("isLiked") val isLiked: Boolean,
     @SerialName("isWriter") val isWriter: Boolean
 )

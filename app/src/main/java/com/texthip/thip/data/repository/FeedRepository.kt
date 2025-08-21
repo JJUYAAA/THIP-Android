@@ -263,7 +263,8 @@ class FeedRepository @Inject constructor(
                     feedId = feedId,
                     isLiked = it.isLiked,
                     likeCount = newLikeCount,
-                    isSaved = currentIsSaved // isSaved 상태는 그대로 유지
+                    isSaved = currentIsSaved, // isSaved 상태는 그대로 유지
+                    commentCount = 0 // 좋아요 함수에서는 댓글 수 정보 없음
                 )
                 _feedStateUpdateResult.emit(update)
             }
@@ -287,7 +288,8 @@ class FeedRepository @Inject constructor(
                     feedId = feedId,
                     isLiked = currentIsLiked, // isLiked 상태는 그대로 유지
                     likeCount = currentLikeCount,
-                    isSaved = it.isSaved
+                    isSaved = it.isSaved,
+                    commentCount = 0 // 저장 함수에서는 댓글 수 정보 없음
                 )
                 _feedStateUpdateResult.emit(update)
             }

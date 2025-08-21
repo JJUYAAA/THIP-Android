@@ -20,7 +20,7 @@ data class RoomsPlayingResponse(
     val bookTitle: String,
     val authorName: String,
     val currentPage: Int,
-    val userPercentage: Double,
+    val userPercentage: Int,
     val currentVotes: List<CurrentVote>
 )
 

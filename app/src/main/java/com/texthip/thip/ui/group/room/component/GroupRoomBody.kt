@@ -24,7 +24,7 @@ fun GroupRoomBody(
     authorName: String,
     isbn: String,
     currentPage: Int,
-    userPercentage: Double,
+    userPercentage: Int,
     currentVotes: List<CurrentVote>,
     onNavigateToBookDetail: (isbn: String) -> Unit = {},
     onNavigateToNote: () -> Unit = {},
@@ -44,7 +44,7 @@ fun GroupRoomBody(
 
         CardNote(
             currentPage = currentPage,
-            percentage = userPercentage.roundToInt(),
+            percentage = userPercentage,
         ) {
             onNavigateToNote()
         }
@@ -71,7 +71,7 @@ private fun GroupRoomBodyPreview() {
         authorName = "저자 이름",
         isbn = "1234567890",
         currentPage = 100,
-        userPercentage = 50.0,
+        userPercentage = 50,
         currentVotes = listOf(
             CurrentVote(
                 content = "3연에 나오는 심장은 무엇을 의미하는 걸까요?",

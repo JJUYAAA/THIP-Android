@@ -35,11 +35,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
@@ -181,6 +181,10 @@ fun GroupNoteContent(
         isCommentBottomSheetVisible || selectedPostForMenu != null || isPinDialogVisible || showDeleteDialog
     var postToDelete by remember { mutableStateOf<PostList?>(null) }
 
+    var toastMessage by remember { mutableStateOf("") }
+    var isErrorToast by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     val commentsViewModel: CommentsViewModel = hiltViewModel()
     val commentsUiState by commentsViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -225,27 +229,6 @@ fun GroupNoteContent(
         }
     ) {
         Box {
-            AnimatedVisibility(
-                visible = showToast,
-                enter = slideInVertically(
-                    initialOffsetY = { -it }, // 위에서 아래로
-                    animationSpec = tween(durationMillis = 2000)
-                ),
-                exit = slideOutVertically(
-                    targetOffsetY = { -it }, // 위로 사라짐
-                    animationSpec = tween(durationMillis = 2000)
-                ),
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
-                    .zIndex(3f)
-            ) {
-                ToastWithDate(
-                    message = stringResource(R.string.condition_of_view_general_review),
-                    color = colors.Red
-                )
-            }
-
             Column(modifier = Modifier.fillMaxSize()) {
                 DefaultTopAppBar(
                     title = stringResource(R.string.record_book),
@@ -468,7 +451,12 @@ fun GroupNoteContent(
                         onFirstPageChange = { onEvent(GroupNoteEvent.OnPageStartChanged(it)) },
                         onLastPageChange = { onEvent(GroupNoteEvent.OnPageEndChanged(it)) },
                         onTotalToggle = { onEvent(GroupNoteEvent.OnOverviewToggled(!uiState.isOverview)) },
-                        onDisabledClick = { showToast = true },
+                        onDisabledClick = {
+                            toastMessage =
+                                context.getString(R.string.condition_of_view_general_review)
+                            isErrorToast = true
+                            showToast = true
+                        },
                         onApplyPageFilter = { onEvent(GroupNoteEvent.ApplyPageFilter) }
                     )
                 }
@@ -509,7 +497,12 @@ fun GroupNoteContent(
                 selectedPostForComment = null
                 onEvent(GroupNoteEvent.RefreshPosts)
             },
-            onProfileClick = onNavigateToUserProfile
+            onProfileClick = onNavigateToUserProfile,
+            onShowToast = { message ->
+                toastMessage = message
+                isErrorToast = false
+                showToast = true
+            }
         )
     }
 
@@ -597,6 +590,25 @@ fun GroupNoteContent(
                 }
             )
         }
+    }
+
+    AnimatedVisibility(
+        modifier = Modifier
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        visible = showToast,
+        enter = slideInVertically(
+            initialOffsetY = { -it },
+            animationSpec = tween(durationMillis = 1000)
+        ),
+        exit = slideOutVertically(
+            targetOffsetY = { -it },
+            animationSpec = tween(durationMillis = 1000)
+        )
+    ) {
+        ToastWithDate(
+            message = toastMessage,
+            color = if (isErrorToast) colors.Red else colors.DarkGrey
+        )
     }
 }
 

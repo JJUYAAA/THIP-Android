@@ -24,9 +24,11 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.ui.navigator.data.NavBarItems
 import com.texthip.thip.ui.navigator.extensions.isRoute
 import com.texthip.thip.ui.navigator.extensions.navigateToTab
@@ -96,7 +98,7 @@ fun BottomNavigationBar(navController: NavHostController) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 32.dp),
+                .padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -132,4 +134,13 @@ fun BottomNavigationBar(navController: NavHostController) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun BottomNavigationBarPreview() {
+    val navController = rememberNavController()
+    BottomNavigationBar(
+        navController = navController
+    )
 }

@@ -52,7 +52,9 @@ fun FilterHeaderSection(
                 text = stringResource(R.string.view_by_page),
                 isSelected = isPageFiltered,
                 onClick = {
-                    isPageInputVisible = !isPageInputVisible
+                    if (!isPageInputVisible) {
+                        isPageInputVisible = true
+                    }
                 },
                 onCloseClick = {
                     isPageInputVisible = true
@@ -66,8 +68,16 @@ fun FilterHeaderSection(
                 isSelected = isTotalSelected,
                 enabled = totalEnabled,
                 textStyle = typography.menu_r400_s14_h24,
-                onClick = onTotalToggle,
-                onDisabledClick = onDisabledClick
+                onClick = {
+                    if (!isPageInputVisible) {
+                        onTotalToggle()
+                    }
+                },
+                onDisabledClick = {
+                    if (!isPageInputVisible) {
+                        onDisabledClick()
+                    }
+                },
             )
         }
 

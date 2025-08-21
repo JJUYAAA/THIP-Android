@@ -1,11 +1,14 @@
 package com.texthip.thip.ui.common.cards
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -41,6 +44,7 @@ fun CardItemRoom(
     endDate: String? = null,
     imageUrl: String? = null,
     hasBorder: Boolean = false,
+    isSecret: Boolean? = null,
     onClick: () -> Unit = {}
 ) {
     Card(
@@ -71,12 +75,23 @@ fun CardItemRoom(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // 이미지
-                AsyncImage(
-                    model = imageUrl ?: R.drawable.img_book_cover_sample,
-                    contentDescription = "책 이미지",
-                    modifier = Modifier.size(width = 80.dp, height = 107.dp),
-                    contentScale = ContentScale.Crop
-                )
+                Box(
+                    modifier = Modifier.size(width = 80.dp, height = 107.dp)
+                ) {
+                    AsyncImage(
+                        model = imageUrl ?: R.drawable.img_book_cover_sample,
+                        contentDescription = "책 이미지",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                    if (isSecret == true) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_secret_cover),
+                            contentDescription = "비밀방",
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.width(12.dp))
 
