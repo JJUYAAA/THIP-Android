@@ -67,6 +67,7 @@ class FeedViewModel @Inject constructor(
     init {
         loadAllFeeds()
         fetchRecentWriters()
+        fetchMyFeedInfo()
     }
 
     private fun updateState(update: (FeedUiState) -> FeedUiState) {
