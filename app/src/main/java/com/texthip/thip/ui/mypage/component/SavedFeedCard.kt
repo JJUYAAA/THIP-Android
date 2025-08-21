@@ -79,7 +79,6 @@ fun SavedFeedCard(
 
         Column(
             modifier = Modifier
-                .padding(bottom = 16.dp)
                 .clickable { onContentClick() }, // 전체 영역 클릭 유지
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
