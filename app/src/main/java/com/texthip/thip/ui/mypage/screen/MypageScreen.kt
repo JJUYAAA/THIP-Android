@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.mypage.screen
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -58,6 +59,7 @@ fun MyPageScreen(
     onDeleteAccount: () -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.fetchMyPageInfo()
@@ -75,7 +77,9 @@ fun MyPageScreen(
         onCustomerServiceClick = onCustomerService,
         onLogoutClick = { viewModel.onLogoutClick() },
         onDismissLogoutDialog = { viewModel.onDismissLogoutDialog() },
-        onConfirmLogout = { viewModel.confirmLogout() },
+        onConfirmLogout = { viewModel.confirmLogout(
+            context = context
+        ) },
         onDeleteAccount = onDeleteAccount
     )
 }

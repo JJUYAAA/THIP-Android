@@ -115,7 +115,7 @@ class UserRepository @Inject constructor(
     suspend fun signup(request: SignupRequest): Result<SignupResponse?> {
         Log.d("SignupDebug", "UserRepository.signup() 호출됨. 요청 닉네임: ${request.nickname}")
 
-        val tempToken = tokenManager.getTempToken()
+        val tempToken = tokenManager.getTempTokenOnce()
 
         Log.d("SignupDebug", "가져온 임시 토큰: $tempToken")
 

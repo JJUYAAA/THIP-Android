@@ -1,13 +1,17 @@
 package com.texthip.thip
 
-import com.kakao.sdk.common.KakaoSdk
 import android.app.Application
+import com.kakao.sdk.common.KakaoSdk
+import com.texthip.thip.data.manager.TokenManager
 import dagger.hilt.android.HiltAndroidApp
-import com.texthip.thip.BuildConfig
+import javax.inject.Inject
 
 
 @HiltAndroidApp
 class ThipApplication : Application(){
+    @Inject
+    lateinit var tokenManager: TokenManager
+
     override fun onCreate() {
         super.onCreate()
 

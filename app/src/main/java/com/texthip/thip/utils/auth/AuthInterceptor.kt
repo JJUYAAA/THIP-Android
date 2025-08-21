@@ -1,7 +1,6 @@
 package com.texthip.thip.utils.auth
 
 import com.texthip.thip.data.manager.TokenManager
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -11,26 +10,24 @@ class AuthInterceptor @Inject constructor(
     private val tokenManager: TokenManager
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val originalRequest = chain.request()
+        val original = chain.request()
 
-        // 1. 요청에 이미 Authorization 헤더가 있는지 확인합니다.
-        if (originalRequest.header("Authorization") != null) {
-            // 이미 헤더가 있다면, 아무 작업도 하지 않고 그대로 보냅니다.
-            return chain.proceed(originalRequest)
+        if (original.header("Authorization") != null) {
+            return chain.proceed(original)
         }
 
-        val appToken = runBlocking { tokenManager.getToken().first() }
-        val tempToken = runBlocking { tokenManager.getTempToken() }
-        val tokenToSend = appToken ?: tempToken
-        val requestBuilder = chain.request().newBuilder()
+        // 1. 정식 토큰을 먼저 확인합니다.
+        val token = runBlocking { tokenManager.getTokenOnce() }
+        // 2. 정식 토큰이 없으면, 임시 토큰을 확인합니다.
+        val tempToken = runBlocking { tokenManager.getTempTokenOnce() }
 
-        if (!tokenToSend.isNullOrBlank()) {
-            requestBuilder.addHeader(
-                "Authorization",
-                "Bearer $tokenToSend"
-            )
-        }
+        // 보낼 토큰을 결정합니다 (정식 토큰 우선).
+        val tokenToSend = token ?: tempToken
 
-        return chain.proceed(requestBuilder.build())
+        val newRequest = original.newBuilder().apply {
+            tokenToSend?.let { addHeader("Authorization", "Bearer $it") }
+        }.build()
+
+        return chain.proceed(newRequest)
     }
 }

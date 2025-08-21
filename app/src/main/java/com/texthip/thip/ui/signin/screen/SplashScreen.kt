@@ -1,5 +1,3 @@
-package com.texthip.thip.ui.signin.screen
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
+import com.texthip.thip.ui.signin.viewmodel.SplashDestination
 import com.texthip.thip.ui.signin.viewmodel.SplashViewModel
 import com.texthip.thip.ui.theme.Purple
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -32,13 +31,16 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun SplashScreen(
     viewModel: SplashViewModel = hiltViewModel(),
-    onNavigateToLogin: () -> Unit = {}
+    onNavigateToLogin: () -> Unit = {},
+    onNavigateToHome: () -> Unit = {}
 ) {
-    val navigateToLogin by viewModel.navigateToLogin.collectAsStateWithLifecycle()
+    val destination by viewModel.destination.collectAsStateWithLifecycle()
 
-    LaunchedEffect(navigateToLogin) {
-        if (navigateToLogin) {
-            onNavigateToLogin()
+    LaunchedEffect(destination) {
+        when (destination) {
+            SplashDestination.NavigateToLogin -> onNavigateToLogin()
+            SplashDestination.NavigateToHome -> onNavigateToHome()
+            else -> {}
         }
     }
 

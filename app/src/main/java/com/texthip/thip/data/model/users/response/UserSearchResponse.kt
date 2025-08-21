@@ -1,7 +1,7 @@
 package com.texthip.thip.data.model.users.response
 
-import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerialName
 
 @Serializable
 data class UserSearchResponse(
@@ -9,10 +9,10 @@ data class UserSearchResponse(
 )
 @Serializable
 data class UserItem(
-    @SerializedName("userId") val userId: Int,
-    @SerializedName("nickname") val nickname: String,
-    @SerializedName("profileImageUrl") val profileImageUrl: String?,
-    @SerializedName("aliasName") val aliasName: String,
-    @SerializedName("aliasColor") val aliasColor: String,
-    @SerializedName("followerCount") val followerCount: Int
+    @SerialName("userId") val userId: Int,
+    @SerialName("nickname") val nickname: String,
+    @SerialName("profileImageUrl") val profileImageUrl: String?,
+    @SerialName("aliasName") val aliasName: String,
+    @SerialName("aliasColor") val aliasColor: String,
+    @SerialName("followerCount") val followerCount: Int
 )
