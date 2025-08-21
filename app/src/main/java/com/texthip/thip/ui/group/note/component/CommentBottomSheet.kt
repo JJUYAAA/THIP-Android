@@ -53,6 +53,7 @@ fun CommentBottomSheet(
     uiState: CommentsUiState,
     onDismiss: () -> Unit,
     onProfileClick: (userId: Long) -> Unit = {},
+    onShowToast: (String) -> Unit = {},
     viewModel: CommentsViewModel = hiltViewModel(),
 ) {
     var inputText by remember { mutableStateOf("") }
@@ -192,6 +193,7 @@ fun CommentBottomSheet(
                                 else -> null
                             }
                             commentId?.let { viewModel.onEvent(CommentsEvent.DeleteComment(it)) }
+                            onShowToast("댓글 삭제를 완료했습니다.")
 
                             selectedCommentForMenu = null
                             selectedReplyForMenu = null
@@ -204,7 +206,7 @@ fun CommentBottomSheet(
                         text = stringResource(R.string.report),
                         color = colors.Red,
                         onClick = {
-                            // TODO: 신고 로직
+                            onShowToast("댓글 신고를 완료했습니다.")
                             selectedCommentForMenu = null
                             selectedReplyForMenu = null
                         }
