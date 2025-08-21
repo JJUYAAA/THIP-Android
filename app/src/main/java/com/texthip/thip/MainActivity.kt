@@ -40,7 +40,28 @@ fun RootNavHost() {
         startDestination = CommonRoutes.Splash
     ) {
         // --- 인증 관련 화면들 ---
-        authNavigation(navController)
+        authNavigation(
+            onNavigateToLogin = {
+                navController.navigate(CommonRoutes.Login) {
+                    popUpTo(CommonRoutes.Splash) { inclusive = true }
+                }
+            },
+            onNavigateToHome = {
+                navController.navigate(CommonRoutes.Main) {
+                    popUpTo(CommonRoutes.Splash) { inclusive = true }
+                }
+            },
+            onNavigateToSignup = {
+                navController.navigate(CommonRoutes.SignupFlow)
+            },
+            onNavigateToMainAfterSignup = {
+                navController.navigate(CommonRoutes.Main) { // 혹은 MainGraph
+                    popUpTo(CommonRoutes.Splash) { inclusive = true }
+                }
+            },
+            navController = navController
+        )
+
 
         // --- 메인 관련 화면들 ---
         composable<CommonRoutes.Main> { // MainScreen으로 가는 경로 추가
@@ -48,7 +69,7 @@ fun RootNavHost() {
                 onNavigateToLogin = {
                     navController.navigate(CommonRoutes.Login) {
                         // 메인 화면으로 돌아올 수 없도록 모든 화면 기록 삭제
-                        popUpTo(navController.graph.id) {
+                        popUpTo(CommonRoutes.Main) {
                             inclusive = true
                         }
                     }
