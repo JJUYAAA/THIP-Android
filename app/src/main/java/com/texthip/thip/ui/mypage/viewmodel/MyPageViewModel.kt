@@ -1,7 +1,12 @@
 package com.texthip.thip.ui.mypage.viewmodel
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.kakao.sdk.user.UserApiClient
 import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -62,9 +67,22 @@ class MyPageViewModel @Inject constructor(
         _uiState.update { it.copy(showLogoutDialog = false) }
     }
 
-    fun confirmLogout() {
+    fun confirmLogout(context: Context) {
         viewModelScope.launch {
             tokenManager.clearTokens()
+            // 2. 카카오 SDK에서 로그아웃
+            UserApiClient.instance.unlink { error ->
+                if (error != null) {
+                    Log.e("MyPageViewModel", "카카오 로그아웃 실패", error)
+                } else {
+                    Log.d("MyPageViewModel", "카카오 로그아웃 성공")
+                }
+            }
+
+            // 3. 구글 SDK에서 로그아웃
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+            GoogleSignIn.getClient(context, gso).signOut()
+
             _uiState.update { it.copy(showLogoutDialog = false, isLogoutCompleted = true) }
         }
     }
