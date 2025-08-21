@@ -18,5 +18,6 @@ data class FollowerList(
   @SerialName("profileImageUrl") val profileImageUrl: String?,
   @SerialName("aliasName") val aliasName: String,
   @SerialName("aliasColor") val aliasColor: String,
-  @SerialName("followerCount") val followerCount: Int
+  @SerialName("followerCount") val followerCount: Int,
+  @SerialName("isMyself") val isMyself: Boolean
 )
