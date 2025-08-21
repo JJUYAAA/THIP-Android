@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.navigator.navigations
 
+import SplashScreen
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -8,29 +9,33 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.texthip.thip.ui.navigator.extensions.navigateToLogin
 import com.texthip.thip.ui.navigator.extensions.navigateToMainAfterSignup
-import com.texthip.thip.ui.navigator.extensions.navigateToSignup
 import com.texthip.thip.ui.navigator.routes.CommonRoutes
 import com.texthip.thip.ui.signin.mock.SignupUserInfo
 import com.texthip.thip.ui.signin.screen.LoginScreen
 import com.texthip.thip.ui.signin.screen.SignupDoneScreen
 import com.texthip.thip.ui.signin.screen.SignupGenreScreen
 import com.texthip.thip.ui.signin.screen.SignupNicknameScreen
-import com.texthip.thip.ui.signin.screen.SplashScreen
 import com.texthip.thip.ui.signin.screen.TutorialScreen
 import com.texthip.thip.ui.signin.viewmodel.SignupViewModel
 
-fun NavGraphBuilder.authNavigation(navController: NavHostController) {
+fun NavGraphBuilder.authNavigation(
+    navController: NavHostController,
+    onNavigateToLogin: () -> Unit,
+    onNavigateToHome: () -> Unit,
+    onNavigateToSignup: () -> Unit,
+    onNavigateToMainAfterSignup: () -> Unit
+) {
     composable<CommonRoutes.Splash> {
         SplashScreen(
-            onNavigateToLogin = { navController.navigateToLogin() }
+            onNavigateToLogin = onNavigateToLogin,
+            onNavigateToHome = onNavigateToHome
         )
     }
     composable<CommonRoutes.Login> {
         LoginScreen(
-            onNavigateToSignup = { navController.navigateToSignup() },
-            onLoginSuccess = { navController.navigateToMainAfterSignup() }
+            onNavigateToSignup = onNavigateToSignup,
+            onLoginSuccess = onNavigateToMainAfterSignup
         )
     }
     navigation<CommonRoutes.SignupFlow>(
