@@ -86,9 +86,10 @@ fun SearchRecentBook(
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
         ) {
             if (popularBooks.isEmpty()) {
                 Column(
@@ -128,6 +129,11 @@ fun SearchRecentBook(
                                     .fillMaxWidth()
                                     .height(1.dp)
                                     .background(colors.DarkGrey02)
+                            )
+                        } else {
+                            Spacer(
+                                modifier = Modifier
+                                    .padding(bottom = 20.dp)
                             )
                         }
                     }

@@ -213,6 +213,7 @@ private fun SearchBookGroupScreenContent(
                                         isRecruiting = true,
                                         endDate = item.deadlineEndDate,
                                         imageUrl = item.bookImageUrl,
+                                        isSecret = !item.isPublic,
                                         onClick = { onCardClick(item.roomId) }
                                     )
                                 }
@@ -269,7 +270,8 @@ private val mockRecruitingList = listOf(
         memberCount = 8,
         recruitCount = 12,
         deadlineEndDate = "3일 뒤",
-        bookImageUrl = "https://example.com/demian.jpg"
+        bookImageUrl = "https://example.com/demian.jpg",
+        isPublic = true
     ),
     RecruitingRoomItem(
         roomId = 2,
@@ -277,7 +279,8 @@ private val mockRecruitingList = listOf(
         memberCount = 15,
         recruitCount = 20,
         deadlineEndDate = "7일 뒤",
-        bookImageUrl = "https://example.com/demian.jpg"
+        bookImageUrl = "https://example.com/demian.jpg",
+        isPublic = false
     ),
     RecruitingRoomItem(
         roomId = 3,
@@ -285,7 +288,8 @@ private val mockRecruitingList = listOf(
         memberCount = 5,
         recruitCount = 10,
         deadlineEndDate = "1일 뒤",
-        bookImageUrl = "https://example.com/demian.jpg"
+        bookImageUrl = "https://example.com/demian.jpg",
+        isPublic = true
     )
 )
 

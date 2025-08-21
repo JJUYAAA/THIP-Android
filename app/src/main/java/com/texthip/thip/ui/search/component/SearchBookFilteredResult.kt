@@ -87,11 +87,11 @@ fun SearchBookFilteredResult(
                 itemsIndexed(bookList) { index, book ->
                     Column {
                         CardBookList(
-                            modifier = Modifier.clickable { onBookClick(book) },
                             title = book.title,
                             author = book.author,
                             publisher = book.publisher,
-                            imageUrl = book.imageUrl
+                            imageUrl = book.imageUrl,
+                            onClick = { onBookClick(book) }
                         )
                         if (index < bookList.size - 1) {
                             Spacer(
