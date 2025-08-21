@@ -67,7 +67,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.foundation)
+    //implementation(libs.androidx.foundation)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.kotlinx.serialization.json)
@@ -91,7 +91,7 @@ dependencies {
 
 // Retrofit
     implementation(libs.retrofit)
-    implementation(libs.converter.gson)
+    //implementation(libs.converter.gson)
     implementation(libs.retrofit.kotlin.serialization.converter)
 
 // OkHttp
@@ -102,7 +102,7 @@ dependencies {
     implementation("com.kakao.sdk:v2-all:2.21.6")
 
 // 토큰 저장을 위한 DataStore
-    implementation ("androidx.datastore:datastore-preferences:1.1.1")
+    //implementation ("androidx.datastore:datastore-preferences:1.1.1")
 
 // 구글 로그인
     implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
