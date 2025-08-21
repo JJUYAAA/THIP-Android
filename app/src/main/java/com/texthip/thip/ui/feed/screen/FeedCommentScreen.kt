@@ -490,6 +490,9 @@ fun FeedCommentScreen(
                         color = colors.Red,
                         onClick = {
                             commentsViewModel.onEvent(CommentsEvent.DeleteComment(comment.commentId))
+                            toastMessage = "댓글 삭제를 완료했습니다."
+                            showToast = true
+                            isCommentMenuVisible = false
                             isCommentMenuVisible = false
                         }
                     )
