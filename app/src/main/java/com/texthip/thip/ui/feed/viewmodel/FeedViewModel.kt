@@ -202,7 +202,7 @@ class FeedViewModel @Inject constructor(
     fun pullToRefresh() {
         viewModelScope.launch {
             updateState { it.copy(isPullToRefreshing = true) }
-
+            fetchRecentWriters()
             when (_uiState.value.selectedTabIndex) {
                 0 -> refreshAllFeeds()
                 1 -> refreshMyFeeds()
@@ -288,7 +288,7 @@ class FeedViewModel @Inject constructor(
         }
     }
 
-    private fun fetchRecentWriters() {
+    fun fetchRecentWriters() {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true) }
             userRepository.getMyFollowingsRecentFeeds()
@@ -332,10 +332,10 @@ class FeedViewModel @Inject constructor(
         viewModelScope.launch {
             val currentAllFeeds = _uiState.value.allFeeds
             val currentMyFeeds = _uiState.value.myFeeds
-            
+
             val allFeedToUpdate = currentAllFeeds.find { it.feedId.toLong() == feedId }
             val myFeedToUpdate = currentMyFeeds.find { it.feedId.toLong() == feedId }
-            
+
             if (allFeedToUpdate == null && myFeedToUpdate == null) return@launch
 
             //ui 먼저 변경 ( 낙관적 업데이트 )
@@ -349,7 +349,7 @@ class FeedViewModel @Inject constructor(
                     it
                 }
             }
-            
+
             val newMyFeeds = currentMyFeeds.map {
                 if (it.feedId.toLong() == feedId) {
                     it.copy(
@@ -360,7 +360,7 @@ class FeedViewModel @Inject constructor(
                     it
                 }
             }
-            
+
             _uiState.update { it.copy(allFeeds = newAllFeeds, myFeeds = newMyFeeds) }
 
             //api 호출
@@ -369,15 +369,20 @@ class FeedViewModel @Inject constructor(
             } else {
                 !myFeedToUpdate!!.isLiked
             }
-            
+
             val currentLikeCount = allFeedToUpdate?.likeCount ?: myFeedToUpdate!!.likeCount
             val currentIsSaved = allFeedToUpdate?.isSaved ?: myFeedToUpdate!!.isSaved
-            
+
             changeFeedLikeUseCase(
                 feedId, newLikeStatus, currentLikeCount, currentIsSaved
             )
                 .onFailure {
-                    _uiState.update { it.copy(allFeeds = currentAllFeeds, myFeeds = currentMyFeeds) }
+                    _uiState.update {
+                        it.copy(
+                            allFeeds = currentAllFeeds,
+                            myFeeds = currentMyFeeds
+                        )
+                    }
                 }
         }
     }
@@ -386,10 +391,10 @@ class FeedViewModel @Inject constructor(
         viewModelScope.launch {
             val currentAllFeeds = _uiState.value.allFeeds
             val currentMyFeeds = _uiState.value.myFeeds
-            
+
             val allFeedToUpdate = currentAllFeeds.find { it.feedId.toLong() == feedId }
             val myFeedToUpdate = currentMyFeeds.find { it.feedId.toLong() == feedId }
-            
+
             if (allFeedToUpdate == null && myFeedToUpdate == null) return@launch
 
             // (낙관적 업데이트) UI 즉시 변경
@@ -400,7 +405,7 @@ class FeedViewModel @Inject constructor(
                     it
                 }
             }
-            
+
             val newMyFeeds = currentMyFeeds.map {
                 if (it.feedId.toLong() == feedId) {
                     it.copy(isSaved = !it.isSaved)
@@ -408,7 +413,7 @@ class FeedViewModel @Inject constructor(
                     it
                 }
             }
-            
+
             updateState { it.copy(allFeeds = newAllFeeds, myFeeds = newMyFeeds) }
 
             // API 호출
@@ -417,10 +422,10 @@ class FeedViewModel @Inject constructor(
             } else {
                 !myFeedToUpdate!!.isSaved
             }
-            
+
             val currentIsLiked = allFeedToUpdate?.isLiked ?: myFeedToUpdate!!.isLiked
             val currentLikeCount = allFeedToUpdate?.likeCount ?: myFeedToUpdate!!.likeCount
-            
+
             changeFeedSaveUseCase(
                 feedId = feedId,
                 newSaveStatus = newSaveStatus,
@@ -445,7 +450,7 @@ class FeedViewModel @Inject constructor(
                 feed
             }
         }
-        
+
         val updatedMyFeeds = _uiState.value.myFeeds.map { feed ->
             if (feed.feedId.toLong() == result.feedId) {
                 feed.copy(
@@ -458,7 +463,7 @@ class FeedViewModel @Inject constructor(
                 feed
             }
         }
-        
+
         _uiState.update { it.copy(allFeeds = updatedAllFeeds, myFeeds = updatedMyFeeds) }
     }
 
