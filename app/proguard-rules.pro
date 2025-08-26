@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Kakao SDK v2
+-keep class com.kakao.** { *; }
+-keep enum com.kakao.** { *; }
+-keep interface com.kakao.** { *; }
+-keep class com.texthip.thip.ui.navigator.** { *; }
