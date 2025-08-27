@@ -30,7 +30,11 @@ import com.texthip.thip.ui.navigator.routes.FeedRoutes
 import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
 // Feed
-fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBack: () -> Unit) {
+fun NavGraphBuilder.feedNavigation(
+    navController: NavHostController, 
+    navigateBack: () -> Unit,
+    onFeedTabReselected: Int = 0
+) {
     composable<MainTabRoutes.Feed> { backStackEntry ->
         val feedViewModel: FeedViewModel = hiltViewModel(backStackEntry)
         val uiState by feedViewModel.uiState.collectAsState()
@@ -54,6 +58,7 @@ fun NavGraphBuilder.feedNavigation(navController: NavHostController, navigateBac
             navController = navController,
             resultFeedId = resultFeedId,
             refreshFeed = refreshFeed,
+            onFeedTabReselected = onFeedTabReselected,
             onResultConsumed = {
                 backStackEntry.savedStateHandle.remove<Long>("feedId")
             },

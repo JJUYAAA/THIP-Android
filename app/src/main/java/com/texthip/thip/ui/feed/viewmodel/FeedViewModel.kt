@@ -75,22 +75,43 @@ class FeedViewModel @Inject constructor(
     }
 
     fun onTabSelected(index: Int) {
+        val isCurrentTab = _uiState.value.selectedTabIndex == index
         updateState { it.copy(selectedTabIndex = index) }
 
         when (index) {
             0 -> {
-                // 항상 새로고침 (인디케이터 표시)
-                refreshCurrentTab()
+                if (isCurrentTab) {
+                    // 같은 탭 다시 클릭 시: 전체 새로고침 + 스크롤 상단
+                    refreshDataAndScrollToTop()
+                } else {
+                    // 다른 탭에서 이동: 기존처럼 현재 탭만 새로고침
+                    refreshCurrentTab()
+                }
             }
 
             1 -> {
-                // 항상 새로고침 (인디케이터 표시)
-                refreshCurrentTab()
-                if (_uiState.value.myFeedInfo == null) {
-                    fetchMyFeedInfo()
+                if (isCurrentTab) {
+                    // 같은 탭 다시 클릭 시: 전체 새로고침 + 스크롤 상단
+                    refreshDataAndScrollToTop()
+                } else {
+                    // 다른 탭에서 이동: 기존처럼 현재 탭만 새로고침
+                    refreshCurrentTab()
+                    if (_uiState.value.myFeedInfo == null) {
+                        fetchMyFeedInfo()
+                    }
                 }
             }
         }
+    }
+    
+    fun refreshDataAndScrollToTop() {
+        refreshData()
+        // 스크롤 상단 이동은 Screen에서 처리
+    }
+    
+    fun refreshOnBottomNavReselect() {
+        // 바텀 네비게이션에서 같은 탭 다시 클릭 시 (스크롤은 Screen에서 처리)
+        refreshData()
     }
 
     private fun loadAllFeeds(isInitial: Boolean = true) {

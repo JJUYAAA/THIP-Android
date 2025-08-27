@@ -76,6 +76,7 @@ fun FeedScreen(
     onNavigateToSearchPeople: () -> Unit = {},
     onNavigateToNotification: () -> Unit = {},
     refreshFeed: Boolean? = null,
+    onFeedTabReselected: Int = 0, // 바텀 네비게이션 재선택 트리거
     onNavigateToOthersSubscription: (userId: Long) -> Unit = {},
     onResultConsumed: () -> Unit = {},
     onRefreshConsumed: () -> Unit = {},
@@ -139,6 +140,7 @@ fun FeedScreen(
     }
 
     var isUserTabChange by remember { mutableStateOf(false) }
+    var shouldScrollToTop by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         // 최초 진입시에만 데이터 로딩
@@ -172,6 +174,16 @@ fun FeedScreen(
             isUserTabChange = false
         }
     }
+    
+    // 같은 탭 재클릭 시 스크롤 상단 이동 처리
+    LaunchedEffect(shouldScrollToTop) {
+        if (shouldScrollToTop) {
+            currentListState.scrollToItem(0)
+            shouldScrollToTop = false
+        }
+    }
+    
+    // 중복된 로직 제거 - 기존 bottomNavReselected 방식만 사용
 
     LaunchedEffect(resultFeedId) {
         if (resultFeedId != null) {
@@ -200,6 +212,14 @@ fun FeedScreen(
                 feedViewModel.refreshData()
                 currentListState.scrollToItem(0)
             }
+        }
+    }
+    
+    // 바텀 네비게이션 탭 재선택 처리 (직접 상태 전달 방식)
+    LaunchedEffect(onFeedTabReselected) {
+        if (onFeedTabReselected > 0) {
+            feedViewModel.refreshOnBottomNavReselect()
+            currentListState.scrollToItem(0)
         }
     }
     LaunchedEffect(Unit) { //커스텀객체 타입 인식오류 -> 직렬화가 아닌 잘게 쪼개어 전달
@@ -263,7 +283,14 @@ fun FeedScreen(
                     titles = feedTabTitles,
                     selectedTabIndex = feedUiState.selectedTabIndex,
                     onTabSelected = { index ->
-                        isUserTabChange = true
+                        val isCurrentTab = feedUiState.selectedTabIndex == index
+                        if (isCurrentTab) {
+                            // 같은 탭 다시 클릭 시 스크롤 상단 이동 트리거
+                            shouldScrollToTop = true
+                        } else {
+                            // 다른 탭으로 전환 시
+                            isUserTabChange = true
+                        }
                         feedViewModel.onTabSelected(index)
                     }
                 )
