@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "353417813537-ihcvubi6dsbsbq1psgbr1sqj0g4i4c17.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.texthip.thip",
+            "certificate_hash": "673c2d448182cb54e88248b18ba155fb25891115"
+          }
+        },
+        {
           "client_id": "353417813537-lovs0p2tb9kjnjlp493a7098ov0cb2bu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
