@@ -106,7 +106,8 @@ fun SignupNicknameContent(
                 showIcon = false,
                 showLimit = true,
                 maxLength = 10,
-                warningMessage = warningMessageResId?.let { stringResource(it) } ?: ""
+                warningMessage = warningMessageResId?.let { stringResource(it) } ?: "",
+                preventUppercase = true
             )
         }
     }

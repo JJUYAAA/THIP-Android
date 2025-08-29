@@ -121,7 +121,8 @@ fun EditProfileContent(
                     showLimit = true,
                     maxLength = 10,
                     warningMessage = uiState.nicknameWarningMessageResId?.let { stringResource(it) }
-                        ?: ""
+                        ?: "",
+                    preventUppercase = true
                 )
                 Spacer(modifier = Modifier.height(40.dp))
                 Text(
