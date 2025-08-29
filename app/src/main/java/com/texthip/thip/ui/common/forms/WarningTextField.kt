@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,55 +47,67 @@ fun WarningTextField(
     showIcon: Boolean = false,
     containerColor: Color = colors.Black,
     isNumberOnly: Boolean = false,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    preventUppercase: Boolean = false
 ) {
-    val myStyle = typography.menu_r400_s14_h24.copy(lineHeight = 14.sp)
+    val myStyle = typography.menu_r400_s14_h24.copy(lineHeight = 16.sp)
 
     Column {
         Box(
             modifier = modifier
                 .height(48.dp)
         ) {
-            OutlinedTextField(
+            BasicTextField(
                 value = value,
                 onValueChange = { input ->
                     var filtered = input
                     if (isNumberOnly) filtered = filtered.filter { it.isDigit() }
+                    if (preventUppercase) filtered = filtered.filter { !it.isUpperCase() }
                     if (filtered.length > maxLength) filtered = filtered.take(maxLength)
                     onValueChange(filtered)
                 },
-                placeholder = {
-                    Text(
-                        text = hint,
-                        color = colors.Grey02,
-                        style = myStyle
+                textStyle = myStyle.copy(color = colors.White),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = containerColor,
+                        shape = RoundedCornerShape(12.dp)
                     )
-                },
-                textStyle = myStyle,
-                modifier = Modifier.fillMaxSize(),
-                shape = RoundedCornerShape(12.dp),
-                colors = TextFieldDefaults.colors(
-                    unfocusedTextColor = colors.White,
-                    focusedTextColor = colors.White,
-                    focusedIndicatorColor = if (showWarning) colors.Red else Color.Transparent,
-                    unfocusedIndicatorColor = if (showWarning) colors.Red else Color.Transparent,
-                    focusedContainerColor = containerColor,
-                    unfocusedContainerColor = containerColor,
-                    cursorColor = colors.NeonGreen
-                ),
-                trailingIcon = {
-                    if (showIcon) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_x_circle_grey),
-                            contentDescription = "Clear text",
-                            modifier = Modifier.clickable { onValueChange("") },
-                            tint = Color.Unspecified
-                        )
-                    }
-                },
+                    .border(
+                        width = if (showWarning) 1.dp else 0.dp,
+                        color = if (showWarning) colors.Red else Color.Transparent,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
-
+                keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+                cursorBrush = SolidColor(colors.NeonGreen),
+                decorationBox = { innerTextField ->
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        if (value.isEmpty()) {
+                            Text(
+                                text = hint,
+                                color = colors.Grey02,
+                                style = myStyle
+                            )
+                        }
+                        innerTextField()
+                        
+                        if (showIcon) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_x_circle_grey),
+                                contentDescription = "Clear text",
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .clickable { onValueChange("") },
+                                tint = Color.Unspecified
+                            )
+                        }
+                    }
+                }
             )
 
             if (showLimit && maxLength != Int.MAX_VALUE) {
@@ -159,28 +173,6 @@ fun WarningTextFieldPreviewNormal() {
             showWarning = false,
             showIcon = true,
             showLimit = false
-        )
-    }
-}
-
-@Composable
-@Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360, heightDp = 200)
-fun WarningTextFieldPreviewNormal_numberonly() {
-    var password by remember { mutableStateOf("") }
-
-    Box(
-        modifier = Modifier.size(width = 360.dp, height = 200.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        WarningTextField(
-            value = password,
-            onValueChange = { password = it },
-            hint = "4자리 숫자로 입장 비밀번호를 설정",
-            showWarning = false,
-            warningMessage = "4자리 숫자를 입력해주세요.",
-            maxLength = 4,
-            isNumberOnly = true,
-            keyboardType = KeyboardType.NumberPassword
         )
     }
 }
