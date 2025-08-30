@@ -62,7 +62,7 @@ fun WarningTextField(
                 onValueChange = { input ->
                     var filtered = input
                     if (isNumberOnly) filtered = filtered.filter { it.isDigit() }
-                    if (preventUppercase) filtered = filtered.filter { !it.isUpperCase() }
+                    if (preventUppercase) filtered = filtered.lowercase()
                     if (filtered.length > maxLength) filtered = filtered.take(maxLength)
                     onValueChange(filtered)
                 },
