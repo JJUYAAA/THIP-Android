@@ -52,6 +52,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.texthip.thip.R
+import com.texthip.thip.data.model.comments.response.CommentList
+import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.buttons.ActionBarButton
 import com.texthip.thip.ui.common.buttons.ActionBookButton
@@ -62,9 +64,11 @@ import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.feed.component.ImageViewerModal
+import com.texthip.thip.ui.feed.viewmodel.FeedDetailUiState
 import com.texthip.thip.ui.feed.viewmodel.FeedDetailViewModel
 import com.texthip.thip.ui.group.note.component.CommentSection
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
+import com.texthip.thip.ui.group.note.viewmodel.CommentsUiState
 import com.texthip.thip.ui.group.note.viewmodel.CommentsViewModel
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.theme.ThipTheme
@@ -593,8 +597,48 @@ private fun FeedCommentContent(
 private fun FeedCommentContentPreview() {
     ThipTheme {
         FeedCommentContent(
-            feedDetailUiState = com.texthip.thip.ui.feed.viewmodel.FeedDetailUiState(),
-            commentsUiState = com.texthip.thip.ui.group.note.viewmodel.CommentsUiState(),
+            feedDetailUiState = FeedDetailUiState(
+                feedDetail = FeedDetailResponse(
+                    feedId = 1,
+                    creatorId = 123L,
+                    creatorNickname = "책읽는사람",
+                    creatorProfileImageUrl = "",
+                    aliasName = "문학 애호가",
+                    aliasColor = "#FF6B9D",
+                    postDate = "2시간 전",
+                    bookTitle = "코스모스",
+                    isbn = "9788983711892",
+                    bookAuthor = "칼 세이건",
+                    contentBody = "이 책을 읽으면서 우주에 대한 새로운 시각을 갖게 되었습니다. 과학적 사실들이 아름다운 문장으로 표현되어 있어서 읽는 내내 감동받았어요.",
+                    contentUrls = listOf("https://example.com/image1.jpg"),
+                    tagList = listOf("과학", "우주", "감동"),
+                    isLiked = true,
+                    likeCount = 42,
+                    commentCount = 8,
+                    isSaved = false,
+                    isWriter = false,
+                    isPublic = true
+                )
+            ),
+            commentsUiState = CommentsUiState(
+                comments = listOf(
+                    CommentList(
+                        commentId = 1,
+                        creatorId = 456L,
+                        creatorProfileImageUrl = "",
+                        creatorNickname = "독서왕",
+                        aliasName = "과학 전문가",
+                        aliasColor = "#00FF7F",
+                        postDate = "1시간 전",
+                        content = "정말 좋은 책이네요! 저도 읽어보고 싶습니다.",
+                        likeCount = 5,
+                        isDeleted = false,
+                        isWriter = false,
+                        isLike = false,
+                        replyList = emptyList()
+                    )
+                )
+            ),
             onNavigateBack = {},
             onNavigateToFeedEdit = {},
             onNavigateToUserProfile = {},

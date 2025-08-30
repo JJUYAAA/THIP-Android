@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.data.manager.Genre
+import com.texthip.thip.data.model.book.response.RecentSearchItem
+import com.texthip.thip.data.model.rooms.response.SearchRoomItem
 import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
@@ -220,7 +222,39 @@ private fun GroupSearchContent(
 private fun GroupSearchContentPreview() {
     ThipTheme {
         GroupSearchContent(
-            uiState = com.texthip.thip.ui.group.search.viewmodel.GroupSearchUiState()
+            uiState = GroupSearchUiState(
+                searchQuery = "코스모스",
+                isCompleteSearching = true,
+                searchResults = listOf(
+                    SearchRoomItem(
+                        roomId = 1,
+                        bookImageUrl = "",
+                        roomName = "코스모스 독서 모임",
+                        memberCount = 8,
+                        recruitCount = 12,
+                        deadlineDate = "2024-12-31",
+                        isPublic = true
+                    )
+                ),
+                recentSearches = listOf(
+                    RecentSearchItem(
+                        recentSearchId = 1,
+                        searchTerm = "해리포터"
+                    ),
+                    RecentSearchItem(
+                        recentSearchId = 2,
+                        searchTerm = "1984"
+                    )
+                ),
+                genres = listOf(
+                    Genre.LITERATURE,
+                    Genre.SCIENCE_IT,
+                    Genre.SOCIAL_SCIENCE,
+                    Genre.HUMANITIES,
+                    Genre.ART
+                ),
+                selectedGenre = Genre.SCIENCE_IT
+            )
         )
     }
 }

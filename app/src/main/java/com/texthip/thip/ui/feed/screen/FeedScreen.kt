@@ -45,6 +45,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.R
+import com.texthip.thip.data.model.feed.response.AllFeedItem
+import com.texthip.thip.data.model.users.response.RecentWriterList
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.header.AuthorHeader
 import com.texthip.thip.ui.common.header.HeaderMenuBarTab
@@ -53,6 +55,7 @@ import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
 import com.texthip.thip.ui.feed.mock.FeedStateUpdateResult
+import com.texthip.thip.ui.feed.viewmodel.FeedUiState
 import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
@@ -601,7 +604,61 @@ private fun FeedContent(
 private fun FeedContentPreview() {
     ThipTheme {
         FeedContent(
-            feedUiState = com.texthip.thip.ui.feed.viewmodel.FeedUiState(),
+            feedUiState = FeedUiState(
+                selectedTabIndex = 0,
+                allFeeds = listOf(
+                    AllFeedItem(
+                        feedId = 1,
+                        creatorId = 123L,
+                        creatorNickname = "책읽는사람",
+                        creatorProfileImageUrl = "",
+                        aliasName = "문학 애호가",
+                        aliasColor = "#FF6B9D",
+                        postDate = "2시간 전",
+                        isbn = "9788983711892",
+                        bookTitle = "코스모스",
+                        bookAuthor = "칼 세이건",
+                        contentBody = "이 책을 읽으면서 우주에 대한 새로운 시각을 갖게 되었습니다. 과학적 사실들이 아름다운 문장으로 표현되어 있어서 읽는 내내 감동받았어요.",
+                        contentUrls = listOf("https://example.com/image1.jpg"),
+                        likeCount = 42,
+                        commentCount = 8,
+                        isSaved = false,
+                        isLiked = true,
+                        isWriter = false
+                    ),
+                    AllFeedItem(
+                        feedId = 2,
+                        creatorId = 456L,
+                        creatorNickname = "소설러버",
+                        creatorProfileImageUrl = "",
+                        aliasName = "추리소설 전문가",
+                        aliasColor = "#4ECDC4",
+                        postDate = "4시간 전",
+                        isbn = "9788932473234",
+                        bookTitle = "셜록 홈즈의 모험",
+                        bookAuthor = "아서 코난 도일",
+                        contentBody = "홈즈의 추리 과정이 정말 흥미진진합니다. 논리적 사고의 힘을 보여주는 명작이에요.",
+                        contentUrls = emptyList(),
+                        likeCount = 28,
+                        commentCount = 15,
+                        isSaved = true,
+                        isLiked = false,
+                        isWriter = false
+                    )
+                ),
+                recentWriters = listOf(
+                    RecentWriterList(
+                        userId = 789L,
+                        nickname = "철학자",
+                        profileImageUrl = ""
+                    ),
+                    RecentWriterList(
+                        userId = 101L,
+                        nickname = "역사학도",
+                        profileImageUrl = ""
+                    )
+                )
+            ),
             showProgressBar = false,
             progress = 0f,
             currentListState = LazyListState(),
