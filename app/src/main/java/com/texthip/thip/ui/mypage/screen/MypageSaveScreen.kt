@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.mypage.component.BookContent
+import com.texthip.thip.ui.mypage.component.FeedContent
 import com.texthip.thip.ui.mypage.mock.BookItem
 import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.mypage.viewmodel.SavedBookViewModel
@@ -67,7 +69,9 @@ fun MypageSaveScreen(
         bookList = bookList,
         onNavigateBack = onNavigateBack,
         onBookClick = onBookClick,
-        onFeedClick = onFeedClick
+        onFeedClick = onFeedClick,
+        feedViewModel = feedViewModel,
+        bookViewModel = bookViewModel
     )
 }
 
@@ -79,7 +83,9 @@ private fun MypageSaveContent(
     bookList: List<BookItem>,
     onNavigateBack: () -> Unit,
     onBookClick: (isbn: String) -> Unit,
-    onFeedClick: (feedId: Long) -> Unit
+    onFeedClick: (feedId: Long) -> Unit,
+    feedViewModel: SavedFeedViewModel?,
+    bookViewModel: SavedBookViewModel?
 ) {
     val tabs = listOf(stringResource(R.string.feed), stringResource(R.string.book))
     
@@ -145,25 +151,19 @@ private fun MypageSaveContent(
                     .fillMaxWidth()
             ) {
                 when (selectedTabIndex) {
-                    0 -> {
-                        Text(
-                            text = "저장된 피드 ${feedList.size}개",
-                            style = typography.smalltitle_sb600_s18_h24,
-                            color = colors.White,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(16.dp)
+                    0 -> feedViewModel?.let {
+                        FeedContent(
+                            feedList = feedList,
+                            onFeedClick = onFeedClick,
+                            viewModel = it
                         )
                     }
 
-                    1 -> {
-                        Text(
-                            text = "저장된 책 ${bookList.size}개",
-                            style = typography.smalltitle_sb600_s18_h24,
-                            color = colors.White,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(16.dp)
+                    1 -> bookViewModel?.let {
+                        BookContent(
+                            bookList = bookList,
+                            onBookClick = onBookClick,
+                            viewModel = it
                         )
                     }
                 }
@@ -247,7 +247,9 @@ private fun MypageSaveContentPreview() {
             ),
             onNavigateBack = {},
             onBookClick = {},
-            onFeedClick = {}
+            onFeedClick = {},
+            feedViewModel = null,
+            bookViewModel = null
         )
     }
 }
