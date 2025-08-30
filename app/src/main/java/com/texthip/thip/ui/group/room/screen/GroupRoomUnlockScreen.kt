@@ -97,6 +97,46 @@ fun GroupRoomUnlockScreen(
         }
     }
 
+    GroupRoomUnlockContent(
+        password = password,
+        showError = showError,
+        focusRequesters = focusRequesters,
+        onBackClick = onBackClick,
+        onPasswordChange = { index, input ->
+            if (input.length <= 1 && input.all { it.isDigit() }) {
+                val newPassword = password.copyOf()
+                val wasEmpty = password[index].isEmpty()
+                newPassword[index] = input
+                password = newPassword
+
+                // 숫자가 입력되면 다음 칸으로 이동
+                if (input.isNotEmpty() && index < 3) {
+                    focusRequesters[index + 1].requestFocus()
+                } else if (input.isEmpty() && !wasEmpty && index > 0) {
+                    focusRequesters[index - 1].requestFocus()
+                }
+            }
+        },
+        onBackspace = { index ->
+            // 빈 박스에서 백스페이스 → 이전 박스로 이동
+            if (index > 0) {
+                val prevIndex = index - 1
+                focusRequesters[prevIndex].requestFocus()
+            }
+        }
+    )
+}
+
+@Composable
+private fun GroupRoomUnlockContent(
+    password: Array<String>,
+    showError: Boolean,
+    focusRequesters: List<FocusRequester>,
+    onBackClick: () -> Unit,
+    onPasswordChange: (Int, String) -> Unit,
+    onBackspace: (Int) -> Unit
+) {
+
     Box(modifier = Modifier.fillMaxSize().advancedImePadding()) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -130,29 +170,8 @@ fun GroupRoomUnlockScreen(
                     repeat(4) { index ->
                         SingleDigitBox(
                             value = password[index],
-                            onValueChange = { input ->
-                                if (input.length <= 1 && input.all { it.isDigit() }) {
-                                    val newPassword = password.copyOf()
-                                    val wasEmpty = password[index].isEmpty()
-                                    newPassword[index] = input
-                                    password = newPassword
-
-                                    // 숫자가 입력되면 다음 칸으로 이동
-                                    if (input.isNotEmpty() && index < 3) {
-                                        focusRequesters[index + 1].requestFocus()
-                                    } else if (input.isEmpty() && !wasEmpty && index > 0) {
-                                        focusRequesters[index - 1].requestFocus()
-                                    }
-
-                                }
-                            },
-                            onBackspace = {
-                                // 빈 박스에서 백스페이스 → 이전 박스로 이동
-                                if (index > 0) {
-                                    val prevIndex = index - 1
-                                    focusRequesters[prevIndex].requestFocus()
-                                }
-                            },
+                            onValueChange = { input -> onPasswordChange(index, input) },
+                            onBackspace = { onBackspace(index) },
                             borderColor = if (showError) colors.Red else Color.Transparent,
                             modifier = Modifier
                                 .size(44.dp)
@@ -183,11 +202,15 @@ fun GroupRoomUnlockScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun GroupRoomUnlockScreenPreview() {
+private fun GroupRoomUnlockContentPreview() {
     ThipTheme {
-        GroupRoomUnlockScreen(
+        GroupRoomUnlockContent(
+            password = arrayOf("", "", "", ""),
+            showError = false,
+            focusRequesters = List(4) { FocusRequester() },
             onBackClick = {},
-            onSuccessNavigation = {}
+            onPasswordChange = { _, _ -> },
+            onBackspace = {}
         )
     }
 }

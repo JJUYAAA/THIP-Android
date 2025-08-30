@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -66,6 +67,7 @@ import com.texthip.thip.ui.group.note.component.CommentSection
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
 import com.texthip.thip.ui.group.note.viewmodel.CommentsViewModel
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.rooms.advancedImePadding
@@ -112,7 +114,7 @@ fun FeedCommentScreen(
     }
     LaunchedEffect(feedId) {
         feedDetailViewModel.loadFeedDetail(feedId)
-        commentsViewModel.initialize(postId = feedId.toLong(), postType = "FEED")
+        commentsViewModel.initialize(postId = feedId, postType = "FEED")
     }
 
     // 댓글이 생성되면 피드 상세 정보를 다시 로드
@@ -123,6 +125,35 @@ fun FeedCommentScreen(
         }
     }
 
+    FeedCommentContent(
+        modifier = modifier,
+        feedDetailUiState = feedDetailUiState,
+        commentsUiState = commentsUiState,
+        onNavigateBack = onNavigateBack,
+        onNavigateToFeedEdit = onNavigateToFeedEdit,
+        onNavigateToUserProfile = onNavigateToUserProfile,
+        onNavigateToBookDetail = onNavigateToBookDetail,
+        onLikeClick = { feedDetailViewModel.changeFeedLike() },
+        onBookmarkClick = { feedDetailViewModel.changeFeedSave() },
+        onDeleteFeed = { feedDetailViewModel.deleteFeed(feedId) },
+        onCommentEvent = commentsViewModel::onEvent
+    )
+}
+
+@Composable
+private fun FeedCommentContent(
+    modifier: Modifier = Modifier,
+    feedDetailUiState: com.texthip.thip.ui.feed.viewmodel.FeedDetailUiState,
+    commentsUiState: com.texthip.thip.ui.group.note.viewmodel.CommentsUiState,
+    onNavigateBack: () -> Unit,
+    onNavigateToFeedEdit: (Int) -> Unit,
+    onNavigateToUserProfile: (userId: Long) -> Unit,
+    onNavigateToBookDetail: (String) -> Unit,
+    onLikeClick: () -> Unit,
+    onBookmarkClick: () -> Unit,
+    onDeleteFeed: () -> Unit,
+    onCommentEvent: (CommentsEvent) -> Unit
+) {
     // 로딩 상태 처리
     if (feedDetailUiState.isLoading) {
         Box(
@@ -151,7 +182,7 @@ fun FeedCommentScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = feedDetailUiState.error!!,
+                    text = feedDetailUiState.error,
                     style = typography.copy_r400_s14,
                     color = colors.Grey
                 )
@@ -324,8 +355,8 @@ fun FeedCommentScreen(
                                 isSaved = feedDetail.isSaved,
                                 isPinVisible = false,
                                 isLockIcon = feedDetail.isPublic == false,
-                                onLikeClick = { feedDetailViewModel.changeFeedLike() },
-                                onBookmarkClick = { feedDetailViewModel.changeFeedSave() },
+                                onLikeClick = onLikeClick,
+                                onBookmarkClick = onBookmarkClick,
                             )
 
                             HorizontalDivider(
@@ -380,7 +411,7 @@ fun FeedCommentScreen(
                             ) { commentItem ->
                                 CommentSection(
                                     commentItem = commentItem,
-                                    onEvent = commentsViewModel::onEvent,
+                                    onEvent = onCommentEvent,
                                     onReplyClick = { commentId, nickname ->
                                         replyingToCommentId = commentId
                                         replyingToNickname = nickname
@@ -409,7 +440,7 @@ fun FeedCommentScreen(
                     onInputChange = { commentInput = it },
                     onSendClick = {
                         if (commentInput.isNotBlank()) {
-                            commentsViewModel.onEvent(
+                            onCommentEvent(
                                 CommentsEvent.CreateComment(
                                     content = commentInput,
                                     parentId = replyingToCommentId
@@ -498,10 +529,9 @@ fun FeedCommentScreen(
                         text = stringResource(R.string.delete),
                         color = colors.Red,
                         onClick = {
-                            commentsViewModel.onEvent(CommentsEvent.DeleteComment(comment.commentId))
+                            onCommentEvent(CommentsEvent.DeleteComment(comment.commentId))
                             toastMessage = "댓글 삭제를 완료했습니다."
                             showToast = true
-                            isCommentMenuVisible = false
                             isCommentMenuVisible = false
                         }
                     )
@@ -538,7 +568,7 @@ fun FeedCommentScreen(
                         description = stringResource(R.string.delete_feed_dialog_description),
                         onConfirm = {
                             showDeleteDialog = false
-                            feedDetailViewModel.deleteFeed(feedId)
+                            onDeleteFeed()
                         },
                         onCancel = {
                             showDeleteDialog = false
@@ -555,5 +585,24 @@ fun FeedCommentScreen(
                 onDismiss = { showImageViewer = false }
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun FeedCommentContentPreview() {
+    ThipTheme {
+        FeedCommentContent(
+            feedDetailUiState = com.texthip.thip.ui.feed.viewmodel.FeedDetailUiState(),
+            commentsUiState = com.texthip.thip.ui.group.note.viewmodel.CommentsUiState(),
+            onNavigateBack = {},
+            onNavigateToFeedEdit = {},
+            onNavigateToUserProfile = {},
+            onNavigateToBookDetail = {},
+            onLikeClick = {},
+            onBookmarkClick = {},
+            onDeleteFeed = {},
+            onCommentEvent = {}
+        )
     }
 }

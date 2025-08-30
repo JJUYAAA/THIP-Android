@@ -1,3 +1,5 @@
+package com.texthip.thip.ui.signin.screen
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +27,7 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.signin.viewmodel.SplashDestination
 import com.texthip.thip.ui.signin.viewmodel.SplashViewModel
 import com.texthip.thip.ui.theme.Purple
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
@@ -44,6 +47,11 @@ fun SplashScreen(
         }
     }
 
+    SplashContent()
+}
+
+@Composable
+private fun SplashContent() {
     Column(
         Modifier
             .background(colors.Black)
@@ -72,6 +80,8 @@ fun SplashScreen(
 
 @Preview
 @Composable
-private fun SplashScreenPrev() {
-    SplashScreen()
+private fun SplashContentPreview() {
+    ThipTheme {
+        SplashContent()
+    }
 }

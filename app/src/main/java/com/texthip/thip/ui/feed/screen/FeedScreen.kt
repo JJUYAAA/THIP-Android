@@ -250,6 +250,60 @@ fun FeedScreen(
             }
         }
     }
+
+    FeedContent(
+        feedUiState = feedUiState,
+        showProgressBar = showProgressBar,
+        progress = progress.value,
+        currentListState = currentListState,
+        feedTabTitles = feedTabTitles,
+        onNavigateToSearchPeople = onNavigateToSearchPeople,
+        onNavigateToNotification = onNavigateToNotification,
+        onNavigateToMySubscription = onNavigateToMySubscription,
+        onNavigateToOthersSubscription = onNavigateToOthersSubscription,
+        onNavigateToFeedComment = onNavigateToFeedComment,
+        onNavigateToBookDetail = onNavigateToBookDetail,
+        onNavigateToUserProfile = { userId ->
+            navController.currentBackStackEntry?.savedStateHandle?.set("from_profile", true)
+            onNavigateToUserProfile(userId)
+        },
+        onNavigateToFeedWrite = onNavigateToFeedWrite,
+        onTabSelected = { index ->
+            val isCurrentTab = feedUiState.selectedTabIndex == index
+            if (isCurrentTab) {
+                shouldScrollToTop = true
+            } else {
+                isUserTabChange = true
+            }
+            feedViewModel.onTabSelected(index)
+        },
+        onChangeFeedLike = feedViewModel::changeFeedLike,
+        onChangeFeedSave = feedViewModel::changeFeedSave,
+        onPullToRefresh = feedViewModel::pullToRefresh
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FeedContent(
+    feedUiState: com.texthip.thip.ui.feed.viewmodel.FeedUiState,
+    showProgressBar: Boolean,
+    progress: Float,
+    currentListState: LazyListState,
+    feedTabTitles: List<String>,
+    onNavigateToSearchPeople: () -> Unit,
+    onNavigateToNotification: () -> Unit,
+    onNavigateToMySubscription: () -> Unit,
+    onNavigateToOthersSubscription: (userId: Long) -> Unit,
+    onNavigateToFeedComment: (Long) -> Unit,
+    onNavigateToBookDetail: (String) -> Unit,
+    onNavigateToUserProfile: (userId: Long) -> Unit,
+    onNavigateToFeedWrite: () -> Unit,
+    onTabSelected: (Int) -> Unit,
+    onChangeFeedLike: (Long) -> Unit,
+    onChangeFeedSave: (Long) -> Unit,
+    onPullToRefresh: () -> Unit
+) {
     // 초기 로딩 상태 처리
     if (feedUiState.isLoading && feedUiState.currentTabFeeds.isEmpty()) {
         Box(
@@ -267,7 +321,7 @@ fun FeedScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         PullToRefreshBox(
             isRefreshing = feedUiState.isPullToRefreshing,
-            onRefresh = { feedViewModel.pullToRefresh() }
+            onRefresh = onPullToRefresh
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -284,14 +338,7 @@ fun FeedScreen(
                     selectedTabIndex = feedUiState.selectedTabIndex,
                     onTabSelected = { index ->
                         val isCurrentTab = feedUiState.selectedTabIndex == index
-                        if (isCurrentTab) {
-                            // 같은 탭 다시 클릭 시 스크롤 상단 이동 트리거
-                            shouldScrollToTop = true
-                        } else {
-                            // 다른 탭으로 전환 시
-                            isUserTabChange = true
-                        }
-                        feedViewModel.onTabSelected(index)
+                        onTabSelected(index)
                     }
                 )
 
@@ -310,7 +357,7 @@ fun FeedScreen(
                             ) {
                                 Text(
                                     modifier = Modifier.padding(bottom = 12.dp),
-                                    text = if (progress.value < 1.0f) {
+                                    text = if (progress < 1.0f) {
                                         stringResource(R.string.posting_in_progress_feed)
                                     } else {
                                         stringResource(R.string.posting_complete_feed)
@@ -328,7 +375,7 @@ fun FeedScreen(
                                 ) {
                                     Box(
                                         modifier = Modifier
-                                            .fillMaxWidth(fraction = progress.value)
+                                            .fillMaxWidth(fraction = progress)
                                             .fillMaxHeight()
                                             .background(
                                                 color = colors.NeonGreen,
@@ -428,7 +475,7 @@ fun FeedScreen(
 
                                 MyFeedCard(
                                     feedItem = feedItem,
-                                    onLikeClick = { feedViewModel.changeFeedLike(feedItem.id) },
+                                    onLikeClick = { onChangeFeedLike(feedItem.id) },
                                     onContentClick = {
                                         onNavigateToFeedComment(feedItem.id)
                                     },
@@ -483,10 +530,10 @@ fun FeedScreen(
                                 feedItem = feedItem,
                                 bottomTextColor = hexToColor(allFeed.aliasColor),
                                 onBookmarkClick = {
-                                    feedViewModel.changeFeedSave(feedItem.id)
+                                    onChangeFeedSave(feedItem.id)
                                 },
                                 onLikeClick = {
-                                    feedViewModel.changeFeedLike(feedItem.id)
+                                    onChangeFeedLike(feedItem.id)
                                 },
                                 onContentClick = {
                                     onNavigateToFeedComment(feedItem.id)
@@ -498,8 +545,6 @@ fun FeedScreen(
                                     onNavigateToBookDetail(allFeed.isbn)
                                 },
                                 onProfileClick = {
-                                    // 프로필에서 돌아올 때를 위한 플래그 설정
-                                    navController.currentBackStackEntry?.savedStateHandle?.set("from_profile", true)
                                     onNavigateToUserProfile(allFeed.creatorId)
                                 }
                             )
@@ -553,24 +598,26 @@ fun FeedScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun FeedScreenPreview() {
+private fun FeedContentPreview() {
     ThipTheme {
-        FeedScreen(
-            onNavigateToFeedWrite = { },
-            onNavigateToBookDetail = { },
-            navController = rememberNavController()
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun FeedScreenWithoutDataPreview() {
-    ThipTheme {
-        FeedScreen(
-            onNavigateToFeedWrite = { },
-            onNavigateToBookDetail = { },
-            navController = rememberNavController()
+        FeedContent(
+            feedUiState = com.texthip.thip.ui.feed.viewmodel.FeedUiState(),
+            showProgressBar = false,
+            progress = 0f,
+            currentListState = LazyListState(),
+            feedTabTitles = listOf("피드", "내 피드"),
+            onNavigateToSearchPeople = {},
+            onNavigateToNotification = {},
+            onNavigateToMySubscription = {},
+            onNavigateToOthersSubscription = {},
+            onNavigateToFeedComment = {},
+            onNavigateToBookDetail = {},
+            onNavigateToUserProfile = {},
+            onNavigateToFeedWrite = {},
+            onTabSelected = {},
+            onChangeFeedLike = {},
+            onChangeFeedSave = {},
+            onPullToRefresh = {}
         )
     }
 }
