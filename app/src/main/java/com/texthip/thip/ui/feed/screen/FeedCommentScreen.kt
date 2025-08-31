@@ -74,6 +74,7 @@ import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.color.hexToColor
 import com.texthip.thip.utils.rooms.advancedImePadding
 import kotlinx.coroutines.delay
 
@@ -279,6 +280,7 @@ private fun FeedCommentContent(
                                 profileImage = feedDetail.creatorProfileImageUrl ?: "",
                                 topText = feedDetail.creatorNickname,
                                 bottomText = feedDetail.aliasName,
+                                bottomTextColor = hexToColor(feedDetail.aliasColor),
                                 showSubscriberInfo = false,
                                 hoursAgo = feedDetail.postDate,
                                 onClick = { onNavigateToUserProfile(feedDetail.creatorId) }
