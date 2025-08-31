@@ -1,7 +1,5 @@
 package com.texthip.thip.ui.feed.viewmodel
 
-import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -76,10 +74,6 @@ class FeedOthersViewModel @Inject constructor(
             val feedsResult = feedsDeferred.await()
 
             val fetchedFeeds = feedsResult.getOrNull()?.feedList ?: emptyList()
-
-            // ✅ 로그를 추가하여 유저 정보와 피드 개수를 확인
-            Log.d("FeedOthersViewModel", "User Info Result: ${userInfoResult.getOrNull()}")
-            Log.d("FeedOthersViewModel", "Fetched Feeds Count: ${fetchedFeeds.size}")
 
             _uiState.update {
                 it.copy(
