@@ -65,7 +65,7 @@ class FeedOthersViewModel @Inject constructor(
     }
 
 
-    private fun fetchData() {
+    fun fetchData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 

@@ -68,10 +68,50 @@ class FeedViewModel @Inject constructor(
         loadAllFeeds()
         fetchRecentWriters()
         fetchMyFeedInfo()
+        observeFeedUpdates()
     }
 
     private fun updateState(update: (FeedUiState) -> FeedUiState) {
         _uiState.value = update(_uiState.value)
+    }
+
+    private fun observeFeedUpdates() {
+        viewModelScope.launch {
+            feedRepository.feedStateUpdateResult.collect { update ->
+                val updatedAllFeeds = _uiState.value.allFeeds.map { feed ->
+                    if (feed.feedId.toLong() == update.feedId) {
+                        feed.copy(
+                            isLiked = update.isLiked,
+                            likeCount = update.likeCount,
+                            isSaved = update.isSaved,
+                            commentCount = update.commentCount
+                        )
+                    } else {
+                        feed
+                    }
+                }
+
+                val updatedMyFeeds = _uiState.value.myFeeds.map { feed ->
+                    if (feed.feedId.toLong() == update.feedId) {
+                        feed.copy(
+                            isLiked = update.isLiked,
+                            likeCount = update.likeCount,
+                            isSaved = update.isSaved,
+                            commentCount = update.commentCount
+                        )
+                    } else {
+                        feed
+                    }
+                }
+
+                _uiState.update { 
+                    it.copy(
+                        allFeeds = updatedAllFeeds, 
+                        myFeeds = updatedMyFeeds
+                    ) 
+                }
+            }
+        }
     }
 
     fun onTabSelected(index: Int) {
@@ -333,7 +373,7 @@ class FeedViewModel @Inject constructor(
         }
     }
 
-    private fun fetchMyFeedInfo() {
+    fun fetchMyFeedInfo() {
         viewModelScope.launch {
             feedRepository.getMyFeedInfo()
                 .onSuccess { data ->
