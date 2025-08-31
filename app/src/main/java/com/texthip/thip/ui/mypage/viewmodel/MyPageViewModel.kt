@@ -71,7 +71,7 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             tokenManager.clearTokens()
             // 2. 카카오 SDK에서 로그아웃
-            UserApiClient.instance.unlink { error ->
+            UserApiClient.instance.logout { error ->
                 if (error != null) {
                     Log.e("MyPageViewModel", "카카오 로그아웃 실패", error)
                 } else {
