@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.group.room.screen
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,6 +62,7 @@ fun GroupRoomChatScreen(
 ) {
     var inputText by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     var activeToast by remember { mutableStateOf<ToastType?>(null) }
 
@@ -69,7 +72,9 @@ fun GroupRoomChatScreen(
                 is GroupRoomChatEvent.ShowToast -> {
                     activeToast = event.type
                 }
-
+                is GroupRoomChatEvent.ShowErrorToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
                 else -> Unit
             }
         }
@@ -298,7 +303,9 @@ fun GroupRoomChatContent(
                     text = stringResource(R.string.delete),
                     color = colors.Red,
                     onClick = {
-                        // TODO: 삭제 처리
+                        selectedMessage?.let { message ->
+                            onEvent(GroupRoomChatEvent.DeleteGreeting(message.attendanceCheckId))
+                        }
                         isBottomSheetVisible = false
                     }
                 )
