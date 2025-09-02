@@ -20,7 +20,8 @@ interface BookService {
     /** 저장된 책 또는 모임 책 목록 조회 */
     @GET("books/selectable-list")
     suspend fun getBooks(
-        @Query("type") type: String
+        @Query("type") type: String,
+        @Query("cursor") cursor: String? = null
     ): BaseResponse<BookListResponse>
 
     /** 책 검색 */
@@ -56,5 +57,7 @@ interface BookService {
     ): BaseResponse<RecruitingRoomsResponse>
 
     @GET("books/saved")
-    suspend fun getSavedBooks(): BaseResponse<BookUserSaveResponse>
+    suspend fun getSavedBooks(
+        @Query("cursor") cursor: String? = null
+    ): BaseResponse<BookUserSaveResponse>
 }

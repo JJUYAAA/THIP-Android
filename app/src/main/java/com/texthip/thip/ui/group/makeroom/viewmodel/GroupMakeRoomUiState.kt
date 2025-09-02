@@ -22,8 +22,16 @@ data class GroupMakeRoomUiState(
     val savedBooks: List<BookData> = emptyList(),
     val groupBooks: List<BookData> = emptyList(),
     val isLoadingBooks: Boolean = false,
+    val isLoadingMoreSavedBooks: Boolean = false,
+    val isLoadingMoreGroupBooks: Boolean = false,
+    val isLastSavedBooks: Boolean = false,
+    val isLastGroupBooks: Boolean = false,
     val searchResults: List<BookData> = emptyList(),
     val isSearching: Boolean = false,
+    val isLoadingMoreSearchResults: Boolean = false,
+    val searchPage: Int = 1,
+    val isLastSearchPage: Boolean = false,
+    val currentSearchQuery: String = "",
     val genres: List<Genre> = emptyList(),
     val isBookPreselected: Boolean = false
 ) {
