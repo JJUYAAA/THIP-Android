@@ -1,8 +1,10 @@
 package com.texthip.thip.data.service
 
 import com.texthip.thip.data.model.base.BaseResponse
+import com.texthip.thip.data.model.feed.request.CreateFeedRequest
 import com.texthip.thip.data.model.feed.request.FeedLikeRequest
 import com.texthip.thip.data.model.feed.request.FeedSaveRequest
+import com.texthip.thip.data.model.feed.request.PresignedUrlRequest
 import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
@@ -14,16 +16,13 @@ import com.texthip.thip.data.model.feed.response.FeedUsersInfoResponse
 import com.texthip.thip.data.model.feed.response.FeedUsersResponse
 import com.texthip.thip.data.model.feed.response.FeedWriteInfoResponse
 import com.texthip.thip.data.model.feed.response.MyFeedResponse
+import com.texthip.thip.data.model.feed.response.PresignedUrlResponse
 import com.texthip.thip.data.model.feed.response.RelatedBooksResponse
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
-import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -34,12 +33,16 @@ interface FeedService {
     @GET("feeds/write-info")
     suspend fun getFeedWriteInfo(): BaseResponse<FeedWriteInfoResponse>
 
+    /** 피드 이미지 업로드용 presigned URL 발급 */
+    @POST("feeds/images/presigned-url")
+    suspend fun getPresignedUrls(
+        @Body request: PresignedUrlRequest
+    ): BaseResponse<PresignedUrlResponse>
+
     /** 피드 생성 */
-    @Multipart
     @POST("feeds")
     suspend fun createFeed(
-        @Part("request") request: RequestBody,
-        @Part images: List<MultipartBody.Part>?
+        @Body request: CreateFeedRequest
     ): BaseResponse<CreateFeedResponse>
 
     /** 전체 피드 목록 조회 */

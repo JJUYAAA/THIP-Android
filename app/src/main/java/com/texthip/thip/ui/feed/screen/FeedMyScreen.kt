@@ -48,7 +48,6 @@ fun FeedMyScreen(
 
     LaunchedEffect(Unit) {
         viewModel.onTabSelected(1)
-        viewModel.fetchMyFeedInfo()
     }
 
     FeedMyContent(
