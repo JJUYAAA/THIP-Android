@@ -35,18 +35,6 @@ class AuthRepository @Inject constructor(
         }
     }
     suspend fun loginWithGoogle(idToken: String): Result<AuthResponse?> {
-        /*return runCatching {
-            //Firebase에 구글 ID 토큰으로 로그인
-            val credential = GoogleAuthProvider.getCredential(idToken, null)
-            val authResult = Firebase.auth.signInWithCredential(credential).await()
-            val googleUid = authResult.user?.uid ?: throw IllegalStateException("Google User UID is null")
-
-            //받아온 UID로 신규/기존 유저인지 확인 요청
-            val request = AuthRequest(oauth2Id = "google_$googleUid")
-            authService.checkNewUser(request)
-                .handleBaseResponse()
-                .getOrThrow()
-        }*/
         return runCatching {
             val payload = idToken.split('.')[1]//ID 토큰을 .기준 분리
             val decodedJson = String(Base64.getUrlDecoder().decode(payload))//디코딩 해서 JSON 문자열 반환
