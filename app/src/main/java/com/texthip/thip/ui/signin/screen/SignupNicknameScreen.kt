@@ -100,7 +100,7 @@ fun SignupNicknameContent(
             WarningTextField(
                 containerColor = colors.DarkGrey02,
                 value = nickname,
-                onValueChange = onNicknameChange,
+                onValueChange = { newNickname -> onNicknameChange(newNickname.lowercase()) },//소문자로 즉시 변경
                 hint = stringResource(R.string.nickname_condition),
                 showWarning = warningMessageResId != null,
                 showIcon = false,
