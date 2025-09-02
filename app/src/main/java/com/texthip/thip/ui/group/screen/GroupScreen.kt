@@ -72,7 +72,7 @@ fun GroupScreen(
         onNavigateToGroupRecruit = onNavigateToGroupRecruit,
         onNavigateToGroupRoom = onNavigateToGroupRoom,
         onRefreshGroupData = { viewModel.refreshGroupData() },
-        onCardVisible = { cardIndex -> viewModel.onCardVisible(cardIndex) },
+        onCardVisible = { cardIndex -> viewModel.loadMoreGroups() },
         onSelectGenre = { genreIndex -> viewModel.selectGenre(genreIndex) },
         onHideToast = { viewModel.hideToast() }
     )

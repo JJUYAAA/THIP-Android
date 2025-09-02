@@ -8,8 +8,7 @@ import kotlinx.serialization.Serializable
 data class JoinedRoomListResponse(
     @SerialName("roomList") val roomList: List<JoinedRoomResponse>,
     @SerialName("nickname") val nickname: String,
-    @SerialName("page") val page: Int,
-    @SerialName("size") val size: Int,
+    @SerialName("nextCursor") val nextCursor: String? = null,
     @SerialName("last") val last: Boolean,
     @SerialName("first") val first: Boolean
 )
