@@ -53,12 +53,13 @@ fun MypageSaveScreen(
     val tabs = listOf(stringResource(R.string.feed), stringResource(R.string.book))
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val feedList by feedViewModel.feeds.collectAsState()
-    val bookList by bookViewModel.books.collectAsState()
+    val bookUiState by bookViewModel.uiState.collectAsState()
+    val bookList = bookUiState.books
 
     LaunchedEffect(selectedTabIndex) {
         when (selectedTabIndex) {
             0 -> feedViewModel.loadSavedFeeds()
-            1 -> bookViewModel.loadSavedBooks()
+            1 -> bookViewModel.loadSavedBooks(isInitial = true)
         }
     }
 
