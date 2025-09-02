@@ -40,7 +40,16 @@ fun GroupBookSearchBottomSheet(
     searchResults: List<BookData> = emptyList(),
     isLoading: Boolean = false,
     isSearching: Boolean = false,
-    onSearch: (String) -> Unit = {}
+    isLoadingMoreSaved: Boolean = false,
+    isLoadingMoreGroup: Boolean = false,
+    isLoadingMoreSearch: Boolean = false,
+    hasMoreSaved: Boolean = true,
+    hasMoreGroup: Boolean = true,
+    hasMoreSearch: Boolean = true,
+    onSearch: (String) -> Unit = {},
+    onLoadMoreSaved: () -> Unit = {},
+    onLoadMoreGroup: () -> Unit = {},
+    onLoadMoreSearch: () -> Unit = {}
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     val tabs = listOf(
@@ -111,10 +120,35 @@ fun GroupBookSearchBottomSheet(
 
                     else -> {
                         Column(Modifier.padding(horizontal = 20.dp)) {
-                            GroupBookListWithScrollbar(
-                                books = displayBooks,
-                                onBookClick = onBookSelect
-                            )
+                            when {
+                                searchText.isNotEmpty() -> {
+                                    GroupBookListWithScrollbar(
+                                        books = displayBooks,
+                                        onBookClick = onBookSelect,
+                                        isLoadingMore = isLoadingMoreSearch,
+                                        hasMore = hasMoreSearch,
+                                        onLoadMore = onLoadMoreSearch
+                                    )
+                                }
+                                selectedTab == 0 -> {
+                                    GroupBookListWithScrollbar(
+                                        books = displayBooks,
+                                        onBookClick = onBookSelect,
+                                        isLoadingMore = isLoadingMoreSaved,
+                                        hasMore = hasMoreSaved,
+                                        onLoadMore = onLoadMoreSaved
+                                    )
+                                }
+                                else -> {
+                                    GroupBookListWithScrollbar(
+                                        books = displayBooks,
+                                        onBookClick = onBookSelect,
+                                        isLoadingMore = isLoadingMoreGroup,
+                                        hasMore = hasMoreGroup,
+                                        onLoadMore = onLoadMoreGroup
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -134,7 +168,7 @@ fun PreviewBookSearchBottomSheet_HasBooks() {
                 onDismiss = { showSheet = false },
                 onBookSelect = {},
                 onRequestBook = {},
-                savedBooks = dummySavedBooks,   // 데이터 있음
+                savedBooks = dummySavedBooks,
                 groupBooks = dummyGroupBooks,
                 isLoading = false
             )
@@ -152,7 +186,7 @@ fun PreviewBookSearchBottomSheet_Empty() {
                 onDismiss = { showSheet = false },
                 onBookSelect = {},
                 onRequestBook = {},
-                savedBooks = emptyList(),   // 데이터 없음
+                savedBooks = emptyList(),
                 groupBooks = emptyList(),
                 isLoading = false
             )
