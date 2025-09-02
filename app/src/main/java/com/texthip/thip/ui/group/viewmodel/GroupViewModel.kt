@@ -84,8 +84,8 @@ class GroupViewModel @Inject constructor(
                         updateState { 
                             it.copy(
                                 myJoinedRooms = currentList + joinedRoomsResponse.roomList,
-                                hasMoreMyGroups = !joinedRoomsResponse.last,
-                                isLast = joinedRoomsResponse.last
+                                hasMoreMyGroups = !joinedRoomsResponse.isLast,
+                                isLast = joinedRoomsResponse.isLast
                             )
                         }
                         nextCursor = joinedRoomsResponse.nextCursor
