@@ -1,5 +1,9 @@
 package com.texthip.thip.ui.group.room.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +32,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -36,15 +41,20 @@ import com.texthip.thip.data.model.rooms.response.CurrentVote
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.modal.DialogPopup
+import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.GradationTopAppBar
 import com.texthip.thip.ui.group.room.component.GroupRoomBody
 import com.texthip.thip.ui.group.room.component.GroupRoomHeader
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
+import com.texthip.thip.ui.group.room.viewmodel.GroupRoomEvent
+import com.texthip.thip.ui.group.room.viewmodel.GroupRoomToastType
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomUiState
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.utils.type.GenreBackgroundImage
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun GroupRoomScreen(
@@ -57,10 +67,21 @@ fun GroupRoomScreen(
     viewModel: GroupRoomViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var activeToast by remember { mutableStateOf<GroupRoomToastType?>(null) }
 
     // 화면이 처음 그려질 때 데이터 로딩 실행
     LaunchedEffect(key1 = Unit) {
         viewModel.fetchRoomsPlaying(roomId)
+    }
+
+    LaunchedEffect(key1 = viewModel.eventFlow) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is GroupRoomEvent.ShowToast -> {
+                    activeToast = event.type
+                }
+            }
+        }
     }
 
     // UI 상태에 따라 다른 화면을 보여줌
@@ -79,7 +100,10 @@ fun GroupRoomScreen(
                 onNavigateToMates = onNavigateToMates,
                 onNavigateToChat = onNavigateToChat,
                 onNavigateToNote = onNavigateToNote,
-                onNavigateToBookDetail = onNavigateToBookDetail
+                onNavigateToBookDetail = onNavigateToBookDetail,
+                onLeaveRoomConfirm = { viewModel.leaveRoom(roomId) },
+                activeToast = activeToast,
+                onDismissToast = { activeToast = null }
             )
         }
 
@@ -100,6 +124,9 @@ fun GroupRoomContent(
     onNavigateToChat: () -> Unit = {},
     onNavigateToNote: (page: Int?, isOverview: Boolean?) -> Unit = { _, _ -> },
     onNavigateToBookDetail: (isbn: String) -> Unit = {},
+    onLeaveRoomConfirm: () -> Unit = {},
+    activeToast: GroupRoomToastType?,
+    onDismissToast: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
@@ -204,6 +231,47 @@ fun GroupRoomContent(
             isRightIconVisible = true,
             onRightClick = { isBottomSheetVisible = true },
         )
+
+        AnimatedVisibility(
+            visible = activeToast != null,
+            enter = slideInVertically(
+                initialOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .zIndex(3f)
+        ) {
+            LaunchedEffect(activeToast) {
+                if (activeToast != null) {
+                    delay(3000L)
+                    if (activeToast == GroupRoomToastType.LEAVE_ROOM_SUCCESS) {
+                        onBackClick()
+                    }
+                    onDismissToast()
+                }
+            }
+
+            when (activeToast) {
+                GroupRoomToastType.LEAVE_ROOM_SUCCESS -> {
+                    ToastWithDate(message = stringResource(R.string.leave_room_toast))
+                }
+
+                GroupRoomToastType.ACTION_FAILURE -> {
+                    ToastWithDate(
+                        message = stringResource(R.string.leave_room_fail_toast),
+                        color = colors.Red
+                    )
+                }
+
+                null -> {}
+            }
+        }
     }
 
     if (isBottomSheetVisible) {
@@ -248,7 +316,7 @@ fun GroupRoomContent(
                 title = stringResource(R.string.leave_room_modal_title),
                 description = stringResource(R.string.leave_room_modal_content),
                 onConfirm = {
-                    // 방 나가기 로직
+                    onLeaveRoomConfirm()
                     isLeaveDialogVisible = false
                 },
                 onCancel = {
@@ -304,7 +372,8 @@ private fun GroupRoomScreenPreview() {
                 userPercentage = 5,
                 currentVotes = emptyList()
             ),
-            onBackClick = {}
+            onBackClick = {},
+            activeToast = null
         )
     }
 }
