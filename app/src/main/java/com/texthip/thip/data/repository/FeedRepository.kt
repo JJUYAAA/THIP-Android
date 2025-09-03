@@ -6,6 +6,10 @@ import com.texthip.thip.data.model.feed.request.CreateFeedRequest
 import com.texthip.thip.data.model.feed.request.FeedLikeRequest
 import com.texthip.thip.data.model.feed.request.FeedSaveRequest
 import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
@@ -81,23 +85,32 @@ class FeedRepository @Inject constructor(
     }
 
     /** 이미지들을 S3에 업로드하고 CloudFront URL 목록 반환 */
-    private suspend fun uploadImagesToS3(imageUris: List<Uri>): List<String> {
-        val imageMetadataList = imageUris.mapNotNull { uri ->
-            imageUploadHelper.getImageMetadata(uri)
-        }
+    private suspend fun uploadImagesToS3(imageUris: List<Uri>): List<String> = withContext(Dispatchers.IO) {
+        val validImagePairs = imageUris.map { uri ->
+            async { 
+                imageUploadHelper.getImageMetadata(uri)?.let { metadata ->
+                    uri to metadata
+                }
+            }
+        }.awaitAll().filterNotNull()
 
-        if (imageMetadataList.isEmpty()) return emptyList()
+        if (validImagePairs.isEmpty()) return@withContext emptyList()
 
-        val presignedUrlRequest = imageMetadataList
+        val presignedUrlRequest = validImagePairs.map { it.second }
         
         val presignedResponse = feedService.getPresignedUrls(presignedUrlRequest)
             .handleBaseResponse()
             .getOrThrow() ?: throw Exception("Failed to get presigned URLs")
 
+        // 개수 검증
+        if (validImagePairs.size != presignedResponse.presignedUrls.size) {
+            throw Exception("Presigned URL count mismatch: expected ${validImagePairs.size}, got ${presignedResponse.presignedUrls.size}")
+        }
+
         val uploadedImageUrls = mutableListOf<String>()
 
-        presignedResponse.presignedUrls.forEachIndexed { index, presignedInfo ->
-            val uri = imageUris[index]
+        validImagePairs.forEachIndexed { index, (uri, _) ->
+            val presignedInfo = presignedResponse.presignedUrls[index]
 
             imageUploadHelper.uploadImageToS3(
                 uri = uri,
@@ -109,7 +122,7 @@ class FeedRepository @Inject constructor(
             }
         }
 
-        return uploadedImageUrls
+        uploadedImageUrls
     }
 
 

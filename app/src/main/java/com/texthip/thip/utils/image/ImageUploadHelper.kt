@@ -1,7 +1,10 @@
 package com.texthip.thip.utils.image
 
 import android.content.Context
+import android.database.Cursor
 import android.net.Uri
+import android.provider.OpenableColumns
+import com.texthip.thip.BuildConfig
 import com.texthip.thip.data.model.feed.request.ImageMetadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -24,11 +27,15 @@ class ImageUploadHelper @Inject constructor(
         .connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
         .writeTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
         .readTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
-        .addInterceptor(
-            HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.HEADERS
+        .apply {
+            if (BuildConfig.DEBUG) {
+                addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BASIC
+                    }
+                )
             }
-        )
+        }
         .build()
     
     suspend fun uploadImageToS3(
@@ -65,31 +72,46 @@ class ImageUploadHelper @Inject constructor(
         }
     }
     
-    fun getImageMetadata(uri: Uri): ImageMetadata? {
-        return runCatching {
-            val mimeType = context.contentResolver.getType(uri) ?: return null
+    suspend fun getImageMetadata(uri: Uri): ImageMetadata? = withContext(Dispatchers.IO) {
+        runCatching {
+            val mimeType = context.contentResolver.getType(uri) ?: return@withContext null
             val extension = when (mimeType) {
                 "image/png" -> "png"
                 "image/jpeg", "image/jpg" -> "jpg"
                 "image/gif" -> "gif"
-                else -> return null
+                else -> return@withContext null
             }
             
-            // 파일 크기 더 정확하게 계산
-            val size = context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                var totalBytes = 0L
-                val buffer = ByteArray(8192)
-                var bytesRead: Int
-                while (inputStream.read(buffer).also { bytesRead = it } != -1) {
-                    totalBytes += bytesRead
-                }
-                totalBytes
-            } ?: return null
+            // 성능 최적화된 파일 크기 계산
+            val size = getFileSize(uri) ?: return@withContext null
             
             ImageMetadata(
                 extension = extension,
                 size = size
             )
         }.getOrNull()
+    }
+    
+    private fun getFileSize(uri: Uri): Long? {
+        return try {
+            context.contentResolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                    if (sizeIndex >= 0) {
+                        val size = cursor.getLong(sizeIndex)
+                        if (size > 0) return size
+                    }
+                }
+            }
+
+            context.contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
+                val size = pfd.statSize
+                if (size > 0) return size
+            }
+            
+            null
+        } catch (e: Exception) {
+            null
+        }
     }
 }
