@@ -22,6 +22,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
+import com.texthip.thip.data.manager.Genre
+import com.texthip.thip.data.model.book.response.RecentSearchItem
+import com.texthip.thip.data.model.rooms.response.SearchRoomItem
 import com.texthip.thip.ui.common.buttons.FilterButton
 import com.texthip.thip.ui.common.forms.SearchBookTextField
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
@@ -29,6 +32,7 @@ import com.texthip.thip.ui.group.search.component.GroupRecentSearch
 import com.texthip.thip.ui.group.search.component.GroupEmptyResult
 import com.texthip.thip.ui.group.search.component.GroupFilteredSearchResult
 import com.texthip.thip.ui.group.search.component.GroupLiveSearchResult
+import com.texthip.thip.ui.group.search.viewmodel.GroupSearchUiState
 import com.texthip.thip.ui.group.search.viewmodel.GroupSearchViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.utils.rooms.toDisplayStrings
@@ -41,6 +45,34 @@ fun GroupSearchScreen(
     viewModel: GroupSearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    GroupSearchContent(
+        modifier = modifier,
+        uiState = uiState,
+        onNavigateBack = onNavigateBack,
+        onRoomClick = onRoomClick,
+        onUpdateSearchQuery = viewModel::updateSearchQuery,
+        onSearchButtonClick = viewModel::onSearchButtonClick,
+        onDeleteRecentSearch = viewModel::deleteRecentSearchByKeyword,
+        onLoadMoreRooms = viewModel::loadMoreRooms,
+        onUpdateSelectedGenre = viewModel::updateSelectedGenre,
+        onUpdateSortType = viewModel::updateSortType
+    )
+}
+
+@Composable
+private fun GroupSearchContent(
+    modifier: Modifier = Modifier,
+    uiState: GroupSearchUiState,
+    onNavigateBack: () -> Unit = {},
+    onRoomClick: (Int) -> Unit = {},
+    onUpdateSearchQuery: (String) -> Unit = {},
+    onSearchButtonClick: () -> Unit = {},
+    onDeleteRecentSearch: (String) -> Unit = {},
+    onLoadMoreRooms: () -> Unit = {},
+    onUpdateSelectedGenre: (Genre?) -> Unit = {},
+    onUpdateSortType: (String) -> Unit = {}
+) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -60,7 +92,6 @@ fun GroupSearchScreen(
         "memberCount" -> 1
         else -> 0
     }
-
 
     LaunchedEffect(uiState.isCompleteSearching) {
         if (uiState.isCompleteSearching) {
@@ -91,12 +122,8 @@ fun GroupSearchScreen(
                         .focusRequester(focusRequester),
                     hint = stringResource(R.string.group_room_search_hint),
                     text = uiState.searchQuery,
-                    onValueChange = { query ->
-                        viewModel.updateSearchQuery(query)
-                    },
-                    onSearch = {
-                        viewModel.onSearchButtonClick()
-                    }
+                    onValueChange = onUpdateSearchQuery,
+                    onSearch = { _ -> onSearchButtonClick() }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -105,19 +132,17 @@ fun GroupSearchScreen(
                         if (uiState.recentSearches.isEmpty()) {
                             GroupRecentSearch(
                                 recentSearches = emptyList(),
-                                onSearchClick = {},
-                                onRemove = {}
+                                onSearchClick = { _ -> },
+                                onRemove = { _ -> }
                             )
                         } else {
                             GroupRecentSearch(
                                 recentSearches = uiState.recentSearches.map { it.searchTerm },
                                 onSearchClick = { keyword ->
-                                    viewModel.updateSearchQuery(keyword)
-                                    viewModel.onSearchButtonClick()
+                                    onUpdateSearchQuery(keyword)
+                                    onSearchButtonClick()
                                 },
-                                onRemove = { keyword ->
-                                    viewModel.deleteRecentSearchByKeyword(keyword)
-                                }
+                                onRemove = onDeleteRecentSearch
                             )
                         }
                     }
@@ -134,7 +159,7 @@ fun GroupSearchScreen(
                                 onRoomClick = { room -> onRoomClick(room.roomId) },
                                 canLoadMore = uiState.canLoadMore,
                                 isLoadingMore = uiState.isLoadingMore,
-                                onLoadMore = { viewModel.loadMoreRooms() }
+                                onLoadMore = onLoadMoreRooms
                             )
                         }
                     }
@@ -157,14 +182,14 @@ fun GroupSearchScreen(
                                 } else {
                                     null
                                 }
-                                viewModel.updateSelectedGenre(selectedGenre)
+                                onUpdateSelectedGenre(selectedGenre)
                             },
                             resultCount = uiState.searchResults.size,
                             roomList = uiState.searchResults,
                             onRoomClick = { room -> onRoomClick(room.roomId) },
                             canLoadMore = uiState.canLoadMore,
                             isLoadingMore = uiState.isLoadingMore,
-                            onLoadMore = { viewModel.loadMoreRooms() }
+                            onLoadMore = onLoadMoreRooms
                         )
                     }
                 }
@@ -184,7 +209,7 @@ fun GroupSearchScreen(
                         1 -> "memberCount"
                         else -> "deadline"
                     }
-                    viewModel.updateSortType(sortType)
+                    onUpdateSortType(sortType)
                 }
             )
         }
@@ -194,8 +219,42 @@ fun GroupSearchScreen(
 
 @Preview
 @Composable
-fun PreviewGroupSearchScreen() {
+private fun GroupSearchContentPreview() {
     ThipTheme {
-        GroupSearchScreen()
+        GroupSearchContent(
+            uiState = GroupSearchUiState(
+                searchQuery = "코스모스",
+                isCompleteSearching = true,
+                searchResults = listOf(
+                    SearchRoomItem(
+                        roomId = 1,
+                        bookImageUrl = "",
+                        roomName = "코스모스 독서 모임",
+                        memberCount = 8,
+                        recruitCount = 12,
+                        deadlineDate = "2024-12-31",
+                        isPublic = true
+                    )
+                ),
+                recentSearches = listOf(
+                    RecentSearchItem(
+                        recentSearchId = 1,
+                        searchTerm = "해리포터"
+                    ),
+                    RecentSearchItem(
+                        recentSearchId = 2,
+                        searchTerm = "1984"
+                    )
+                ),
+                genres = listOf(
+                    Genre.LITERATURE,
+                    Genre.SCIENCE_IT,
+                    Genre.SOCIAL_SCIENCE,
+                    Genre.HUMANITIES,
+                    Genre.ART
+                ),
+                selectedGenre = Genre.SCIENCE_IT
+            )
+        )
     }
 }

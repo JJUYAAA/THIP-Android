@@ -30,6 +30,7 @@ fun SearchPeopleResult(
                 profileImage = user.profileImageUrl,
                 nickname = user.nickname,
                 badgeText = user.role,
+                badgeTextColor = user.roleColor,
                 profileImageSize = 36.dp,
                 showButton = false,
                 showThipNum = true,

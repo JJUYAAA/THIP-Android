@@ -12,5 +12,7 @@ data class CreateFeedRequest(
     @SerialName("isPublic")
     val isPublic: Boolean,
     @SerialName("tagList")
-    val tagList: List<String> = emptyList()
+    val tagList: List<String> = emptyList(),
+    @SerialName("imageUrls")
+    val imageUrls: List<String> = emptyList()
 )

@@ -1,6 +1,6 @@
 package com.texthip.thip.ui.navigator.navigations
 
-import SplashScreen
+import com.texthip.thip.ui.signin.screen.SplashScreen
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel

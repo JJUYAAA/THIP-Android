@@ -1,19 +1,18 @@
 package com.texthip.thip.ui.common.forms
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,48 +47,56 @@ fun FormTextFieldDefault(
 
     Box(modifier = modifier
         .height(48.dp)) {
-        OutlinedTextField(
+        BasicTextField(
             value = displayText,
             onValueChange = {
                 // 글자수 제한 적용
                 text = if (showLimit && it.length > limit) it.substring(0, limit) else it
             },
-            placeholder = {
-                Text(
-                    text = hint,
-                    color = colors.Grey02,
-                    style = myStyle
+            textStyle = myStyle.copy(color = colors.White),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    color = containerColor,
+                    shape = RoundedCornerShape(12.dp)
                 )
-            },
-            textStyle = myStyle,
-            modifier = Modifier.fillMaxSize(),
-            shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = colors.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedContainerColor = containerColor,
-                unfocusedContainerColor = containerColor,
-                cursorColor = colors.NeonGreen
-            ),
-            trailingIcon = {
-                if (showIcon) {
-                    if (text.isNotEmpty()) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_x_circle_white),
-                            contentDescription = "Clear text",
-                            modifier = Modifier.clickable { text = "" },
-                            tint = Color.Unspecified
-                        )
-                    } else {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_x_circle),
-                            contentDescription = "Clear text"
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            singleLine = true,
+            cursorBrush = SolidColor(colors.NeonGreen),
+            decorationBox = { innerTextField ->
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    if (displayText.isEmpty()) {
+                        Text(
+                            text = hint,
+                            color = colors.Grey02,
+                            style = myStyle
                         )
                     }
+                    innerTextField()
+                    
+                    if (showIcon) {
+                        if (text.isNotEmpty()) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_x_circle_white),
+                                contentDescription = "Clear text",
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .clickable { text = "" },
+                                tint = Color.Unspecified
+                            )
+                        } else {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_x_circle),
+                                contentDescription = "Clear text",
+                                modifier = Modifier.align(Alignment.CenterEnd)
+                            )
+                        }
+                    }
                 }
-            },
-            singleLine = true
+            }
         )
 
         // 글자수 제한 표시 (오른쪽 상단)

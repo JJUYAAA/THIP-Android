@@ -37,7 +37,7 @@ fun LeftNameTopAppBar(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = colors.Black)
-            .padding(horizontal = 20.dp, vertical = 20.dp),
+            .padding(horizontal = 20.dp, vertical = 16.dp),
         contentAlignment = Alignment.CenterStart
     ) {
         Text(

@@ -45,6 +45,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.R
+import com.texthip.thip.data.model.feed.response.AllFeedItem
+import com.texthip.thip.data.model.users.response.RecentWriterList
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.header.AuthorHeader
 import com.texthip.thip.ui.common.header.HeaderMenuBarTab
@@ -53,6 +55,7 @@ import com.texthip.thip.ui.feed.component.FeedSubscribeBarlist
 import com.texthip.thip.ui.feed.component.MyFeedCard
 import com.texthip.thip.ui.feed.component.MySubscribeBarlist
 import com.texthip.thip.ui.feed.mock.FeedStateUpdateResult
+import com.texthip.thip.ui.feed.viewmodel.FeedUiState
 import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
 import com.texthip.thip.ui.mypage.mock.FeedItem
@@ -76,6 +79,7 @@ fun FeedScreen(
     onNavigateToSearchPeople: () -> Unit = {},
     onNavigateToNotification: () -> Unit = {},
     refreshFeed: Boolean? = null,
+    onFeedTabReselected: Int = 0, // 바텀 네비게이션 재선택 트리거
     onNavigateToOthersSubscription: (userId: Long) -> Unit = {},
     onResultConsumed: () -> Unit = {},
     onRefreshConsumed: () -> Unit = {},
@@ -139,6 +143,7 @@ fun FeedScreen(
     }
 
     var isUserTabChange by remember { mutableStateOf(false) }
+    var shouldScrollToTop by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         // 최초 진입시에만 데이터 로딩
@@ -172,6 +177,16 @@ fun FeedScreen(
             isUserTabChange = false
         }
     }
+    
+    // 같은 탭 재클릭 시 스크롤 상단 이동 처리
+    LaunchedEffect(shouldScrollToTop) {
+        if (shouldScrollToTop) {
+            currentListState.scrollToItem(0)
+            shouldScrollToTop = false
+        }
+    }
+    
+    // 중복된 로직 제거 - 기존 bottomNavReselected 방식만 사용
 
     LaunchedEffect(resultFeedId) {
         if (resultFeedId != null) {
@@ -202,6 +217,14 @@ fun FeedScreen(
             }
         }
     }
+    
+    // 바텀 네비게이션 탭 재선택 처리 (직접 상태 전달 방식)
+    LaunchedEffect(onFeedTabReselected) {
+        if (onFeedTabReselected > 0) {
+            feedViewModel.refreshOnBottomNavReselect()
+            currentListState.scrollToItem(0)
+        }
+    }
     LaunchedEffect(Unit) { //커스텀객체 타입 인식오류 -> 직렬화가 아닌 잘게 쪼개어 전달
         navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
             handle.getLiveData<Long>("updated_feed_id").observeForever { feedId ->
@@ -230,6 +253,60 @@ fun FeedScreen(
             }
         }
     }
+
+    FeedContent(
+        feedUiState = feedUiState,
+        showProgressBar = showProgressBar,
+        progress = progress.value,
+        currentListState = currentListState,
+        feedTabTitles = feedTabTitles,
+        onNavigateToSearchPeople = onNavigateToSearchPeople,
+        onNavigateToNotification = onNavigateToNotification,
+        onNavigateToMySubscription = onNavigateToMySubscription,
+        onNavigateToOthersSubscription = onNavigateToOthersSubscription,
+        onNavigateToFeedComment = onNavigateToFeedComment,
+        onNavigateToBookDetail = onNavigateToBookDetail,
+        onNavigateToUserProfile = { userId ->
+            navController.currentBackStackEntry?.savedStateHandle?.set("from_profile", true)
+            onNavigateToUserProfile(userId)
+        },
+        onNavigateToFeedWrite = onNavigateToFeedWrite,
+        onTabSelected = { index ->
+            val isCurrentTab = feedUiState.selectedTabIndex == index
+            if (isCurrentTab) {
+                shouldScrollToTop = true
+            } else {
+                isUserTabChange = true
+            }
+            feedViewModel.onTabSelected(index)
+        },
+        onChangeFeedLike = feedViewModel::changeFeedLike,
+        onChangeFeedSave = feedViewModel::changeFeedSave,
+        onPullToRefresh = feedViewModel::pullToRefresh
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FeedContent(
+    feedUiState: com.texthip.thip.ui.feed.viewmodel.FeedUiState,
+    showProgressBar: Boolean,
+    progress: Float,
+    currentListState: LazyListState,
+    feedTabTitles: List<String>,
+    onNavigateToSearchPeople: () -> Unit,
+    onNavigateToNotification: () -> Unit,
+    onNavigateToMySubscription: () -> Unit,
+    onNavigateToOthersSubscription: (userId: Long) -> Unit,
+    onNavigateToFeedComment: (Long) -> Unit,
+    onNavigateToBookDetail: (String) -> Unit,
+    onNavigateToUserProfile: (userId: Long) -> Unit,
+    onNavigateToFeedWrite: () -> Unit,
+    onTabSelected: (Int) -> Unit,
+    onChangeFeedLike: (Long) -> Unit,
+    onChangeFeedSave: (Long) -> Unit,
+    onPullToRefresh: () -> Unit
+) {
     // 초기 로딩 상태 처리
     if (feedUiState.isLoading && feedUiState.currentTabFeeds.isEmpty()) {
         Box(
@@ -247,7 +324,7 @@ fun FeedScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         PullToRefreshBox(
             isRefreshing = feedUiState.isPullToRefreshing,
-            onRefresh = { feedViewModel.pullToRefresh() }
+            onRefresh = onPullToRefresh
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -263,8 +340,8 @@ fun FeedScreen(
                     titles = feedTabTitles,
                     selectedTabIndex = feedUiState.selectedTabIndex,
                     onTabSelected = { index ->
-                        isUserTabChange = true
-                        feedViewModel.onTabSelected(index)
+                        val isCurrentTab = feedUiState.selectedTabIndex == index
+                        onTabSelected(index)
                     }
                 )
 
@@ -283,7 +360,7 @@ fun FeedScreen(
                             ) {
                                 Text(
                                     modifier = Modifier.padding(bottom = 12.dp),
-                                    text = if (progress.value < 1.0f) {
+                                    text = if (progress < 1.0f) {
                                         stringResource(R.string.posting_in_progress_feed)
                                     } else {
                                         stringResource(R.string.posting_complete_feed)
@@ -301,7 +378,7 @@ fun FeedScreen(
                                 ) {
                                     Box(
                                         modifier = Modifier
-                                            .fillMaxWidth(fraction = progress.value)
+                                            .fillMaxWidth(fraction = progress)
                                             .fillMaxHeight()
                                             .background(
                                                 color = colors.NeonGreen,
@@ -401,7 +478,7 @@ fun FeedScreen(
 
                                 MyFeedCard(
                                     feedItem = feedItem,
-                                    onLikeClick = { feedViewModel.changeFeedLike(feedItem.id) },
+                                    onLikeClick = { onChangeFeedLike(feedItem.id) },
                                     onContentClick = {
                                         onNavigateToFeedComment(feedItem.id)
                                     },
@@ -456,10 +533,10 @@ fun FeedScreen(
                                 feedItem = feedItem,
                                 bottomTextColor = hexToColor(allFeed.aliasColor),
                                 onBookmarkClick = {
-                                    feedViewModel.changeFeedSave(feedItem.id)
+                                    onChangeFeedSave(feedItem.id)
                                 },
                                 onLikeClick = {
-                                    feedViewModel.changeFeedLike(feedItem.id)
+                                    onChangeFeedLike(feedItem.id)
                                 },
                                 onContentClick = {
                                     onNavigateToFeedComment(feedItem.id)
@@ -471,8 +548,6 @@ fun FeedScreen(
                                     onNavigateToBookDetail(allFeed.isbn)
                                 },
                                 onProfileClick = {
-                                    // 프로필에서 돌아올 때를 위한 플래그 설정
-                                    navController.currentBackStackEntry?.savedStateHandle?.set("from_profile", true)
                                     onNavigateToUserProfile(allFeed.creatorId)
                                 }
                             )
@@ -526,24 +601,80 @@ fun FeedScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun FeedScreenPreview() {
+private fun FeedContentPreview() {
     ThipTheme {
-        FeedScreen(
-            onNavigateToFeedWrite = { },
-            onNavigateToBookDetail = { },
-            navController = rememberNavController()
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun FeedScreenWithoutDataPreview() {
-    ThipTheme {
-        FeedScreen(
-            onNavigateToFeedWrite = { },
-            onNavigateToBookDetail = { },
-            navController = rememberNavController()
+        FeedContent(
+            feedUiState = FeedUiState(
+                selectedTabIndex = 0,
+                allFeeds = listOf(
+                    AllFeedItem(
+                        feedId = 1,
+                        creatorId = 123L,
+                        creatorNickname = "책읽는사람",
+                        creatorProfileImageUrl = "",
+                        aliasName = "문학 애호가",
+                        aliasColor = "#FF6B9D",
+                        postDate = "2시간 전",
+                        isbn = "9788983711892",
+                        bookTitle = "코스모스",
+                        bookAuthor = "칼 세이건",
+                        contentBody = "이 책을 읽으면서 우주에 대한 새로운 시각을 갖게 되었습니다. 과학적 사실들이 아름다운 문장으로 표현되어 있어서 읽는 내내 감동받았어요.",
+                        contentUrls = listOf("https://example.com/image1.jpg"),
+                        likeCount = 42,
+                        commentCount = 8,
+                        isSaved = false,
+                        isLiked = true,
+                        isWriter = false
+                    ),
+                    AllFeedItem(
+                        feedId = 2,
+                        creatorId = 456L,
+                        creatorNickname = "소설러버",
+                        creatorProfileImageUrl = "",
+                        aliasName = "추리소설 전문가",
+                        aliasColor = "#4ECDC4",
+                        postDate = "4시간 전",
+                        isbn = "9788932473234",
+                        bookTitle = "셜록 홈즈의 모험",
+                        bookAuthor = "아서 코난 도일",
+                        contentBody = "홈즈의 추리 과정이 정말 흥미진진합니다. 논리적 사고의 힘을 보여주는 명작이에요.",
+                        contentUrls = emptyList(),
+                        likeCount = 28,
+                        commentCount = 15,
+                        isSaved = true,
+                        isLiked = false,
+                        isWriter = false
+                    )
+                ),
+                recentWriters = listOf(
+                    RecentWriterList(
+                        userId = 789L,
+                        nickname = "철학자",
+                        profileImageUrl = ""
+                    ),
+                    RecentWriterList(
+                        userId = 101L,
+                        nickname = "역사학도",
+                        profileImageUrl = ""
+                    )
+                )
+            ),
+            showProgressBar = false,
+            progress = 0f,
+            currentListState = LazyListState(),
+            feedTabTitles = listOf("피드", "내 피드"),
+            onNavigateToSearchPeople = {},
+            onNavigateToNotification = {},
+            onNavigateToMySubscription = {},
+            onNavigateToOthersSubscription = {},
+            onNavigateToFeedComment = {},
+            onNavigateToBookDetail = {},
+            onNavigateToUserProfile = {},
+            onNavigateToFeedWrite = {},
+            onTabSelected = {},
+            onChangeFeedLike = {},
+            onChangeFeedSave = {},
+            onPullToRefresh = {}
         )
     }
 }

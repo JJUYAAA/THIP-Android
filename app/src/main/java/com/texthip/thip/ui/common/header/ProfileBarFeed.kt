@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.common.header
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,6 +50,11 @@ fun ProfileBarFeed(
                     modifier = Modifier
                         .size(24.dp)
                         .clip(CircleShape)
+                        .border(
+                            width = 0.5.dp,
+                            color = colors.Grey02,
+                            shape = CircleShape
+                        )
                 )
             } else {
                 Box(

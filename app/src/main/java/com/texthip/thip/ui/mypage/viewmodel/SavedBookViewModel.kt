@@ -11,23 +11,79 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class SavedBookUiState(
+    val books: List<BookItem> = emptyList(),
+    val isLoading: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    val isLast: Boolean = false,
+    val error: String? = null
+) {
+    val canLoadMore: Boolean get() = !isLoading && !isLoadingMore && !isLast
+}
+
 @HiltViewModel
 class SavedBookViewModel @Inject constructor(
     private val bookRepository: BookRepository
 ) : ViewModel() {
 
-    private val _books = MutableStateFlow<List<BookItem>>(emptyList())
-    val books = _books.asStateFlow()
+    private val _uiState = MutableStateFlow(SavedBookUiState())
+    val uiState = _uiState.asStateFlow()
+    
+    private var nextCursor: String? = null
+    private var isLoadingBooks = false
 
-    fun loadSavedBooks() {
+    private fun updateState(update: (SavedBookUiState) -> SavedBookUiState) {
+        _uiState.value = update(_uiState.value)
+    }
+
+    fun loadSavedBooks(isInitial: Boolean = true) {
+        if (isLoadingBooks && !isInitial) return
+        if (_uiState.value.isLast && !isInitial) return
+
         viewModelScope.launch {
-            bookRepository.getSavedBooks()
-                .onSuccess { response ->
-                    _books.value = response?.bookList?.map { it.toBookItem() } ?: emptyList()
+            try {
+                isLoadingBooks = true
+                
+                if (isInitial) {
+                    updateState { it.copy(isLoading = true, books = emptyList(), isLast = false) }
+                    nextCursor = null
+                } else {
+                    updateState { it.copy(isLoadingMore = true) }
                 }
-                .onFailure {
-                    it.printStackTrace()
-                }
+
+                val cursor = if (isInitial) null else nextCursor
+
+                bookRepository.getSavedBooks(cursor)
+                    .onSuccess { response ->
+                        if (response != null) {
+                            val currentList = if (isInitial) emptyList() else _uiState.value.books
+                            val newBooks = response.bookList.map { it.toBookItem() }
+                            updateState {
+                                it.copy(
+                                    books = currentList + newBooks,
+                                    error = null,
+                                    isLast = response.isLast
+                                )
+                            }
+                            nextCursor = response.nextCursor
+                        } else {
+                            updateState { it.copy(isLast = true) }
+                        }
+                    }
+                    .onFailure { exception ->
+                        updateState { it.copy(error = exception.message) }
+                        exception.printStackTrace()
+                    }
+            } finally {
+                isLoadingBooks = false
+                updateState { it.copy(isLoading = false, isLoadingMore = false) }
+            }
+        }
+    }
+
+    fun loadMoreBooks() {
+        if (_uiState.value.canLoadMore) {
+            loadSavedBooks(isInitial = false)
         }
     }
 

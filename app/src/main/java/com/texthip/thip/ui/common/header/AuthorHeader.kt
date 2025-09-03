@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.common.header
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,6 +62,11 @@ fun AuthorHeader(
                 modifier = Modifier
                     .size(profileImageSize)
                     .clip(CircleShape)
+                    .border(
+                        width = 0.5.dp,
+                        color = colors.Grey02,
+                        shape = CircleShape
+                    )
             )
         } else {
             Box(

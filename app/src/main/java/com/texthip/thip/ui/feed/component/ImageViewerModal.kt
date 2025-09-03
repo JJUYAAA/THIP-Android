@@ -47,17 +47,21 @@ fun ImageViewerModal(
             .clickable { onDismiss() }
     ) {
         // 이전 버튼
-        Icon(
-            painter = painterResource(R.drawable.ic_arrow_back),
-            contentDescription = "닫기",
-            tint = colors.White,
+        Box(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(20.dp)
-                .size(24.dp)
-                .clickable { onDismiss() }
+                .padding(horizontal = 20.dp, vertical = 16.dp)
                 .zIndex(1f)
-        )
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_back),
+                contentDescription = "닫기",
+                tint = colors.White,
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onDismiss() }
+            )
+        }
 
         // 이미지 페이저
         HorizontalPager(

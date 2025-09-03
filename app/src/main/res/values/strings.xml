@@ -49,7 +49,7 @@
     <string name="card_item_end">" 모집 마감"</string>
     <string name="time_remaining_after">뒤</string>
     <string name="time_remaining_left">남음</string>
-    <string name="card_item_finish">종료</string>
+    <string name="card_item_finish">" 종료"</string>
     <string name="card_item_participating_count">%1$s명</string>
     <string name="card_item_participant_string">참여</string>
     <string name="card_item_participant_count">%1$s</string>
@@ -425,7 +425,8 @@
     <string name="error_room_expired">이미 모집기간이 만료된 방입니다.</string>
     <string name="error_room_close_failed">모집 마감 중 오류가 발생했습니다.</string>
     <string name="error_room_info_not_found">방 정보를 찾을 수 없습니다.</string>
-    
+    <string name="error_max_participate">모임방 인원이 다 찼어요.</string>
+
     <!-- SearchBookGroupViewModel -->
     <string name="error_recruiting_rooms_not_found">모집중인 방 정보를 찾을 수 없습니다.</string>
     <string name="error_recruiting_rooms_load_failed">모집중인 방을 불러오는데 실패했습니다.</string>

@@ -24,11 +24,8 @@ class GroupViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(GroupUiState())
     val uiState: StateFlow<GroupUiState> = _uiState.asStateFlow()
     
-    private var currentMyGroupsPage = 1
-    private var loadedPagesCount = 0
-    private val pagesPerBatch = 3
-    private val preloadThreshold = 2
-    private var isBatchLoading = false
+    private var nextCursor: String? = null
+    private var isLoadingMyGroups = false
     
     private fun updateState(update: (GroupUiState) -> GroupUiState) {
         _uiState.value = update(_uiState.value)
@@ -59,62 +56,57 @@ class GroupViewModel @Inject constructor(
             updateState { it.copy(isRefreshing = true) }
         }
         try {
-            loadPageBatchSuspend()
+            loadMyGroupsSuspend(isInitial = reset)
         } finally {
             updateState { it.copy(isRefreshing = false) }
         }
     }
 
-    private suspend fun loadPageBatchSuspend() {
-        if (!uiState.value.hasMoreMyGroups || isBatchLoading) return
+    private suspend fun loadMyGroupsSuspend(isInitial: Boolean = false) {
+        if (isLoadingMyGroups) return
+        if (!isInitial && _uiState.value.isLast) return
 
         try {
-            isBatchLoading = true
-            updateState { it.copy(isLoadingMoreMyGroups = true) }
-
-            val currentBatchStart = currentMyGroupsPage
-            val batchEndPage = currentBatchStart + pagesPerBatch - 1
-
-            for (page in currentBatchStart..batchEndPage) {
-                if (!uiState.value.hasMoreMyGroups) break
-
-                repository.getMyJoinedRooms(page)
-                    .onSuccess { joinedRoomsResponse ->
-                        joinedRoomsResponse?.let { response ->
-                            updateState { 
-                                it.copy(
-                                    myJoinedRooms = it.myJoinedRooms + response.roomList,
-                                    hasMoreMyGroups = !response.last
-                                )
-                            }
-                            loadedPagesCount++
-                            currentMyGroupsPage = page + 1
-                        } ?: run {
-                            // null 응답 시 더 이상 로드할 수 없음을 명시
-                            updateState { it.copy(hasMoreMyGroups = false) }
-                        }
-                    }
-                    .onFailure {
-                        break
-                    }
+            isLoadingMyGroups = true
+            
+            if (isInitial) {
+                updateState { it.copy(isLoadingMoreMyGroups = false) }
+            } else {
+                updateState { it.copy(isLoadingMoreMyGroups = true) }
             }
+
+            val cursor = if (isInitial) null else nextCursor
+
+            repository.getMyJoinedRooms(cursor)
+                .onSuccess { joinedRoomsResponse ->
+                    if (joinedRoomsResponse != null) {
+                        val currentList = if (isInitial) emptyList() else _uiState.value.myJoinedRooms
+                        updateState { 
+                            it.copy(
+                                myJoinedRooms = currentList + joinedRoomsResponse.roomList,
+                                hasMoreMyGroups = !joinedRoomsResponse.isLast,
+                                isLast = joinedRoomsResponse.isLast
+                            )
+                        }
+                        nextCursor = joinedRoomsResponse.nextCursor
+                    } else {
+                        updateState { it.copy(hasMoreMyGroups = false, isLast = true) }
+                    }
+                }
+                .onFailure { exception ->
+                    updateState { it.copy(error = exception.message) }
+                }
         } finally {
-            isBatchLoading = false
+            isLoadingMyGroups = false
             updateState { it.copy(isLoadingMoreMyGroups = false) }
         }
     }
 
-    private fun loadPageBatch() = viewModelScope.launch {
-        loadPageBatchSuspend()
-    }
-
-    fun onCardVisible(cardIndex: Int) {
-        val currentPageEquivalent = (cardIndex / 3) + 1
-
-        if (currentPageEquivalent >= loadedPagesCount - preloadThreshold &&
-            uiState.value.hasMoreMyGroups && !isBatchLoading
-        ) {
-            loadPageBatch()
+    fun loadMoreGroups() {
+        if (_uiState.value.hasMoreMyGroups && !isLoadingMyGroups) {
+            viewModelScope.launch {
+                loadMyGroupsSuspend(isInitial = false)
+            }
         }
     }
 
@@ -166,7 +158,7 @@ class GroupViewModel @Inject constructor(
                     async { loadUserName() },
                     async {
                         resetMyGroupsData()
-                        loadPageBatchSuspend()
+                        loadMyGroupsSuspend(isInitial = true)
                     },
                     async { loadRoomSections() },
                 )
@@ -179,12 +171,12 @@ class GroupViewModel @Inject constructor(
     }
 
     private fun resetMyGroupsData() {
-        currentMyGroupsPage = 1
-        loadedPagesCount = 0
+        nextCursor = null
         updateState { 
             it.copy(
                 myJoinedRooms = emptyList(),
-                hasMoreMyGroups = true
+                hasMoreMyGroups = true,
+                isLast = false
             )
         }
     }

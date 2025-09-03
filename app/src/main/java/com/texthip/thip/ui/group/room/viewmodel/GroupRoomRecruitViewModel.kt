@@ -63,10 +63,17 @@ class GroupRoomRecruitViewModel @Inject constructor(
     }
     
     fun onParticipationClick() {
+        val currentState = uiState.value
+        val roomDetail = currentState.roomDetail ?: return
+        
+        // 인원이 가득 찬 경우 메시지 표시
+        if (roomDetail.memberCount >= roomDetail.recruitCount) {
+            showToastMessage(stringResourceProvider.getString(R.string.error_max_participate))
+            return
+        }
+        
         viewModelScope.launch {
-            val roomId = uiState.value.roomDetail?.roomId ?: return@launch
-            
-            repository.joinOrCancelRoom(roomId, RoomAction.JOIN.value)
+            repository.joinOrCancelRoom(roomDetail.roomId, RoomAction.JOIN.value)
                 .onSuccess {
                     updateState { it.copy(currentButtonType = GroupBottomButtonType.CANCEL) }
                     showToastMessage(stringResourceProvider.getString(R.string.success_participation_complete))

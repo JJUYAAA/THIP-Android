@@ -1,10 +1,13 @@
 package com.texthip.thip.data.model.book.response
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class BookUserSaveResponse(
-    val bookList: List<BookUserSaveList>
+    val bookList: List<BookUserSaveList>,
+    @SerialName("nextCursor") val nextCursor: String? = null,
+    @SerialName("isLast") val isLast: Boolean = false
 )
 
 @Serializable

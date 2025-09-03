@@ -19,8 +19,8 @@ class BookRepository @Inject constructor(
 ) {
 
     /** 저장된 책 또는 모임 책 목록 조회 */
-    suspend fun getBooks(type: String): Result<BookListResponse?> = runCatching {
-        bookService.getBooks(type)
+    suspend fun getBooks(type: String, cursor: String? = null): Result<BookListResponse?> = runCatching {
+        bookService.getBooks(type, cursor)
             .handleBaseResponse()
             .getOrThrow()
     }
@@ -67,8 +67,8 @@ class BookRepository @Inject constructor(
             .getOrThrow()
     }
 
-    suspend fun getSavedBooks(): Result<BookUserSaveResponse?> = runCatching {
-        bookService.getSavedBooks()
+    suspend fun getSavedBooks(cursor: String? = null): Result<BookUserSaveResponse?> = runCatching {
+        bookService.getSavedBooks(cursor)
             .handleBaseResponse()
             .getOrThrow()
     }

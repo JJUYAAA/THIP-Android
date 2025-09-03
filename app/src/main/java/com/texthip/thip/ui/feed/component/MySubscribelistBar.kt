@@ -1,6 +1,7 @@
 package com.texthip.thip.ui.feed.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -98,6 +99,11 @@ fun MySubscribeBarlist(
                                 modifier = Modifier
                                     .size(36.dp)
                                     .clip(CircleShape)
+                                    .border(
+                                        width = 0.5.dp,
+                                        color = colors.Grey02,
+                                        shape = CircleShape
+                                    )
                                     .background(Color.LightGray)
                             )
                             Text(
