@@ -453,8 +453,10 @@ fun GroupRoomRecruitContent(
                         }
                     }
                 },
+                enabled = buttonType != GroupBottomButtonType.JOIN || uiState.isJoinButtonEnabled,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.Purple
+                    containerColor = if (uiState.isJoinButtonEnabled || buttonType != GroupBottomButtonType.JOIN) colors.Purple else colors.Grey02,
+                    disabledContainerColor = colors.Grey02
                 ),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
