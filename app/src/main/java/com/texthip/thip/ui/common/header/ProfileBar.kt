@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.common.header
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,11 @@ fun ProfileBar(
             modifier = Modifier
                 .size(36.dp)
                 .clip(CircleShape)
+                .border(
+                    width = 0.5.dp,
+                    color = colors.Grey02,
+                    shape = CircleShape
+                )
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column(

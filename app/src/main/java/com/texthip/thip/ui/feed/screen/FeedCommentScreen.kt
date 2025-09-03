@@ -45,12 +45,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.texthip.thip.R
+import com.texthip.thip.data.model.comments.response.CommentList
+import com.texthip.thip.data.model.feed.response.FeedDetailResponse
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
 import com.texthip.thip.ui.common.buttons.ActionBarButton
 import com.texthip.thip.ui.common.buttons.ActionBookButton
@@ -61,13 +64,17 @@ import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.feed.component.ImageViewerModal
+import com.texthip.thip.ui.feed.viewmodel.FeedDetailUiState
 import com.texthip.thip.ui.feed.viewmodel.FeedDetailViewModel
 import com.texthip.thip.ui.group.note.component.CommentSection
 import com.texthip.thip.ui.group.note.viewmodel.CommentsEvent
+import com.texthip.thip.ui.group.note.viewmodel.CommentsUiState
 import com.texthip.thip.ui.group.note.viewmodel.CommentsViewModel
 import com.texthip.thip.ui.group.room.mock.MenuBottomSheetItem
+import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.color.hexToColor
 import com.texthip.thip.utils.rooms.advancedImePadding
 import kotlinx.coroutines.delay
 
@@ -112,7 +119,7 @@ fun FeedCommentScreen(
     }
     LaunchedEffect(feedId) {
         feedDetailViewModel.loadFeedDetail(feedId)
-        commentsViewModel.initialize(postId = feedId.toLong(), postType = "FEED")
+        commentsViewModel.initialize(postId = feedId, postType = "FEED")
     }
 
     // 댓글이 생성되면 피드 상세 정보를 다시 로드
@@ -123,6 +130,35 @@ fun FeedCommentScreen(
         }
     }
 
+    FeedCommentContent(
+        modifier = modifier,
+        feedDetailUiState = feedDetailUiState,
+        commentsUiState = commentsUiState,
+        onNavigateBack = onNavigateBack,
+        onNavigateToFeedEdit = onNavigateToFeedEdit,
+        onNavigateToUserProfile = onNavigateToUserProfile,
+        onNavigateToBookDetail = onNavigateToBookDetail,
+        onLikeClick = { feedDetailViewModel.changeFeedLike() },
+        onBookmarkClick = { feedDetailViewModel.changeFeedSave() },
+        onDeleteFeed = { feedDetailViewModel.deleteFeed(feedId) },
+        onCommentEvent = commentsViewModel::onEvent
+    )
+}
+
+@Composable
+private fun FeedCommentContent(
+    modifier: Modifier = Modifier,
+    feedDetailUiState: com.texthip.thip.ui.feed.viewmodel.FeedDetailUiState,
+    commentsUiState: com.texthip.thip.ui.group.note.viewmodel.CommentsUiState,
+    onNavigateBack: () -> Unit,
+    onNavigateToFeedEdit: (Int) -> Unit,
+    onNavigateToUserProfile: (userId: Long) -> Unit,
+    onNavigateToBookDetail: (String) -> Unit,
+    onLikeClick: () -> Unit,
+    onBookmarkClick: () -> Unit,
+    onDeleteFeed: () -> Unit,
+    onCommentEvent: (CommentsEvent) -> Unit
+) {
     // 로딩 상태 처리
     if (feedDetailUiState.isLoading) {
         Box(
@@ -151,7 +187,7 @@ fun FeedCommentScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = feedDetailUiState.error!!,
+                    text = feedDetailUiState.error,
                     style = typography.copy_r400_s14,
                     color = colors.Grey
                 )
@@ -244,6 +280,7 @@ fun FeedCommentScreen(
                                 profileImage = feedDetail.creatorProfileImageUrl ?: "",
                                 topText = feedDetail.creatorNickname,
                                 bottomText = feedDetail.aliasName,
+                                bottomTextColor = hexToColor(feedDetail.aliasColor),
                                 showSubscriberInfo = false,
                                 hoursAgo = feedDetail.postDate,
                                 onClick = { onNavigateToUserProfile(feedDetail.creatorId) }
@@ -324,8 +361,8 @@ fun FeedCommentScreen(
                                 isSaved = feedDetail.isSaved,
                                 isPinVisible = false,
                                 isLockIcon = feedDetail.isPublic == false,
-                                onLikeClick = { feedDetailViewModel.changeFeedLike() },
-                                onBookmarkClick = { feedDetailViewModel.changeFeedSave() },
+                                onLikeClick = onLikeClick,
+                                onBookmarkClick = onBookmarkClick,
                             )
 
                             HorizontalDivider(
@@ -380,7 +417,7 @@ fun FeedCommentScreen(
                             ) { commentItem ->
                                 CommentSection(
                                     commentItem = commentItem,
-                                    onEvent = commentsViewModel::onEvent,
+                                    onEvent = onCommentEvent,
                                     onReplyClick = { commentId, nickname ->
                                         replyingToCommentId = commentId
                                         replyingToNickname = nickname
@@ -409,7 +446,7 @@ fun FeedCommentScreen(
                     onInputChange = { commentInput = it },
                     onSendClick = {
                         if (commentInput.isNotBlank()) {
-                            commentsViewModel.onEvent(
+                            onCommentEvent(
                                 CommentsEvent.CreateComment(
                                     content = commentInput,
                                     parentId = replyingToCommentId
@@ -498,10 +535,9 @@ fun FeedCommentScreen(
                         text = stringResource(R.string.delete),
                         color = colors.Red,
                         onClick = {
-                            commentsViewModel.onEvent(CommentsEvent.DeleteComment(comment.commentId))
+                            onCommentEvent(CommentsEvent.DeleteComment(comment.commentId))
                             toastMessage = "댓글 삭제를 완료했습니다."
                             showToast = true
-                            isCommentMenuVisible = false
                             isCommentMenuVisible = false
                         }
                     )
@@ -538,7 +574,7 @@ fun FeedCommentScreen(
                         description = stringResource(R.string.delete_feed_dialog_description),
                         onConfirm = {
                             showDeleteDialog = false
-                            feedDetailViewModel.deleteFeed(feedId)
+                            onDeleteFeed()
                         },
                         onCancel = {
                             showDeleteDialog = false
@@ -555,5 +591,64 @@ fun FeedCommentScreen(
                 onDismiss = { showImageViewer = false }
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun FeedCommentContentPreview() {
+    ThipTheme {
+        FeedCommentContent(
+            feedDetailUiState = FeedDetailUiState(
+                feedDetail = FeedDetailResponse(
+                    feedId = 1,
+                    creatorId = 123L,
+                    creatorNickname = "책읽는사람",
+                    creatorProfileImageUrl = "",
+                    aliasName = "문학 애호가",
+                    aliasColor = "#FF6B9D",
+                    postDate = "2시간 전",
+                    bookTitle = "코스모스",
+                    isbn = "9788983711892",
+                    bookAuthor = "칼 세이건",
+                    contentBody = "이 책을 읽으면서 우주에 대한 새로운 시각을 갖게 되었습니다. 과학적 사실들이 아름다운 문장으로 표현되어 있어서 읽는 내내 감동받았어요.",
+                    contentUrls = listOf("https://example.com/image1.jpg"),
+                    tagList = listOf("과학", "우주", "감동"),
+                    isLiked = true,
+                    likeCount = 42,
+                    commentCount = 8,
+                    isSaved = false,
+                    isWriter = false,
+                    isPublic = true
+                )
+            ),
+            commentsUiState = CommentsUiState(
+                comments = listOf(
+                    CommentList(
+                        commentId = 1,
+                        creatorId = 456L,
+                        creatorProfileImageUrl = "",
+                        creatorNickname = "독서왕",
+                        aliasName = "과학 전문가",
+                        aliasColor = "#00FF7F",
+                        postDate = "1시간 전",
+                        content = "정말 좋은 책이네요! 저도 읽어보고 싶습니다.",
+                        likeCount = 5,
+                        isDeleted = false,
+                        isWriter = false,
+                        isLike = false,
+                        replyList = emptyList()
+                    )
+                )
+            ),
+            onNavigateBack = {},
+            onNavigateToFeedEdit = {},
+            onNavigateToUserProfile = {},
+            onNavigateToBookDetail = {},
+            onLikeClick = {},
+            onBookmarkClick = {},
+            onDeleteFeed = {},
+            onCommentEvent = {}
+        )
     }
 }

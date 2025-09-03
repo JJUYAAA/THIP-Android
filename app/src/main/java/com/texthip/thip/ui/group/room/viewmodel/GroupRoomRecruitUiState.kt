@@ -17,4 +17,6 @@ data class GroupRoomRecruitUiState(
     val roomId: Int? = null
 ) {
     val hasRoomDetail: Boolean get() = roomDetail != null
+    val isRoomFull: Boolean get() = roomDetail?.let { it.memberCount >= it.recruitCount } ?: false
+    val isJoinButtonEnabled: Boolean get() = currentButtonType == GroupBottomButtonType.JOIN && !isRoomFull
 }

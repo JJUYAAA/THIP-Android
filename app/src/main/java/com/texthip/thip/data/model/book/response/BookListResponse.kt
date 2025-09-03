@@ -6,7 +6,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BookListResponse(
-    @SerialName("bookList") val bookList: List<BookSavedResponse> = emptyList()
+    @SerialName("bookList") val bookList: List<BookSavedResponse> = emptyList(),
+    @SerialName("nextCursor") val nextCursor: String? = null,
+    @SerialName("isLast") val isLast: Boolean = false
 )
 
 @Serializable

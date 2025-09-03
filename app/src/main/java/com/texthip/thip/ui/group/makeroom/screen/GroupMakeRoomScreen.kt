@@ -84,6 +84,9 @@ fun GroupMakeRoomScreen(
         onTogglePrivate = viewModel::togglePrivate,
         onUpdatePassword = viewModel::updatePassword,
         onSearchBooks = viewModel::searchBooks,
+        onLoadMoreSavedBooks = viewModel::loadMoreSavedBooks,
+        onLoadMoreGroupBooks = viewModel::loadMoreGroupBooks,
+        onLoadMoreSearchResults = viewModel::loadMoreSearchResults,
         modifier = modifier
     )
 }
@@ -103,7 +106,10 @@ fun GroupMakeRoomContent(
     onSetMemberLimit: (Int) -> Unit = {},
     onTogglePrivate: (Boolean) -> Unit = {},
     onUpdatePassword: (String) -> Unit = {},
-    onSearchBooks: (String) -> Unit = {}
+    onSearchBooks: (String) -> Unit = {},
+    onLoadMoreSavedBooks: () -> Unit = {},
+    onLoadMoreGroupBooks: () -> Unit = {},
+    onLoadMoreSearchResults: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
@@ -258,7 +264,16 @@ fun GroupMakeRoomContent(
                 searchResults = uiState.searchResults,
                 isLoading = uiState.isLoadingBooks,
                 isSearching = uiState.isSearching,
-                onSearch = onSearchBooks
+                isLoadingMoreSaved = uiState.isLoadingMoreSavedBooks,
+                isLoadingMoreGroup = uiState.isLoadingMoreGroupBooks,
+                isLoadingMoreSearch = uiState.isLoadingMoreSearchResults,
+                hasMoreSaved = !uiState.isLastSavedBooks,
+                hasMoreGroup = !uiState.isLastGroupBooks,
+                hasMoreSearch = !uiState.isLastSearchPage,
+                onSearch = onSearchBooks,
+                onLoadMoreSaved = onLoadMoreSavedBooks,
+                onLoadMoreGroup = onLoadMoreGroupBooks,
+                onLoadMoreSearch = onLoadMoreSearchResults
             )
         }
     }

@@ -94,6 +94,9 @@ fun FeedWriteScreen(
         onToggleTag = viewModel::toggleTag,
         onRemoveTag = viewModel::removeTag,
         onSearchBooks = viewModel::searchBooks,
+        onLoadMoreSavedBooks = viewModel::loadMoreSavedBooks,
+        onLoadMoreGroupBooks = viewModel::loadMoreGroupBooks,
+        onLoadMoreSearchResults = viewModel::loadMoreSearchResults,
         modifier = modifier
     )
 }
@@ -114,7 +117,10 @@ fun FeedWriteContent(
     onSelectCategory: (Int) -> Unit = {},
     onToggleTag: (String) -> Unit = {},
     onRemoveTag: (String) -> Unit = {},
-    onSearchBooks: (String) -> Unit = {}
+    onSearchBooks: (String) -> Unit = {},
+    onLoadMoreSavedBooks: () -> Unit = {},
+    onLoadMoreGroupBooks: () -> Unit = {},
+    onLoadMoreSearchResults: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
@@ -405,7 +411,16 @@ fun FeedWriteContent(
                 searchResults = uiState.searchResults,
                 isLoading = uiState.isLoadingBooks,
                 isSearching = uiState.isSearching,
-                onSearch = onSearchBooks
+                isLoadingMoreSaved = uiState.isLoadingMoreSavedBooks,
+                isLoadingMoreGroup = uiState.isLoadingMoreGroupBooks,
+                isLoadingMoreSearch = uiState.isLoadingMoreSearchResults,
+                hasMoreSaved = !uiState.isLastSavedBooks,
+                hasMoreGroup = !uiState.isLastGroupBooks,
+                hasMoreSearch = !uiState.isLastSearchPage,
+                onSearch = onSearchBooks,
+                onLoadMoreSaved = onLoadMoreSavedBooks,
+                onLoadMoreGroup = onLoadMoreGroupBooks,
+                onLoadMoreSearch = onLoadMoreSearchResults
             )
         }
     }

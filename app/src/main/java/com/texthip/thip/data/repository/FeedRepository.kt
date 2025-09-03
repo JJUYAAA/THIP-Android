@@ -1,12 +1,15 @@
 package com.texthip.thip.data.repository
 
-import android.content.Context
 import android.net.Uri
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.feed.request.CreateFeedRequest
 import com.texthip.thip.data.model.feed.request.FeedLikeRequest
 import com.texthip.thip.data.model.feed.request.FeedSaveRequest
 import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
 import com.texthip.thip.data.model.feed.response.FeedDetailResponse
@@ -18,27 +21,17 @@ import com.texthip.thip.data.model.feed.response.MyFeedResponse
 import com.texthip.thip.data.model.feed.response.RelatedBooksResponse
 import com.texthip.thip.data.service.FeedService
 import com.texthip.thip.ui.feed.mock.FeedStateUpdateResult
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
+import com.texthip.thip.utils.image.ImageUploadHelper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FeedRepository @Inject constructor(
     private val feedService: FeedService,
-    @param:ApplicationContext private val context: Context,
-    private val json: Json
+    private val imageUploadHelper: ImageUploadHelper
 ) {
     private val _feedStateUpdateResult = MutableSharedFlow<FeedStateUpdateResult>()
     val feedStateUpdateResult: Flow<FeedStateUpdateResult> = _feedStateUpdateResult.asSharedFlow()
@@ -72,79 +65,66 @@ class FeedRepository @Inject constructor(
         tagList: List<String>,
         imageUris: List<Uri>
     ): Result<CreateFeedResponse?> = runCatching {
+        val imageUrls = if (imageUris.isNotEmpty()) {
+            uploadImagesToS3(imageUris)
+        } else {
+            emptyList()
+        }
+
         val request = CreateFeedRequest(
             isbn = isbn,
             contentBody = contentBody,
             isPublic = isPublic,
-            tagList = tagList
+            tagList = tagList,
+            imageUrls = imageUrls
         )
 
-        // JSON 요청 부분을 RequestBody로 변환
-        val requestJson = json.encodeToString(CreateFeedRequest.serializer(), request)
-        val requestBody = requestJson.toRequestBody("application/json".toMediaType())
-
-        // 임시 파일 목록 추적
-        val tempFiles = mutableListOf<File>()
-
-        // 이미지 파일들을 MultipartBody.Part로 변환
-        val imageParts = if (imageUris.isNotEmpty()) {
-            withContext(Dispatchers.IO) {
-                imageUris.mapNotNull { uri ->
-                    runCatching {
-                        uriToMultipartBodyPart(uri, "images", tempFiles)
-                    }.getOrNull()
-                }
-            }
-        } else {
-            null
-        }
-
-        try {
-            feedService.createFeed(requestBody, imageParts)
-                .handleBaseResponse()
-                .getOrThrow()
-        } finally {
-            // 임시 파일들 정리
-            cleanupTempFiles(tempFiles)
-        }
+        feedService.createFeed(request)
+            .handleBaseResponse()
+            .getOrThrow()
     }
 
-    private fun uriToMultipartBodyPart(
-        uri: Uri,
-        paramName: String,
-        tempFiles: MutableList<File>
-    ): MultipartBody.Part? {
-        return runCatching {
-            // MIME 타입 확인
-            val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
-            val extension = when (mimeType) {
-                "image/png" -> "png"
-                "image/gif" -> "gif"
-                "image/jpeg", "image/jpg" -> "jpg"
-                else -> "jpg" // 기본값
-            }
-
-            // 파일명 생성
-            val fileName = "feed_image_${System.currentTimeMillis()}.$extension"
-            val tempFile = File(context.cacheDir, fileName)
-
-            // 임시 파일 목록에 추가
-            tempFiles.add(tempFile)
-
-            // InputStream을 use 블록으로 안전하게 관리
-            context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                FileOutputStream(tempFile).use { outputStream ->
-                    inputStream.copyTo(outputStream)
+    /** 이미지들을 S3에 업로드하고 CloudFront URL 목록 반환 */
+    private suspend fun uploadImagesToS3(imageUris: List<Uri>): List<String> = withContext(Dispatchers.IO) {
+        val validImagePairs = imageUris.map { uri ->
+            async { 
+                imageUploadHelper.getImageMetadata(uri)?.let { metadata ->
+                    uri to metadata
                 }
-            } ?: throw IllegalStateException("Failed to open input stream for URI: $uri")
+            }
+        }.awaitAll().filterNotNull()
 
-            // MultipartBody.Part 생성
-            val requestFile = tempFile.asRequestBody(mimeType.toMediaType())
-            MultipartBody.Part.createFormData(paramName, fileName, requestFile)
-        }.onFailure { e ->
-            e.printStackTrace()
-        }.getOrNull()
+        if (validImagePairs.isEmpty()) return@withContext emptyList()
+
+        val presignedUrlRequest = validImagePairs.map { it.second }
+        
+        val presignedResponse = feedService.getPresignedUrls(presignedUrlRequest)
+            .handleBaseResponse()
+            .getOrThrow() ?: throw Exception("Failed to get presigned URLs")
+
+        // 개수 검증
+        if (validImagePairs.size != presignedResponse.presignedUrls.size) {
+            throw Exception("Presigned URL count mismatch: expected ${validImagePairs.size}, got ${presignedResponse.presignedUrls.size}")
+        }
+
+        val uploadedImageUrls = mutableListOf<String>()
+
+        validImagePairs.forEachIndexed { index, (uri, _) ->
+            val presignedInfo = presignedResponse.presignedUrls[index]
+
+            imageUploadHelper.uploadImageToS3(
+                uri = uri,
+                presignedUrl = presignedInfo.presignedUrl
+            ).onSuccess {
+                uploadedImageUrls.add(presignedInfo.fileUrl)
+            }.onFailure { exception ->
+                throw Exception("Failed to upload image ${index + 1}: ${exception.message}")
+            }
+        }
+
+        uploadedImageUrls
     }
+
 
     /** 전체 피드 목록 조회 */
     suspend fun getAllFeeds(cursor: String? = null): Result<AllFeedResponse?> = runCatching {
@@ -205,18 +185,6 @@ class FeedRepository @Inject constructor(
             .getOrThrow()
     }
 
-    /** 임시 파일들을 정리하는 함수 */
-    private fun cleanupTempFiles(tempFiles: List<File>) {
-        tempFiles.forEach { file ->
-            runCatching {
-                if (file.exists()) {
-                    file.delete()
-                }
-            }.onFailure { e ->
-                e.printStackTrace()
-            }
-        }
-    }
 
     suspend fun getFeedUsersInfo(userId: Long) = runCatching {
         feedService.getFeedUsersInfo(userId)

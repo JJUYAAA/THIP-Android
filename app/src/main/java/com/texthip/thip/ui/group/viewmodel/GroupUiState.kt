@@ -13,7 +13,9 @@ data class GroupUiState(
     val userName: String = "",
     val selectedGenreIndex: Int = 0,
     val showToast: Boolean = false,
-    val toastMessage: String = ""
+    val toastMessage: String = "",
+    val isLast: Boolean = false,
+    val error: String? = null
 ) {
     val hasContent: Boolean get() = myJoinedRooms.isNotEmpty() || (roomMainList != null)
     val canLoadMore: Boolean get() = hasMoreMyGroups && !isRefreshing && !isLoadingMoreMyGroups

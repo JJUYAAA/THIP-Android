@@ -42,8 +42,8 @@ class RoomsRepository @Inject constructor(
     }
 
     /** 내가 참여 중인 모임방 목록 조회 */
-    suspend fun getMyJoinedRooms(page: Int): Result<JoinedRoomListResponse?> = runCatching {
-        val response = roomsService.getJoinedRooms(page)
+    suspend fun getMyJoinedRooms(cursor: String? = null): Result<JoinedRoomListResponse?> = runCatching {
+        val response = roomsService.getJoinedRooms(cursor)
             .handleBaseResponse()
             .getOrThrow()
 

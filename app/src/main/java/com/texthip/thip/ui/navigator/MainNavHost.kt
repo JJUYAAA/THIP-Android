@@ -14,7 +14,8 @@ import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 @Composable
 fun MainNavHost(
     navController: NavHostController,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onFeedTabReselected: Int = 0
 ) {
     NavHost(
         navController = navController,
@@ -22,7 +23,8 @@ fun MainNavHost(
     ) {
         feedNavigation(
             navController = navController,
-            navigateBack = navController::popBackStack
+            navigateBack = navController::popBackStack,
+            onFeedTabReselected = onFeedTabReselected
         )
         groupNavigation(
             navController = navController,

@@ -32,11 +32,15 @@ import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.ui.navigator.data.NavBarItems
 import com.texthip.thip.ui.navigator.extensions.isRoute
 import com.texthip.thip.ui.navigator.extensions.navigateToTab
+import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
+fun BottomNavigationBar(
+    navController: NavHostController,
+    onTabReselected: ((MainTabRoutes) -> Unit)? = null
+) {
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     val greyColor = colors.Grey02
 
@@ -119,7 +123,9 @@ fun BottomNavigationBar(navController: NavHostController) {
                     },
                     selected = isSelected,
                     onClick = {
-                        if (!isSelected) {
+                        if (isSelected) {
+                            onTabReselected?.invoke(item.route)
+                        } else {
                             navController.navigateToTab(item.route)
                         }
                     },

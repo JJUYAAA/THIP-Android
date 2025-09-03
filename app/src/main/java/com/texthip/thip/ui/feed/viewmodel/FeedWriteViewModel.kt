@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.texthip.thip.R
 import com.texthip.thip.data.model.book.response.BookSavedResponse
 import com.texthip.thip.data.model.book.response.BookSearchItem
+import com.texthip.thip.data.model.book.response.BookUserSaveList
 import com.texthip.thip.data.provider.StringResourceProvider
 import com.texthip.thip.data.repository.BookRepository
 import com.texthip.thip.data.repository.FeedRepository
@@ -31,6 +32,11 @@ class FeedWriteViewModel @Inject constructor(
     val uiState: StateFlow<FeedWriteUiState> = _uiState.asStateFlow()
 
     private var searchJob: Job? = null
+    private var loadMoreSearchJob: Job? = null
+    private var savedBooksCursor: String? = null
+    private var groupBooksCursor: String? = null
+    private var isLoadingSavedBooks = false
+    private var isLoadingGroupBooks = false
 
     private fun updateState(update: (FeedWriteUiState) -> FeedWriteUiState) {
         _uiState.value = update(_uiState.value)
@@ -191,37 +197,129 @@ class FeedWriteViewModel @Inject constructor(
     }
 
     private fun loadBooks() {
+        updateState { it.copy(isLoadingBooks = true) }
+        loadSavedBooks(isInitial = true)
+        loadGroupBooks(isInitial = true)
+    }
+
+    fun loadSavedBooks(isInitial: Boolean = false) {
+        if (isLoadingSavedBooks) return
+        if (!isInitial && _uiState.value.isLastSavedBooks) return
+
         viewModelScope.launch {
-            updateState { it.copy(isLoadingBooks = true) }
             try {
-                val savedBooksResult = bookRepository.getBooks("SAVED")
-                savedBooksResult.onSuccess { response ->
-                    updateState {
-                        it.copy(savedBooks = response?.bookList?.map { dto -> dto.toBookData() }
-                            ?: emptyList())
-                    }
-                }.onFailure {
-                    updateState { it.copy(savedBooks = emptyList()) }
+                isLoadingSavedBooks = true
+                
+                if (isInitial) {
+                    updateState { it.copy(savedBooks = emptyList(), isLastSavedBooks = false) }
+                    savedBooksCursor = null
+                } else {
+                    updateState { it.copy(isLoadingMoreSavedBooks = true) }
                 }
 
-                val groupBooksResult = bookRepository.getBooks("JOINING")
-                groupBooksResult.onSuccess { response ->
-                    updateState {
-                        it.copy(groupBooks = response?.bookList?.map { dto -> dto.toBookData() }
-                            ?: emptyList())
+                val cursor = if (isInitial) null else savedBooksCursor
+
+                bookRepository.getBooks("SAVED", cursor)
+                    .onSuccess { response ->
+                        if (response != null) {
+                            val currentList = if (isInitial) emptyList() else _uiState.value.savedBooks
+                            val newBooks = response.bookList.map { it.toBookData() }
+                            updateState {
+                                it.copy(
+                                    savedBooks = currentList + newBooks,
+                                    isLastSavedBooks = response.isLast
+                                )
+                            }
+                            savedBooksCursor = response.nextCursor
+                        } else {
+                            updateState { it.copy(isLastSavedBooks = true) }
+                        }
                     }
-                }.onFailure {
-                    updateState { it.copy(groupBooks = emptyList()) }
-                }
-            } catch (e: Exception) {
-                updateState { it.copy(savedBooks = emptyList(), groupBooks = emptyList()) }
+                    .onFailure { exception ->
+                        if (isInitial) {
+                            updateState { it.copy(savedBooks = emptyList()) }
+                        }
+                    }
             } finally {
-                updateState { it.copy(isLoadingBooks = false) }
+                isLoadingSavedBooks = false
+                updateState { 
+                    it.copy(
+                        isLoadingBooks = if (isInitial && !isLoadingGroupBooks) false else it.isLoadingBooks,
+                        isLoadingMoreSavedBooks = false
+                    ) 
+                }
             }
         }
     }
 
+    fun loadGroupBooks(isInitial: Boolean = false) {
+        if (isLoadingGroupBooks) return
+        if (!isInitial && _uiState.value.isLastGroupBooks) return
+
+        viewModelScope.launch {
+            try {
+                isLoadingGroupBooks = true
+                
+                if (isInitial) {
+                    updateState { it.copy(groupBooks = emptyList(), isLastGroupBooks = false) }
+                    groupBooksCursor = null
+                } else {
+                    updateState { it.copy(isLoadingMoreGroupBooks = true) }
+                }
+
+                val cursor = if (isInitial) null else groupBooksCursor
+
+                bookRepository.getBooks("JOINING", cursor)
+                    .onSuccess { response ->
+                        if (response != null) {
+                            val currentList = if (isInitial) emptyList() else _uiState.value.groupBooks
+                            val newBooks = response.bookList.map { it.toBookData() }
+                            updateState {
+                                it.copy(
+                                    groupBooks = currentList + newBooks,
+                                    isLastGroupBooks = response.isLast
+                                )
+                            }
+                            groupBooksCursor = response.nextCursor
+                        } else {
+                            updateState { it.copy(isLastGroupBooks = true) }
+                        }
+                    }
+                    .onFailure { exception ->
+                        if (isInitial) {
+                            updateState { it.copy(groupBooks = emptyList()) }
+                        }
+                    }
+            } finally {
+                isLoadingGroupBooks = false
+                updateState { 
+                    it.copy(
+                        isLoadingBooks = if (isInitial && !isLoadingSavedBooks) false else it.isLoadingBooks,
+                        isLoadingMoreGroupBooks = false
+                    ) 
+                }
+            }
+        }
+    }
+
+    fun loadMoreSavedBooks() {
+        loadSavedBooks(isInitial = false)
+    }
+
+    fun loadMoreGroupBooks() {
+        loadGroupBooks(isInitial = false)
+    }
+
     private fun BookSavedResponse.toBookData(): BookData {
+        return BookData(
+            title = this.bookTitle,
+            imageUrl = this.bookImageUrl,
+            author = this.authorName,
+            isbn = this.isbn
+        )
+    }
+
+    private fun BookUserSaveList.toBookDataFromSaved(): BookData {
         return BookData(
             title = this.bookTitle,
             imageUrl = this.bookImageUrl,
@@ -241,28 +339,54 @@ class FeedWriteViewModel @Inject constructor(
 
     fun searchBooks(query: String) {
         searchJob?.cancel()
+        loadMoreSearchJob?.cancel()
 
         if (query.isBlank()) {
-            updateState { it.copy(searchResults = emptyList(), isSearching = false) }
+            updateState { 
+                it.copy(
+                    searchResults = emptyList(), 
+                    isSearching = false,
+                    searchPage = 1,
+                    isLastSearchPage = false,
+                    currentSearchQuery = ""
+                ) 
+            }
             return
         }
 
         searchJob = viewModelScope.launch {
             delay(300) // 디바운싱
-            updateState { it.copy(isSearching = true) }
+            updateState { 
+                it.copy(
+                    isSearching = true,
+                    searchResults = emptyList(),
+                    searchPage = 1,
+                    isLastSearchPage = false,
+                    currentSearchQuery = query
+                ) 
+            }
 
             try {
                 val result = bookRepository.searchBooks(query, page = 1, isFinalized = false)
                 result.onSuccess { response ->
-                    val searchResults =
-                        response?.searchResult?.map {
-                            it.toBookData()
-                        } ?: emptyList()
-                    updateState {
-                        it.copy(
-                            searchResults = searchResults,
-                            isSearching = false
-                        )
+                    if (response != null) {
+                        val searchResults = response.searchResult.map { it.toBookData() }
+                        updateState {
+                            it.copy(
+                                searchResults = searchResults,
+                                searchPage = response.page,
+                                isLastSearchPage = response.last,
+                                isSearching = false
+                            )
+                        }
+                    } else {
+                        updateState {
+                            it.copy(
+                                searchResults = emptyList(),
+                                isSearching = false,
+                                isLastSearchPage = true
+                            )
+                        }
                     }
                 }.onFailure {
                     updateState {
@@ -278,6 +402,59 @@ class FeedWriteViewModel @Inject constructor(
                         searchResults = emptyList(),
                         isSearching = false
                     )
+                }
+            }
+        }
+    }
+
+    fun loadMoreSearchResults() {
+        val currentState = _uiState.value
+        if (currentState.isLoadingMoreSearchResults || 
+            currentState.isSearching ||
+            currentState.isLastSearchPage || 
+            currentState.searchResults.isEmpty() ||
+            currentState.currentSearchQuery.isBlank()) {
+            return
+        }
+
+        loadMoreSearchJob?.cancel()
+        loadMoreSearchJob = viewModelScope.launch {
+            updateState { it.copy(isLoadingMoreSearchResults = true) }
+            
+            try {
+                val nextPage = currentState.searchPage + 1
+                val result = bookRepository.searchBooks(
+                    currentState.currentSearchQuery,
+                    page = nextPage, 
+                    isFinalized = false
+                )
+                result.onSuccess { response ->
+                    if (response != null) {
+                        val newResults = response.searchResult.map { it.toBookData() }
+                        updateState {
+                            it.copy(
+                                searchResults = currentState.searchResults + newResults,
+                                searchPage = response.page,
+                                isLastSearchPage = response.last,
+                                isLoadingMoreSearchResults = false
+                            )
+                        }
+                    } else {
+                        updateState {
+                            it.copy(
+                                isLoadingMoreSearchResults = false,
+                                isLastSearchPage = true
+                            )
+                        }
+                    }
+                }.onFailure {
+                    updateState {
+                        it.copy(isLoadingMoreSearchResults = false)
+                    }
+                }
+            } catch (e: Exception) {
+                updateState {
+                    it.copy(isLoadingMoreSearchResults = false)
                 }
             }
         }
@@ -460,5 +637,11 @@ class FeedWriteViewModel @Inject constructor(
 
     fun clearError() {
         updateState { it.copy(errorMessage = null) }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        searchJob?.cancel()
+        loadMoreSearchJob?.cancel()
     }
 }

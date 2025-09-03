@@ -44,7 +44,7 @@ interface RoomsService {
     /** 참여 중인 모임방 목록 조회 */
     @GET("rooms/home/joined")
     suspend fun getJoinedRooms(
-        @Query("page") page: Int = 1
+        @Query("cursor") cursor: String? = null
     ): BaseResponse<JoinedRoomListResponse>
 
     /** 카테고리별 모임방 목록 조회 (마감임박/인기) */

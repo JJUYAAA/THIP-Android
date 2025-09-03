@@ -72,7 +72,8 @@ fun PageInputSection(
                     if (!isGeneralReview) onPageTextChange(it)
                 },
                 enabled = !isGeneralReview,
-                isError = isError
+                isError = isError,
+                showClearButton = !isGeneralReview
             )
 
             Row(

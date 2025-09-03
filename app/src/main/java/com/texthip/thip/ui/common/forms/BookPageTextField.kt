@@ -17,10 +17,12 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,11 +49,14 @@ fun BookPageTextField(
     text: String,
     isError: Boolean,
     onValueChange: (String) -> Unit,
+    showClearButton: Boolean = true,
 ) {
+    var hasFocusCleared by remember(text) { mutableStateOf(false) }
+    
     Column {
         OutlinedTextField(
             value = text,
-            onValueChange = { newText: String ->
+            onValueChange = { newText ->
                 if (newText.isEmpty() || newText.all { it.isDigit() }) {
                     onValueChange(newText)
                 }
@@ -65,6 +70,15 @@ fun BookPageTextField(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = modifier
                 .size(width = 320.dp, height = 48.dp)
+                .onFocusChanged { focusState ->
+                    if (focusState.isFocused && !hasFocusCleared && text.isNotEmpty()) {
+                        hasFocusCleared = true
+                        onValueChange("")
+                    }
+                    if (!focusState.isFocused) {
+                        hasFocusCleared = false
+                    }
+                }
                 .then(
                     if (isError)
                         Modifier.border(
@@ -89,18 +103,20 @@ fun BookPageTextField(
                 disabledContainerColor = colors.DarkGrey02,
                 cursorColor = colors.NeonGreen,
             ),
-            trailingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_x_circle_grey),
-                    contentDescription = "Clear text",
-                    modifier = Modifier.clickable {
-                        if (text.isNotEmpty()) {
-                            onValueChange("")
-                        }
-                    },
-                    tint = Color.Unspecified
-                )
-            }
+            trailingIcon = if (showClearButton && enabled) {
+                {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_x_circle_grey),
+                        contentDescription = "Clear text",
+                        modifier = Modifier.clickable {
+                            if (text.isNotEmpty()) {
+                                onValueChange("")
+                            }
+                        },
+                        tint = Color.Unspecified
+                    )
+                }
+            } else null
         )
 
         Box(modifier = Modifier.height(24.dp)) {
