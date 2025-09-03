@@ -80,6 +80,13 @@ fun GroupRoomChatScreen(
         }
     }
 
+    LaunchedEffect(activeToast) {
+        if (activeToast != null) {
+            delay(3000)
+            activeToast = null
+        }
+    }
+
     GroupRoomChatContent(
         uiState = uiState,
         onEvent = viewModel::onEvent,
@@ -91,7 +98,6 @@ fun GroupRoomChatScreen(
         },
         onNavigateBack = onBackClick,
         activeToast = activeToast,
-        onDismissToast = { activeToast = null }
     )
 }
 
@@ -104,7 +110,6 @@ fun GroupRoomChatContent(
     onSendClick: () -> Unit,
     onNavigateBack: () -> Unit,
     activeToast: ToastType?,
-    onDismissToast: () -> Unit
 ) {
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedMessage by remember { mutableStateOf<TodayCommentList?>(null) }
@@ -247,11 +252,11 @@ fun GroupRoomChatContent(
         AnimatedVisibility(
             visible = activeToast != null,
             enter = slideInVertically(
-                initialOffsetY = { -it }, // 위에서 아래로
+                initialOffsetY = { -it },
                 animationSpec = tween(durationMillis = 2000)
             ),
             exit = slideOutVertically(
-                targetOffsetY = { -it }, // 위로 사라짐
+                targetOffsetY = { -it },
                 animationSpec = tween(durationMillis = 2000)
             ),
             modifier = Modifier
@@ -259,39 +264,20 @@ fun GroupRoomChatContent(
                 .padding(horizontal = 20.dp, vertical = 16.dp)
                 .zIndex(3f)
         ) {
-            LaunchedEffect(activeToast) {
-                if (activeToast != null) {
-                    delay(3000L)
-                    onDismissToast()
+            when (activeToast) {
+                ToastType.DAILY_GREETING_LIMIT -> {
+                    ToastWithDate(color = colors.Red)
                 }
-            }
 
-            AnimatedVisibility(
-                visible = activeToast != null,
-                enter = slideInVertically(
-                    initialOffsetY = { -it },
-                    animationSpec = tween(durationMillis = 2000)
-                ),
-                exit = slideOutVertically(
-                    targetOffsetY = { -it },
-                    animationSpec = tween(durationMillis = 2000)
-                ),
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
-                    .zIndex(3f)
-            ) {
-                when (activeToast) {
-                    ToastType.DAILY_GREETING_LIMIT -> {
-                        ToastWithDate(color = colors.Red)
-                    }
-
-                    ToastType.FIRST_WRITE -> {
-                        ToastWithDate()
-                    }
-
-                    null -> {}
+                ToastType.FIRST_WRITE -> {
+                    ToastWithDate()
                 }
+
+                ToastType.DELETE_GREETING_SUCCESS -> {
+                    ToastWithDate(message = stringResource(R.string.group_room_chat_delete_success))
+                }
+
+                null -> {}
             }
         }
     }
@@ -360,7 +346,6 @@ private fun GroupRoomChatScreenPreview() {
             onSendClick = {},
             onNavigateBack = {},
             activeToast = null,
-            onDismissToast = {}
         )
     }
 }

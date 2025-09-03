@@ -24,7 +24,8 @@ data class GroupRoomChatUiState(
 
 enum class ToastType {
     DAILY_GREETING_LIMIT,
-    FIRST_WRITE
+    FIRST_WRITE,
+    DELETE_GREETING_SUCCESS
 }
 
 sealed interface GroupRoomChatEvent {
@@ -67,6 +68,7 @@ class GroupRoomChatViewModel @Inject constructor(
                 roomId = roomId,
                 attendanceCheckId = attendanceCheckId
             ).onSuccess {
+                _eventFlow.emit(GroupRoomChatEvent.ShowToast(ToastType.DELETE_GREETING_SUCCESS))
                 fetchDailyGreetings(isRefresh = true)
             }.onFailure { throwable ->
                 _eventFlow.emit(GroupRoomChatEvent.ShowErrorToast(throwable.message ?: "삭제에 실패했습니다."))
