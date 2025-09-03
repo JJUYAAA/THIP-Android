@@ -190,4 +190,9 @@ interface RoomsService {
         @Path("roomId") roomId: Int,
         @Path("recordId") recordId: Int
     ): BaseResponse<RoomsRecordsPinResponse>
+
+    @DELETE("rooms/{roomId}/leave")
+    suspend fun leaveRoom(
+        @Path("roomId") roomId: Int
+    ): BaseResponse<Unit>
 }

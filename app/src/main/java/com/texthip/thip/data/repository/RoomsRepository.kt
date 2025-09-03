@@ -308,4 +308,12 @@ class RoomsRepository @Inject constructor(
             recordId = recordId
         ).handleBaseResponse().getOrThrow()
     }
+
+    suspend fun leaveRoom(
+        roomId: Int,
+    ) = runCatching {
+        roomsService.leaveRoom(
+            roomId = roomId,
+        ).handleBaseResponse().getOrThrow()
+    }
 }
