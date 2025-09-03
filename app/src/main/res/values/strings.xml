@@ -155,7 +155,6 @@
     <string name="group_recruiting">"모집"</string>
     <string name="group_genre">"장르"</string>
     <string name="deadline_string">마감 임박한 독서 모임방</string>
-    <string name="my_group">내 모임방</string>
     <string name="group_participant">%1$s명</string>
     <string name="group_participant_string">참여</string>
     <string name="group_progress">"%1$s님의 진행도 "</string>
