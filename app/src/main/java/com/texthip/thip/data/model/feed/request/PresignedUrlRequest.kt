@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ImageMetadata(
-    @SerialName("filename")
-    val filename: String,
     @SerialName("extension")
     val extension: String,
     @SerialName("size")

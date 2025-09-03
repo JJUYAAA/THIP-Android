@@ -5,7 +5,6 @@ import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.feed.request.CreateFeedRequest
 import com.texthip.thip.data.model.feed.request.FeedLikeRequest
 import com.texthip.thip.data.model.feed.request.FeedSaveRequest
-import com.texthip.thip.data.model.feed.request.ImageMetadata
 import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
@@ -84,13 +83,7 @@ class FeedRepository @Inject constructor(
     /** 이미지들을 S3에 업로드하고 CloudFront URL 목록 반환 */
     private suspend fun uploadImagesToS3(imageUris: List<Uri>): List<String> {
         val imageMetadataList = imageUris.mapNotNull { uri ->
-            imageUploadHelper.getImageMetadata(uri)?.let { metadata ->
-                ImageMetadata(
-                    filename = metadata.filename,
-                    extension = metadata.extension,
-                    size = metadata.size
-                )
-            }
+            imageUploadHelper.getImageMetadata(uri)
         }
 
         if (imageMetadataList.isEmpty()) return emptyList()
@@ -105,12 +98,10 @@ class FeedRepository @Inject constructor(
 
         presignedResponse.presignedUrls.forEachIndexed { index, presignedInfo ->
             val uri = imageUris[index]
-            val originalFilename = imageMetadataList[index].filename
 
             imageUploadHelper.uploadImageToS3(
                 uri = uri,
-                presignedUrl = presignedInfo.presignedUrl,
-                filename = originalFilename
+                presignedUrl = presignedInfo.presignedUrl
             ).onSuccess {
                 uploadedImageUrls.add(presignedInfo.fileUrl)
             }.onFailure { exception ->

@@ -2,6 +2,7 @@ package com.texthip.thip.utils.image
 
 import android.content.Context
 import android.net.Uri
+import com.texthip.thip.data.model.feed.request.ImageMetadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -32,12 +33,11 @@ class ImageUploadHelper @Inject constructor(
     
     suspend fun uploadImageToS3(
         uri: Uri,
-        presignedUrl: String,
-        filename: String
+        presignedUrl: String
     ): Result<Unit> = withContext(Dispatchers.IO) {
         runCatching {
             val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
-            val tempFile = File(context.cacheDir, filename)
+            val tempFile = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}")
             
             try {
                 context.contentResolver.openInputStream(uri)?.use { inputStream ->
@@ -86,19 +86,10 @@ class ImageUploadHelper @Inject constructor(
                 totalBytes
             } ?: return null
             
-            val filename = "feed_image_${System.currentTimeMillis()}.$extension"
-            
             ImageMetadata(
-                filename = filename,
                 extension = extension,
                 size = size
             )
         }.getOrNull()
     }
 }
-
-data class ImageMetadata(
-    val filename: String,
-    val extension: String,
-    val size: Long
-)
