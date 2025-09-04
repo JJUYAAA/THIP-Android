@@ -68,7 +68,6 @@ fun SearchBookDetailScreen(
     modifier: Modifier = Modifier,
     isbn: String,
     onLeftClick: () -> Unit = {},
-    onRightClick: () -> Unit = {},
     onRecruitingGroupClick: () -> Unit = {},
     onWriteFeedClick: (BookDetailResponse) -> Unit = {},
     onFeedClick: (Long) -> Unit = {},

@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.OutlinedButton
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -34,7 +35,9 @@ fun CardInputBook(
     modifier: Modifier = Modifier,
     title: String,
     author: String,
-    imageRes: Int? = R.drawable.img_book_cover_sample, // 기본 이미지 리소스
+    imageUrl: String? = null, // 이미지 URL (AsyncImage 사용)
+    imageRes: Int? = R.drawable.img_book_cover_sample, // 기본 이미지 리소스 (fallback)
+    showChangeButton: Boolean = true, // 변경 버튼 표시 여부
     onChangeClick: () -> Unit = {}
 ) {
     Row(
@@ -47,14 +50,26 @@ fun CardInputBook(
             modifier = Modifier
                 .size(width = 60.dp, height = 80.dp)
         ) {
-
-            imageRes?.let {
-                Image(
-                    painter = painterResource(id = it),
+            if (!imageUrl.isNullOrBlank()) {
+                // URL 이미지가 있는 경우 AsyncImage 사용
+                AsyncImage(
+                    model = imageUrl,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    fallback = imageRes?.let { painterResource(id = it) },
+                    error = imageRes?.let { painterResource(id = it) }
                 )
+            } else {
+                // URL이 없는 경우 기본 이미지 리소스 사용
+                imageRes?.let {
+                    Image(
+                        painter = painterResource(id = it),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
         }
 
@@ -76,20 +91,24 @@ fun CardInputBook(
             Text(
                 text = stringResource(R.string.card_input_author, author),
                 style = typography.view_m500_s12_h20,
-                color = colors.Grey01
+                color = colors.Grey01,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
-        // 텍스트 정보와 버튼 사이 19dp 고정 간격
-        Spacer(modifier = Modifier.width(19.dp))
 
-        OutlinedButton(
-            modifier = Modifier
-                .size(width = 49.dp, height = 33.dp)
-                .align(Alignment.Bottom),
-            text = stringResource(R.string.change),
-            textStyle = typography.view_m500_s14,
-            onClick = onChangeClick
-        )
+        if (showChangeButton) {
+            Spacer(modifier = Modifier.width(19.dp))
+
+            OutlinedButton(
+                modifier = Modifier
+                    .size(width = 49.dp, height = 33.dp)
+                    .align(Alignment.Bottom),
+                text = stringResource(R.string.change),
+                textStyle = typography.view_m500_s14,
+                onClick = onChangeClick
+            )
+        }
     }
 }
 
@@ -105,6 +124,7 @@ fun CardInputBookPreview() {
         CardInputBook(
             title = "책제목입니다.책제목입니다.책제목입니다.책제목입니다.책제목입니다.",
             author = "리처드 도킨스",
+            imageUrl = null, // 기본 이미지 사용
             onChangeClick = {}
         )
     }

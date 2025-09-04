@@ -189,6 +189,21 @@ class FeedWriteViewModel @Inject constructor(
         updateState { it.copy(selectedBook = book) }
     }
 
+    fun setPreselectedBookForFeed(isbn: String, bookTitle: String, bookAuthor: String, bookImageUrl: String) {
+        val preselectedBook = BookData(
+            title = bookTitle,
+            imageUrl = bookImageUrl,
+            author = bookAuthor,
+            isbn = isbn
+        )
+        updateState {
+            it.copy(
+                selectedBook = preselectedBook,
+                isBookPreselected = true
+            )
+        }
+    }
+
     fun toggleBookSearchSheet(show: Boolean) {
         updateState { it.copy(showBookSearchSheet = show) }
         if (show) {

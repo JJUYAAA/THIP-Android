@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,14 +17,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.texthip.thip.R
-import com.texthip.thip.ui.common.buttons.OptionChipButton
+import com.texthip.thip.ui.common.cards.CardInputBook
 import com.texthip.thip.ui.group.makeroom.mock.BookData
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -78,54 +75,14 @@ fun GroupSelectBook(
                 )
             }
         } else {
-            // 선택된 상태: 커버, 제목, 저자, 변경 버튼
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                AsyncImage(
-                    model = selectedBook.imageUrl ?: R.drawable.img_book_cover_sample,
-                    contentDescription = selectedBook.title,
-                    modifier = Modifier
-                        .height(80.dp)
-                        .width(60.dp),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    verticalArrangement = Arrangement.Top
-                ) {
-                    Text(
-                        text = selectedBook.title,
-                        color = colors.White,
-                        style = typography.menu_sb600_s14_h24
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    selectedBook.author?.let {
-                        Text(
-                            text = stringResource(
-                                R.string.group_selected_book_author,
-                                selectedBook.author
-                            ),
-                            color = colors.Grey01,
-                            style = typography.info_r400_s12,
-                            maxLines = 1
-                        )
-                    }
-                }
-                if (!isBookPreselected) {
-                    OptionChipButton(
-                        text = stringResource(R.string.change),
-                        onClick = onChangeBookClick,
-                        isSelected = false
-                    )
-                }
-            }
+            CardInputBook(
+                title = selectedBook.title,
+                author = selectedBook.author ?: "",
+                imageUrl = selectedBook.imageUrl,
+                imageRes = R.drawable.img_book_cover_sample,
+                showChangeButton = !isBookPreselected, // 사전 선택된 책인 경우 변경 버튼 숨김
+                onChangeClick = onChangeBookClick
+            )
         }
     }
 }

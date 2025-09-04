@@ -151,13 +151,11 @@ fun NavGraphBuilder.feedNavigation(
                 route.bookAuthor != null
             ) {
                 // 새 글 작성 모드: 책 정보만 있는 경우 (책 상세 페이지에서 온 경우)
-                viewModel.selectBook(
-                    com.texthip.thip.ui.group.makeroom.mock.BookData(
-                        title = route.bookTitle,
-                        imageUrl = route.bookImageUrl ?: "",
-                        author = route.bookAuthor,
-                        isbn = route.isbn
-                    )
+                viewModel.setPreselectedBookForFeed(
+                    isbn = route.isbn,
+                    bookTitle = route.bookTitle,
+                    bookAuthor = route.bookAuthor,
+                    bookImageUrl = route.bookImageUrl ?: ""
                 )
             }
         }
