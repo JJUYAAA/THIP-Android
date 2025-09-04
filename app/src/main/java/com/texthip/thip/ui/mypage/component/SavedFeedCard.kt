@@ -48,8 +48,29 @@ fun SavedFeedCard(
     onProfileClick: () -> Unit = {}
 ) {
     val hasImages = feedItem.imageUrls.isNotEmpty()
-    val maxLines = if (hasImages) 3 else 8
+    val maxTextLines = if (hasImages) 3 else 8
     var isTextTruncated by remember { mutableStateOf(false) }
+    
+    // 실제 텍스트 줄 수를 기준으로 표시할 텍스트 계산
+    val processedText = remember(feedItem.content) {
+        val lines = feedItem.content.split("\n")
+        val nonEmptyLines = mutableListOf<Int>() // 실제 텍스트가 있는 줄의 인덱스
+        
+        lines.forEachIndexed { index, line ->
+            if (line.trim().isNotEmpty()) {
+                nonEmptyLines.add(index)
+            }
+        }
+        
+        if (nonEmptyLines.size <= maxTextLines) {
+            // 실제 텍스트 줄이 제한보다 적으면 전체 표시
+            feedItem.content
+        } else {
+            // 실제 텍스트 줄이 제한을 초과하면, maxTextLines 번째 텍스트 줄까지만 표시
+            val lastAllowedLineIndex = nonEmptyLines[maxTextLines - 1]
+            lines.take(lastAllowedLineIndex + 1).joinToString("\n")
+        }
+    }
 
     Column(
         modifier = modifier
@@ -85,15 +106,17 @@ fun SavedFeedCard(
         ) {
             Box {
                 Text(
-                    text = feedItem.content,
+                    text = processedText,
                     style = typography.feedcopy_r400_s14_h20,
                     color = colors.White,
-                    maxLines = maxLines,
                     modifier = Modifier.fillMaxWidth(),
                     onTextLayout = { textLayoutResult ->
-                        isTextTruncated = textLayoutResult.hasVisualOverflow
+                        // 원본 텍스트와 처리된 텍스트가 다르면 잘렸다고 판단
+                        isTextTruncated = processedText != feedItem.content
                     }
                 )
+                
+                // 텍스트가 잘린 경우에만 "...더보기" 표시
                 if (isTextTruncated) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_text_more),
