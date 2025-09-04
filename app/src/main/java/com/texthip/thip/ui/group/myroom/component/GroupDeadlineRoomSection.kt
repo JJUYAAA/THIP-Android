@@ -113,7 +113,7 @@ fun GroupRoomDeadlineSection(
                             ),
                             shape = RoundedCornerShape(14.dp)
                         )
-                        .padding(vertical = 20.dp, horizontal = 20.dp)
+                        .padding(vertical = 20.dp)
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -121,7 +121,8 @@ fun GroupRoomDeadlineSection(
                         Text(
                             text = sectionTitle,
                             style = typography.title_b700_s20_h24,
-                            color = colors.White
+                            color = colors.White,
+                            modifier = Modifier.padding(horizontal = 20.dp)
                         )
                         Spacer(Modifier.height(40.dp))
 
@@ -137,6 +138,7 @@ fun GroupRoomDeadlineSection(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(584.dp)
+                                .padding(horizontal = 20.dp)
                         ) {
                             when {
                                 // 에러 상태
