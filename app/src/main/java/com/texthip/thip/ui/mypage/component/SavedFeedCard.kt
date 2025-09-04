@@ -49,10 +49,9 @@ fun SavedFeedCard(
 ) {
     val hasImages = feedItem.imageUrls.isNotEmpty()
     val maxTextLines = if (hasImages) 3 else 8
-    var isTextTruncated by remember { mutableStateOf(false) }
     
     // 실제 텍스트 줄 수를 기준으로 표시할 텍스트 계산
-    val processedText = remember(feedItem.content) {
+    val processedText = remember(feedItem.content, hasImages) {
         val lines = feedItem.content.split("\n")
         val nonEmptyLines = mutableListOf<Int>() // 실제 텍스트가 있는 줄의 인덱스
         
@@ -71,6 +70,9 @@ fun SavedFeedCard(
             lines.take(lastAllowedLineIndex + 1).joinToString("\n")
         }
     }
+    
+    // 잘림 여부는 파생 값으로 계산
+    val isTextTruncated = processedText != feedItem.content
 
     Column(
         modifier = modifier
@@ -110,10 +112,6 @@ fun SavedFeedCard(
                     style = typography.feedcopy_r400_s14_h20,
                     color = colors.White,
                     modifier = Modifier.fillMaxWidth(),
-                    onTextLayout = { textLayoutResult ->
-                        // 원본 텍스트와 처리된 텍스트가 다르면 잘렸다고 판단
-                        isTextTruncated = processedText != feedItem.content
-                    }
                 )
                 
                 // 텍스트가 잘린 경우에만 "...더보기" 표시
