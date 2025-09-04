@@ -42,7 +42,7 @@ import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import com.texthip.thip.utils.color.hexToColor
 
-private const val URL_CUSTOMER_SERVICE = "https://slashpage.com/thip/xjqy1g2vw7vejm6vd54z"
+private const val URL_CUSTOMER_SERVICE = "https://slashpage.com/thip/dk58wg2e6yy3zmnqevxz"
 private const val URL_NOTICE = "https://slashpage.com/thip/7vgjr4m1nynpy2dwpy86"
 private const val URL_TERMS_OF_USE = "https://slashpage.com/thip/7916x82r8y74n24kpyg3"
 private const val URL_GUIDE = "https://slashpage.com/thip/ywk9j72989p6rmgpqvnd"
