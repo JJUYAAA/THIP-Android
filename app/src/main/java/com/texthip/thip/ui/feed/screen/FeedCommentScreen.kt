@@ -9,6 +9,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -145,6 +147,7 @@ fun FeedCommentScreen(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FeedCommentContent(
     modifier: Modifier = Modifier,
@@ -330,11 +333,13 @@ private fun FeedCommentContent(
                                 }
                             }
                             if (feedDetail.tagList.isNotEmpty()) {
-                                Row(
-                                    Modifier
+                                FlowRow(
+                                    modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(bottom = 16.dp, start = 20.dp, end = 20.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    maxLines = 2 // 최대 2줄로 제한
                                 ) {
                                     feedDetail.tagList.forEach { tag ->
                                         OptionChipButton(

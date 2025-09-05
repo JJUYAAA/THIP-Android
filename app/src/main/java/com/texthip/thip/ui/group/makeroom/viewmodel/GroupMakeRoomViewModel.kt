@@ -210,15 +210,6 @@ class GroupMakeRoomViewModel @Inject constructor(
         )
     }
 
-    private fun BookUserSaveList.toBookDataFromSaved(): BookData {
-        return BookData(
-            title = this.bookTitle,
-            imageUrl = this.bookImageUrl,
-            author = this.authorName,
-            isbn = this.isbn
-        )
-    }
-
     private fun BookSearchItem.toBookData(): BookData {
         return BookData(
             title = this.title,

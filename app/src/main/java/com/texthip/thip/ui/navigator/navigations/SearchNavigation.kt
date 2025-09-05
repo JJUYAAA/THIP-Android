@@ -38,9 +38,6 @@ fun NavGraphBuilder.searchNavigation(navController: NavHostController) {
             onLeftClick = {
                 navController.popBackStack()
             },
-            onRightClick = {
-                // TODO: 우측 버튼 액션 구현
-            },
             onRecruitingGroupClick = {
                 navController.navigateToBookGroup(isbn)
             },

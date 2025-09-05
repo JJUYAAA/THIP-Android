@@ -44,8 +44,31 @@ fun MyFeedCard(
     onBookClick: () -> Unit = {}
 ) {
     val hasImages = feedItem.imageUrls.isNotEmpty()
-    val maxLines = if (hasImages) 3 else 8
-    var isTextTruncated by remember { mutableStateOf(false) }
+    val maxTextLines = if (hasImages) 3 else 8
+    
+    // 실제 텍스트 줄 수를 기준으로 표시할 텍스트 계산
+    val processedText = remember(feedItem.content, hasImages) {
+        val lines = feedItem.content.split("\n")
+        val nonEmptyLines = mutableListOf<Int>() // 실제 텍스트가 있는 줄의 인덱스
+        
+        lines.forEachIndexed { index, line ->
+            if (line.trim().isNotEmpty()) {
+                nonEmptyLines.add(index)
+            }
+        }
+        
+        if (nonEmptyLines.size <= maxTextLines) {
+            // 실제 텍스트 줄이 제한보다 적으면 전체 표시
+            feedItem.content
+        } else {
+            // 실제 텍스트 줄이 제한을 초과하면, maxTextLines 번째 텍스트 줄까지만 표시
+            val lastAllowedLineIndex = nonEmptyLines[maxTextLines - 1]
+            lines.take(lastAllowedLineIndex + 1).joinToString("\n")
+        }
+    }
+    
+    // 잘림 여부는 파생 값으로 계산
+    val isTextTruncated = processedText != feedItem.content
 
     Column(
         modifier = modifier
@@ -99,20 +122,15 @@ fun MyFeedCard(
                 .clickable { onContentClick() }
         ) {
             Text(
-                text = feedItem.content,
+                text = processedText,
                 style = typography.feedcopy_r400_s14_h20,
                 color = colors.White,
-                maxLines = maxLines,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
-                // 3. onTextLayout 콜백을 사용하여 텍스트가 잘렸는지 확인
-                onTextLayout = { textLayoutResult ->
-                    isTextTruncated = textLayoutResult.hasVisualOverflow
-                }
             )
 
-            // 4. 텍스트가 잘렸을 경우에만 "...더보기" 이미지를 우측 하단에 표시
+            // 텍스트가 잘린 경우에만 "...더보기" 표시
             if (isTextTruncated) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_text_more),
