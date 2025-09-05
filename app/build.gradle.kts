@@ -108,9 +108,11 @@ dependencies {
     //implementation ("androidx.datastore:datastore-preferences:1.1.1")
 
 // 구글 로그인
-    implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
-    implementation("com.google.firebase:firebase-auth")
     implementation("com.google.android.gms:play-services-auth:21.2.0")
+
+    implementation("androidx.credentials:credentials:1.2.2")
+    implementation("androidx.credentials:credentials-play-services-auth:1.2.2")
+
 }
 
 kapt {

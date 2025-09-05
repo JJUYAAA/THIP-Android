@@ -114,7 +114,7 @@ fun EditProfileContent(
                 WarningTextField(
                     containerColor = colors.DarkGrey02,
                     value = uiState.nickname,
-                    onValueChange = onNicknameChange,
+                    onValueChange = { newNickname -> onNicknameChange(newNickname.lowercase()) },
                     hint = stringResource(R.string.nickname_condition),
                     showWarning = uiState.nicknameWarningMessageResId != null,
                     showIcon = false,

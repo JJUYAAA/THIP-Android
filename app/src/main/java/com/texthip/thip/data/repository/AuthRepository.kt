@@ -1,9 +1,6 @@
 package com.texthip.thip.data.repository
 
 import android.content.Context
-import com.google.firebase.Firebase
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.auth
 import com.kakao.sdk.user.UserApiClient
 import com.texthip.thip.data.model.auth.request.AuthRequest
 import com.texthip.thip.data.model.auth.response.AuthResponse
@@ -11,7 +8,10 @@ import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.service.AuthService
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.tasks.await
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import java.util.Base64
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
@@ -36,13 +36,14 @@ class AuthRepository @Inject constructor(
     }
     suspend fun loginWithGoogle(idToken: String): Result<AuthResponse?> {
         return runCatching {
-            //Firebase에 구글 ID 토큰으로 로그인
-            val credential = GoogleAuthProvider.getCredential(idToken, null)
-            val authResult = Firebase.auth.signInWithCredential(credential).await()
-            val googleUid = authResult.user?.uid ?: throw IllegalStateException("Google User UID is null")
+            val payload = idToken.split('.')[1]//ID 토큰을 .기준 분리
+            val decodedJson = String(Base64.getUrlDecoder().decode(payload))//디코딩 해서 JSON 문자열 반환
+
+            val jsonObject = Json.parseToJsonElement(decodedJson).jsonObject
+            val googleSubId = jsonObject["sub"]?.jsonPrimitive?.content ?: throw IllegalStateException("구글 userID (sub)값이 없습니다.")//sub 값 추출
 
             //받아온 UID로 신규/기존 유저인지 확인 요청
-            val request = AuthRequest(oauth2Id = "google_$googleUid")
+            val request = AuthRequest(oauth2Id = "google_$googleSubId")
             authService.checkNewUser(request)
                 .handleBaseResponse()
                 .getOrThrow()
