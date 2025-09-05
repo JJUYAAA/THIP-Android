@@ -53,6 +53,7 @@ import com.texthip.thip.ui.common.buttons.ActionMediumButton
 import com.texthip.thip.ui.common.modal.InfoPopup
 import com.texthip.thip.ui.common.topappbar.GradationTopAppBar
 import com.texthip.thip.ui.mypage.component.SavedFeedCard
+import com.texthip.thip.ui.mypage.mock.FeedItem
 import com.texthip.thip.ui.search.component.SearchFilterButton
 import com.texthip.thip.ui.search.component.SearchFilterDropdownOverlay
 import com.texthip.thip.ui.search.viewmodel.BookDetailUiState
@@ -398,7 +399,7 @@ private fun SearchBookDetailScreenContent(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(30.dp)
+                                    .height(40.dp)
                                     .background(
                                         brush = Brush.verticalGradient(
                                             colors = listOf(
@@ -459,7 +460,7 @@ private fun SearchBookDetailScreenContent(
                         ) { index, feedItem ->
                             val relatedFeedItem = uiState?.relatedFeeds?.getOrNull(index)
 
-                            Spacer(modifier = Modifier.height(if (index == 0) 20.dp else 40.dp))
+                            Spacer(modifier = Modifier.height(if (index == 0) 0.dp else 40.dp))
 
                             SavedFeedCard(
                                 feedItem = feedItem,
@@ -570,6 +571,99 @@ fun SearchBookDetailScreenContentSavedPreview() {
     ThipTheme {
         SearchBookDetailScreenContent(
             bookDetail = mockBookDetailSaved
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBookDetailScreenContentWithFeedsPreview() {
+    val mockFeedItems = listOf(
+        FeedItem(
+            id = 1L,
+            userProfileImage = "https://example.com/profile1.jpg",
+            userName = "책읽는사람",
+            userRole = "문학 애호가",
+            bookTitle = "데미안",
+            authName = "헤르만 헤세",
+            timeAgo = "2시간 전",
+            content = "이 책을 읽으면서 진정한 자아를 찾아가는 과정에 대해 많은 생각을 하게 되었습니다. 싱클레어의 성장 과정이 현재의 나와 많이 닮아있다고 느꼈어요.",
+            likeCount = 24,
+            commentCount = 8,
+            isLiked = true,
+            isSaved = false,
+            imageUrls = listOf("https://example.com/image1.jpg")
+        ),
+        FeedItem(
+            id = 2L,
+            userProfileImage = "https://example.com/profile2.jpg",
+            userName = "철학독서가",
+            userRole = "인문학 탐구자",
+            bookTitle = "데미안",
+            authName = "헤르만 헤세",
+            timeAgo = "5시간 전",
+            content = "헤세의 작품 중에서도 가장 깊이 있는 성찰을 담고 있는 작품이라고 생각합니다. 선악을 넘어선 인간 내면의 복잡성을 이해하는 데 큰 도움이 되었습니다.",
+            likeCount = 18,
+            commentCount = 12,
+            isLiked = false,
+            isSaved = true,
+            imageUrls = emptyList()
+        ),
+        FeedItem(
+            id = 3L,
+            userProfileImage = "https://example.com/profile3.jpg",
+            userName = "문학소녀",
+            userRole = "소설 리뷰어",
+            bookTitle = "데미안",
+            authName = "헤르만 헤세",
+            timeAgo = "1일 전",
+            content = "청소년기에 읽었을 때와 성인이 되어 다시 읽었을 때의 감상이 완전히 달랐습니다. 나이가 들수록 더 깊이 이해되는 작품이네요.\n\n특히 데미안이라는 인물이 주는 메시지가 인상 깊었어요.",
+            likeCount = 31,
+            commentCount = 15,
+            isLiked = true,
+            isSaved = true,
+            imageUrls = listOf(
+                "https://example.com/image2.jpg",
+                "https://example.com/image3.jpg"
+            )
+        )
+    )
+
+    val mockUiState = BookDetailUiState(
+        bookDetail = mockBookDetail,
+        relatedFeeds = emptyList(), // feedItems로 변환되므로 빈 리스트
+        isLoadingFeeds = false,
+        isLoadingMore = false,
+        currentSort = "like"
+    ).copy(
+        // feedItems를 직접 설정하기 위해 relatedFeeds를 임시로 설정
+        relatedFeeds = mockFeedItems.map { feedItem ->
+            com.texthip.thip.data.model.feed.response.RelatedFeedItem(
+                feedId = feedItem.id.toInt(),
+                creatorId = feedItem.id.toInt(),
+                creatorNickname = feedItem.userName,
+                creatorProfileImageUrl = feedItem.userProfileImage,
+                aliasName = feedItem.userRole,
+                aliasColor = "#FF6B9D",
+                postDate = feedItem.timeAgo,
+                isbn = mockBookDetail.isbn,
+                bookTitle = feedItem.bookTitle,
+                bookAuthor = feedItem.authName,
+                contentBody = feedItem.content,
+                contentUrls = feedItem.imageUrls,
+                likeCount = feedItem.likeCount,
+                commentCount = feedItem.commentCount,
+                isSaved = feedItem.isSaved,
+                isLiked = feedItem.isLiked,
+                isWriter = false
+            )
+        }
+    )
+
+    ThipTheme {
+        SearchBookDetailScreenContent(
+            bookDetail = mockBookDetail,
+            uiState = mockUiState
         )
     }
 }
