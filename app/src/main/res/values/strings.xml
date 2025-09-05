@@ -155,7 +155,6 @@
     <string name="group_recruiting">"모집"</string>
     <string name="group_genre">"장르"</string>
     <string name="deadline_string">마감 임박한 독서 모임방</string>
-    <string name="my_group">내 모임방</string>
     <string name="group_participant">%1$s명</string>
     <string name="group_participant_string">참여</string>
     <string name="group_progress">"%1$s님의 진행도 "</string>
@@ -170,6 +169,8 @@
     <string name="card_input_author">%1$s 저</string>
     <string name="current_page">현재 페이지 %d</string>
     <string name="percent">%</string>
+    <string name="leave_room_toast">모임 나가기를 완료했어요.</string>
+    <string name="leave_room_fail_toast">모임 나가기를 실패했어요.</string>
 
     <!--    group room    -->
     <string name="introduction_content">소개글</string>
@@ -195,6 +196,7 @@
     <string name="group_room_no_chat_title">아직 대화가 없어요</string>
     <string name="group_room_no_chat_content">첫번째 한마디를 남겨보세요!</string>
     <string name="group_room_chat_max">오늘의 한마디는 하루에 다섯번까지 작성할 수 있어요</string>
+    <string name="group_room_chat_delete_success">오늘의 한마디 삭제를 완료했어요.</string>
     <string name="numbering" formatted="false">%d. %s</string>
 
     <!--    group note    -->

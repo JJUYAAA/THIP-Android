@@ -24,13 +24,15 @@ data class GroupRoomChatUiState(
 
 enum class ToastType {
     DAILY_GREETING_LIMIT,
-    FIRST_WRITE
+    FIRST_WRITE,
+    DELETE_GREETING_SUCCESS
 }
 
 sealed interface GroupRoomChatEvent {
     data object LoadMore : GroupRoomChatEvent
     data class ShowToast(val type: ToastType) : GroupRoomChatEvent
     data class ShowErrorToast(val message: String) : GroupRoomChatEvent
+    data class DeleteGreeting(val attendanceCheckId: Int) : GroupRoomChatEvent
 }
 
 @HiltViewModel
@@ -55,7 +57,22 @@ class GroupRoomChatViewModel @Inject constructor(
     fun onEvent(event: GroupRoomChatEvent) {
         when (event) {
             is GroupRoomChatEvent.LoadMore -> fetchDailyGreetings()
+            is GroupRoomChatEvent.DeleteGreeting -> deleteDailyGreeting(event.attendanceCheckId)
             else -> Unit
+        }
+    }
+
+    private fun deleteDailyGreeting(attendanceCheckId: Int) {
+        viewModelScope.launch {
+            roomsRepository.deleteRoomsDailyGreeting(
+                roomId = roomId,
+                attendanceCheckId = attendanceCheckId
+            ).onSuccess {
+                _eventFlow.emit(GroupRoomChatEvent.ShowToast(ToastType.DELETE_GREETING_SUCCESS))
+                fetchDailyGreetings(isRefresh = true)
+            }.onFailure { throwable ->
+                _eventFlow.emit(GroupRoomChatEvent.ShowErrorToast(throwable.message ?: "삭제에 실패했습니다."))
+            }
         }
     }
 

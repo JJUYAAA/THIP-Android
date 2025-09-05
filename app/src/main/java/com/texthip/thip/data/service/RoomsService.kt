@@ -21,6 +21,7 @@ import com.texthip.thip.data.model.rooms.response.RoomsBookPageResponse
 import com.texthip.thip.data.model.rooms.response.RoomsCreateDailyGreetingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsCreateVoteResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDailyGreetingResponse
+import com.texthip.thip.data.model.rooms.response.RoomsDeleteDailyGreetingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteRecordResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteVoteResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
@@ -178,9 +179,20 @@ interface RoomsService {
         @Body request: RoomsCreateDailyGreetingRequest
     ): BaseResponse<RoomsCreateDailyGreetingResponse>
 
+    @DELETE("rooms/{roomId}/daily-greeting/{attendanceCheckId}")
+    suspend fun deleteRoomsDailyGreeting(
+        @Path("roomId") roomId: Int,
+        @Path("attendanceCheckId") attendanceCheckId: Int
+    ): BaseResponse<RoomsDeleteDailyGreetingResponse>
+
     @GET("rooms/{roomId}/records/{recordId}/pin")
     suspend fun getRoomsRecordsPin(
         @Path("roomId") roomId: Int,
         @Path("recordId") recordId: Int
     ): BaseResponse<RoomsRecordsPinResponse>
+
+    @DELETE("rooms/{roomId}/leave")
+    suspend fun leaveRoom(
+        @Path("roomId") roomId: Int
+    ): BaseResponse<Unit>
 }

@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.group.room.screen
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
@@ -28,6 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,18 +63,49 @@ fun GroupRoomChatScreen(
 ) {
     var inputText by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
-    var activeToast by remember { mutableStateOf<ToastType?>(null) }
+    var showToast by remember { mutableStateOf(false) }
+    var toastMessage by remember { mutableStateOf("") }
+    val colorWhite = colors.White
+    val colorRed = colors.Red
+    var toastColor by remember { mutableStateOf(colorWhite) }
+
+    val dailyGreetingLimitMessage = stringResource(R.string.group_room_chat_max)
+    val deleteSuccessMessage = stringResource(R.string.group_room_chat_delete_success)
 
     LaunchedEffect(key1 = Unit) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is GroupRoomChatEvent.ShowToast -> {
-                    activeToast = event.type
+                    when (event.type) {
+                        ToastType.DAILY_GREETING_LIMIT -> {
+                            toastMessage = dailyGreetingLimitMessage
+                            toastColor = colorRed
+                        }
+                        ToastType.FIRST_WRITE -> {
+                            toastMessage = dailyGreetingLimitMessage
+                            toastColor = colorWhite
+                        }
+                        ToastType.DELETE_GREETING_SUCCESS -> {
+                            toastMessage = deleteSuccessMessage
+                            toastColor = colorWhite
+                        }
+                    }
+                    showToast = true
                 }
-
+                is GroupRoomChatEvent.ShowErrorToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
                 else -> Unit
             }
+        }
+    }
+
+    LaunchedEffect(showToast) {
+        if (showToast) {
+            delay(3000)
+            showToast = false
         }
     }
 
@@ -85,8 +119,9 @@ fun GroupRoomChatScreen(
             inputText = ""
         },
         onNavigateBack = onBackClick,
-        activeToast = activeToast,
-        onDismissToast = { activeToast = null }
+        showToast = showToast,
+        toastMessage = toastMessage,
+        toastColor = toastColor
     )
 }
 
@@ -98,8 +133,9 @@ fun GroupRoomChatContent(
     onInputTextChanged: (String) -> Unit,
     onSendClick: () -> Unit,
     onNavigateBack: () -> Unit,
-    activeToast: ToastType?,
-    onDismissToast: () -> Unit
+    showToast: Boolean,
+    toastMessage: String,
+    toastColor: Color,
 ) {
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedMessage by remember { mutableStateOf<TodayCommentList?>(null) }
@@ -240,13 +276,14 @@ fun GroupRoomChatContent(
         }
 
         AnimatedVisibility(
-            visible = activeToast != null,
+            // visible 조건을 showToast로 변경
+            visible = showToast,
             enter = slideInVertically(
-                initialOffsetY = { -it }, // 위에서 아래로
+                initialOffsetY = { -it },
                 animationSpec = tween(durationMillis = 2000)
             ),
             exit = slideOutVertically(
-                targetOffsetY = { -it }, // 위로 사라짐
+                targetOffsetY = { -it },
                 animationSpec = tween(durationMillis = 2000)
             ),
             modifier = Modifier
@@ -254,40 +291,10 @@ fun GroupRoomChatContent(
                 .padding(horizontal = 20.dp, vertical = 16.dp)
                 .zIndex(3f)
         ) {
-            LaunchedEffect(activeToast) {
-                if (activeToast != null) {
-                    delay(3000L)
-                    onDismissToast()
-                }
-            }
-
-            AnimatedVisibility(
-                visible = activeToast != null,
-                enter = slideInVertically(
-                    initialOffsetY = { -it },
-                    animationSpec = tween(durationMillis = 2000)
-                ),
-                exit = slideOutVertically(
-                    targetOffsetY = { -it },
-                    animationSpec = tween(durationMillis = 2000)
-                ),
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
-                    .zIndex(3f)
-            ) {
-                when (activeToast) {
-                    ToastType.DAILY_GREETING_LIMIT -> {
-                        ToastWithDate(color = colors.Red)
-                    }
-
-                    ToastType.FIRST_WRITE -> {
-                        ToastWithDate()
-                    }
-
-                    null -> {}
-                }
-            }
+            ToastWithDate(
+                message = toastMessage,
+                color = toastColor
+            )
         }
     }
 
@@ -298,7 +305,9 @@ fun GroupRoomChatContent(
                     text = stringResource(R.string.delete),
                     color = colors.Red,
                     onClick = {
-                        // TODO: 삭제 처리
+                        selectedMessage?.let { message ->
+                            onEvent(GroupRoomChatEvent.DeleteGreeting(message.attendanceCheckId))
+                        }
                         isBottomSheetVisible = false
                     }
                 )
@@ -352,8 +361,9 @@ private fun GroupRoomChatScreenPreview() {
             onInputTextChanged = { newText -> inputText = newText },
             onSendClick = {},
             onNavigateBack = {},
-            activeToast = null,
-            onDismissToast = {}
+            showToast = false,
+            toastMessage = "",
+            toastColor = colors.White
         )
     }
 }

@@ -289,6 +289,16 @@ class RoomsRepository @Inject constructor(
         ).handleBaseResponse().getOrThrow()
     }
 
+    suspend fun deleteRoomsDailyGreeting(
+        roomId: Int,
+        attendanceCheckId: Int
+    ) = runCatching {
+        roomsService.deleteRoomsDailyGreeting(
+            roomId = roomId,
+            attendanceCheckId = attendanceCheckId
+        ).handleBaseResponse().getOrThrow()
+    }
+
     suspend fun getRoomsRecordsPin(
         roomId: Int,
         recordId: Int
@@ -296,6 +306,14 @@ class RoomsRepository @Inject constructor(
         roomsService.getRoomsRecordsPin(
             roomId = roomId,
             recordId = recordId
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun leaveRoom(
+        roomId: Int,
+    ) = runCatching {
+        roomsService.leaveRoom(
+            roomId = roomId,
         ).handleBaseResponse().getOrThrow()
     }
 }
