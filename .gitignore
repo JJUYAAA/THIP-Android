@@ -18,3 +18,5 @@ local.properties
 .idea/gradle.xml
 .idea/appInsightsSettings.xml
 /app/google-services.json
+*.properties
+*.jks
