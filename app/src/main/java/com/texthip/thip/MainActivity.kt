@@ -5,27 +5,32 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.texthip.thip.data.manager.AuthStateManager
 import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.ui.navigator.navigations.authNavigation
 import com.texthip.thip.ui.navigator.routes.CommonRoutes
 import com.texthip.thip.ui.theme.ThipTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var tokenManager: TokenManager
+    @Inject
+    lateinit var authStateManager: AuthStateManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ThipTheme {
-                RootNavHost()
+                RootNavHost(authStateManager)
             }
         }
 //        getKakaoKeyHash(this)
@@ -33,8 +38,17 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun RootNavHost() {
+fun RootNavHost(authStateManager: AuthStateManager) {
     val navController = rememberNavController()
+
+    LaunchedEffect(Unit) {
+        authStateManager.tokenExpiredEvent.collectLatest {
+            navController.navigate(CommonRoutes.Login) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+    }
+    
     NavHost(
         navController = navController,
         startDestination = CommonRoutes.Splash
