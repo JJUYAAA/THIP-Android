@@ -35,6 +35,6 @@ data class PostList(
 data class VoteItems(
     val voteItemId: Int,
     val itemName: String,
-    val percentage: Int,
+    val count: Int,
     val isVoted: Boolean,
 )

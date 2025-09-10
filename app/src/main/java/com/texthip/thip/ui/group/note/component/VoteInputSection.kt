@@ -37,6 +37,7 @@ fun VoteInputSection(
     onAddOption: () -> Unit,
     onRemoveOption: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
     maxOptionLength: Int = 20,
     maxOptions: Int = 5
 ) {
@@ -45,6 +46,7 @@ fun VoteInputSection(
     Column(
         modifier = modifier
             .clickable(
+                enabled = isEnabled,
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
@@ -55,6 +57,7 @@ fun VoteInputSection(
         BasicTextField(
             value = title,
             onValueChange = { if (it.length <= maxOptionLength) onTitleChange(it) },
+//            enabled = isEnabled,
             textStyle = typography.smalltitle_m500_s18_h24.copy(color = colors.White),
             modifier = Modifier
                 .fillMaxWidth(),
@@ -81,11 +84,12 @@ fun VoteInputSection(
                 onDelete = { onOptionChange(index, "") }, // x 버튼 클릭 시 내용 삭제
                 onRemoveField = { if (canRemove) onRemoveOption(index) }, // 쓰레기통 클릭 시 항목 제거
                 canRemove = canRemove,
+                isEnabled = isEnabled,
                 hint = stringResource(R.string.vote_content_placeholder)
             )
         }
 
-        if (options.size < maxOptions) {
+        if (options.size < maxOptions && isEnabled) {
             Button(
                 onClick = {
                     focusManager.clearFocus() // 항목 추가 시 포커스 해제

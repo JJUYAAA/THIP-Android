@@ -38,6 +38,7 @@ fun BorderedTextField(
     hint: String,
     text: String,
     canRemove: Boolean = true,
+    isEnabled: Boolean = true,
     onTextChange: (String) -> Unit,
     onDelete: () -> Unit,
     onRemoveField: () -> Unit
@@ -46,11 +47,15 @@ fun BorderedTextField(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    val iconRes = when {
-        isFocused && text.isEmpty() -> R.drawable.ic_x_circle_darkgrey
-        isFocused && text.isNotEmpty() -> R.drawable.ic_x_circle_grey
-        !isFocused && canRemove -> R.drawable.ic_delete
-        else -> null
+    val iconRes = if (isEnabled) {
+        when {
+            isFocused && text.isEmpty() -> R.drawable.ic_x_circle_darkgrey
+            isFocused && text.isNotEmpty() -> R.drawable.ic_x_circle_grey
+            !isFocused && canRemove -> R.drawable.ic_delete
+            else -> null
+        }
+    } else {
+        null
     }
 
     val iconEnabled = when (iconRes) {
@@ -74,6 +79,7 @@ fun BorderedTextField(
         BasicTextField(
             value = text,
             onValueChange = onTextChange,
+            enabled = isEnabled,
             textStyle = myStyle.copy(color = colors.White),
             singleLine = true,
             modifier = Modifier

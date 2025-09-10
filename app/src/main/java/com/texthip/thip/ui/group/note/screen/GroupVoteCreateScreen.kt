@@ -45,6 +45,11 @@ fun GroupVoteCreateScreen(
     recentPage: Int,
     totalPage: Int,
     isOverviewPossible: Boolean,
+    postId: Int?,
+    page: Int?,
+    isOverview: Boolean?,
+    title: String?,
+    options: List<String>?,
     onBackClick: () -> Unit,
     onNavigateBackWithResult: () -> Unit,
     viewModel: GroupVoteCreateViewModel = hiltViewModel()
@@ -52,7 +57,10 @@ fun GroupVoteCreateScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.initialize(roomId, recentPage, totalPage, isOverviewPossible)
+        viewModel.initialize(
+            roomId, recentPage, totalPage, isOverviewPossible,
+            postId, page, isOverview, title, options
+        )
     }
 
     LaunchedEffect(uiState.isSuccess) {
@@ -85,7 +93,8 @@ fun GroupVoteCreateContent(
     ) {
         Column {
             InputTopAppBar(
-                title = stringResource(R.string.create_vote),
+                title = if (uiState.isEditMode) stringResource(R.string.edit_vote)
+                else stringResource(R.string.create_vote),
                 isRightButtonEnabled = uiState.isFormFilled,
                 onLeftClick = onBackClick,
                 onRightClick = { onEvent(GroupVoteCreateEvent.CreateVoteClicked) }
@@ -106,7 +115,8 @@ fun GroupVoteCreateContent(
                     isEligible = uiState.isGeneralReviewEnabled,
                     bookTotalPage = uiState.bookTotalPage,
                     onInfoClick = { showTooltip = true },
-                    onInfoPositionCaptured = { iconCoordinates.value = it }
+                    onInfoPositionCaptured = { iconCoordinates.value = it },
+                    isEnabled = !uiState.isEditMode
                 )
 
                 VoteInputSection(
@@ -119,7 +129,8 @@ fun GroupVoteCreateContent(
                     onAddOption = { onEvent(GroupVoteCreateEvent.AddOptionClicked) },
                     onRemoveOption = { index ->
                         onEvent(GroupVoteCreateEvent.RemoveOptionClicked(index))
-                    }
+                    },
+                    isEnabled = !uiState.isEditMode
                 )
             }
         }
