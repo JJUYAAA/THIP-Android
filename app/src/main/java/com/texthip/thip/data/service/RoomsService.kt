@@ -6,6 +6,7 @@ import com.texthip.thip.data.model.rooms.request.RoomJoinRequest
 import com.texthip.thip.data.model.rooms.request.RoomSecretRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateDailyGreetingRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
+import com.texthip.thip.data.model.rooms.request.RoomsPatchRecordRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
@@ -24,6 +25,7 @@ import com.texthip.thip.data.model.rooms.response.RoomsDailyGreetingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteDailyGreetingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteRecordResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteVoteResponse
+import com.texthip.thip.data.model.rooms.response.RoomsPatchRecordResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsLikesResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsResponse
@@ -35,6 +37,7 @@ import com.texthip.thip.data.model.rooms.response.RoomsVoteResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -195,4 +198,11 @@ interface RoomsService {
     suspend fun leaveRoom(
         @Path("roomId") roomId: Int
     ): BaseResponse<Unit>
+
+    @PATCH("rooms/{roomId}/records/{recordId}")
+    suspend fun patchRoomsRecord(
+        @Path("roomId") roomId: Int,
+        @Path("recordId") recordId: Int,
+        @Body request: RoomsPatchRecordRequest
+    ): BaseResponse<RoomsPatchRecordResponse>
 }
