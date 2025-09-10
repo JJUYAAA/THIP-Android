@@ -46,10 +46,12 @@ fun BookPageTextField(
     modifier: Modifier = Modifier,
     bookTotalPage: Int,
     enabled: Boolean = true,
+    readOnly: Boolean = false,
     text: String,
     isError: Boolean,
     onValueChange: (String) -> Unit,
     showClearButton: Boolean = true,
+    showTotalPage: Boolean = true
 ) {
     var hasFocusCleared by remember(text) { mutableStateOf(false) }
     
@@ -62,7 +64,8 @@ fun BookPageTextField(
                 }
             },
             enabled = enabled,
-            visualTransformation = if (enabled) {
+            readOnly = readOnly,
+            visualTransformation = if (showTotalPage) {
                 SuffixTransformation("/${bookTotalPage}p", colors.Grey02)
             } else {
                 VisualTransformation.None
@@ -70,15 +73,21 @@ fun BookPageTextField(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = modifier
                 .size(width = 320.dp, height = 48.dp)
-                .onFocusChanged { focusState ->
-                    if (focusState.isFocused && !hasFocusCleared && text.isNotEmpty()) {
-                        hasFocusCleared = true
-                        onValueChange("")
+                .then(
+                    if (enabled) {
+                        Modifier.onFocusChanged { focusState ->
+                            if (focusState.isFocused && !hasFocusCleared && text.isNotEmpty()) {
+                                hasFocusCleared = true
+                                onValueChange("")
+                            }
+                            if (!focusState.isFocused) {
+                                hasFocusCleared = false
+                            }
+                        }
+                    } else {
+                        Modifier
                     }
-                    if (!focusState.isFocused) {
-                        hasFocusCleared = false
-                    }
-                }
+                )
                 .then(
                     if (isError)
                         Modifier.border(

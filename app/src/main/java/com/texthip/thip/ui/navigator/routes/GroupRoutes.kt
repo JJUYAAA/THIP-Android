@@ -48,7 +48,11 @@ sealed class GroupRoutes : Routes() {
         val roomId: Int,
         val recentBookPage: Int,
         val totalBookPage: Int,
-        val isOverviewPossible: Boolean
+        val isOverviewPossible: Boolean,
+        val postId: Int? = null,
+        val page: Int? = null,
+        val content: String? = null,
+        val isOverview: Boolean? = null
     )
 
     @Serializable

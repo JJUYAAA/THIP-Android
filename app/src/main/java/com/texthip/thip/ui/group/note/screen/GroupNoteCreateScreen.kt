@@ -45,6 +45,10 @@ fun GroupNoteCreateScreen(
     recentPage: Int,
     totalPage: Int,
     isOverviewPossible: Boolean,
+    postId: Int?,
+    page: Int?,
+    content: String?,
+    isOverview: Boolean?,
     onBackClick: () -> Unit,
     onNavigateBackWithResult: () -> Unit,
     viewModel: GroupNoteCreateViewModel = hiltViewModel()
@@ -52,7 +56,10 @@ fun GroupNoteCreateScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.initialize(roomId, recentPage, totalPage, isOverviewPossible)
+        viewModel.initialize(
+            roomId, recentPage, totalPage, isOverviewPossible,
+            postId, page, content, isOverview
+        )
     }
 
     LaunchedEffect(key1 = uiState.isSuccess) {
@@ -87,7 +94,11 @@ fun GroupNoteCreateContent(
     ) {
         Column {
             InputTopAppBar(
-                title = stringResource(R.string.write_record),
+                title = if (uiState.isEditMode) {
+                    stringResource(R.string.edit_record)
+                } else {
+                    stringResource(R.string.write_record)
+                },
                 isRightButtonEnabled = uiState.isFormFilled,
                 onLeftClick = onBackClick,
                 onRightClick = { onEvent(GroupNoteCreateEvent.CreateRecordClicked) }
@@ -108,14 +119,14 @@ fun GroupNoteCreateContent(
                     isEligible = uiState.isOverviewPossible,
                     bookTotalPage = uiState.totalPage,
                     onInfoClick = { showTooltip = true },
-                    onInfoPositionCaptured = { iconCoordinates.value = it }
+                    onInfoPositionCaptured = { iconCoordinates.value = it },
+                    isEnabled = !uiState.isEditMode
                 )
 
                 OpinionInputSection(
-                    text = uiState.opinionText,
+                    textFieldValue = uiState.opinionTextFieldValue,
                     onTextChange = { onEvent(GroupNoteCreateEvent.OpinionChanged(it)) }
                 )
-
             }
         }
         if (showTooltip && iconCoordinates.value != null) {
@@ -154,7 +165,7 @@ fun GroupNoteCreateContent(
 private fun GroupNoteCreateScreenPreview() {
     ThipTheme {
         GroupNoteCreateContent(
-            uiState = GroupNoteCreateUiState(pageText = "123", opinionText = "재미있었다."),
+            uiState = GroupNoteCreateUiState(),
             onEvent = {},
             onBackClick = {}
         )

@@ -40,7 +40,8 @@ fun PageInputSection(
     bookTotalPage: Int,
     isEligible: Boolean,
     onInfoClick: () -> Unit,
-    onInfoPositionCaptured: (LayoutCoordinates) -> Unit
+    onInfoPositionCaptured: (LayoutCoordinates) -> Unit,
+    isEnabled: Boolean = true
 ) {
     val allRangeText = stringResource(R.string.all_range)
     val isError = remember(pageText, bookTotalPage, isGeneralReview) {
@@ -71,49 +72,53 @@ fun PageInputSection(
                 onValueChange = {
                     if (!isGeneralReview) onPageTextChange(it)
                 },
-                enabled = !isGeneralReview,
+                enabled = !isGeneralReview && isEnabled,
+                readOnly = !isEnabled,
                 isError = isError,
-                showClearButton = !isGeneralReview
+                showClearButton = !isGeneralReview,
+                showTotalPage = !isGeneralReview
             )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomEnd),
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            if (isEnabled) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomEnd),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_information),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(20.dp)
-                            .onGloballyPositioned { coordinates ->
-                                onInfoPositionCaptured(coordinates)
-                            }
-                            .clickable { onInfoClick() },
-                        tint = colors.Grey02
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_information),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(20.dp)
+                                .onGloballyPositioned { coordinates ->
+                                    onInfoPositionCaptured(coordinates)
+                                }
+                                .clickable { onInfoClick() },
+                            tint = colors.Grey02
+                        )
 
-                    Text(
-                        text = stringResource(R.string.general_review),
-                        style = typography.info_r400_s12,
-                        color = colors.Grey
+                        Text(
+                            text = stringResource(R.string.general_review),
+                            style = typography.info_r400_s12,
+                            color = colors.Grey
+                        )
+                    }
+
+                    ToggleSwitchButton(
+                        isChecked = isGeneralReview,
+                        onToggleChange = { checked ->
+                            onGeneralReviewToggle(checked)
+                            onPageTextChange(if (checked) allRangeText else "")
+                        },
+                        enabled = isEligible
                     )
                 }
-
-                ToggleSwitchButton(
-                    isChecked = isGeneralReview,
-                    onToggleChange = { checked ->
-                        onGeneralReviewToggle(checked)
-                        onPageTextChange(if (checked) allRangeText else "")
-                    },
-                    enabled = isEligible
-                )
             }
         }
     }
