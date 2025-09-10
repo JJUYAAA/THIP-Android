@@ -351,6 +351,19 @@ fun NavGraphBuilder.groupNavigation(
                     isOverviewPossible = isOverviewPossible
                 )
             },
+            onEditNoteClick = { post ->
+                val currentState = viewModel.uiState.value
+                navController.navigateToGroupNoteCreate(
+                    roomId = roomId,
+                    recentBookPage = currentState.recentBookPage,
+                    totalBookPage = currentState.totalBookPage,
+                    isOverviewPossible = currentState.isOverviewPossible,
+                    postId = post.postId,
+                    page = post.page,
+                    content = post.content,
+                    isOverview = post.isOverview
+                )
+            },
             onCreateVoteClick = { recentPage, totalPage, isOverviewPossible ->
                 navController.navigateToGroupVoteCreate(
                     roomId = roomId,
@@ -389,6 +402,10 @@ fun NavGraphBuilder.groupNavigation(
             recentPage = route.recentBookPage,
             totalPage = route.totalBookPage,
             isOverviewPossible = route.isOverviewPossible,
+            postId = route.postId,
+            page = route.page,
+            content = route.content,
+            isOverview = route.isOverview,
             onBackClick = {
                 navigateBack()
             },

@@ -99,14 +99,22 @@ fun NavHostController.navigateToGroupNoteCreate(
     roomId: Int,
     recentBookPage: Int,
     totalBookPage: Int,
-    isOverviewPossible: Boolean
+    isOverviewPossible: Boolean,
+    postId: Int? = null,
+    page: Int? = null,
+    content: String? = null,
+    isOverview: Boolean? = null
 ) {
     navigate(
         GroupRoutes.NoteCreate(
             roomId = roomId,
             recentBookPage = recentBookPage,
             totalBookPage = totalBookPage,
-            isOverviewPossible = isOverviewPossible
+            isOverviewPossible = isOverviewPossible,
+            postId = postId,
+            page = page,
+            content = content,
+            isOverview = isOverview
         )
     )
 }
