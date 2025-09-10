@@ -15,6 +15,7 @@ import com.texthip.thip.data.model.users.response.SignupResponse
 import com.texthip.thip.data.model.users.response.UserSearchResponse
 import com.texthip.thip.data.model.users.response.UsersMyFollowingsRecentFeedsResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -73,5 +74,8 @@ interface UserService {
         @Query("keyword") keyword: String,
         @Query("size") size: Int = 30
     ): BaseResponse<UserSearchResponse>
+
+    @DELETE("users")
+    suspend fun deleteAccount(): BaseResponse<Unit>
 
 }
