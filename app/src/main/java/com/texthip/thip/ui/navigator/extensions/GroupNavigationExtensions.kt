@@ -124,14 +124,24 @@ fun NavHostController.navigateToGroupVoteCreate(
     roomId: Int,
     recentPage: Int,
     totalPage: Int,
-    isOverviewPossible: Boolean
+    isOverviewPossible: Boolean,
+    postId: Int? = null,
+    page: Int? = null,
+    isOverview: Boolean? = null,
+    title: String? = null,
+    options: List<String>? = null
 ) {
     navigate(
         GroupRoutes.VoteCreate(
             roomId = roomId,
             recentPage = recentPage,
             totalPage = totalPage,
-            isOverviewPossible = isOverviewPossible
+            isOverviewPossible = isOverviewPossible,
+            postId = postId,
+            page = page,
+            isOverview = isOverview,
+            title = title,
+            options = options
         )
     )
 }

@@ -364,6 +364,21 @@ fun NavGraphBuilder.groupNavigation(
                     isOverview = post.isOverview
                 )
             },
+            onEditVoteClick = { post ->
+                val currentState = viewModel.uiState.value
+                navController.navigateToGroupVoteCreate(
+                    roomId = roomId,
+                    recentPage = currentState.recentBookPage,
+                    totalPage = currentState.totalBookPage,
+                    isOverviewPossible = currentState.isOverviewPossible,
+                    // 투표 수정 데이터 전달
+                    postId = post.postId,
+                    page = post.page,
+                    isOverview = post.isOverview,
+                    title = post.content,
+                    options = post.voteItems.map { it.itemName }
+                )
+            },
             onCreateVoteClick = { recentPage, totalPage, isOverviewPossible ->
                 navController.navigateToGroupVoteCreate(
                     roomId = roomId,
@@ -427,6 +442,11 @@ fun NavGraphBuilder.groupNavigation(
             recentPage = route.recentPage,
             totalPage = route.totalPage,
             isOverviewPossible = route.isOverviewPossible,
+            postId = route.postId,
+            page = route.page,
+            isOverview = route.isOverview,
+            title = route.title,
+            options = route.options,
             onBackClick = { navigateBack() },
             onNavigateBackWithResult = {
                 // 투표 생성 후 '내 기록' 탭으로 이동

@@ -60,6 +60,11 @@ sealed class GroupRoutes : Routes() {
         val roomId: Int,
         val recentPage: Int,
         val totalPage: Int,
-        val isOverviewPossible: Boolean
+        val isOverviewPossible: Boolean,
+        val postId: Int? = null,
+        val page: Int? = null,
+        val isOverview: Boolean? = null,
+        val title: String? = null,
+        val options: List<String>? = null
     )
 }
