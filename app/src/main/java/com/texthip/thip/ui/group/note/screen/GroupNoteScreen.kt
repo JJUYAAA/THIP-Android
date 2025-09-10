@@ -424,7 +424,7 @@ fun GroupNoteContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 120.dp)
+                        .padding(top = 98.dp)
                 ) {
                     Box(
                         modifier = Modifier
