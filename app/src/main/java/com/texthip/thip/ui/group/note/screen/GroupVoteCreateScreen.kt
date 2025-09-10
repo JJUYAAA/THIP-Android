@@ -18,10 +18,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -38,6 +40,7 @@ import com.texthip.thip.ui.group.note.viewmodel.GroupVoteCreateUiState
 import com.texthip.thip.ui.group.note.viewmodel.GroupVoteCreateViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.utils.rooms.advancedImePadding
+import kotlinx.coroutines.delay
 
 @Composable
 fun GroupVoteCreateScreen(
@@ -86,6 +89,15 @@ fun GroupVoteCreateContent(
     var showTooltip by rememberSaveable { mutableStateOf(false) }
     val iconCoordinates = remember { mutableStateOf<LayoutCoordinates?>(null) }
 
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(uiState.isEditMode) {
+        if (uiState.isEditMode) {
+            delay(100)
+            focusRequester.requestFocus()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -120,7 +132,7 @@ fun GroupVoteCreateContent(
                 )
 
                 VoteInputSection(
-                    title = uiState.title,
+                    titleValue = uiState.titleValue,
                     onTitleChange = { onEvent(GroupVoteCreateEvent.TitleChanged(it)) },
                     options = uiState.options,
                     onOptionChange = { index, newText ->
@@ -130,7 +142,8 @@ fun GroupVoteCreateContent(
                     onRemoveOption = { index ->
                         onEvent(GroupVoteCreateEvent.RemoveOptionClicked(index))
                     },
-                    isEnabled = !uiState.isEditMode
+                    isEnabled = !uiState.isEditMode,
+                    focusRequester = focusRequester
                 )
             }
         }
@@ -173,7 +186,7 @@ private fun GroupVoteCreateScreenPreview() {
         GroupVoteCreateContent(
             uiState = GroupVoteCreateUiState(
                 pageText = "123",
-                title = "가장 인상깊은 구절은?",
+                titleValue = TextFieldValue("이번 모임의 장소는 어디가 좋을까요?"),
                 options = listOf("1연 1행", "2연 3행", ""),
                 bookTotalPage = 600,
                 isGeneralReviewEnabled = true

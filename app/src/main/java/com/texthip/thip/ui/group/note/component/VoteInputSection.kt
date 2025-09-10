@@ -18,9 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
@@ -30,8 +33,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun VoteInputSection(
-    title: String,
-    onTitleChange: (String) -> Unit,
+    titleValue: TextFieldValue,
+    onTitleChange: (TextFieldValue) -> Unit,
     options: List<String>,
     onOptionChange: (index: Int, newText: String) -> Unit,
     onAddOption: () -> Unit,
@@ -39,7 +42,8 @@ fun VoteInputSection(
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
     maxOptionLength: Int = 20,
-    maxOptions: Int = 5
+    maxOptions: Int = 5,
+    focusRequester: FocusRequester = remember { FocusRequester() },
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -55,15 +59,15 @@ fun VoteInputSection(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         BasicTextField(
-            value = title,
-            onValueChange = { if (it.length <= maxOptionLength) onTitleChange(it) },
-//            enabled = isEnabled,
+            value = titleValue,
+            onValueChange = { if (it.text.length <= maxOptionLength) onTitleChange(it) },
             textStyle = typography.smalltitle_m500_s18_h24.copy(color = colors.White),
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
             cursorBrush = SolidColor(colors.NeonGreen),
             decorationBox = { innerTextField ->
-                if (title.isEmpty()) {
+                if (titleValue.text.isEmpty()) {
                     Text(
                         text = stringResource(R.string.vote_title_placeholder),
                         color = colors.Grey02,
@@ -116,12 +120,14 @@ fun VoteInputSection(
 @Preview
 @Composable
 private fun VoteInputSectionPreview() {
-    var title by rememberSaveable { mutableStateOf("") }
+    var value by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(""))
+    }
     var options by rememberSaveable { mutableStateOf(mutableListOf("", "")) }
 
     VoteInputSection(
-        title = title,
-        onTitleChange = { title = it },
+        titleValue = value,
+        onTitleChange = { value = it },
         options = options,
         onOptionChange = { index, newText ->
             options = options.toMutableList().also { it[index] = newText }

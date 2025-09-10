@@ -1,5 +1,7 @@
 package com.texthip.thip.ui.group.note.viewmodel
 
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.model.rooms.request.VoteItem
@@ -14,7 +16,7 @@ import javax.inject.Inject
 data class GroupVoteCreateUiState(
     // 입력 값
     val pageText: String = "",
-    val title: String = "",
+    val titleValue: TextFieldValue = TextFieldValue(""),
     val options: List<String> = listOf("", ""), // 옵션은 최소 2개로 시작
     val isGeneralReview: Boolean = false,
     val isEditMode: Boolean = false,
@@ -37,14 +39,14 @@ data class GroupVoteCreateUiState(
         get() {
             val filledOptionsCount = options.count { it.isNotBlank() }
             return (isGeneralReview || pageText.isNotBlank()) &&
-                    title.isNotBlank() &&
+                    titleValue.text.isNotBlank() &&
                     filledOptionsCount >= 2
         }
 }
 
 sealed interface GroupVoteCreateEvent {
     data class PageChanged(val text: String) : GroupVoteCreateEvent
-    data class TitleChanged(val text: String) : GroupVoteCreateEvent
+    data class TitleChanged(val newValue: TextFieldValue) : GroupVoteCreateEvent
     data class OptionChanged(val index: Int, val text: String) : GroupVoteCreateEvent
     data class GeneralReviewToggled(val isChecked: Boolean) : GroupVoteCreateEvent
     data object AddOptionClicked : GroupVoteCreateEvent
@@ -83,7 +85,10 @@ class GroupVoteCreateViewModel @Inject constructor(
                     postId = postId,
                     pageText = page.toString(),
                     isGeneralReview = isOverview,
-                    title = title,
+                    titleValue = TextFieldValue(
+                        text = title,
+                        selection = TextRange(title.length)
+                    ),
                     options = options,
                     bookTotalPage = totalPage,
                     isGeneralReviewEnabled = isOverviewPossible
@@ -106,7 +111,7 @@ class GroupVoteCreateViewModel @Inject constructor(
                 _uiState.update { it.copy(pageText = event.text) }
             }
 
-            is GroupVoteCreateEvent.TitleChanged -> _uiState.update { it.copy(title = event.text) }
+            is GroupVoteCreateEvent.TitleChanged -> _uiState.update { it.copy(titleValue = event.newValue) }
             is GroupVoteCreateEvent.OptionChanged -> _uiState.update {
                 val newOptions = it.options.toMutableList()
                 newOptions[event.index] = event.text
@@ -152,7 +157,7 @@ class GroupVoteCreateViewModel @Inject constructor(
             roomsRepository.patchRoomsVote(
                 roomId = roomId,
                 voteId = postId,
-                content = currentState.title,
+                content = currentState.titleValue.text
             ).onSuccess {
                 _uiState.update { it.copy(isLoading = false, isSuccess = true) }
             }.onFailure { throwable ->
@@ -185,7 +190,7 @@ class GroupVoteCreateViewModel @Inject constructor(
                 roomId = roomId,
                 page = pageNumber,
                 isOverview = currentState.isGeneralReview,
-                content = currentState.title,
+                content = currentState.titleValue.text,
                 voteItemList = voteItems
             ).onSuccess {
                 _uiState.update { it.copy(isLoading = false, isSuccess = true) }

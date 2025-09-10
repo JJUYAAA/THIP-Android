@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
@@ -38,6 +39,7 @@ import com.texthip.thip.ui.group.note.viewmodel.GroupNoteCreateUiState
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteCreateViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.utils.rooms.advancedImePadding
+import kotlinx.coroutines.delay
 
 @Composable
 fun GroupNoteCreateScreen(
@@ -87,6 +89,15 @@ fun GroupNoteCreateContent(
     // Tooltip 위치 측정용 state
     val iconCoordinates = remember { mutableStateOf<LayoutCoordinates?>(null) }
 
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(uiState.isEditMode) {
+        if (uiState.isEditMode) {
+            delay(100)
+            focusRequester.requestFocus()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -125,7 +136,8 @@ fun GroupNoteCreateContent(
 
                 OpinionInputSection(
                     textFieldValue = uiState.opinionTextFieldValue,
-                    onTextChange = { onEvent(GroupNoteCreateEvent.OpinionChanged(it)) }
+                    onTextChange = { onEvent(GroupNoteCreateEvent.OpinionChanged(it)) },
+                    focusRequester = focusRequester
                 )
             }
         }
