@@ -1,5 +1,6 @@
 package com.texthip.thip.ui.mypage.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,15 +13,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -29,10 +33,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.CheckboxButton
 import com.texthip.thip.ui.common.modal.DialogPopup
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.mypage.viewmodel.DeleteAccountViewModel
 import com.texthip.thip.ui.theme.DarkGrey02
 import com.texthip.thip.ui.theme.Red
 import com.texthip.thip.ui.theme.ThipTheme.colors
@@ -40,11 +47,30 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 
 @Composable
 fun DeleteAccountScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    viewModel: DeleteAccountViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    
     var isChecked by rememberSaveable { mutableStateOf(false) }
     val backgroundColor = if (isChecked) colors.Purple else colors.Grey02
     var isDialogVisible by rememberSaveable { mutableStateOf(false) }
+    
+    // 회원탈퇴 완료 시 로그인 화면으로 이동
+    LaunchedEffect(uiState.isDeleteCompleted) {
+        if (uiState.isDeleteCompleted) {
+            onNavigateToLogin()
+        }
+    }
+    
+    // 에러 메시지 표시
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Column(
         Modifier
@@ -159,10 +185,20 @@ fun DeleteAccountScreen(
                         onCancel = { isDialogVisible = false },
                         onConfirm = {
                             isDialogVisible = false
-                            // TODO: 회원탈퇴 로직
+                            viewModel.deleteAccount(context)
                         }
                     )
                 }
+            }
+        }
+        
+        // 로딩 중일 때 전체 화면에 로딩 인디케이터 표시
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
     }
@@ -172,6 +208,7 @@ fun DeleteAccountScreen(
 @Composable
 private fun DeleteAccountScreenPrev() {
     DeleteAccountScreen(
-        onNavigateBack = {}
+        onNavigateBack = {},
+        onNavigateToLogin = {}
     )
 }

@@ -59,7 +59,8 @@ fun NavGraphBuilder.myPageNavigation(
     }
     composable<MyPageRoutes.LeaveThip> {
         DeleteAccountScreen(
-            onNavigateBack = { navController.popBackStack() }
+            onNavigateBack = { navController.popBackStack() },
+            onNavigateToLogin = onNavigateToLogin
         )
     }
     composable<MyPageRoutes.CustomerService> {
