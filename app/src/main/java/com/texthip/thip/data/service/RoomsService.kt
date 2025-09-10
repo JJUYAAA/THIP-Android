@@ -7,6 +7,7 @@ import com.texthip.thip.data.model.rooms.request.RoomSecretRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateDailyGreetingRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPatchRecordRequest
+import com.texthip.thip.data.model.rooms.request.RoomsPatchVoteRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
@@ -26,6 +27,7 @@ import com.texthip.thip.data.model.rooms.response.RoomsDeleteDailyGreetingRespon
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteRecordResponse
 import com.texthip.thip.data.model.rooms.response.RoomsDeleteVoteResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPatchRecordResponse
+import com.texthip.thip.data.model.rooms.response.RoomsPatchVoteResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPlayingResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsLikesResponse
 import com.texthip.thip.data.model.rooms.response.RoomsPostsResponse
@@ -205,4 +207,11 @@ interface RoomsService {
         @Path("recordId") recordId: Int,
         @Body request: RoomsPatchRecordRequest
     ): BaseResponse<RoomsPatchRecordResponse>
+
+    @PATCH("rooms/{roomId}/votes/{voteId}")
+    suspend fun patchRoomsVote(
+        @Path("roomId") roomId: Int,
+        @Path("voteId") voteId: Int,
+        @Body request: RoomsPatchVoteRequest
+    ): BaseResponse<RoomsPatchVoteResponse>
 }
