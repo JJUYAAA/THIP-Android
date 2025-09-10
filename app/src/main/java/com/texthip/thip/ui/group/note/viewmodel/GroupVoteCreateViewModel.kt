@@ -17,6 +17,8 @@ data class GroupVoteCreateUiState(
     val title: String = "",
     val options: List<String> = listOf("", ""), // 옵션은 최소 2개로 시작
     val isGeneralReview: Boolean = false,
+    val isEditMode: Boolean = false,
+    val postId: Int? = null,
 
     // 상태 값
     val isLoading: Boolean = false,
@@ -64,15 +66,37 @@ class GroupVoteCreateViewModel @Inject constructor(
         roomId: Int,
         recentPage: Int,
         totalPage: Int,
-        isOverviewPossible: Boolean
+        isOverviewPossible: Boolean,
+        postId: Int?,
+        page: Int?,
+        isOverview: Boolean?,
+        title: String?,
+        options: List<String>?
     ) {
         this.roomId = roomId
-        _uiState.update {
-            it.copy(
-                pageText = recentPage.toString(),
-                bookTotalPage = totalPage,
-                isGeneralReviewEnabled = isOverviewPossible
-            )
+
+        // 수정 모드인 경우
+        if (postId != null && page != null && isOverview != null && title != null && options != null) {
+            _uiState.update {
+                it.copy(
+                    isEditMode = true,
+                    postId = postId,
+                    pageText = page.toString(),
+                    isGeneralReview = isOverview,
+                    title = title,
+                    options = options,
+                    bookTotalPage = totalPage,
+                    isGeneralReviewEnabled = isOverviewPossible
+                )
+            }
+        } else { // 생성 모드인 경우
+            _uiState.update {
+                it.copy(
+                    pageText = recentPage.toString(),
+                    bookTotalPage = totalPage,
+                    isGeneralReviewEnabled = isOverviewPossible
+                )
+            }
         }
     }
 
@@ -109,7 +133,31 @@ class GroupVoteCreateViewModel @Inject constructor(
                 }
             }
 
-            GroupVoteCreateEvent.CreateVoteClicked -> createVote()
+            GroupVoteCreateEvent.CreateVoteClicked -> {
+                if (_uiState.value.isEditMode) {
+                    updateVote()
+                } else {
+                    createVote()
+                }
+            }
+        }
+    }
+
+    private fun updateVote() {
+        val currentState = _uiState.value
+        val postId = currentState.postId ?: return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            roomsRepository.patchRoomsVote(
+                roomId = roomId,
+                voteId = postId,
+                content = currentState.title,
+            ).onSuccess {
+                _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+            }.onFailure { throwable ->
+                _uiState.update { it.copy(isLoading = false, error = throwable.message) }
+            }
         }
     }
 

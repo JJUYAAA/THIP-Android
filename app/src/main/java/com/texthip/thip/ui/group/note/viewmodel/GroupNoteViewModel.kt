@@ -97,11 +97,7 @@ class GroupNoteViewModel @Inject constructor(
             }
         }
 
-        viewModelScope.launch {
-            val postsJob = async { loadPosts(isRefresh = true) }
-            val bookPageJob = async { loadBookPageInfo() }
-            awaitAll(postsJob, bookPageJob)
-        }
+        refreshAllData()
     }
 
     private fun loadBookPageInfo() {
@@ -121,6 +117,14 @@ class GroupNoteViewModel @Inject constructor(
                 .onFailure { throwable ->
                     _uiState.update { it.copy(error = throwable.message) }
                 }
+        }
+    }
+
+    private fun refreshAllData() {
+        viewModelScope.launch {
+            val postsJob = async { loadPosts(isRefresh = true) }
+            val bookPageJob = async { loadBookPageInfo() }
+            awaitAll(postsJob, bookPageJob)
         }
     }
 
