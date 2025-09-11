@@ -78,6 +78,8 @@ fun GroupNoteScreen(
     onCreateNoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
     onCreateVoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
     onNavigateToFeedWrite: (pinInfo: RoomsRecordsPinResponse, recordContent: String) -> Unit,
+    onEditNoteClick: (post: PostList) -> Unit = {},
+    onEditVoteClick: (post: PostList) -> Unit = {},
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
     resultTabIndex: Int? = null,
     onResultConsumed: () -> Unit = {},
@@ -153,6 +155,8 @@ fun GroupNoteScreen(
                 onCreateVoteClick(s.recentBookPage, s.totalBookPage, s.isOverviewPossible)
             }
         },
+        onEditNoteClick = onEditNoteClick,
+        onEditVoteClick = onEditVoteClick,
         onNavigateToUserProfile = onNavigateToUserProfile,
         showProgressBar = showProgressBar,
         progress = progress.value
@@ -166,6 +170,8 @@ fun GroupNoteContent(
     onBackClick: () -> Unit,
     onCreateNoteClick: () -> Unit,
     onCreateVoteClick: () -> Unit,
+    onEditNoteClick: (post: PostList) -> Unit,
+    onEditVoteClick: (post: PostList) -> Unit,
     onNavigateToUserProfile: (userId: Long) -> Unit,
     showProgressBar: Boolean,
     progress: Float
@@ -418,7 +424,7 @@ fun GroupNoteContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 120.dp)
+                        .padding(top = 98.dp)
                 ) {
                     Box(
                         modifier = Modifier
@@ -510,6 +516,17 @@ fun GroupNoteContent(
         val post = selectedPostForMenu!!
         val menuItems = if (post.isWriter) {
             listOf(
+                MenuBottomSheetItem(
+                    text = stringResource(R.string.modify),
+                    color = colors.White,
+                    onClick = {
+                        when (post.postType) {
+                            "RECORD" -> onEditNoteClick(post)
+                            "VOTE" -> onEditVoteClick(post)
+                        }
+                        selectedPostForMenu = null
+                    }
+                ),
                 MenuBottomSheetItem(
                     text = stringResource(R.string.delete),
                     color = colors.Red,
@@ -652,7 +669,9 @@ private fun GroupNoteScreenPreview() {
             onCreateVoteClick = {},
             showProgressBar = true,
             progress = 0.5f,
-            onNavigateToUserProfile = {}
+            onNavigateToUserProfile = {},
+            onEditNoteClick = {},
+            onEditVoteClick = {}
         )
     }
 }

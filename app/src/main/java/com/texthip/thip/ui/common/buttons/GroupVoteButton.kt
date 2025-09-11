@@ -39,13 +39,19 @@ fun GroupVoteButton(
     hasVoted: Boolean = false, // 투표 여부
     onOptionSelected: (Int?) -> Unit
 ) {
+    val totalVotes = voteItems.sumOf { it.count }
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         voteItems.forEachIndexed { index, item ->
             val isSelected = selectedIndex == index
-            val votePercent = if (hasVoted) item.percentage.coerceIn(0, 100) else 0
+            val votePercent = if (totalVotes > 0) {
+                (item.count.toFloat() / totalVotes * 100).toInt()
+            } else {
+                0
+            }
 
             val animatedPercent by animateFloatAsState(
                 targetValue = votePercent / 100f,
@@ -104,7 +110,7 @@ fun GroupVoteButton(
                     )
                     if (hasVoted) {
                         Text(
-                            text = "${item.percentage}%",
+                            text = "${item.count}표",
                             color = textColor,
                             style = fontStyle
                         )

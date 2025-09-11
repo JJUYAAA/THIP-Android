@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
@@ -38,6 +39,7 @@ import com.texthip.thip.ui.group.note.viewmodel.GroupNoteCreateUiState
 import com.texthip.thip.ui.group.note.viewmodel.GroupNoteCreateViewModel
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.utils.rooms.advancedImePadding
+import kotlinx.coroutines.delay
 
 @Composable
 fun GroupNoteCreateScreen(
@@ -45,6 +47,10 @@ fun GroupNoteCreateScreen(
     recentPage: Int,
     totalPage: Int,
     isOverviewPossible: Boolean,
+    postId: Int?,
+    page: Int?,
+    content: String?,
+    isOverview: Boolean?,
     onBackClick: () -> Unit,
     onNavigateBackWithResult: () -> Unit,
     viewModel: GroupNoteCreateViewModel = hiltViewModel()
@@ -52,7 +58,10 @@ fun GroupNoteCreateScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.initialize(roomId, recentPage, totalPage, isOverviewPossible)
+        viewModel.initialize(
+            roomId, recentPage, totalPage, isOverviewPossible,
+            postId, page, content, isOverview
+        )
     }
 
     LaunchedEffect(key1 = uiState.isSuccess) {
@@ -80,6 +89,15 @@ fun GroupNoteCreateContent(
     // Tooltip 위치 측정용 state
     val iconCoordinates = remember { mutableStateOf<LayoutCoordinates?>(null) }
 
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(uiState.isEditMode) {
+        if (uiState.isEditMode) {
+            delay(100)
+            focusRequester.requestFocus()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -87,7 +105,11 @@ fun GroupNoteCreateContent(
     ) {
         Column {
             InputTopAppBar(
-                title = stringResource(R.string.write_record),
+                title = if (uiState.isEditMode) {
+                    stringResource(R.string.edit_record)
+                } else {
+                    stringResource(R.string.write_record)
+                },
                 isRightButtonEnabled = uiState.isFormFilled,
                 onLeftClick = onBackClick,
                 onRightClick = { onEvent(GroupNoteCreateEvent.CreateRecordClicked) }
@@ -108,14 +130,15 @@ fun GroupNoteCreateContent(
                     isEligible = uiState.isOverviewPossible,
                     bookTotalPage = uiState.totalPage,
                     onInfoClick = { showTooltip = true },
-                    onInfoPositionCaptured = { iconCoordinates.value = it }
+                    onInfoPositionCaptured = { iconCoordinates.value = it },
+                    isEnabled = !uiState.isEditMode
                 )
 
                 OpinionInputSection(
-                    text = uiState.opinionText,
-                    onTextChange = { onEvent(GroupNoteCreateEvent.OpinionChanged(it)) }
+                    textFieldValue = uiState.opinionTextFieldValue,
+                    onTextChange = { onEvent(GroupNoteCreateEvent.OpinionChanged(it)) },
+                    focusRequester = focusRequester
                 )
-
             }
         }
         if (showTooltip && iconCoordinates.value != null) {
@@ -154,7 +177,7 @@ fun GroupNoteCreateContent(
 private fun GroupNoteCreateScreenPreview() {
     ThipTheme {
         GroupNoteCreateContent(
-            uiState = GroupNoteCreateUiState(pageText = "123", opinionText = "재미있었다."),
+            uiState = GroupNoteCreateUiState(),
             onEvent = {},
             onBackClick = {}
         )

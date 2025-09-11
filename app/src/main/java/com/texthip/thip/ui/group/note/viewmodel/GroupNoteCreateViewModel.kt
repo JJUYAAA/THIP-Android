@@ -1,5 +1,7 @@
 package com.texthip.thip.ui.group.note.viewmodel
 
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.repository.RoomsRepository
@@ -12,7 +14,8 @@ import javax.inject.Inject
 
 data class GroupNoteCreateUiState(
     val pageText: String = "",
-    val opinionText: String = "",
+    val opinionTextFieldValue: TextFieldValue = TextFieldValue(""),
+    val isEditMode: Boolean = false,
     val isGeneralReview: Boolean = false,
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
@@ -22,12 +25,12 @@ data class GroupNoteCreateUiState(
 ) {
     // 입력 폼이 모두 채워졌는지 확인
     val isFormFilled: Boolean
-        get() = (pageText.isNotBlank() || isGeneralReview) && opinionText.isNotBlank()
+        get() = (pageText.isNotBlank() || isGeneralReview) && opinionTextFieldValue.text.isNotBlank()
 }
 
 sealed interface GroupNoteCreateEvent {
     data class PageChanged(val text: String) : GroupNoteCreateEvent
-    data class OpinionChanged(val text: String) : GroupNoteCreateEvent
+    data class OpinionChanged(val newTextFieldValue: TextFieldValue) : GroupNoteCreateEvent
     data class GeneralReviewToggled(val isChecked: Boolean) : GroupNoteCreateEvent
     data object CreateRecordClicked : GroupNoteCreateEvent
 }
@@ -40,12 +43,17 @@ class GroupNoteCreateViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private var roomId: Int = -1
+    private var postIdToEdit: Int? = null // 수정할 포스트 ID 저장
 
     fun initialize(
         roomId: Int,
         recentPage: Int,
         totalPage: Int,
-        isOverviewPossible: Boolean
+        isOverviewPossible: Boolean,
+        postId: Int?,
+        page: Int?,
+        content: String?,
+        isOverview: Boolean?
     ) {
         this.roomId = roomId
         _uiState.update {
@@ -54,6 +62,22 @@ class GroupNoteCreateViewModel @Inject constructor(
                 totalPage = totalPage,
                 isOverviewPossible = isOverviewPossible
             )
+        }
+
+        // postId가 null이 아니면 수정 모드로 진입
+        if (postId != null && page != null && content != null && isOverview != null) {
+            this.postIdToEdit = postId
+            _uiState.update {
+                it.copy(
+                    isEditMode = true,
+                    pageText = page.toString(),
+                    isGeneralReview = isOverview,
+                    opinionTextFieldValue = TextFieldValue(
+                        text = content,
+                        selection = TextRange(content.length)
+                    )
+                )
+            }
         }
     }
 
@@ -66,7 +90,7 @@ class GroupNoteCreateViewModel @Inject constructor(
             }
 
             is GroupNoteCreateEvent.OpinionChanged -> {
-                _uiState.update { it.copy(opinionText = event.text) }
+                _uiState.update { it.copy(opinionTextFieldValue = event.newTextFieldValue) }
             }
 
             is GroupNoteCreateEvent.GeneralReviewToggled -> {
@@ -77,7 +101,11 @@ class GroupNoteCreateViewModel @Inject constructor(
             }
 
             GroupNoteCreateEvent.CreateRecordClicked -> {
-                createRecord()
+                if (_uiState.value.isEditMode) {
+                    updateRecord()
+                } else {
+                    createRecord()
+                }
             }
         }
     }
@@ -96,10 +124,11 @@ class GroupNoteCreateViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
+            val content = _uiState.value.opinionTextFieldValue.text
 
             roomsRepository.postRoomsRecord(
                 roomId = roomId,
-                content = currentState.opinionText,
+                content = content,
                 isOverview = currentState.isGeneralReview,
                 page = pageNumber
             ).onSuccess {
@@ -108,6 +137,24 @@ class GroupNoteCreateViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(isLoading = false, error = throwable.message)
                 }
+            }
+        }
+    }
+
+    private fun updateRecord() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            val content = _uiState.value.opinionTextFieldValue.text
+            val postId = postIdToEdit ?: return@launch
+
+            roomsRepository.patchRoomsRecord(
+                roomId = roomId,
+                recordId = postId,
+                content = content
+            ).onSuccess {
+                _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+            }.onFailure { throwable ->
+                _uiState.update { it.copy(isLoading = false, error = throwable.message) }
             }
         }
     }

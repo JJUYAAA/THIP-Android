@@ -9,6 +9,8 @@ import com.texthip.thip.data.model.rooms.request.RoomJoinRequest
 import com.texthip.thip.data.model.rooms.request.RoomSecretRoomRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateDailyGreetingRequest
 import com.texthip.thip.data.model.rooms.request.RoomsCreateVoteRequest
+import com.texthip.thip.data.model.rooms.request.RoomsPatchRecordRequest
+import com.texthip.thip.data.model.rooms.request.RoomsPatchVoteRequest
 import com.texthip.thip.data.model.rooms.request.RoomsPostsLikesRequest
 import com.texthip.thip.data.model.rooms.request.RoomsRecordRequest
 import com.texthip.thip.data.model.rooms.request.RoomsVoteRequest
@@ -314,6 +316,34 @@ class RoomsRepository @Inject constructor(
     ) = runCatching {
         roomsService.leaveRoom(
             roomId = roomId,
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun patchRoomsRecord(
+        roomId: Int,
+        recordId: Int,
+        content: String
+    ) = runCatching {
+        roomsService.patchRoomsRecord(
+            roomId = roomId,
+            recordId = recordId,
+            request = RoomsPatchRecordRequest(
+                content = content
+            )
+        ).handleBaseResponse().getOrThrow()
+    }
+
+    suspend fun patchRoomsVote(
+        roomId: Int,
+        voteId: Int,
+        content: String,
+    ) = runCatching {
+        roomsService.patchRoomsVote(
+            roomId = roomId,
+            voteId = voteId,
+            request = RoomsPatchVoteRequest(
+                content = content,
+            )
         ).handleBaseResponse().getOrThrow()
     }
 }

@@ -99,14 +99,22 @@ fun NavHostController.navigateToGroupNoteCreate(
     roomId: Int,
     recentBookPage: Int,
     totalBookPage: Int,
-    isOverviewPossible: Boolean
+    isOverviewPossible: Boolean,
+    postId: Int? = null,
+    page: Int? = null,
+    content: String? = null,
+    isOverview: Boolean? = null
 ) {
     navigate(
         GroupRoutes.NoteCreate(
             roomId = roomId,
             recentBookPage = recentBookPage,
             totalBookPage = totalBookPage,
-            isOverviewPossible = isOverviewPossible
+            isOverviewPossible = isOverviewPossible,
+            postId = postId,
+            page = page,
+            content = content,
+            isOverview = isOverview
         )
     )
 }
@@ -116,14 +124,24 @@ fun NavHostController.navigateToGroupVoteCreate(
     roomId: Int,
     recentPage: Int,
     totalPage: Int,
-    isOverviewPossible: Boolean
+    isOverviewPossible: Boolean,
+    postId: Int? = null,
+    page: Int? = null,
+    isOverview: Boolean? = null,
+    title: String? = null,
+    options: List<String>? = null
 ) {
     navigate(
         GroupRoutes.VoteCreate(
             roomId = roomId,
             recentPage = recentPage,
             totalPage = totalPage,
-            isOverviewPossible = isOverviewPossible
+            isOverviewPossible = isOverviewPossible,
+            postId = postId,
+            page = page,
+            isOverview = isOverview,
+            title = title,
+            options = options
         )
     )
 }
