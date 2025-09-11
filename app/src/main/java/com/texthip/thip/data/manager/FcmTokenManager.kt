@@ -84,18 +84,14 @@ class FcmTokenManager @Inject constructor(
     }
 
     private suspend fun sendTokenToServer(token: String) {
-        runCatching {
-            val deviceId = getDeviceId()
-            notificationRepository.registerFcmToken(deviceId, token)
-        }.onSuccess {
-            it.onSuccess {
+        val deviceId = getDeviceId()
+        notificationRepository.registerFcmToken(deviceId, token)
+            .onSuccess {
                 Log.d("FCM", "Token sent successfully")
-            }.onFailure { exception ->
+            }
+            .onFailure { exception ->
                 Log.e("FCM", "Failed to send token", exception)
             }
-        }.onFailure { exception ->
-            Log.e("FCM", "Error sending token", exception)
-        }
     }
 
     @SuppressLint("HardwareIds")
