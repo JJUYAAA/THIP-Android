@@ -1,4 +1,4 @@
-package com.texthip.thip.ui.common.cards
+package com.texthip.thip.ui.common.alarmpage.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -111,18 +111,25 @@ fun CardAlarm(
                         Column(
                             horizontalAlignment = Alignment.End
                         ) {
-                            // 안읽음 상태일 때만 빨간 점
-                            if (!isRead) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(6.dp)
-                                        .clip(RoundedCornerShape(3.dp))
-                                        .background(color = colors.Red)
-                                )
+                            // 빨간 점을 위한 고정 공간 (항상 6dp 높이 유지)
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                // 안읽음 상태일 때만 빨간 점 표시
+                                if (!isRead) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(6.dp)
+                                            .clip(RoundedCornerShape(3.dp))
+                                            .background(color = colors.Red)
+                                    )
+                                }
                             }
 
                             Text(
-                                text = timeAgo + stringResource(R.string.time_ago),
+                                text = timeAgo,
                                 style = typography.timedate_r400_s11,
                                 color = if (isRead) colors.Grey02 else colors.Grey01,
                                 modifier = Modifier
@@ -161,7 +168,7 @@ fun PreviewNotificationCards() {
             title = "같이 읽기를 시작했어요!",
             badgeText = "모임",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
-            timeAgo = "12",
+            timeAgo = "12시간 전",
             isRead = isRead
         ) {
             isRead = true
@@ -172,7 +179,7 @@ fun PreviewNotificationCards() {
             title = "같이 읽기를 시작했어요!",
             badgeText = "모임",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
-            timeAgo = "12",
+            timeAgo = "12시간 전",
             isRead = true
         )
 
@@ -180,7 +187,7 @@ fun PreviewNotificationCards() {
             title = "같이 읽기를 시작했어요!",
             badgeText = "피드",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
-            timeAgo = "12",
+            timeAgo = "12시간 전",
             isRead = false
         )
 
@@ -188,7 +195,7 @@ fun PreviewNotificationCards() {
             title = "같이 읽기를 시작했어요!",
             badgeText = "좋아요",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
-            timeAgo = "12",
+            timeAgo = "12시간 전",
             isRead = isRead
         )
 
@@ -196,7 +203,7 @@ fun PreviewNotificationCards() {
             title = "같이 읽기를 시작했어요!",
             badgeText = "댓글",
             message = "한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다. 한줄만 입력이 가능합니다.",
-            timeAgo = "12",
+            timeAgo = "12시간 전",
             isRead = isRead
         )
     }

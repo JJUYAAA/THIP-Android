@@ -137,4 +137,10 @@ class UserRepository @Inject constructor(
             .handleBaseResponse()
             .getOrThrow()
     }
+
+    suspend fun deleteAccount(): Result<Unit?> = runCatching {
+        userService.deleteAccount()
+            .handleBaseResponse()
+            .getOrThrow()
+    }
 }

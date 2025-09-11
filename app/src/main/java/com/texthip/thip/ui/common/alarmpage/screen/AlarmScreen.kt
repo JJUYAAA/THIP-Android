@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.texthip.thip.R
 import com.texthip.thip.ui.common.alarmpage.component.AlarmFilterRow
 import com.texthip.thip.ui.common.alarmpage.mock.AlarmItem
-import com.texthip.thip.ui.common.cards.CardAlarm
+import com.texthip.thip.ui.common.alarmpage.component.CardAlarm
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
 import com.texthip.thip.ui.theme.ThipTheme
 import com.texthip.thip.ui.theme.ThipTheme.colors

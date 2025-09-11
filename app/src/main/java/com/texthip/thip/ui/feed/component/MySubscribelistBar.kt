@@ -136,7 +136,7 @@ private fun EmptyMySubscriptionBar() {
         modifier = Modifier
             .fillMaxWidth()
             .height(42.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(colors.DarkGrey02)
             .clickable { }
     ) {
