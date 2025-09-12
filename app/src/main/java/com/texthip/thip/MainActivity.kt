@@ -22,6 +22,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var tokenManager: TokenManager
+
     @Inject
     lateinit var authStateManager: AuthStateManager
 
@@ -48,7 +49,7 @@ fun RootNavHost(authStateManager: AuthStateManager) {
             }
         }
     }
-    
+
     NavHost(
         navController = navController,
         startDestination = CommonRoutes.Splash

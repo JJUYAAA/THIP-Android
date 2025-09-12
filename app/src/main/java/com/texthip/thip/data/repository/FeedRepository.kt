@@ -85,45 +85,48 @@ class FeedRepository @Inject constructor(
     }
 
     /** 이미지들을 S3에 업로드하고 CloudFront URL 목록 반환 */
-    private suspend fun uploadImagesToS3(imageUris: List<Uri>): List<String> = withContext(Dispatchers.IO) {
-        val validImagePairs = imageUris.map { uri ->
-            async { 
-                imageUploadHelper.getImageMetadata(uri)?.let { metadata ->
-                    uri to metadata
+    private suspend fun uploadImagesToS3(
+        imageUris: List<Uri>
+    ): List<String> =
+        withContext(Dispatchers.IO) {
+            val validImagePairs = imageUris.map { uri ->
+                async {
+                    imageUploadHelper.getImageMetadata(uri)?.let { metadata ->
+                        uri to metadata
+                    }
+                }
+            }.awaitAll().filterNotNull()
+
+            if (validImagePairs.isEmpty()) return@withContext emptyList()
+
+            val presignedUrlRequest = validImagePairs.map { it.second }
+
+            val presignedResponse = feedService.getPresignedUrls(presignedUrlRequest)
+                .handleBaseResponse()
+                .getOrThrow() ?: throw Exception("Failed to get presigned URLs")
+
+            // 개수 검증
+            if (validImagePairs.size != presignedResponse.presignedUrls.size) {
+                throw Exception("개수가 올바르지 않습니다: expected ${validImagePairs.size}, got ${presignedResponse.presignedUrls.size}")
+            }
+
+            val uploadedImageUrls = mutableListOf<String>()
+
+            validImagePairs.forEachIndexed { index, (uri, _) ->
+                val presignedInfo = presignedResponse.presignedUrls[index]
+
+                imageUploadHelper.uploadImageToS3(
+                    uri = uri,
+                    presignedUrl = presignedInfo.presignedUrl
+                ).onSuccess {
+                    uploadedImageUrls.add(presignedInfo.fileUrl)
+                }.onFailure { exception ->
+                    throw Exception("Failed to upload image ${index + 1}: ${exception.message}")
                 }
             }
-        }.awaitAll().filterNotNull()
 
-        if (validImagePairs.isEmpty()) return@withContext emptyList()
-
-        val presignedUrlRequest = validImagePairs.map { it.second }
-        
-        val presignedResponse = feedService.getPresignedUrls(presignedUrlRequest)
-            .handleBaseResponse()
-            .getOrThrow() ?: throw Exception("Failed to get presigned URLs")
-
-        // 개수 검증
-        if (validImagePairs.size != presignedResponse.presignedUrls.size) {
-            throw Exception("Presigned URL count mismatch: expected ${validImagePairs.size}, got ${presignedResponse.presignedUrls.size}")
+            uploadedImageUrls
         }
-
-        val uploadedImageUrls = mutableListOf<String>()
-
-        validImagePairs.forEachIndexed { index, (uri, _) ->
-            val presignedInfo = presignedResponse.presignedUrls[index]
-
-            imageUploadHelper.uploadImageToS3(
-                uri = uri,
-                presignedUrl = presignedInfo.presignedUrl
-            ).onSuccess {
-                uploadedImageUrls.add(presignedInfo.fileUrl)
-            }.onFailure { exception ->
-                throw Exception("Failed to upload image ${index + 1}: ${exception.message}")
-            }
-        }
-
-        uploadedImageUrls
-    }
 
 
     /** 전체 피드 목록 조회 */
@@ -134,7 +137,9 @@ class FeedRepository @Inject constructor(
     }
 
     /** 내 피드 목록 조회 */
-    suspend fun getMyFeeds(cursor: String? = null): Result<MyFeedResponse?> = runCatching {
+    suspend fun getMyFeeds(
+        cursor: String? = null
+    ): Result<MyFeedResponse?> = runCatching {
         feedService.getMyFeeds(cursor)
             .handleBaseResponse()
             .getOrThrow()
@@ -159,7 +164,9 @@ class FeedRepository @Inject constructor(
     }
 
     /** 피드 상세 조회 */
-    suspend fun getFeedDetail(feedId: Long): Result<FeedDetailResponse?> = runCatching {
+    suspend fun getFeedDetail(
+        feedId: Long
+    ): Result<FeedDetailResponse?> = runCatching {
         feedService.getFeedDetail(feedId)
             .handleBaseResponse()
             .getOrThrow()
@@ -186,7 +193,9 @@ class FeedRepository @Inject constructor(
     }
 
 
-    suspend fun getFeedUsersInfo(userId: Long) = runCatching {
+    suspend fun getFeedUsersInfo(
+        userId: Long
+    ) = runCatching {
         feedService.getFeedUsersInfo(userId)
             .handleBaseResponse()
             .getOrThrow()
