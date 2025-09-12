@@ -1,14 +1,15 @@
-package com.texthip.thip
+package com.texthip.thip.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.texthip.thip.MainActivity
+import com.texthip.thip.R
 import com.texthip.thip.data.manager.FcmTokenManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
