@@ -3,7 +3,8 @@ package com.texthip.thip.data.repository
 import android.content.Context
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.notification.request.FcmTokenRequest
-import com.texthip.thip.data.model.notification.response.NotificationEnableStateResponse
+import com.texthip.thip.data.model.notification.request.NotificationEnabledRequest
+import com.texthip.thip.data.model.notification.response.NotificationEnabledResponse
 import com.texthip.thip.data.service.NotificationService
 import com.texthip.thip.utils.auth.getAndroidDeviceId
 import javax.inject.Inject
@@ -29,10 +30,22 @@ class NotificationRepository @Inject constructor(
         }
     }
     
-    suspend fun getNotificationEnableState(): Result<NotificationEnableStateResponse?> {
+    suspend fun getNotificationEnableState(): Result<NotificationEnabledResponse?> {
         return runCatching {
             val deviceId = context.getAndroidDeviceId()
             val response = notificationService.getNotificationEnableState(deviceId)
+            response.handleBaseResponse().getOrNull()
+        }
+    }
+    
+    suspend fun updateNotificationEnabled(enabled: Boolean): Result<NotificationEnabledResponse?> {
+        return runCatching {
+            val deviceId = context.getAndroidDeviceId()
+            val request = NotificationEnabledRequest(
+                enable = enabled,
+                deviceId = deviceId
+            )
+            val response = notificationService.updateNotificationEnabled(request)
             response.handleBaseResponse().getOrNull()
         }
     }
