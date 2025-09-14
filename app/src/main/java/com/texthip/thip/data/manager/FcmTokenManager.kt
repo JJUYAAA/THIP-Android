@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.firebase.messaging.FirebaseMessaging
 import com.texthip.thip.data.repository.NotificationRepository
 import com.texthip.thip.utils.auth.getAndroidDeviceId
+import com.texthip.thip.utils.permission.NotificationPermissionUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -79,6 +80,12 @@ class FcmTokenManager @Inject constructor(
     }
 
     private suspend fun sendTokenToServer(token: String) {
+        // 알림 권한이 없으면 토큰을 서버에 전송하지 않음
+        if (!NotificationPermissionUtils.isNotificationPermissionGranted(context)) {
+            Log.w("FCM", "Notification permission not granted, skipping token registration")
+            return
+        }
+        
         val deviceId = context.getAndroidDeviceId()
         notificationRepository.registerFcmToken(deviceId, token)
             .onSuccess {
