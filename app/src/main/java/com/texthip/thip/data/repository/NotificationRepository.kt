@@ -3,6 +3,7 @@ package com.texthip.thip.data.repository
 import android.content.Context
 import com.texthip.thip.data.model.base.handleBaseResponse
 import com.texthip.thip.data.model.notification.request.FcmTokenRequest
+import com.texthip.thip.data.model.notification.request.FcmTokenDeleteRequest
 import com.texthip.thip.data.model.notification.request.NotificationEnabledRequest
 import com.texthip.thip.data.model.notification.response.NotificationEnabledResponse
 import com.texthip.thip.data.service.NotificationService
@@ -47,6 +48,15 @@ class NotificationRepository @Inject constructor(
                 deviceId = deviceId
             )
             val response = notificationService.updateNotificationEnabled(request)
+            response.handleBaseResponse().getOrNull()
+        }
+    }
+    
+    suspend fun deleteFcmToken(): Result<Unit?> {
+        return runCatching {
+            val deviceId = context.getAppScopeDeviceId()
+            val request = FcmTokenDeleteRequest(deviceId = deviceId)
+            val response = notificationService.deleteFcmToken(request)
             response.handleBaseResponse().getOrNull()
         }
     }
