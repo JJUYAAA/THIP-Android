@@ -19,7 +19,7 @@ class NotificationRepository @Inject constructor(
     suspend fun registerFcmToken(
         deviceId: String,
         fcmToken: String
-    ): Result<Unit> {
+    ): Result<Unit?> {
         return runCatching {
             val request = FcmTokenRequest(
                 deviceId = deviceId,
@@ -27,7 +27,7 @@ class NotificationRepository @Inject constructor(
                 platformType = "ANDROID"
             )
             val response = notificationService.registerFcmToken(request)
-            response.handleBaseResponse().getOrThrow()
+            response.handleBaseResponse().getOrNull()
         }
     }
     
