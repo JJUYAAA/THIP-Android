@@ -12,6 +12,7 @@ import javax.inject.Inject
 data class MypageNotificationEditUiState(
     val isLoading: Boolean = true,
     val isNotificationEnabled: Boolean = true,
+    val isUpdating: Boolean = false,
     val errorMessage: String? = null
 )
 
@@ -65,7 +66,39 @@ class MypageNotificationEditViewModel @Inject constructor(
     }
 
     fun onNotificationToggle(enabled: Boolean) {
-        updateState { it.copy(isNotificationEnabled = enabled) }
-        // TODO: 서버에 알림 설정 업데이트 API 호출 (향후 구현)
+        viewModelScope.launch {
+            // 즉시 UI 업데이트 (낙관적 업데이트)
+            updateState { it.copy(isNotificationEnabled = enabled, isUpdating = true) }
+            
+            notificationRepository.updateNotificationEnabled(enabled)
+                .onSuccess { data ->
+                    data?.let {
+                        updateState {
+                            it.copy(
+                                isUpdating = false,
+                                isNotificationEnabled = data.isEnabled,
+                                errorMessage = null
+                            )
+                        }
+                    } ?: run {
+                        updateState {
+                            it.copy(
+                                isUpdating = false,
+                                errorMessage = "알림 설정을 업데이트할 수 없습니다."
+                            )
+                        }
+                    }
+                }
+                .onFailure { exception ->
+                    // 실패 시 이전 상태로 롤백
+                    updateState {
+                        it.copy(
+                            isUpdating = false,
+                            isNotificationEnabled = !enabled,
+                            errorMessage = exception.message
+                        )
+                    }
+                }
+        }
     }
 }
