@@ -11,11 +11,11 @@ import com.texthip.thip.data.repository.NotificationRepository
 import com.texthip.thip.utils.auth.getAndroidDeviceId
 import com.texthip.thip.utils.permission.NotificationPermissionUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -48,26 +48,38 @@ class FcmTokenManager @Inject constructor(
             sendTokenToServer(storedFcmToken)
         } else {
             // 저장된 토큰이 없으면 Firebase에서 직접 가져와서 저장하고 전송
-            fetchAndSendCurrentToken()
+            try {
+                val token = fetchCurrentToken()
+                saveFcmToken(token)
+                sendTokenToServer(token)
+            } catch (e: Exception) {
+                Log.e("FCM", "Failed to fetch and send current token", e)
+            }
         }
     }
 
-    private fun fetchAndSendCurrentToken() {
+    private suspend fun fetchCurrentToken(): String = suspendCancellableCoroutine { continuation ->
         try {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Log.w("FCM", "Failed to fetch token", task.exception)
-                    return@addOnCompleteListener
-                }
-
-                val token = task.result
-                CoroutineScope(Dispatchers.IO).launch {
-                    saveFcmToken(token)
-                    sendTokenToServer(token)
+                when {
+                    task.isSuccessful -> {
+                        val token = task.result
+                        if (token != null) {
+                            continuation.resume(token)
+                        } else {
+                            continuation.resumeWithException(IllegalStateException("FCM token is null"))
+                        }
+                    }
+                    else -> {
+                        val exception = task.exception ?: Exception("Unknown error fetching FCM token")
+                        Log.w("FCM", "Failed to fetch token", exception)
+                        continuation.resumeWithException(exception)
+                    }
                 }
             }
         } catch (e: Exception) {
             Log.e("FCM", "Error fetching FCM token", e)
+            continuation.resumeWithException(e)
         }
     }
 
