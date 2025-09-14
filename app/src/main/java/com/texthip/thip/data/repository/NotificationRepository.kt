@@ -6,7 +6,7 @@ import com.texthip.thip.data.model.notification.request.FcmTokenRequest
 import com.texthip.thip.data.model.notification.request.NotificationEnabledRequest
 import com.texthip.thip.data.model.notification.response.NotificationEnabledResponse
 import com.texthip.thip.data.service.NotificationService
-import com.texthip.thip.utils.auth.getAndroidDeviceId
+import com.texthip.thip.utils.auth.getAppScopeDeviceId
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,7 +33,7 @@ class NotificationRepository @Inject constructor(
     
     suspend fun getNotificationEnableState(): Result<NotificationEnabledResponse?> {
         return runCatching {
-            val deviceId = context.getAndroidDeviceId()
+            val deviceId = context.getAppScopeDeviceId()
             val response = notificationService.getNotificationEnableState(deviceId)
             response.handleBaseResponse().getOrNull()
         }
@@ -41,7 +41,7 @@ class NotificationRepository @Inject constructor(
     
     suspend fun updateNotificationEnabled(enabled: Boolean): Result<NotificationEnabledResponse?> {
         return runCatching {
-            val deviceId = context.getAndroidDeviceId()
+            val deviceId = context.getAppScopeDeviceId()
             val request = NotificationEnabledRequest(
                 enable = enabled,
                 deviceId = deviceId

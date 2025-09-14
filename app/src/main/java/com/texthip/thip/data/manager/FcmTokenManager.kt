@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.firebase.messaging.FirebaseMessaging
 import com.texthip.thip.data.repository.NotificationRepository
-import com.texthip.thip.utils.auth.getAndroidDeviceId
+import com.texthip.thip.utils.auth.getAppScopeDeviceId
 import com.texthip.thip.utils.permission.NotificationPermissionUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
@@ -99,7 +99,7 @@ class FcmTokenManager @Inject constructor(
             return
         }
         
-        val deviceId = context.getAndroidDeviceId()
+        val deviceId = context.getAppScopeDeviceId()
         notificationRepository.registerFcmToken(deviceId, token)
             .onSuccess {
                 Log.d("FCM", "Token sent successfully")
