@@ -9,6 +9,8 @@ import com.texthip.thip.data.model.feed.request.UpdateFeedRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import com.texthip.thip.data.model.feed.response.AllFeedResponse
 import com.texthip.thip.data.model.feed.response.CreateFeedResponse
@@ -33,6 +35,9 @@ class FeedRepository @Inject constructor(
     private val feedService: FeedService,
     private val imageUploadHelper: ImageUploadHelper
 ) {
+    companion object {
+        private const val MAX_CONCURRENT_UPLOADS = 3 // 동시 업로드 제한
+    }
     private val _feedStateUpdateResult = MutableSharedFlow<FeedStateUpdateResult>()
     val feedStateUpdateResult: Flow<FeedStateUpdateResult> = _feedStateUpdateResult.asSharedFlow()
 
@@ -110,22 +115,30 @@ class FeedRepository @Inject constructor(
                 throw Exception("개수가 올바르지 않습니다: expected ${validImagePairs.size}, got ${presignedResponse.presignedUrls.size}")
             }
 
-            val uploadedImageUrls = mutableListOf<String>()
-
-            validImagePairs.forEachIndexed { index, (uri, _) ->
-                val presignedInfo = presignedResponse.presignedUrls[index]
-
-                imageUploadHelper.uploadImageToS3(
-                    uri = uri,
-                    presignedUrl = presignedInfo.presignedUrl
-                ).onSuccess {
-                    uploadedImageUrls.add(presignedInfo.fileUrl)
-                }.onFailure { exception ->
-                    throw Exception("Failed to upload image ${index + 1}: ${exception.message}")
+            // 세마포어를 사용한 제한 병렬 업로드
+            val semaphore = Semaphore(MAX_CONCURRENT_UPLOADS)
+            
+            validImagePairs.mapIndexed { index, (uri, _) ->
+                async {
+                    semaphore.withPermit {
+                        val presignedInfo = presignedResponse.presignedUrls[index]
+                        
+                        imageUploadHelper.uploadImageToS3(
+                            uri = uri,
+                            presignedUrl = presignedInfo.presignedUrl
+                        ).fold(
+                            onSuccess = { 
+                                index to presignedInfo.fileUrl // 인덱스와 URL을 함께 반환
+                            },
+                            onFailure = { exception ->
+                                throw Exception("Failed to upload image ${index + 1}: ${exception.message}")
+                            }
+                        )
+                    }
                 }
-            }
-
-            uploadedImageUrls
+            }.awaitAll()
+                .sortedBy { it.first } // 원래 순서대로 정렬
+                .map { it.second } // URL만 추출
         }
 
 
