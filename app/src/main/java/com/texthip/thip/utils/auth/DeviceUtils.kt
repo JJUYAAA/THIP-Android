@@ -82,3 +82,18 @@ private suspend fun Context.getOrCreateLocalDeviceId(): String {
 suspend fun Context.getAndroidDeviceId(): String {
     return getAppScopeDeviceId()
 }
+
+/**
+ * 앱-스코프 디바이스 ID와 관련된 모든 로컬 데이터를 삭제합니다.
+ * 회원 탈퇴 시 호출하여 개인정보를 완전히 정리합니다.
+ */
+suspend fun Context.clearAppScopeDeviceData() {
+    try {
+        appDeviceIdDataStore.edit { preferences ->
+            preferences.clear()
+        }
+        Log.i("DeviceUtils", "App-scope device data cleared successfully")
+    } catch (e: Exception) {
+        Log.e("DeviceUtils", "Failed to clear app-scope device data", e)
+    }
+}
