@@ -1,8 +1,6 @@
 package com.texthip.thip.data.manager
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.provider.Settings
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -10,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.firebase.messaging.FirebaseMessaging
 import com.texthip.thip.data.repository.NotificationRepository
+import com.texthip.thip.utils.auth.getAndroidDeviceId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -84,7 +83,7 @@ class FcmTokenManager @Inject constructor(
     }
 
     private suspend fun sendTokenToServer(token: String) {
-        val deviceId = getDeviceId()
+        val deviceId = context.getAndroidDeviceId()
         notificationRepository.registerFcmToken(deviceId, token)
             .onSuccess {
                 Log.d("FCM", "Token sent successfully")
@@ -92,13 +91,5 @@ class FcmTokenManager @Inject constructor(
             .onFailure { exception ->
                 Log.e("FCM", "Failed to send token", exception)
             }
-    }
-
-    @SuppressLint("HardwareIds")
-    private fun getDeviceId(): String {
-        return Settings.Secure.getString(
-            context.contentResolver,
-            Settings.Secure.ANDROID_ID
-        ) ?: "unknown_device"
     }
 }
