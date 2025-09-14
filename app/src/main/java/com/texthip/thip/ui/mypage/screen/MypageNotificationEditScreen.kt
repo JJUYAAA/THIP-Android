@@ -16,10 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -30,6 +32,7 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.mypage.viewmodel.MypageNotificationEditViewModel
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 import kotlinx.coroutines.delay
@@ -39,9 +42,10 @@ import java.util.Locale
 
 @Composable
 fun NotificationScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: MypageNotificationEditViewModel = hiltViewModel()
 ) {
-    var isChecked by rememberSaveable { mutableStateOf(true) }
+    val uiState by viewModel.uiState.collectAsState()
     var toastMessage by rememberSaveable { mutableStateOf<String?>(null) }
     var toastDateTime by rememberSaveable { mutableStateOf("") }
 
@@ -112,10 +116,10 @@ fun NotificationScreen(
                             .weight(1f)
                     )
                     ToggleSwitchButton(
-                        isChecked = isChecked,
-                        onToggleChange = {
-                            isChecked = it
-                            toastMessage = if (it) "push_on" else "push_off"
+                        isChecked = uiState.isNotificationEnabled,
+                        onToggleChange = { enabled ->
+                            viewModel.onNotificationToggle(enabled)
+                            toastMessage = if (enabled) "push_on" else "push_off"
                             val dateFormat = SimpleDateFormat("yyyy년 M월 d일 H시 m분", Locale.KOREAN)
                             toastDateTime = dateFormat.format(Date())
                         }
