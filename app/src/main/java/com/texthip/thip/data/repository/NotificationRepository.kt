@@ -7,13 +7,14 @@ import com.texthip.thip.data.model.notification.request.NotificationEnabledReque
 import com.texthip.thip.data.model.notification.response.NotificationEnabledResponse
 import com.texthip.thip.data.service.NotificationService
 import com.texthip.thip.utils.auth.getAndroidDeviceId
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class NotificationRepository @Inject constructor(
     private val notificationService: NotificationService,
-    private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     suspend fun registerFcmToken(
         deviceId: String,

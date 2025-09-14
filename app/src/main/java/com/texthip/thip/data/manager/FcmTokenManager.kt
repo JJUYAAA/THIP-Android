@@ -10,6 +10,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.texthip.thip.data.repository.NotificationRepository
 import com.texthip.thip.utils.auth.getAndroidDeviceId
 import com.texthip.thip.utils.permission.NotificationPermissionUtils
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -22,9 +23,9 @@ import javax.inject.Singleton
 class FcmTokenManager @Inject constructor(
     private val dataStore: DataStore<Preferences>,
     private val notificationRepository: NotificationRepository,
-    private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
-    
+
     companion object {
         private val FCM_TOKEN_KEY = stringPreferencesKey("fcm_token")
     }
