@@ -34,10 +34,7 @@ class FcmTokenManager @Inject constructor(
         if (storedToken != newToken) {
             Log.d("FCM", "Token updated")
 
-            // 새 토큰 저장
             saveFcmToken(newToken)
-
-            // 서버에 전송
             sendTokenToServer(newToken)
         }
     }
@@ -62,7 +59,6 @@ class FcmTokenManager @Inject constructor(
                 }
 
                 val token = task.result
-                // 토큰을 저장하고 서버로 전송 (비동기)
                 CoroutineScope(Dispatchers.IO).launch {
                     saveFcmToken(token)
                     sendTokenToServer(token)

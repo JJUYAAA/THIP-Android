@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -32,6 +32,7 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.common.buttons.ToggleSwitchButton
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.DefaultTopAppBar
+import com.texthip.thip.ui.mypage.viewmodel.MypageNotificationEditUiState
 import com.texthip.thip.ui.mypage.viewmodel.MypageNotificationEditViewModel
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
@@ -41,11 +42,11 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun NotificationScreen(
+fun MyPageNotificationEditScreen(
     onNavigateBack: () -> Unit,
     viewModel: MypageNotificationEditViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var toastMessage by rememberSaveable { mutableStateOf<String?>(null) }
     var toastDateTime by rememberSaveable { mutableStateOf("") }
 
@@ -55,6 +56,29 @@ fun NotificationScreen(
             toastMessage = null
         }
     }
+
+    MyPageNotificationEditContent(
+        uiState = uiState,
+        toastMessage = toastMessage,
+        toastDateTime = toastDateTime,
+        onNavigateBack = onNavigateBack,
+        onNotificationToggle = { enabled ->
+            viewModel.onNotificationToggle(enabled)
+            toastMessage = if (enabled) "push_on" else "push_off"
+            val dateFormat = SimpleDateFormat("yyyy년 M월 d일 H시 m분", Locale.KOREAN)
+            toastDateTime = dateFormat.format(Date())
+        }
+    )
+}
+
+@Composable
+fun MyPageNotificationEditContent(
+    uiState: MypageNotificationEditUiState,
+    toastMessage: String?,
+    toastDateTime: String,
+    onNavigateBack: () -> Unit,
+    onNotificationToggle: (Boolean) -> Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         AnimatedVisibility(
             visible = toastMessage != null,
@@ -117,26 +141,27 @@ fun NotificationScreen(
                     )
                     ToggleSwitchButton(
                         isChecked = uiState.isNotificationEnabled,
-                        onToggleChange = { enabled ->
-                            viewModel.onNotificationToggle(enabled)
-                            toastMessage = if (enabled) "push_on" else "push_off"
-                            val dateFormat = SimpleDateFormat("yyyy년 M월 d일 H시 m분", Locale.KOREAN)
-                            toastDateTime = dateFormat.format(Date())
-                        }
+                        onToggleChange = onNotificationToggle
                     )
                 }
-
             }
-
-
         }
     }
 }
 
 @Preview
 @Composable
-private fun NotificationScreenPrev() {
-    NotificationScreen(
-        onNavigateBack = {}
+private fun MypageNotificationEditContentPrev() {
+    MyPageNotificationEditContent(
+        uiState = MypageNotificationEditUiState(
+            isNotificationEnabled = true,
+            isLoading = false,
+            isUpdating = false,
+            errorMessage = null
+        ),
+        toastMessage = null,
+        toastDateTime = "",
+        onNavigateBack = {},
+        onNotificationToggle = {}
     )
 }
