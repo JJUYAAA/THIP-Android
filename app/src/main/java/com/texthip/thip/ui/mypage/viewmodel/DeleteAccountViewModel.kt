@@ -9,6 +9,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.kakao.sdk.user.UserApiClient
 import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.data.repository.UserRepository
+import com.texthip.thip.data.repository.NotificationRepository
+import com.texthip.thip.utils.auth.clearAppScopeDeviceData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +27,8 @@ data class DeleteAccountUiState(
 @HiltViewModel
 class DeleteAccountViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DeleteAccountUiState())
@@ -35,36 +38,52 @@ class DeleteAccountViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             
-            // 1. 서버에 회원탈퇴 요청
-            userRepository.deleteAccount()
-                .onSuccess {
-                    // 2. 서버 요청 성공 후 토큰 삭제
-                    tokenManager.clearTokens()
-                    
-                    // 3. 카카오 SDK에서 연결 끊기
-                    UserApiClient.instance.unlink { error ->
-                        if (error != null) {
-                            Log.e("DeleteAccountViewModel", "카카오 연결 끊기 실패", error)
-                        } else {
-                            Log.d("DeleteAccountViewModel", "카카오 연결 끊기 성공")
-                        }
+            try {
+                notificationRepository.deleteFcmToken()
+                    .onFailure { exception ->
+                        Log.w("DeleteAccountViewModel", "FCM 토큰 삭제 실패 (계속 진행)", exception)
                     }
-                    
-                    // 4. 구글 SDK에서 로그아웃
-                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
-                    GoogleSignIn.getClient(context, gso).signOut()
-                    
-                    _uiState.update { it.copy(isLoading = false, isDeleteCompleted = true) }
-                }
-                .onFailure { exception ->
-                    Log.e("DeleteAccountViewModel", "회원탈퇴 실패", exception)
-                    _uiState.update { 
-                        it.copy(
-                            isLoading = false, 
-                            errorMessage = exception.message ?: "회원탈퇴에 실패했습니다."
-                        ) 
+
+                userRepository.deleteAccount()
+                    .onSuccess {
+                        performLocalDataCleanup(context)
+                        
+                        _uiState.update { it.copy(isLoading = false, isDeleteCompleted = true) }
                     }
+                    .onFailure { exception ->
+                        throw exception
+                    }
+            } catch (exception: Exception) {
+                Log.e("DeleteAccountViewModel", "회원탈퇴 실패", exception)
+                _uiState.update { 
+                    it.copy(
+                        isLoading = false, 
+                        errorMessage = exception.message ?: "회원탈퇴에 실패했습니다."
+                    ) 
                 }
+            }
+        }
+    }
+    
+    private suspend fun performLocalDataCleanup(context: Context) {
+        try {
+            tokenManager.clearTokens()
+            context.clearAppScopeDeviceData()
+
+            UserApiClient.instance.unlink { error ->
+                if (error != null) {
+                    Log.e("DeleteAccountViewModel", "카카오 연결 끊기 실패", error)
+                } else {
+                    Log.d("DeleteAccountViewModel", "카카오 연결 끊기 성공")
+                }
+            }
+
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+            GoogleSignIn.getClient(context, gso).signOut()
+            
+            Log.i("DeleteAccountViewModel", "로컬 데이터 정리 완료")
+        } catch (e: Exception) {
+            Log.e("DeleteAccountViewModel", "로컬 데이터 정리 중 오류", e)
         }
     }
 }
