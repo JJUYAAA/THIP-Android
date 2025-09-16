@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,7 +33,7 @@ fun ActionBookButton(
 ) {
     Box(
         modifier = Modifier
-            .background(color = colors.DarkGrey, shape = RoundedCornerShape(12.dp))
+            .background(color = colors.DarkGrey02, shape = RoundedCornerShape(12.dp))
             .clickable {
                 onClick()
             }
@@ -51,14 +52,23 @@ fun ActionBookButton(
                 maxLines = 1
             )
 
+            // 저자명과 "저"를 분리
             Text(
-                text = bookAuthor + stringResource(R.string.author),
+                text = bookAuthor,
                 style = typography.info_r400_s12_h24,
                 color = colors.Grey,
-                modifier = Modifier.width(100.dp),
+                modifier = Modifier
+                    .widthIn(max = 80.dp)
+                    .padding(start = 8.dp),
                 textAlign = TextAlign.Right,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
+            )
+
+            Text(
+                text = stringResource(R.string.author),
+                style = typography.info_r400_s12_h24,
+                color = colors.Grey,
             )
 
             Icon(

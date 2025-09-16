@@ -2,6 +2,7 @@ package com.texthip.thip.ui.common.buttons
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
@@ -20,22 +21,28 @@ import com.texthip.thip.R
 import com.texthip.thip.ui.theme.ThipTheme.colors
 
 @Composable
-fun ToggleSwitchButton() {
-    var isChecked by remember { mutableStateOf(true) }
-
+fun ToggleSwitchButton(
+    isChecked: Boolean,
+    enabled: Boolean = true,
+    onToggleChange: (Boolean) -> Unit
+) {
     Switch(
-        modifier = Modifier.padding(4.dp),
+        modifier = Modifier.height(30.dp),
         checked = isChecked,
-        onCheckedChange = {
-            isChecked = it
-        },
+        onCheckedChange = onToggleChange,
         colors = SwitchDefaults.colors(
             checkedThumbColor = colors.White,
+            disabledCheckedThumbColor = colors.White,
             checkedTrackColor = colors.Purple,
+            disabledCheckedTrackColor = colors.Purple,
             uncheckedThumbColor = colors.White,
+            disabledUncheckedThumbColor = colors.White,
             uncheckedTrackColor = colors.DarkGrey,
+            disabledUncheckedTrackColor = colors.DarkGrey,
             uncheckedBorderColor = Color.Transparent,
+            disabledUncheckedBorderColor = Color.Transparent,
         ),
+        enabled = enabled,
         thumbContent = {
             Icon(
                 painter = painterResource(R.drawable.ic_circle),
@@ -49,11 +56,16 @@ fun ToggleSwitchButton() {
 @Preview
 @Composable
 private fun ToggleSwitchButtonPreview() {
+    var isChecked by remember { mutableStateOf(true) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(30.dp)
     ) {
-        ToggleSwitchButton()
+        ToggleSwitchButton(
+            isChecked = isChecked,
+            onToggleChange = { isChecked = it }
+        )
     }
 }

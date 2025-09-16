@@ -1,17 +1,23 @@
 <resources>
-    <string name="app_name">Thip</string>
+    <string name="app_name">THIP</string>
+
+    <!--    navigation    -->
+    <string name="nav_feed">피드</string>
+    <string name="nav_group">모임</string>
+    <string name="nav_search">검색</string>
+    <string name="nav_mypage">내 정보</string>
 
     <!--   view 컴포넌트    -->
     <string name="reading_user_num">🔥 %d명이 읽기에 참여중이에요! 🔥</string>
 
     <!--   header 컴포넌트    -->
     <string name="subscribe">구독</string>
-    <string name="subscriber_num">%02d명이 구독중</string>
+    <string name="subscriber_num">명이 구독중</string>
     <string name="influencer">공식 인플루언서</string>
     <string name="hours_ago">%d시간 전</string>
 
     <!--   modal 컴포넌트    -->
-    <string name="condition_of_general_review">독서진행도 %d%%부터 총평을 작성할 수 있습니다.</string>
+    <string name="condition_of_general_review">독서 진행도 80%를 달성해야 총평을 작성할 수 있어요.</string>
     <string name="complete_comment">댓글 작성이 완료되었습니다.</string>
     <string name="action_view_comment">보러가기</string>
     <string name="introduction">소개</string>
@@ -21,7 +27,7 @@
     <string name="book_author">한한강한강한강한ㅇㅇㄴㄴㅁ강</string>
 
     <!--    버튼 컴포넌트    -->
-    <string name="author">저</string>
+    <string name="author">" 저"</string>
     <string name="add_to_my_feed">내 피드에 추가</string>
     <string name="yes">예</string>
     <string name="no">아니오</string>
@@ -35,17 +41,415 @@
     <string name="character_relationship">인물관계도 보기</string>
     <string name="write_record">기록 작성</string>
     <string name="create_vote">투표 생성</string>
+    <string name="edit_record">기록 수정</string>
+    <string name="edit_vote">투표 수정</string>
 
     <!--    카드 컴포넌트    -->
     <string name="time_ago">시간 전</string>
-    <string name="group">모임</string>
     <string name="change">변경</string>
-
-    <!--    TextField 컴포넌트    -->
-    <string name="error_page_over">해당 도서는 %1$dp까지만 있습니다.</string>
+    <string name="card_item_end_date">"%1$s일 뒤 "</string>
+    <string name="card_item_end">" 모집 마감"</string>
+    <string name="time_remaining_after">뒤</string>
+    <string name="time_remaining_left">남음</string>
+    <string name="card_item_finish">" 종료"</string>
+    <string name="card_item_participating_count">%1$s명</string>
+    <string name="card_item_participant_string">참여</string>
+    <string name="card_item_participant_count">%1$s</string>
+    <string name="card_item_participant_count_max"> / %1$s명</string>
+    <string name="card_book_explain">도서 소개</string>
+    <string name="card_author">%1$s 저</string>
+    <string name="record_book">기록장</string>
+    <string name="vote_title">모임방의 뜨거운 감자</string>
+    <string name="no_vote">모임방에 생성된 투표가 없어요</string>
 
     <!--    top app bar 컴포넌트    -->
     <string name="subscriber">님의 구독자</string>
     <string name="next">다음</string>
     <string name="page_name">페이지명</string>
+
+    <!--    myPage Screen    -->
+    <string name="my_page">내 정보</string>
+    <string name="etc">기타</string>
+    <string name="edit">편집</string>
+    <string name="my_activity">내 활동</string>
+    <string name="saved">저장</string>
+    <string name="reactions">반응</string>
+    <string name="notification_settings">알림설정</string>
+    <string name="guide">가이드</string>
+    <string name="version">버전 1.0.0</string>
+    <string name="terms_of_use">개인정보처리방침  이용약관</string>
+    <string name="customer_service">고객센터</string>
+    <string name="notice">공지사항</string>
+    <string name="delete_account">회원탈퇴</string>
+    <string name="log_out">로그아웃</string>
+    <string name="menu">메뉴</string>
+    <string name="likes">좋아요</string>
+    <string name="comments">댓글</string>
+    <string name="feed">피드</string>
+    <string name="book">책</string>
+    <string name="edit_profile">프로필 편집</string>
+    <string name="change_nickname">닉네임 변경</string>
+    <string name="edit_role">칭호 편집</string>
+    <string name="role_description">장르는 칭호와 연결돼요.</string>
+    <string name="choice_one">아래에서 하나를 선택해주세요.</string>
+
+    <string name="ask_account_deletion">정말로 탈퇴하시겠어요?</string>
+    <string name="delete_account_description">\'예\'를 누르면 모든 기록이 사라져요.</string>
+
+    <string name="literature">문학</string>
+    <string name="literary_person">문학가</string>
+    <string name="science_it">과학·IT</string>
+    <string name="scientist">과학자</string>
+    <string name="social_science">사회과학</string>
+    <string name="sociologist">사회학자</string>
+    <string name="art">예술</string>
+    <string name="artist">예술가</string>
+    <string name="humanities">인문학</string>
+    <string name="philosopher">철학자</string>
+
+    <string name="logout_description">또 THIP 해주실거죠?</string>
+
+    <string name="leave_thip">THIP 떠나기</string>
+    <string name="leave_thip_notice_title">탈퇴 주의사항</string>
+    <string name="leave_thip_notice_1">회원탈퇴 시 계정정보는 </string>
+    <string name="leave_thip_notice_2">복구 불가능</string>
+    <string name="leave_thip_notice_3">하며 90일 이후 재가입이 가능합니다.</string>
+    <string name="leave_thip_notice_4">-을 사유로 개인정보를 -개월 간 보존합니다.</string>
+    <string name="leave_thip_notice_5">등록된 기록 및 게시물은 자동으로 삭제되지 않습니다.(or 삭제됩니다.)</string>
+    <string name="leave_thip_agree">주의사항을 확인하였으며 이에 동의합니다.</string>
+    <string name="delete_account_complete">탈퇴 완료</string>
+    <string name="see_you_again">다음에 또 만나요!</string>
+
+
+    <string name="push_notification">푸시 알림</string>
+    <string name="notification_description">알림센터의 모든 알림을 포함해요</string>
+    <string name="push_off">푸시 알림이 해제되었어요.</string>
+    <string name="push_on">푸시 알림이 설정되었어요.</string>
+
+    <string name="customer_center_email">texthip2025@gmail.com</string>
+    <string name="customer_center_description">이메일로 닉네임과 문의사항을 보내주시면</string>
+    <string name="customer_center_description_2">빠른 시일 내로 해결해 드릴게요!</string>
+
+    <string name="no_saved_book">아직 저장한 책이 없어요</string>
+    <string name="no_saved_feed">아직 저장한 피드가 없어요</string>
+    <string name="do_thip_book">마음에 드는 책을 THIP 해보세요!</string>
+    <string name="do_thip_feed">마음에 드는 피드를 THIP 해보세요!</string>
+
+    <string name="no_saved_reaction">아직 저장한 반응이 없어요</string>
+    <string name="save_first_reaction">첫 번째 반응을 저장해 보세요!</string>
+
+    <string name="nickname_error_cooldown">닉네임은 6개월에 한 번 변경할 수 있어요</string>
+    <string name="nickname_error_duplicate">중복된 닉네임이에요</string>
+    <string name="nickname_error_same">현재 닉네임과 같아요</string>
+    <string name="error_unknown">알 수 없는 오류가 발생했어요</string>
+
+    <string name="profile_edit_completely">프로필 설정을 성공적으로 변경했어요.</string>
+
+
+    <!--    my room 컴포넌트    -->
+    <string name="on_going">진행중</string>
+    <string name="recruiting">모집중</string>
+    <string name="my_group_room">내 모임방</string>
+    <string name="group_room_desc">소개글</string>
+    <string name="group_period">모임 활동 기간</string>
+    <string name="group_mate">참여 중인 독서 메이트</string>
+    <string name="group_recommend">이런 모임방은 어때요?</string>
+    <string name="group_recruiting">"모집"</string>
+    <string name="group_genre">"장르"</string>
+    <string name="deadline_string">마감 임박한 독서 모임방</string>
+    <string name="group_participant">%1$s명</string>
+    <string name="group_participant_string">참여</string>
+    <string name="group_progress">"%1$s님의 진행도 "</string>
+    <string name="group_search_placeholder">모임방 참여할 사람!</string>
+    <string name="group_room_screen_participant_count_max"> / %1$s명</string>
+    <string name="group_room_screen_participant_count">%1$s</string>
+    <string name="group_room_screen_end_date">%1$s일 남음</string>
+    <string name="group_room_screen_participant">참여하기</string>
+    <string name="group_room_screen_cancel">참여 취소하기</string>
+    <string name="group_room_screen_end">모집 마감하기</string>
+    <string name="group_room_period">%1$s ~ %2$s</string>
+    <string name="card_input_author">%1$s 저</string>
+    <string name="current_page">현재 페이지 %d</string>
+    <string name="percent">%</string>
+    <string name="leave_room_toast">모임 나가기를 완료했어요.</string>
+    <string name="leave_room_fail_toast">모임 나가기를 실패했어요.</string>
+
+    <!--    group room    -->
+    <string name="introduction_content">소개글</string>
+    <string name="group_active_period">모임 활동기간</string>
+    <string name="book_mate">독서메이트</string>
+    <string name="participate_num">%d명이 참여 중</string>
+    <string name="genre">장르</string>
+    <string name="group_room_chat">오늘의 한마디</string>
+    <string name="group_room_chat_description">모임방 멤버들과 간단한 인사를 나눠보세요!</string>
+    <string name="group_room_mates">독서메이트</string>
+    <string name="comment_to">님에게 답글 작성</string>
+    <string name="group_room_chat_hint">메이트들과 간단한 인사를 나눠보세요!</string>
+    <string name="leave_room">방 나가기</string>
+    <string name="leave_room_modal_title">모임방을 나가시겠어요?</string>
+    <string name="leave_room_modal_content">방을 나가시게 되면\n독서메이트들과의 추억이 사라집니다.</string>
+    <string name="report_room">방 신고하기</string>
+    <string name="delete_room">방 삭제하기</string>
+    <string name="delete_room_modal_title">모임방을 삭제하시겠어요?</string>
+    <string name="delete_room_modal_content">방을 삭제하게 되면\n독서메이트들과의 추억이 사라집니다.</string>
+    <string name="delete">삭제하기</string>
+    <string name="modify">수정하기</string>
+    <string name="report">신고하기</string>
+    <string name="group_room_no_chat_title">아직 대화가 없어요</string>
+    <string name="group_room_no_chat_content">첫번째 한마디를 남겨보세요!</string>
+    <string name="group_room_chat_max">오늘의 한마디는 하루에 다섯번까지 작성할 수 있어요</string>
+    <string name="group_room_chat_delete_success">오늘의 한마디 삭제를 완료했어요.</string>
+    <string name="numbering" formatted="false">%d. %s</string>
+
+    <!--    group note    -->
+    <string name="tilde">~</string>
+    <string name="page">p</string>
+    <string name="group_record">그룹 기록</string>
+    <string name="my_record">내 기록</string>
+    <string name="view_by_page">페이지별 보기</string>
+    <string name="view_by_all">총평 보기</string>
+    <string name="group_note_info">내 진행도에 따라 일부 댓글은 블러처리됩니다.</string>
+    <string name="write_reply">답글작성</string>
+    <string name="annotation">\@</string>
+    <string name="space_bar">\ </string>
+    <string name="reply_to">00님에게 댓글을 남겨보세요.</string>
+    <string name="group_done_title">완료된 모임방</string>
+    <string name="group_done_user_comment">%1$s님이 참여했던 모임방들을 확인해보세요.</string>
+    <string name="group_room_search_hint">" 방 제목 혹은 책 제목을 검색해보세요."</string>
+    <string name="group_recent_search">최근 검색어</string>
+    <string name="group_no_recent_search">최근 검색어가 아직 없어요.</string>
+    <string name="group_room_search_topappbar">모임 검색</string>
+    <string name="group_searched_room_size">전체 %1$d</string>
+    <string name="group_no_search_result1">해당하는 모임방이 없어요</string>
+    <string name="group_no_search_result2">직접 모임방을 만들어보세요.</string>
+    <string name="group_secret_screen_comment">비밀번호를 입력해주세요.</string>
+    <string name="group_secret_screen_error_comment">비밀번호가 일치하지 않습니다.</string>
+    <string name="group_participant_complete_alarm">모임방 참여가 완료되었어요!</string>
+    <string name="group_participant_cancel_popup">모임방 참여를 취소하시겠어요?</string>
+    <string name="group_participant_cancel_comment">지금 취소해도, 활동 시작 전에 다시 참여 가능해요.</string>
+    <string name="group_participant_cancel_alarm">모임방 참여가 취소되었어요! 다른 방을 찾아보세요.</string>
+    <string name="page_to_record">기록할 페이지</string>
+    <string name="general_review">총평</string>
+    <string name="all_range">전체범위</string>
+    <string name="error_page_over">전체페이지를 초과할 수 없어요.</string>
+    <string name="my_opinion_title">지금 읽은 그 부분, 어땠나요?</string>
+    <string name="my_opinion_placeholder">...한 생각이 들었어요.🤔</string>
+    <string name="vote_title_placeholder">투표 내용을 20자 이내로 입력하세요.</string>
+    <string name="vote_content_placeholder">항목을 20자 이내로 입력</string>
+    <string name="add_content">항목 추가</string>
+    <string name="condition_of_view_general_review">독서 진행도 80% 이상부터 총평을 볼 수 있어요.</string>
+    <string name="no_records_yet">아직 기록이 없어요.</string>
+    <string name="no_overviews_yet">아직 총평이 없어요.</string>
+    <string name="no_group_record_subtext">우리 모임의 첫번째 기록을 남겨보세요</string>
+    <string name="no_my_record_subtext">나의 첫번째 기록을 남겨보세요</string>
+    <string name="no_overview_subtext">책을 끝까지 읽고 든 생각을 남겨보세요</string>
+    <string name="no_comments_yet">아직 댓글이 없어요.</string>
+    <string name="no_comment_subtext">첫번째 댓글을 남겨보세요</string>
+    <string name="pin_modal_title">이 기록을 피드에 핀할까요?</string>
+    <string name="pin_modal_content">핀하면 내 피드에 글을 옮길 수 있어요.</string>
+    <string name="delete_post_title">이 기록을 삭제하시겠어요?</string>
+    <string name="delete_post_content">삭제 후에는 되돌릴 수 없어요.</string>
+    <string name="sort_comment">댓글 많은 순</string>
+    <string name="posting_in_progress">기록을 게시 중입니다...</string>
+    <string name="posting_complete">기록이 게시되었습니다!</string>
+    <string name="delete_comment_title">이 댓글을 삭제하시겠어요?</string>
+    <string name="comment_deleted">삭제된 댓글이에요.</string>
+
+    <!--    alarm    -->
+    <string name="alarm_feed">피드</string>
+    <string name="alarm_group">모임</string>
+    <string name="alarm_string">알림</string>
+    <string name="alarm_notification_comment">새로운 알림이 없어요</string>
+
+    <!--    group makeroom    -->
+    <string name="group_making_group">모임 만들기</string>
+    <string name="group_saved_book">저장한 책</string>
+    <string name="group_book">모임 책</string>
+    <string name="group_book_search_hint"> 책 제목을 검색해보세요.</string>
+    <string name="group_register_book">책 신청하기</string>
+    <string name="group_register_book_comment_1">현재 등록된 책이 아닙니다.</string>
+    <string name="group_register_book_comment_2">원하시는 책을 신청해주세요.</string>
+    <string name="group_request_book">책 신청</string>
+    <string name="group_request_book_comment_1">이메일로 책 제목, 출판사를 보내주시면</string>
+    <string name="group_request_book_comment_2">빠른 시일내로 책을 추가해드릴게요!</string>
+    <string name="group_select_book_title">책 선택</string>
+    <string name="group_book_genre">책 장르</string>
+    <string name="group_genre_select_comment">책을 가장 잘 설명하는 장르를 하나 골라주세요</string>
+    <string name="group_room_title">방 제목</string>
+    <string name="group_room_title_hint">방 제목을 입력해주세요</string>
+    <string name="group_room_explain">한 줄 소개</string>
+    <string name="group_room_explain_hint">방에 대한 짧은 소개글을 작성해주세요</string>
+    <string name="group_room_duration_title">모임 활동기간</string>
+    <string name="group_room_duration_comment">모임 활동 기간은 최대 3개월까지 설정 가능합니다.</string>
+    <string name="group_room_duration_error">(선택된 기간: %1$d일)</string>
+    <string name="group_room_member_limit_title">인원 제한</string>
+    <string name="group_room_member_limit_comment">모집 인원은 최대 30명까지 입력할 수 있습니다.</string>
+    <string name="group_room_limit">명의 독서 메이트를 모집합니다</string>
+    <string name="group_genre_selected_comment">1개만 선택 가능합니다.</string>
+    <string name="group_selected_book_author">%1$s 저</string>
+    <string name="group_password_hint">4자리 숫자로 입장 비밀번호를 설정</string>
+    <string name="group_year">년</string>
+    <string name="group_month">월</string>
+    <string name="group_day">일</string>
+    <string name="group_private_option">공개 설정</string>
+    <string name="group_private_comment">비공개로 설정하기</string>
+    <string name="group_private_warning_message">4자리 숫자를 입력해주세요.</string>
+    <string name="group_room_duration_active_comment">%1$d월 %2$d일 자정에 자동으로 모집 마감되고 활동이 가능합니다.</string>
+    <string name="group_book_search">검색해서 찾기</string>
+    <string name="group_room_duration_initial_comment">모임방 활동이 시작되면, 독서메이트 모집이 자동으로 종료돼요.</string>
+    <string name="group_input_count">%1$d / %2$d</string>
+
+    <!--    splash screen   -->
+    <string name="splash_thip">띱!</string>
+    <string name="splash_ment">하고 떠오른 그 문장을 나눠요</string>
+
+    <!--    tutorial screen   -->
+    <string name="tutorial_1">피드에서 책과 독서에 대한 생각을\n자유롭게 나누어 보세요!</string>
+    <string name="tutorial_2">칭호를 통해 내 독서 취향을 드러내고,\n마음에 드는 유저를 \'띱\'하고 감상을 공유해 보세요!</string>
+    <string name="tutorial_3">모임방에서는 글은 물론 투표 기능을 통해\n감상과 의견을 나눌 수 있어요.</string>
+    <string name="tutorial_4">읽고 싶은 책으로 나만의 독서 모임을 만들고,\n독서메이트와 함께 기록을 나눌 수 있어요.</string>
+    <string name="tutorial_5">기록은 자유롭게, 감상은 방해 없이.\n읽지 않은 페이지에 대한 기록은 블라인드 되어\n스포일러 걱정 없이 몰입할 수 있어요</string>
+    <string name="tutorial_6">모임방의 인상깊은 기록을\n\'핀하기\'로 피드에 다시 공유해 보세요.</string>
+    <string name="thip_plus">Thip+</string>
+
+
+    <!--    signin   -->
+    <string name="kakao_login">카카오계정 로그인</string>
+    <string name="google_login">구글계정 로그인</string>
+    <string name="settings_1">설정 1/2</string>
+    <string name="settings_2">설정 2/2</string>
+    <string name="nickname">닉네임 (필수)</string>
+    <string name="nickname_warning">이미 사용중인 닉네임입니다.</string>
+    <string name="nickname_condition">한글/영문소문자/숫자로 구성</string>
+    <string name="hello_user">안녕하세요, %1$s님</string>
+    <string name="signin_done">이제 Thip에서 활동할 준비를 모두 마쳤어요!</string>
+    <string name="start_thip">지금 바로 Thip 시작하기</string>
+    <string name="select_genre">관심있는 장르를 하나 선택해주세요.</string>
+    <string name="genre_can_be_changed">이후 내 정보에서 변경이 가능해요.</string>
+    <string name="skip">건너뛰기</string>
+
+    <!--    feed   -->
+    <string name="my_thip_list">내 띱 목록</string>
+    <string name="thip_list">띱 목록</string>
+    <string name="whole_num">전체 %d</string>
+    <string name="toast_thip">%1$s 님을 띱 했어요</string>
+    <string name="toast_thip_cancel">%1$s 님을 띱 취소했어요</string>
+    <string name="thip">띱 하기</string>
+    <string name="thip_cancel">띱 취소</string>
+    <string name="thip_num">%1$d명</string>
+    <string name="thip_ing">이 띱 하는 중</string>
+    <string name="create_feed">피드에 글을 작성해보세요</string>
+    <string name="empty_feed">피드에 작성된 글이 없어요</string>
+    <string name="find_thip_mate">관심있는 독서메이트를 찾아보세요!</string>
+    <string name="my_feed">내 피드</string>
+
+    <string name="group_participant_close_popup">모집을 마감하시겠습니까?</string>
+    <string name="group_participant_close_comment">독서메이트 모집을 마감하면\n지금 바로 모임방 활동을 바로 시작할 수 있어요.</string>
+    <string name="group_participant_close_alarm">독서메이트 모집을 성공적으로 마감했어요.</string>
+    <string name="group_no_room_exist">모임방이 아직 없어요</string>
+    <string name="group_no_room_error_comment">해당 장르의 모임방이 생기면 보여줄게요!</string>
+    <string name="group_empty_card_title">참여 중인 모임방이 없어요</string>
+    <string name="group_empty_card_description">모임방을 찾아 참여해보세요!</string>
+    <string name="group_myroom_error_comment1">참여 중인 모임방이 없어요</string>
+    <string name="group_myroom_error_comment2">첫번째 모임방에 참여해보세요</string>
+    <string name="feed_reply_to">%1$s 님에게 댓글을 남겨보세요.</string>
+    <string name="just_a_moment_ago">방금 전</string>
+    <string name="my_subscription">내 띱</string>
+    <string name="new_feed">새 글</string>
+    <string name="registration">등록</string>
+    <string name="write_feed">글 작성</string>
+    <string name="write_feed_hint">...한 생각이 들었어요.🤔</string>
+    <string name="feed_private_comment">비공개로 설정</string>
+    <string name="tag">태그</string>
+    <string name="add_photo">사진 추가</string>
+    <string name="photo_count">%1$d / %2$d개</string>
+    <string name="selected_tags">선택된 태그</string>
+    <string name="tag_count">%1$d / %2$d개</string>
+    <string name="edit_feed">수정하기</string>
+    <string name="edit_feed_title">글 수정</string>
+    <string name="delete_feed">삭제하기</string>
+    <string name="delete_feed_dialog_title">이 피드를 삭제하시겠어요?</string>
+    <string name="delete_feed_dialog_description">삭제 후에는 되돌릴 수 없어요.</string>
+    <string name="no_user_you_look_for">찾는 사용자가 없어요</string>
+    <string name="search_user">사용자 찾기</string>
+    <string name="search_user_you_look_for">내가 찾는 사용자를 검색해보세요.</string>
+    <string name="posting_in_progress_feed">글을 작성중이에요...</string>
+    <string name="posting_complete_feed">새 글 작성을 완료했어요!</string>
+    <string name="report_complete_feed">게시글 신고를 완료했어요.</string>
+
+
+    <!--    book search   -->
+    <string name="book_popular_search">가장 많이 검색된 책</string>
+    <string name="book_search_topappbar">검색</string>
+    <string name="book_search_hint">책 제목, 작가명을 검색해보세요.</string>
+    <string name="book_no_search_result1">현재 등록된 책이 없어요.</string>
+    <string name="book_no_search_result2">원하는 책을 신청해주세요!</string>
+    <string name="book_search_date">%1$s. 기준</string>
+    <string name="book_no_most_search_result_comment_1">아직 순위가 집계되지 않았어요.</string>
+    <string name="book_no_most_search_result_comment_2">조금만 기다려주세요!</string>
+    <string name="search_recruiting_group_count">모집중인 모임방 %1$d개</string>
+    <string name="search_write_feed_comment">피드에 글 쓰기</string>
+    <string name="search_watch_feed">피드 글 둘러보기</string>
+    <string name="search_no_feed_comment_1">이 책으로 작성된 피드가 없어요.</string>
+    <string name="search_no_feed_comment_2">첫번째 피드를 작성해보세요!</string>
+    <string name="sort_like">인기순</string>
+    <string name="sort_latest">최신순</string>
+    <string name="search_book_comment">소개</string>
+    <string name="search_book_author">%1$s 저 · %2$s</string>
+    <string name="group_filter_popular">인기순</string>
+    <string name="group_filter_deadline">마감임박순</string>
+    <string name="group_recruiting_title">모집중인 모임방</string>
+    <string name="book_recruiting_empty_message">이 책으로 모집중인 모임방이 없어요.</string>
+    <string name="book_recruiting_empty_sub_message">직접 모임방을 만들어보세요!</string>
+    <string name="group_recruiting_create_button">모임방 만들기</string>
+
+    <!--    group repository sections    -->
+    <string name="room_section_deadline">마감 임박한 독서 모임방</string>
+    <string name="room_section_popular">인기 있는 독서 모임방</string>
+    <string name="room_section_influencer">인플루언서·작가 독서 모임방</string>
+    
+    <!--    error states    -->
+    <string name="error_data_load_failed">데이터를 불러올 수 없습니다</string>
+    <string name="error_network_connection">네트워크 연결을 확인해주세요</string>
+
+    <!--    group viewmodel messages    -->
+    <!-- GroupMakeRoomViewModel -->
+    <string name="error_form_validation">입력 정보를 확인해주세요</string>
+    <string name="error_book_info_invalid">책 정보가 올바르지 않습니다</string>
+    <string name="error_room_creation_failed">모임방 생성에 실패했습니다: %1$s</string>
+    <string name="error_network_error">네트워크 오류가 발생했습니다: %1$s</string>
+    
+    <!-- GroupRoomRecruitViewModel -->
+    <string name="success_participation_complete">모임방 참여가 완료되었어요! 모집 마감 후 활동이 시작돼요.</string>
+    <string name="error_participation_failed">참여 처리 중 오류가 발생했습니다: %1$s</string>
+    <string name="success_participation_cancelled">모임방 참여가 취소되었어요! 다른 방을 찾아보세요.</string>
+    <string name="error_participation_cancel_failed">참여 취소 중 오류가 발생했습니다: %1$s</string>
+    <string name="success_recruitment_closed">독서메이트 모집을 성공적으로 마감했어요.</string>
+    <string name="error_room_close_permission">방 모집 마감 권한이 없습니다.</string>
+    <string name="error_room_expired">이미 모집기간이 만료된 방입니다.</string>
+    <string name="error_room_close_failed">모집 마감 중 오류가 발생했습니다.</string>
+    <string name="error_room_info_not_found">방 정보를 찾을 수 없습니다.</string>
+    <string name="error_max_participate">모임방 인원이 다 찼어요.</string>
+
+    <!-- SearchBookGroupViewModel -->
+    <string name="error_recruiting_rooms_not_found">모집중인 방 정보를 찾을 수 없습니다.</string>
+    <string name="error_recruiting_rooms_load_failed">모집중인 방을 불러오는데 실패했습니다.</string>
+    
+    <!-- BookDetailViewModel -->
+    <string name="error_book_detail_load_failed">책 정보를 불러오는데 실패했습니다.</string>
+    <string name="error_book_save_failed">책 저장에 실패했습니다.</string>
+    
+    <!-- FeedWriteViewModel -->
+    <string name="error_feed_id_not_returned">서버 feedId 반환 오류</string>
+
+    <!-- API constants -->
+    <string name="api_sort_like" translatable="false">like</string>
+    <string name="api_sort_latest" translatable="false">latest</string>
+    
+    <!-- GenreManager API constants -->
+    <string name="api_genre_science_it" translatable="false">과학/IT</string>
+
+    <!-- Google login constants -->
+    <string name="default_web_client_id" translatable="false">211189590640-a2ul4bnsvislm12ov7k8eu61mtketl8d.apps.googleusercontent.com</string>
+
 </resources>

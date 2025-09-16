@@ -1,0 +1,213 @@
+package com.texthip.thip.ui.mypage.screen
+
+
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.texthip.thip.R
+import com.texthip.thip.ui.common.forms.WarningTextField
+import com.texthip.thip.ui.common.modal.ToastWithDate
+import com.texthip.thip.ui.common.topappbar.InputTopAppBar
+import com.texthip.thip.ui.mypage.component.RoleCard
+import com.texthip.thip.ui.mypage.mock.RoleItem
+import com.texthip.thip.ui.mypage.viewmodel.EditProfileUiState
+import com.texthip.thip.ui.mypage.viewmodel.EditProfileViewModel
+import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.ui.theme.ThipTheme.colors
+import com.texthip.thip.ui.theme.ThipTheme.typography
+import kotlinx.coroutines.delay
+
+@Composable
+fun EditProfileScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: EditProfileViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(uiState.isSaveSuccess) {
+        if (uiState.isSaveSuccess) {
+            delay(2500L)
+            onNavigateBack()
+            viewModel.onSaveComplete()
+        }
+    }
+
+
+    EditProfileContent(
+        uiState = uiState,
+        onNicknameChange = viewModel::onNicknameChange,
+        onCardSelected = viewModel::selectCard,
+        onSaveClick = viewModel::saveProfile,
+        onNavigateBack = onNavigateBack
+    )
+}
+
+
+@Composable
+fun EditProfileContent(
+    uiState: EditProfileUiState,
+    onNicknameChange: (String) -> Unit,
+    onCardSelected: (Int) -> Unit,
+    onSaveClick: () -> Unit,
+    onNavigateBack: () -> Unit
+) {
+    val isChanged =
+        uiState.nickname != uiState.initialNickname || uiState.selectedIndex != uiState.initialSelectedIndex
+    val isRightButtonEnabled = isChanged && uiState.nickname.isNotBlank() && !uiState.isLoading
+
+    Box(
+        Modifier
+            .fillMaxSize()
+    ) {
+        Column(
+            Modifier
+                .fillMaxSize()
+        ) {
+            InputTopAppBar(
+                title = stringResource(R.string.edit_profile),
+                isRightButtonEnabled = isRightButtonEnabled,
+                onLeftClick = onNavigateBack,
+                onRightClick = onSaveClick
+            )
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(40.dp))
+                Text(
+                    text = stringResource(R.string.change_nickname),
+                    style = typography.smalltitle_sb600_s18_h24,
+                    color = colors.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
+                )
+                WarningTextField(
+                    containerColor = colors.DarkGrey02,
+                    value = uiState.nickname,
+                    onValueChange = { newNickname -> onNicknameChange(newNickname.lowercase()) },
+                    hint = stringResource(R.string.nickname_condition),
+                    showWarning = uiState.nicknameWarningMessageResId != null,
+                    showIcon = false,
+                    showLimit = true,
+                    maxLength = 10,
+                    warningMessage = uiState.nicknameWarningMessageResId?.let { stringResource(it) }
+                        ?: "",
+                    preventUppercase = true
+                )
+                Spacer(modifier = Modifier.height(40.dp))
+                Text(
+                    text = stringResource(R.string.edit_role),
+                    style = typography.smalltitle_sb600_s18_h24,
+                    color = colors.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                )
+                Text(
+                    text = stringResource(R.string.role_description),
+                    style = typography.copy_r400_s14,
+                    color = colors.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp)
+                )
+
+
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 152.dp), // 카드 최소 크기
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    userScrollEnabled = false,
+                ) {
+                    itemsIndexed(uiState.roleCards) { index, roleItem ->
+                        RoleCard(
+                            genre = roleItem.genre,
+                            role = roleItem.role,
+                            imageUrl = roleItem.imageUrl,
+                            roleColor = roleItem.roleColor,
+                            selected = uiState.selectedIndex == index,
+                            onClick = { onCardSelected(index) }
+                        )
+                    }
+                }
+
+            }
+        }
+        AnimatedVisibility(
+            visible = uiState.isSaveSuccess,
+            enter = slideInVertically(
+                initialOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { -it },
+                animationSpec = tween(durationMillis = 2000)
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .zIndex(3f)
+        ) {
+            ToastWithDate(
+                message = stringResource(R.string.profile_edit_completely)
+            )
+        }
+    }
+}
+
+
+@Preview
+@Composable
+private fun EditProfileScreenPrev() {
+    val previewRoleCards = listOf(
+        RoleItem("문학", "문학가", "", "#FFFFFF"),
+        RoleItem("과학/IT", "과학자", "", "#FFFFFF")
+    )
+    val previewUiState = EditProfileUiState(
+        isLoading = false,
+        roleCards = previewRoleCards,
+        selectedIndex = 0,
+        nickname = "기존닉네임"
+    )
+    ThipTheme {
+        EditProfileContent(
+            uiState = previewUiState,
+            onNicknameChange = {},
+            onCardSelected = {},
+            onSaveClick = {},
+            onNavigateBack = {}
+        )
+    }
+}

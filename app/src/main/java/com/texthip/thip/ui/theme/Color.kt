@@ -13,14 +13,18 @@ val NeonGreen50 = Color(0x80A7FFB4)
 
 val Red = Color(0xFFFF9496)
 
-val Mint = Color(0xFFA0F8E8)
-val MintSub = Color(0xFF4FD9C0)
-val Orange = Color(0xFFFDB770)
-val OrangeSub = Color(0xFFFF8B17)
-val Skyblue = Color(0xFFA1D5FF)
-val SkyblueSub = Color(0xFF6DB5EE)
-val Lavendar = Color(0xFFC8A5FF)
-val LavendaSub = Color(0xFFA76FFF)
+val Literature = Color(0xFFA0F8E8)
+val LiteratureSub = Color(0xFF4FD9C0)
+val SocialScience = Color(0xFFFDB770)
+val SocialScienceSub = Color(0xFFFF8B17)
+val Humanities = Color(0xFFA1D5FF)
+val HumanitiesSub = Color(0xFF6DB5EE)
+val Art = Color(0xFFFF8BAC)
+val ArtSub = Color(0xFFFB5A88)
+val ScienceIt = Color(0xFFC8A5FF)
+val ScienceItSub = Color(0xFFA76FFF)
+val Yellow = Color(0xFFFFECA7)
+val KakaoYellow = Color(0xFFFEE500)
 
 val PureWhite = Color(0xFFFFFFFF)
 val White = Color(0xFFFEFEFE)
@@ -32,13 +36,19 @@ val Grey02 = Color(0xFF888888)
 val Grey03 = Color(0xFF525252)
 val DarkGrey = Color(0xFF3D3D3D)
 val DarkGrey50 = Color(0x803D3D3D)
+val DarkGrey03 = Color(0xFF1D1D1D)
 val DarkGrey02 = Color(0xFF282828)
 val DarkGrey01 = Color(0x4B4B4B4B)
-
 val Black = Color(0xFF121212)
+val Black80 = Color(0xCC121212)
 val Black50 = Color(0x80121212)
+val Black30 = Color(0x4D121212)
 val Black10 = Color(0x1A121212)
 val Black00 = Color(0x00121212)
+val Black700 = Color(0xFF090909)
+val Black800 = Color(0xFF040404)
+
+
 
 @Immutable
 data class ThipColors(
@@ -48,14 +58,18 @@ data class ThipColors(
     val NeonGreen: Color,
     val NeonGreen50: Color,
     val Red: Color,
-    val Mint: Color,
-    val MintSub: Color,
-    val Orange: Color,
-    val OrangeSub: Color,
-    val Skyblue: Color,
-    val SkyblueSub: Color,
-    val Lavendar: Color,
-    val LavendaSub: Color,
+    val Literature: Color,
+    val LiteratureSub: Color,
+    val SocialScience: Color,
+    val SocialScienceSub: Color,
+    val Humanities: Color,
+    val HumanitiesSub: Color,
+    val Art: Color,
+    val ArtSub: Color,
+    val ScienceIt: Color,
+    val ScienceItSub: Color,
+    val Yellow: Color,
+    val KakaoYellow: Color,
     val PureWhite: Color,
     val White: Color,
     val Grey50: Color,
@@ -66,11 +80,16 @@ data class ThipColors(
     val DarkGrey: Color,
     val darkGray01: Color,
     val DarkGrey50: Color,
+    val DarkGrey03: Color,
     val DarkGrey02: Color,
     val Black: Color,
+    val Black80: Color,
     val Black50: Color,
+    val Black30: Color,
     val Black10: Color,
     val Black00: Color,
+    val Black800: Color,
+    val Black700: Color
 )
 
 val defaultThipColors = ThipColors(
@@ -80,14 +99,18 @@ val defaultThipColors = ThipColors(
     NeonGreen = NeonGreen,
     NeonGreen50 = NeonGreen50,
     Red = Red,
-    Mint = Mint,
-    MintSub = MintSub,
-    Orange = Orange,
-    OrangeSub = OrangeSub,
-    Skyblue = Skyblue,
-    SkyblueSub = SkyblueSub,
-    Lavendar = Lavendar,
-    LavendaSub = LavendaSub,
+    Literature = Literature,
+    LiteratureSub = LiteratureSub,
+    SocialScience = SocialScience,
+    SocialScienceSub = SocialScienceSub,
+    Humanities = Humanities,
+    HumanitiesSub = HumanitiesSub,
+    Art = Art,
+    ArtSub = ArtSub,
+    ScienceIt = ScienceIt,
+    ScienceItSub = ScienceItSub,
+    Yellow = Yellow,
+    KakaoYellow = KakaoYellow,
     PureWhite = PureWhite,
     White = White,
     Grey50 = Grey50,
@@ -98,11 +121,16 @@ val defaultThipColors = ThipColors(
     DarkGrey = DarkGrey,
     darkGray01 = DarkGrey01,
     DarkGrey50 = DarkGrey50,
+    DarkGrey03 = DarkGrey03,
     DarkGrey02 = DarkGrey02,
     Black = Black,
     Black50 = Black50,
+    Black80 = Black80,
+    Black30 = Black30,
     Black10 = Black10,
-    Black00 = Black00
+    Black00 = Black00,
+    Black700 = Black700,
+    Black800 = Black800
 )
 
 val LocalThipColorsProvider = staticCompositionLocalOf { defaultThipColors }

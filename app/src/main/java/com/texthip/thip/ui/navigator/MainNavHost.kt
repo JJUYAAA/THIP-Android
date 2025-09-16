@@ -1,20 +1,43 @@
 package com.texthip.thip.ui.navigator
 
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import com.texthip.thip.ui.bookSearch.screen.BookSearchScreen
-import com.texthip.thip.ui.feed.screen.FeedScreen
-import com.texthip.thip.ui.group.screen.GroupScreen
-import com.texthip.thip.ui.myPage.screen.MyPageScreen
+import androidx.navigation.compose.NavHost
+import com.texthip.thip.ui.navigator.navigations.commonNavigation
+import com.texthip.thip.ui.navigator.navigations.feedNavigation
+import com.texthip.thip.ui.navigator.navigations.groupNavigation
+import com.texthip.thip.ui.navigator.navigations.myPageNavigation
+import com.texthip.thip.ui.navigator.navigations.searchNavigation
+import com.texthip.thip.ui.navigator.routes.MainTabRoutes
 
+// 메인 네비게이션
 @Composable
-fun MainNavHost(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Routes.Feed.route) {
-        composable(Routes.Feed.route) { FeedScreen(navController) }
-        composable(Routes.Group.route) { GroupScreen(navController) }
-        composable(Routes.BookSearch.route) { BookSearchScreen(navController) }
-        composable(Routes.MyPage.route) { MyPageScreen(navController) }
+fun MainNavHost(
+    navController: NavHostController,
+    onNavigateToLogin: () -> Unit,
+    onFeedTabReselected: Int = 0
+) {
+    NavHost(
+        navController = navController,
+        startDestination = MainTabRoutes.Feed
+    ) {
+        feedNavigation(
+            navController = navController,
+            navigateBack = navController::popBackStack,
+            onFeedTabReselected = onFeedTabReselected
+        )
+        groupNavigation(
+            navController = navController,
+            navigateBack = navController::popBackStack
+        )
+        searchNavigation(navController)
+        myPageNavigation(
+            navController = navController,
+            onNavigateToLogin = onNavigateToLogin
+        )
+        commonNavigation(
+            navController = navController,
+            navigateBack = navController::popBackStack
+        )
     }
 }

@@ -1,11 +1,12 @@
 package com.texthip.thip.ui.common.forms
 
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,10 +17,12 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,79 +44,99 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun BookPageTextField(
     modifier: Modifier = Modifier,
-    bookPage: Int
+    bookTotalPage: Int,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    text: String,
+    isError: Boolean,
+    onValueChange: (String) -> Unit,
+    showClearButton: Boolean = true,
+    showTotalPage: Boolean = true
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
-    var isError by rememberSaveable { mutableStateOf(false) }
-    var errorMessageRes by rememberSaveable { mutableStateOf<Int?>(null) }
-    var errorMessageParam by rememberSaveable { mutableStateOf(0) }
-
+    var hasFocusCleared by remember(text) { mutableStateOf(false) }
+    
     Column {
         OutlinedTextField(
             value = text,
-            onValueChange = { newText: String ->
+            onValueChange = { newText ->
                 if (newText.isEmpty() || newText.all { it.isDigit() }) {
-                    text = newText
-                    if (newText.isNotEmpty()) {
-                        val pageNum = newText.toInt()
-                        isError = pageNum > bookPage
-                        if (isError) {
-                            errorMessageRes = R.string.error_page_over
-                            errorMessageParam = bookPage
-                        } else {
-                            errorMessageRes = null
-                        }
-                    } else {
-                        isError = false
-                        errorMessageRes = null
-                    }
+                    onValueChange(newText)
                 }
             },
-            visualTransformation = SuffixTransformation(
-                suffix = "/${bookPage}p",
-                suffixColor = colors.Grey02
-            ),
+            enabled = enabled,
+            readOnly = readOnly,
+            visualTransformation = if (showTotalPage) {
+                SuffixTransformation("/${bookTotalPage}p", colors.Grey02)
+            } else {
+                VisualTransformation.None
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = modifier.size(width = 320.dp, height = 48.dp),
+            modifier = modifier
+                .size(width = 320.dp, height = 48.dp)
+                .then(
+                    if (enabled) {
+                        Modifier.onFocusChanged { focusState ->
+                            if (focusState.isFocused && !hasFocusCleared && text.isNotEmpty()) {
+                                hasFocusCleared = true
+                                onValueChange("")
+                            }
+                            if (!focusState.isFocused) {
+                                hasFocusCleared = false
+                            }
+                        }
+                    } else {
+                        Modifier
+                    }
+                )
+                .then(
+                    if (isError)
+                        Modifier.border(
+                            width = 1.dp,
+                            color = colors.Red,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                    else Modifier
+                ),
             textStyle = typography.menu_r400_s14_h24.copy(lineHeight = 12.sp),
             maxLines = 1,
             shape = RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = colors.White,
-                focusedIndicatorColor = if (isError) colors.Red else Color.Transparent,
-                unfocusedIndicatorColor = if (isError) colors.Red else Color.Transparent,
-                focusedContainerColor = colors.Black,
-                unfocusedContainerColor = colors.Black,
-                cursorColor = colors.NeonGreen
+                unfocusedTextColor = colors.White,
+                disabledTextColor = colors.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                focusedContainerColor = colors.DarkGrey02,
+                unfocusedContainerColor = colors.DarkGrey02,
+                disabledContainerColor = colors.DarkGrey02,
+                cursorColor = colors.NeonGreen,
             ),
-            trailingIcon = {
-                if (text.isNotEmpty()) {
+            trailingIcon = if (showClearButton && enabled) {
+                {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_x_circle_white),
+                        painter = painterResource(id = R.drawable.ic_x_circle_grey),
                         contentDescription = "Clear text",
                         modifier = Modifier.clickable {
-                            text = ""
-                            isError = false
-                            errorMessageRes = null
+                            if (text.isNotEmpty()) {
+                                onValueChange("")
+                            }
                         },
                         tint = Color.Unspecified
                     )
-                } else {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_x_circle),
-                        contentDescription = "Clear text"
-                    )
                 }
-            }
+            } else null
         )
 
-        if (isError && errorMessageRes != null) {
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(id = errorMessageRes!!, errorMessageParam),
-                color = colors.Red,
-                style = typography.menu_r400_s14_h24.copy(lineHeight = 12.sp)
-            )
+        Box(modifier = Modifier.height(24.dp)) {
+            if (isError) {
+                Text(
+                    modifier = Modifier.padding(start = 4.dp, top = 8.dp),
+                    text = stringResource(id = R.string.error_page_over),
+                    color = colors.Red,
+                    style = typography.menu_r400_s14_h24.copy(lineHeight = 12.sp)
+                )
+            }
         }
     }
 }
@@ -135,6 +158,7 @@ class SuffixTransformation(
         val offsetMapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int =
                 offset.coerceAtMost(original.length)
+
             override fun transformedToOriginal(offset: Int): Int =
                 offset.coerceAtMost(original.length)
         }
@@ -147,12 +171,19 @@ class SuffixTransformation(
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFF000000, widthDp = 360, heightDp = 200)
 fun BookPageTextFieldPreviewEmpty() {
+    var text by rememberSaveable { mutableStateOf("") }
+
     Box(
         modifier = Modifier.size(width = 360.dp, height = 200.dp),
         contentAlignment = Alignment.Center
     ) {
         BookPageTextField(
-            bookPage = 456
+            bookTotalPage = 456,
+            text = text,
+            isError = false,
+            onValueChange = {
+                text = it
+            }
         )
     }
 }

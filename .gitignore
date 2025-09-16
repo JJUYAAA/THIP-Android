@@ -13,3 +13,10 @@
 .externalNativeBuild
 .cxx
 local.properties
+.idea/deploymentTargetSelector.xml
+.idea/misc.xml
+.idea/gradle.xml
+.idea/appInsightsSettings.xml
+/app/google-services.json
+*.properties
+*.jks

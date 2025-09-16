@@ -23,28 +23,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.texthip.thip.data.model.rooms.response.VoteItems
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
 
 
 @Composable
 fun GroupVoteButton(
-    options: List<String>,
-    voteResults: List<Int>
+    modifier: Modifier = Modifier,
+    voteItems: List<VoteItems>,
+    selectedIndex: Int?, // 선택한 인덱스
+    hasVoted: Boolean = false, // 투표 여부
+    onOptionSelected: (Int?) -> Unit
 ) {
-    var selectedIndex by remember { mutableStateOf<Int?>(null) }
+    val totalVotes = voteItems.sumOf { it.count }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        options.forEachIndexed { index, option ->
+        voteItems.forEachIndexed { index, item ->
             val isSelected = selectedIndex == index
-            val hasVoted = selectedIndex != null
-            val votePercent = if (hasVoted) voteResults.getOrNull(index)?.coerceIn(0, 100) ?: 0 else 0
+            val votePercent = if (totalVotes > 0) {
+                (item.count.toFloat() / totalVotes * 100).toInt()
+            } else {
+                0
+            }
 
             val animatedPercent by animateFloatAsState(
                 targetValue = votePercent / 100f,
@@ -69,22 +76,23 @@ fun GroupVoteButton(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = backgroundColor, shape = RoundedCornerShape(12.dp))
                     .height(44.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(color = backgroundColor)
                     .clickable {
-                        selectedIndex = if (isSelected) null else index
+                        if (isSelected) {
+                            onOptionSelected(null)
+                        } else {
+                            onOptionSelected(index)
+                        }
                     }
             ) {
-                // 퍼센트 채우기
                 if (hasVoted) {
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
                             .fillMaxWidth(animatedPercent)
-                            .background(
-                                color = percentBarColor,
-                                shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
-                            )
+                            .background(color = percentBarColor)
                     )
                 }
 
@@ -96,13 +104,13 @@ fun GroupVoteButton(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "${index + 1}. $option",
+                        text = "${index + 1}. ${item.itemName}",
                         color = textColor,
                         style = fontStyle
                     )
                     if (hasVoted) {
                         Text(
-                            text = "${votePercent}%",
+                            text = "${item.count}표",
                             color = textColor,
                             style = fontStyle
                         )
@@ -116,15 +124,37 @@ fun GroupVoteButton(
 @Preview
 @Composable
 private fun GroupVoteButtonPreview() {
-    val options = listOf("밥", "국수", "고기")
-    val results = listOf(20, 30, 50)
+    var selected by remember { mutableStateOf<Int?>(null) }
+    var voteItems by remember {
+        mutableStateOf(
+            listOf(
+                VoteItems(1, "밥", 25, false),
+                VoteItems(2, "국수", 35, false),
+                VoteItems(3, "고기", 40, false)
+            )
+        )
+    }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    val hasVoted = voteItems.any { it.isVoted }
+
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         GroupVoteButton(
-            options = options,
-            voteResults = results
+            voteItems = voteItems,
+            selectedIndex = selected,
+            hasVoted = hasVoted,
+            onOptionSelected = {
+                if (selected == it) {
+                    // ✅ 이미 선택한 항목을 다시 클릭한 경우: 취소 처리
+                    selected = null
+                    voteItems = voteItems.map { it.copy(isVoted = false) }
+                } else {
+                    // ✅ 새로운 항목 선택
+                    selected = it
+                    voteItems = voteItems.mapIndexed { index, item ->
+                        item.copy(isVoted = index == it)
+                    }
+                }
+            }
         )
     }
 }
