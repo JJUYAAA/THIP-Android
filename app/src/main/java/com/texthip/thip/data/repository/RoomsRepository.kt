@@ -57,7 +57,7 @@ class RoomsRepository @Inject constructor(
         response
     }
 
-    /** 카테고리별 모임방 섹션 조회 (마감임박/인기) */
+    /** 카테고리별 모임방 섹션 조회 (마감임박/인기/최근 생성) */
     suspend fun getRoomSections(
         genre: Genre? = null
     ): Result<RoomMainList?> = runCatching {

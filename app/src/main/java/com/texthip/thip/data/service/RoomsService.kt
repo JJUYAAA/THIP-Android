@@ -52,7 +52,7 @@ interface RoomsService {
         @Query("cursor") cursor: String? = null
     ): BaseResponse<JoinedRoomListResponse>
 
-    /** 카테고리별 모임방 목록 조회 (마감임박/인기) */
+    /** 카테고리별 모임방 목록 조회 (마감임박/인기/최근 생성) */
     @GET("rooms")
     suspend fun getRooms(
         @Query("category") category: String = "문학"

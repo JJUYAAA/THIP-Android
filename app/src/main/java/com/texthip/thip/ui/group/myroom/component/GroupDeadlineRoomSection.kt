@@ -68,7 +68,7 @@ fun GroupRoomDeadlineSection(
             // Genre enum을 현지화된 문자열로 변환
             val genreStrings = Genre.entries.toDisplayStrings()
 
-            // 마감 임박 방 목록과 인기 방 목록을 섹션으로 구성
+            // 마감 임박 방 목록, 인기 방 목록, 최신 생성 모임방을 섹션으로 구성
             val roomSections = listOf(
                 Pair(
                     stringResource(R.string.room_section_deadline),
@@ -77,7 +77,11 @@ fun GroupRoomDeadlineSection(
                 Pair(
                     stringResource(R.string.room_section_popular),
                     roomMainList?.popularRoomList ?: emptyList()
-                )
+                ),
+                Pair(
+                    stringResource(R.string.room_section_recent),
+                    roomMainList?.recentRoomList ?: emptyList()
+                ),
             )
 
             val effectivePagerState = rememberPagerState(
