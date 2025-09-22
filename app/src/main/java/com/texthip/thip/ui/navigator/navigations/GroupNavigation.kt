@@ -144,6 +144,9 @@ fun NavGraphBuilder.groupNavigation(
     // Group Done 화면
     composable<GroupRoutes.Done> {
         GroupDoneScreen(
+            onRoomClick = { roomId ->
+                navController.navigateToGroupRoom(roomId, isExpired = true)
+            },
             onNavigateBack = {
                 navigateBack()
             }
@@ -161,7 +164,7 @@ fun NavGraphBuilder.groupNavigation(
                 if (isRecruiting) {
                     navController.navigateToGroupRecruit(room.roomId)
                 } else {
-                    navController.navigateToGroupRoom(room.roomId)
+                    navController.navigateToGroupRoom(room.roomId, isExpired = false)
                 }
             },
             onNavigateBack = {
@@ -256,9 +259,11 @@ fun NavGraphBuilder.groupNavigation(
     composable<GroupRoutes.Room> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Room>()
         val roomId = route.roomId
+        val isExpired = route.isExpired
 
         GroupRoomScreen(
             roomId = roomId,
+            isExpired = isExpired,
             onBackClick = {
                 navigateBack()
             },
@@ -266,10 +271,10 @@ fun NavGraphBuilder.groupNavigation(
                 navController.navigateToGroupRoomMates(roomId)
             },
             onNavigateToChat = {
-                navController.navigateToGroupRoomChat(roomId)
+                navController.navigateToGroupRoomChat(roomId, isExpired)
             },
             onNavigateToNote = { page, isOverview ->
-                navController.navigateToGroupNote(roomId, page, isOverview)
+                navController.navigateToGroupNote(roomId, page, isOverview, isExpired)
             },
             onNavigateToBookDetail = { isbn ->
                 navController.navigateToBookDetail(isbn)
@@ -282,7 +287,8 @@ fun NavGraphBuilder.groupNavigation(
         val route = backStackEntry.toRoute<GroupRoutes.RoomMates>()
         val roomId = route.roomId
 
-        val feedViewModel: FeedViewModel = hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Group))
+        val feedViewModel: FeedViewModel =
+            hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Group))
         val feedUiState by feedViewModel.uiState.collectAsState()
         val myUserId = feedUiState.myFeedInfo?.creatorId
 
@@ -307,9 +313,12 @@ fun NavGraphBuilder.groupNavigation(
         )
     }
 
-    composable<GroupRoutes.RoomChat> {
+    composable<GroupRoutes.RoomChat> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.RoomChat>()
+
         GroupRoomChatScreen(
             onBackClick = { navigateBack() },
+            isExpired = route.isExpired
         )
     }
 
@@ -319,12 +328,14 @@ fun NavGraphBuilder.groupNavigation(
         val roomId = route.roomId
         val page = route.page
         val isOverview = route.isOverview
+        val isExpired = route.isExpired
 
         val result = backStackEntry.savedStateHandle.get<Int>("selected_tab_index")
 
         val viewModel: GroupNoteViewModel = hiltViewModel(backStackEntry)
 
-        val feedViewModel: FeedViewModel = hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Group))
+        val feedViewModel: FeedViewModel =
+            hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Group))
         val feedUiState by feedViewModel.uiState.collectAsState()
         val myUserId = feedUiState.myFeedInfo?.creatorId
 
@@ -339,6 +350,7 @@ fun NavGraphBuilder.groupNavigation(
             resultTabIndex = result,
             initialPage = page,
             initialIsOverview = isOverview,
+            isExpired = isExpired,
             onResultConsumed = {
                 backStackEntry.savedStateHandle.remove<Int>("selected_tab_index")
             },

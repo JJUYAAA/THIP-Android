@@ -14,7 +14,7 @@ sealed class GroupRoutes : Routes() {
         val imageUrl: String,
         val author: String
     ) : GroupRoutes()
-    
+
     @Serializable
     data object Done : GroupRoutes()
 
@@ -31,17 +31,21 @@ sealed class GroupRoutes : Routes() {
     data class RoomUnlock(val roomId: Int) : GroupRoutes()
 
     @Serializable
-    data class Room(val roomId: Int) : GroupRoutes()
+    data class Room(val roomId: Int, val isExpired: Boolean = false) : GroupRoutes()
 
     @Serializable
     data class RoomMates(val roomId: Int) : GroupRoutes()
 
     @Serializable
-    data class RoomChat(val roomId: Int) : GroupRoutes()
+    data class RoomChat(val roomId: Int, val isExpired: Boolean = false) : GroupRoutes()
 
     @Serializable
-    data class Note(val roomId: Int, val page: Int? = null, val isOverview: Boolean? = null) :
-        GroupRoutes()
+    data class Note(
+        val roomId: Int,
+        val page: Int? = null,
+        val isOverview: Boolean? = null,
+        val isExpired: Boolean = false
+    ) : GroupRoutes()
 
     @Serializable
     data class NoteCreate(

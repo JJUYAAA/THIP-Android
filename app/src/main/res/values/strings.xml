@@ -175,6 +175,7 @@
     <string name="percent">%</string>
     <string name="leave_room_toast">모임 나가기를 완료했어요.</string>
     <string name="leave_room_fail_toast">모임 나가기를 실패했어요.</string>
+    <string name="until_start">시작까지</string>
 
     <!--    group room    -->
     <string name="introduction_content">소개글</string>
@@ -256,6 +257,7 @@
     <string name="posting_complete">기록이 게시되었습니다!</string>
     <string name="delete_comment_title">이 댓글을 삭제하시겠어요?</string>
     <string name="comment_deleted">삭제된 댓글이에요.</string>
+    <string name="expired_room_read_only_message">완료된 모임방에서는 기존 기록에 대한 조회만 가능해요.</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>

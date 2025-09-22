@@ -51,6 +51,7 @@ import com.texthip.thip.utils.rooms.advancedImePadding
 @Composable
 fun CommentBottomSheet(
     uiState: CommentsUiState,
+    isExpired: Boolean = false,
     onDismiss: () -> Unit,
     onProfileClick: (userId: Long) -> Unit = {},
     onShowToast: (String) -> Unit = {},
@@ -122,6 +123,7 @@ fun CommentBottomSheet(
                         } else {
                             CommentLazyList(
                                 listState = listState,
+                                isExpired = isExpired,
                                 commentList = uiState.comments,
                                 isLoadingMore = uiState.isLoadingMore,
                                 isLastPage = uiState.isLast,
@@ -143,31 +145,33 @@ fun CommentBottomSheet(
                     }
                 }
 
-                CommentTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester),
-                    hint = stringResource(R.string.reply_to),
-                    input = inputText,
-                    onInputChange = { inputText = it },
-                    onSendClick = {
-                        viewModel.onEvent(
-                            CommentsEvent.CreateComment(
-                                content = inputText,
-                                parentId = replyingToCommentId
+                if (!isExpired) {
+                    CommentTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester),
+                        hint = stringResource(R.string.reply_to),
+                        input = inputText,
+                        onInputChange = { inputText = it },
+                        onSendClick = {
+                            viewModel.onEvent(
+                                CommentsEvent.CreateComment(
+                                    content = inputText,
+                                    parentId = replyingToCommentId
+                                )
                             )
-                        )
-                        inputText = ""
-                        replyingToCommentId = null
-                        replyingToNickname = null
-                        focusManager.clearFocus()
-                    },
-                    replyTo = replyingToNickname,
-                    onCancelReply = {
-                        replyingToCommentId = null
-                        replyingToNickname = null
-                    }
-                )
+                            inputText = ""
+                            replyingToCommentId = null
+                            replyingToNickname = null
+                            focusManager.clearFocus()
+                        },
+                        replyTo = replyingToNickname,
+                        onCancelReply = {
+                            replyingToCommentId = null
+                            replyingToNickname = null
+                        }
+                    )
+                }
             }
         }
     }
@@ -224,6 +228,7 @@ fun CommentBottomSheet(
 @Composable
 private fun CommentLazyList(
     listState: LazyListState,
+    isExpired: Boolean = false,
     commentList: List<CommentList>,
     isLoadingMore: Boolean,
     isLastPage: Boolean,
