@@ -139,7 +139,8 @@ fun CommentBottomSheet(
                                     selectedCommentForMenu = comment
                                 },
                                 onReplyLongPress = { reply -> selectedReplyForMenu = reply },
-                                onProfileClick = onProfileClick
+                                onProfileClick = onProfileClick,
+                                onShowToast = onShowToast
                             )
                         }
                     }
@@ -237,7 +238,8 @@ private fun CommentLazyList(
     onEvent: (CommentsEvent) -> Unit,
     onCommentLongPress: (CommentList) -> Unit,
     onReplyLongPress: (ReplyList) -> Unit,
-    onProfileClick: (userId: Long) -> Unit
+    onProfileClick: (userId: Long) -> Unit,
+    onShowToast: (String) -> Unit
 ) {
     val isScrolledToEnd by remember {
         derivedStateOf {
@@ -268,11 +270,13 @@ private fun CommentLazyList(
         ) { comment ->
             CommentSection(
                 commentItem = comment,
+                isExpired = isExpired,
                 onReplyClick = onReplyClick,
                 onEvent = onEvent,
                 onCommentLongPress = onCommentLongPress,
                 onReplyLongPress = onReplyLongPress,
-                onProfileClick = onProfileClick
+                onProfileClick = onProfileClick,
+                onShowToast = onShowToast
             )
         }
 
