@@ -46,7 +46,6 @@ fun GroupFilteredSearchResult(
     canLoadMore: Boolean = false,
     isLoadingMore: Boolean = false,
     onLoadMore: () -> Unit = {},
-    isAllCategory: Boolean = false
 ) {
     val allChipText = stringResource(id = R.string.all)
     val chipList = remember(genres) { listOf(allChipText) + genres }

@@ -187,7 +187,6 @@ private fun GroupSearchContent(
                             canLoadMore = uiState.canLoadMore,
                             isLoadingMore = uiState.isLoadingMore,
                             onLoadMore = onLoadMoreRooms,
-                            isAllCategory = uiState.isAllCategory
                         )
                     }
                 }
@@ -198,7 +197,7 @@ private fun GroupSearchContent(
             FilterButton(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(top = 196.dp, end = 20.dp),
+                    .padding(top = 174.dp, end = 20.dp),
                 selectedOption = sortOptions[selectedSortOptionIndex],
                 options = sortOptions,
                 onOptionSelected = { selected ->
