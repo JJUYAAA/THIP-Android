@@ -35,7 +35,8 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 fun GroupRecentSearch(
     recentSearches: List<String>,
     onSearchClick: (String) -> Unit,
-    onRemove: (String) -> Unit
+    onRemove: (String) -> Unit,
+    onViewAllRoomsClick: () -> Unit = {}
 ) {
     Column {
         Text(
@@ -72,7 +73,7 @@ fun GroupRecentSearch(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    // TODO: 전체 방 둘러보기 클릭 시 동작
+                    onViewAllRoomsClick()
                 },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween

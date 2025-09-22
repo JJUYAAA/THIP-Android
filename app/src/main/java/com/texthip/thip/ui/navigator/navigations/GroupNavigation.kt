@@ -28,6 +28,7 @@ import com.texthip.thip.ui.group.room.screen.GroupRoomUnlockScreen
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitViewModel
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
+import com.texthip.thip.ui.group.search.viewmodel.GroupSearchViewModel
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
@@ -82,7 +83,7 @@ fun NavGraphBuilder.groupNavigation(
                 navController.navigateToAlarm()
             },
             onNavigateToGroupSearch = {
-                navController.navigateToGroupSearch()
+                navController.navigateToGroupSearch(viewAll = false)
             },
             onNavigateToGroupMy = {
                 navController.navigateToGroupMy()
@@ -92,6 +93,9 @@ fun NavGraphBuilder.groupNavigation(
             },
             onNavigateToGroupRoom = { roomId ->
                 navController.navigateToGroupRoom(roomId)
+            },
+            onNavigateToGroupSearchAllRooms = {
+                navController.navigateToGroupSearch(viewAll = true)
             }
         )
     }
@@ -174,14 +178,25 @@ fun NavGraphBuilder.groupNavigation(
     }
 
     // Group Search 화면
-    composable<GroupRoutes.Search> {
+    composable<GroupRoutes.Search> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.Search>()
+        val viewModel: GroupSearchViewModel = hiltViewModel()
+
+        // [추가] 화면 진입 시 viewAll 플래그를 확인하고 ViewModel의 함수를 호출
+        LaunchedEffect(Unit) {
+            if (route.viewAll) {
+                viewModel.onViewAllRooms()
+            }
+        }
+
         GroupSearchScreen(
             onNavigateBack = {
                 navigateBack()
             },
             onRoomClick = { roomId ->
                 navController.navigateToGroupRecruit(roomId)
-            }
+            },
+            viewModel = viewModel
         )
     }
 

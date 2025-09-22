@@ -19,7 +19,7 @@ sealed class GroupRoutes : Routes() {
     data object Done : GroupRoutes()
 
     @Serializable
-    data object Search : GroupRoutes()
+    data class Search(val viewAll: Boolean = false) : GroupRoutes()
 
     @Serializable
     data object My : GroupRoutes()

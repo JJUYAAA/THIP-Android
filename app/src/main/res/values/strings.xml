@@ -260,6 +260,7 @@
     <string name="expired_room_read_only_message">완료된 모임방에서는 기존 기록에 대한 조회만 가능해요.</string>
     <string name="look_around_all_rooms">전체 모임방을 한 눈에 둘러보세요!</string>
     <string name="look_around_all_rooms_title">전체 모임방 둘러보기</string>
+    <string name="all">전체</string>
 
     <!--    alarm    -->
     <string name="alarm_feed">피드</string>

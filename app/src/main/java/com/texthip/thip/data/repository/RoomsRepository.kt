@@ -141,11 +141,12 @@ class RoomsRepository @Inject constructor(
     suspend fun searchRooms(
         keyword: String,
         category: String,
+        isAllCategory: Boolean = false,
         sort: String = "deadline",
         isFinalized: Boolean = false,
         cursor: String? = null
     ): Result<RoomsSearchResponse?> = runCatching {
-        roomsService.searchRooms(keyword, category, sort, isFinalized, cursor)
+        roomsService.searchRooms(keyword, category, isAllCategory, sort, isFinalized, cursor)
             .handleBaseResponse()
             .getOrThrow()
     }

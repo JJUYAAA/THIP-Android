@@ -37,8 +37,8 @@ fun NavHostController.navigateToGroupDone() {
 }
 
 // 모임방 검색 화면으로 이동
-fun NavHostController.navigateToGroupSearch() {
-    navigate(GroupRoutes.Search)
+fun NavHostController.navigateToGroupSearch(viewAll: Boolean = false) {
+    navigate(GroupRoutes.Search(viewAll = viewAll))
 }
 
 // 내 모임방 화면으로 이동

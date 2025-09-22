@@ -55,7 +55,8 @@ fun GroupScreen(
     onNavigateToGroupSearch: () -> Unit = {},   // 검색 화면으로 이동
     onNavigateToGroupMy: () -> Unit = {},   // 내 모임방 화면으로 이동
     onNavigateToGroupRecruit: (Int) -> Unit = {},   // 모집 중인 모임방 화면으로 이동
-    onNavigateToGroupRoom: (Int) -> Unit = {},  // 기록장 화면으로 이동
+    onNavigateToGroupRoom: (Int) -> Unit = {},  // 기록장 화면으로 이동,
+    onNavigateToGroupSearchAllRooms: () -> Unit = {},
     viewModel: GroupViewModel = hiltViewModel()
 ) {
     // 화면 재진입 시 데이터 새로고침
@@ -73,10 +74,11 @@ fun GroupScreen(
         onNavigateToGroupMy = onNavigateToGroupMy,
         onNavigateToGroupRecruit = onNavigateToGroupRecruit,
         onNavigateToGroupRoom = onNavigateToGroupRoom,
+        onNavigateToGroupSearchAllRooms = onNavigateToGroupSearchAllRooms,
         onRefreshGroupData = { viewModel.refreshGroupData() },
         onCardVisible = { cardIndex -> viewModel.loadMoreGroups() },
         onSelectGenre = { genreIndex -> viewModel.selectGenre(genreIndex) },
-        onHideToast = { viewModel.hideToast() }
+        onHideToast = { viewModel.hideToast() },
     )
 }
 
@@ -91,6 +93,7 @@ fun GroupContent(
     onNavigateToGroupMy: () -> Unit = {},
     onNavigateToGroupRecruit: (Int) -> Unit = {},
     onNavigateToGroupRoom: (Int) -> Unit = {},
+    onNavigateToGroupSearchAllRooms: () -> Unit = {},
     onRefreshGroupData: () -> Unit = {},
     onCardVisible: (Int) -> Unit = {},
     onSelectGenre: (Int) -> Unit = {},
@@ -150,7 +153,7 @@ fun GroupContent(
                 EmptyMySubscriptionBar(
                     modifier = Modifier.padding(horizontal = 30.dp),
                     text = stringResource(R.string.look_around_all_rooms),
-                    onClick = {} // TODO: 전체 모임방 화면으로 이동
+                    onClick = onNavigateToGroupSearchAllRooms
                 )
 
                 Spacer(Modifier.height(32.dp))

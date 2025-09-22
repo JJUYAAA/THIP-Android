@@ -100,6 +100,7 @@ interface RoomsService {
     suspend fun searchRooms(
         @Query("keyword") keyword: String,
         @Query("category") category: String,
+        @Query("isAllCategory") isAllCategory: Boolean = false,
         @Query("sort") sort: String = "deadline",
         @Query("isFinalized") isFinalized: Boolean = false,
         @Query("cursor") cursor: String? = null
