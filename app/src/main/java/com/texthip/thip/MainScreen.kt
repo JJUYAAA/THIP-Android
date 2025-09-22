@@ -38,6 +38,7 @@ fun MainScreen(
                             MainTabRoutes.Feed -> {
                                 feedReselectionTrigger += 1
                             }
+
                             else -> {
                                 // 다른 탭들은 향후 확장 가능
                             }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
@@ -14,6 +15,7 @@ import com.texthip.thip.data.manager.TokenManager
 import com.texthip.thip.ui.navigator.navigations.authNavigation
 import com.texthip.thip.ui.navigator.routes.CommonRoutes
 import com.texthip.thip.ui.theme.ThipTheme
+import com.texthip.thip.utils.permission.NotificationPermissionUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -22,18 +24,33 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var tokenManager: TokenManager
+
     @Inject
     lateinit var authStateManager: AuthStateManager
+
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        
+        // 앱 시작 시 알림 권한 요청
+        requestNotificationPermissionIfNeeded()
+        
         setContent {
             ThipTheme {
                 RootNavHost(authStateManager)
             }
         }
 //        getKakaoKeyHash(this)
+    }
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (NotificationPermissionUtils.shouldRequestNotificationPermission(this)) {
+            notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 }
 
@@ -48,7 +65,7 @@ fun RootNavHost(authStateManager: AuthStateManager) {
             }
         }
     }
-    
+
     NavHost(
         navController = navController,
         startDestination = CommonRoutes.Splash

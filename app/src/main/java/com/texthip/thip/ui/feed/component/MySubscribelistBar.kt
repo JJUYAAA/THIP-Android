@@ -134,6 +134,7 @@ fun MySubscribeBarlist(
 private fun EmptyMySubscriptionBar() {
     Box(
         modifier = Modifier
+            .padding(top = 8.dp)
             .fillMaxWidth()
             .height(42.dp)
             .clip(RoundedCornerShape(12.dp))
