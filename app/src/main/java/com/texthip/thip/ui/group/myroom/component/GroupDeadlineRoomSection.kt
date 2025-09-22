@@ -84,9 +84,11 @@ fun GroupRoomDeadlineSection(
                 ),
             )
 
+            val actualPageCount = roomSections.size
+
             val effectivePagerState = rememberPagerState(
-                initialPage = 0,
-                pageCount = { roomSections.size }
+                initialPage = 2,
+                pageCount = { Int.MAX_VALUE }
             )
 
             HorizontalPager(
@@ -95,7 +97,8 @@ fun GroupRoomDeadlineSection(
                 pageSpacing = pageSpacing,
                 modifier = Modifier.fillMaxWidth()
             ) { page ->
-                val (sectionTitle, rooms) = roomSections[page]
+                val actualPage = page % actualPageCount
+                val (sectionTitle, rooms) = roomSections[actualPage]
 
                 val isCurrent = effectivePagerState.currentPage == page
                 val scale = if (isCurrent) 1f else 0.94f
