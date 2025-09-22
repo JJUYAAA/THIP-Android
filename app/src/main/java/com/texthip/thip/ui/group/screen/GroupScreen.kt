@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -34,6 +35,7 @@ import com.texthip.thip.data.model.rooms.response.RoomMainResponse
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.modal.ToastWithDate
 import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
+import com.texthip.thip.ui.feed.component.EmptyMySubscriptionBar
 import com.texthip.thip.ui.group.myroom.component.GroupMySectionHeader
 import com.texthip.thip.ui.group.myroom.component.GroupPager
 import com.texthip.thip.ui.group.myroom.component.GroupRoomDeadlineSection
@@ -95,7 +97,7 @@ fun GroupContent(
     onHideToast: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
-    
+
     // 탭 전환 시 스크롤을 맨 위로 초기화
     LaunchedEffect(Unit) {
         scrollState.scrollTo(0)
@@ -144,6 +146,14 @@ fun GroupContent(
                         .fillMaxWidth()
                         .background(color = colors.DarkGrey02)
                 )
+
+                EmptyMySubscriptionBar(
+                    modifier = Modifier.padding(horizontal = 30.dp),
+                    text = stringResource(R.string.look_around_all_rooms),
+                    onClick = {} // TODO: 전체 모임방 화면으로 이동
+                )
+
+                Spacer(Modifier.height(32.dp))
 
                 // 마감 임박한 독서 모임방
                 GroupRoomDeadlineSection(
