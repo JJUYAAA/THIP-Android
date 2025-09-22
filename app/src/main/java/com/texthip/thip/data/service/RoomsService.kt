@@ -108,7 +108,7 @@ interface RoomsService {
 
 
     /** 기록장 API들 */
-    @GET("rooms/{roomId}/playing")
+    @GET("rooms/{roomId}")
     suspend fun getRoomsPlaying(
         @Path("roomId") roomId: Int
     ): BaseResponse<RoomsPlayingResponse>
