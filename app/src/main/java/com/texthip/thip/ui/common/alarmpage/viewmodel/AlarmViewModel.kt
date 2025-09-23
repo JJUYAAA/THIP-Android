@@ -1,27 +1,106 @@
 package com.texthip.thip.ui.common.alarmpage.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.texthip.thip.ui.common.alarmpage.mock.AlarmItem
+import androidx.lifecycle.viewModelScope
+import com.texthip.thip.data.repository.NotificationRepository
+import com.texthip.thip.ui.common.alarmpage.mock.NotificationType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AlarmViewModel : ViewModel() {
-    private val _alarmItems = MutableStateFlow<List<AlarmItem>>(emptyList())
-    val alarmItems: StateFlow<List<AlarmItem>> = _alarmItems.asStateFlow()
+@HiltViewModel
+class AlarmViewModel @Inject constructor(
+    private val repository: NotificationRepository
+) : ViewModel() {
 
-    // 알림 더미 데이터
-    init {
-        _alarmItems.value = listOf(
-            AlarmItem(1, "피드", "내 글을 좋아합니다.", "user123님이 내 글에 좋아요를 눌렀어요.", "2시간 전", false),
-            AlarmItem(2, "모임", "같이 읽기를 시작했어요!", "모임방에서 20분 동안 같이 읽기가 시작되었어요!", "7시간 전", false),
-            AlarmItem(4, "모임", "투표가 시작되었어요!", "투표지를 먼저 열람합니다.", "17시간 전", false),
-            AlarmItem(5, "피드", "팔로워가 새 글을 올렸어요.", "user456님이 새 리뷰를 작성했습니다.", "1일 전", true),
-            AlarmItem(6, "모임", "새로운 모임방 초대", "호르몬 체인지 완독하는 방에 초대되었습니다.", "2일 전", false)
-        )
+    private val _uiState = MutableStateFlow(AlarmUiState())
+    val uiState: StateFlow<AlarmUiState> = _uiState.asStateFlow()
+
+    private var nextCursor: String? = null
+    private var isLastPage = false
+    private var isLoadingData = false
+
+    private fun updateState(update: (AlarmUiState) -> AlarmUiState) {
+        _uiState.value = update(_uiState.value)
     }
 
-    fun onCardClick(item: AlarmItem) {
-        // TODO: 알림 카드 클릭 처리
+    init {
+        loadNotifications(reset = true)
+    }
+
+    fun loadNotifications(reset: Boolean = false) {
+        if (isLoadingData && !reset) return
+        if (isLastPage && !reset) return
+
+        viewModelScope.launch {
+            try {
+                isLoadingData = true
+
+                if (reset) {
+                    updateState {
+                        it.copy(
+                            isLoading = true,
+                            notifications = emptyList(),
+                            hasMore = true
+                        )
+                    }
+                    nextCursor = null
+                    isLastPage = false
+                } else {
+                    updateState { it.copy(isLoadingMore = true) }
+                }
+
+                val type =
+                    if (uiState.value.currentNotificationType == NotificationType.FEED_AND_ROOM) {
+                        null
+                    } else {
+                        uiState.value.currentNotificationType.value
+                    }
+
+                repository.getNotifications(type, nextCursor)
+                    .onSuccess { notificationListResponse ->
+                        notificationListResponse?.let { response ->
+                            val currentList =
+                                if (reset) emptyList() else uiState.value.notifications
+                            updateState {
+                                it.copy(
+                                    notifications = currentList + response.notifications,
+                                    error = null,
+                                    hasMore = !response.isLast
+                                )
+                            }
+                            nextCursor = response.nextCursor
+                            isLastPage = response.isLast
+                        } ?: run {
+                            updateState { it.copy(hasMore = false) }
+                            isLastPage = true
+                        }
+                    }
+                    .onFailure { exception ->
+                        updateState { it.copy(error = exception.message) }
+                    }
+            } finally {
+                isLoadingData = false
+                updateState { it.copy(isLoading = false, isLoadingMore = false) }
+            }
+        }
+    }
+
+    fun loadMoreNotifications() {
+        loadNotifications(reset = false)
+    }
+
+    fun refreshData() {
+        loadNotifications(reset = true)
+    }
+
+    fun changeNotificationType(notificationType: NotificationType) {
+        if (notificationType != uiState.value.currentNotificationType) {
+            updateState { it.copy(currentNotificationType = notificationType) }
+            loadNotifications(reset = true)
+        }
     }
 }
