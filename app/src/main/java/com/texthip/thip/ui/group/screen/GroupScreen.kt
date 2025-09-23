@@ -33,6 +33,7 @@ import com.texthip.thip.data.model.rooms.response.RoomMainList
 import com.texthip.thip.data.model.rooms.response.RoomMainResponse
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.modal.ToastWithDate
+import com.texthip.thip.ui.common.alarmpage.viewmodel.AlarmViewModel
 import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
 import com.texthip.thip.ui.group.myroom.component.GroupMySectionHeader
 import com.texthip.thip.ui.group.myroom.component.GroupPager
@@ -54,16 +55,19 @@ fun GroupScreen(
     onNavigateToGroupMy: () -> Unit = {},   // 내 모임방 화면으로 이동
     onNavigateToGroupRecruit: (Int) -> Unit = {},   // 모집 중인 모임방 화면으로 이동
     onNavigateToGroupRoom: (Int) -> Unit = {},  // 기록장 화면으로 이동
-    viewModel: GroupViewModel = hiltViewModel()
+    viewModel: GroupViewModel = hiltViewModel(),
+    alarmViewModel: AlarmViewModel = hiltViewModel()
 ) {
     // 화면 재진입 시 데이터 새로고침
     LaunchedEffect(Unit) {
         viewModel.resetToInitialState()
     }
     val uiState by viewModel.uiState.collectAsState()
+    val alarmUiState by alarmViewModel.uiState.collectAsState()
 
     GroupContent(
         uiState = uiState,
+        hasUnreadNotifications = alarmUiState.notifications.any { !it.isChecked },
         onNavigateToMakeRoom = onNavigateToMakeRoom,
         onNavigateToGroupDone = onNavigateToGroupDone,
         onNavigateToAlarm = onNavigateToAlarm,
@@ -82,6 +86,7 @@ fun GroupScreen(
 @Composable
 fun GroupContent(
     uiState: GroupUiState,
+    hasUnreadNotifications: Boolean = false,
     onNavigateToMakeRoom: () -> Unit = {},
     onNavigateToGroupDone: () -> Unit = {},
     onNavigateToAlarm: () -> Unit = {},
@@ -162,7 +167,7 @@ fun GroupContent(
         // 상단바
         LogoTopAppBar(
             leftIcon = painterResource(R.drawable.ic_done),
-            hasNotification = false,
+            hasNotification = hasUnreadNotifications,
             onLeftClick = onNavigateToGroupDone,
             onRightClick = onNavigateToAlarm
         )

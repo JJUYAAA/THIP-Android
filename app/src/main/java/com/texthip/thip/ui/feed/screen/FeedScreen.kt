@@ -43,10 +43,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.texthip.thip.R
 import com.texthip.thip.data.model.feed.response.AllFeedItem
 import com.texthip.thip.data.model.users.response.RecentWriterList
+import com.texthip.thip.ui.common.alarmpage.viewmodel.AlarmViewModel
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.header.AuthorHeader
 import com.texthip.thip.ui.common.header.HeaderMenuBarTab
@@ -66,7 +66,6 @@ import com.texthip.thip.utils.color.hexToColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
@@ -85,8 +84,10 @@ fun FeedScreen(
     onRefreshConsumed: () -> Unit = {},
     navController: NavHostController,
     feedViewModel: FeedViewModel = hiltViewModel(),
+    alarmViewModel: AlarmViewModel = hiltViewModel()
 ) {
     val feedUiState by feedViewModel.uiState.collectAsState()
+    val alarmUiState by alarmViewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
     var showProgressBar by remember { mutableStateOf(false) }
     val progress = remember { Animatable(0f) }
@@ -256,6 +257,7 @@ fun FeedScreen(
 
     FeedContent(
         feedUiState = feedUiState,
+        hasUnreadNotifications = alarmUiState.notifications.any { !it.isChecked },
         showProgressBar = showProgressBar,
         progress = progress.value,
         currentListState = currentListState,
@@ -289,7 +291,8 @@ fun FeedScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FeedContent(
-    feedUiState: com.texthip.thip.ui.feed.viewmodel.FeedUiState,
+    feedUiState: FeedUiState,
+    hasUnreadNotifications: Boolean,
     showProgressBar: Boolean,
     progress: Float,
     currentListState: LazyListState,
@@ -331,7 +334,7 @@ private fun FeedContent(
             ) {
                 LogoTopAppBar(
                     leftIcon = painterResource(R.drawable.ic_plusfriend),
-                    hasNotification = false,
+                    hasNotification = hasUnreadNotifications,
                     onLeftClick = onNavigateToSearchPeople,
                     onRightClick = onNavigateToNotification,
                 )
@@ -659,6 +662,7 @@ private fun FeedContentPreview() {
                     )
                 )
             ),
+            hasUnreadNotifications = false,
             showProgressBar = false,
             progress = 0f,
             currentListState = LazyListState(),
