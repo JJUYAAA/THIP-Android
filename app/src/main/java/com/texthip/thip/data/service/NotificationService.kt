@@ -4,6 +4,7 @@ import com.texthip.thip.data.model.notification.request.FcmTokenRequest
 import com.texthip.thip.data.model.notification.request.FcmTokenDeleteRequest
 import com.texthip.thip.data.model.notification.request.NotificationEnabledRequest
 import com.texthip.thip.data.model.notification.response.NotificationEnabledResponse
+import com.texthip.thip.data.model.notification.response.NotificationListResponse
 import com.texthip.thip.data.model.base.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -32,4 +33,10 @@ interface NotificationService {
     suspend fun deleteFcmToken(
         @Body request: FcmTokenDeleteRequest
     ): BaseResponse<Unit>
+    
+    @GET("notifications")
+    suspend fun getNotifications(
+        @Query("cursor") cursor: String? = null,
+        @Query("type") type: String? = null
+    ): BaseResponse<NotificationListResponse>
 }
