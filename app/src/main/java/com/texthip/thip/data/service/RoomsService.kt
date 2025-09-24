@@ -52,7 +52,7 @@ interface RoomsService {
         @Query("cursor") cursor: String? = null
     ): BaseResponse<JoinedRoomListResponse>
 
-    /** 카테고리별 모임방 목록 조회 (마감임박/인기) */
+    /** 카테고리별 모임방 목록 조회 (마감임박/인기/최근 생성) */
     @GET("rooms")
     suspend fun getRooms(
         @Query("category") category: String = "문학"
@@ -100,6 +100,7 @@ interface RoomsService {
     suspend fun searchRooms(
         @Query("keyword") keyword: String,
         @Query("category") category: String,
+        @Query("isAllCategory") isAllCategory: Boolean = false,
         @Query("sort") sort: String = "deadline",
         @Query("isFinalized") isFinalized: Boolean = false,
         @Query("cursor") cursor: String? = null
@@ -108,7 +109,7 @@ interface RoomsService {
 
 
     /** 기록장 API들 */
-    @GET("rooms/{roomId}/playing")
+    @GET("rooms/{roomId}")
     suspend fun getRoomsPlaying(
         @Path("roomId") roomId: Int
     ): BaseResponse<RoomsPlayingResponse>

@@ -37,8 +37,8 @@ fun NavHostController.navigateToGroupDone() {
 }
 
 // 모임방 검색 화면으로 이동
-fun NavHostController.navigateToGroupSearch() {
-    navigate(GroupRoutes.Search)
+fun NavHostController.navigateToGroupSearch(viewAll: Boolean = false) {
+    navigate(GroupRoutes.Search(viewAll = viewAll))
 }
 
 // 내 모임방 화면으로 이동
@@ -71,8 +71,8 @@ fun NavHostController.navigateToRecommendedGroupRecruit(roomId: Int) {
 }
 
 // 진행중인 모임방 화면으로 이동
-fun NavHostController.navigateToGroupRoom(roomId: Int) {
-    navigate(GroupRoutes.Room(roomId))
+fun NavHostController.navigateToGroupRoom(roomId: Int, isExpired: Boolean = false) {
+    navigate(GroupRoutes.Room(roomId, isExpired))
 }
 
 // 독서메이트 화면으로 이동
@@ -81,17 +81,18 @@ fun NavHostController.navigateToGroupRoomMates(roomId: Int) {
 }
 
 // 오늘의 한마디 회면으로 이동
-fun NavHostController.navigateToGroupRoomChat(roomId: Int) {
-    navigate(GroupRoutes.RoomChat(roomId))
+fun NavHostController.navigateToGroupRoomChat(roomId: Int, isExpired: Boolean = false) {
+    navigate(GroupRoutes.RoomChat(roomId, isExpired))
 }
 
 // 기록장 화면으로 이동
 fun NavHostController.navigateToGroupNote(
     roomId: Int,
     page: Int? = null,
-    isOverview: Boolean? = null
+    isOverview: Boolean? = null,
+    isExpired: Boolean = false
 ) {
-    navigate(GroupRoutes.Note(roomId = roomId, page = page, isOverview = isOverview))
+    navigate(GroupRoutes.Note(roomId = roomId, page = page, isOverview = isOverview, isExpired = isExpired))
 }
 
 // 기록 생성 화면으로 이동
