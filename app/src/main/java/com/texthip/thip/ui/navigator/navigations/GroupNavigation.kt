@@ -28,6 +28,7 @@ import com.texthip.thip.ui.group.room.screen.GroupRoomUnlockScreen
 import com.texthip.thip.ui.group.room.viewmodel.GroupRoomRecruitViewModel
 import com.texthip.thip.ui.group.screen.GroupScreen
 import com.texthip.thip.ui.group.search.screen.GroupSearchScreen
+import com.texthip.thip.ui.group.search.viewmodel.GroupSearchViewModel
 import com.texthip.thip.ui.group.viewmodel.GroupViewModel
 import com.texthip.thip.ui.navigator.extensions.navigateToAlarm
 import com.texthip.thip.ui.navigator.extensions.navigateToBookDetail
@@ -82,7 +83,7 @@ fun NavGraphBuilder.groupNavigation(
                 navController.navigateToAlarm()
             },
             onNavigateToGroupSearch = {
-                navController.navigateToGroupSearch()
+                navController.navigateToGroupSearch(viewAll = false)
             },
             onNavigateToGroupMy = {
                 navController.navigateToGroupMy()
@@ -92,6 +93,9 @@ fun NavGraphBuilder.groupNavigation(
             },
             onNavigateToGroupRoom = { roomId ->
                 navController.navigateToGroupRoom(roomId)
+            },
+            onNavigateToGroupSearchAllRooms = {
+                navController.navigateToGroupSearch(viewAll = true)
             }
         )
     }
@@ -144,6 +148,9 @@ fun NavGraphBuilder.groupNavigation(
     // Group Done 화면
     composable<GroupRoutes.Done> {
         GroupDoneScreen(
+            onRoomClick = { roomId ->
+                navController.navigateToGroupRoom(roomId, isExpired = true)
+            },
             onNavigateBack = {
                 navigateBack()
             }
@@ -161,7 +168,7 @@ fun NavGraphBuilder.groupNavigation(
                 if (isRecruiting) {
                     navController.navigateToGroupRecruit(room.roomId)
                 } else {
-                    navController.navigateToGroupRoom(room.roomId)
+                    navController.navigateToGroupRoom(room.roomId, isExpired = false)
                 }
             },
             onNavigateBack = {
@@ -171,14 +178,25 @@ fun NavGraphBuilder.groupNavigation(
     }
 
     // Group Search 화면
-    composable<GroupRoutes.Search> {
+    composable<GroupRoutes.Search> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.Search>()
+        val viewModel: GroupSearchViewModel = hiltViewModel()
+
+        // [추가] 화면 진입 시 viewAll 플래그를 확인하고 ViewModel의 함수를 호출
+        LaunchedEffect(Unit) {
+            if (route.viewAll) {
+                viewModel.onViewAllRooms()
+            }
+        }
+
         GroupSearchScreen(
             onNavigateBack = {
                 navigateBack()
             },
             onRoomClick = { roomId ->
                 navController.navigateToGroupRecruit(roomId)
-            }
+            },
+            viewModel = viewModel
         )
     }
 
@@ -256,9 +274,11 @@ fun NavGraphBuilder.groupNavigation(
     composable<GroupRoutes.Room> { backStackEntry ->
         val route = backStackEntry.toRoute<GroupRoutes.Room>()
         val roomId = route.roomId
+        val isExpired = route.isExpired
 
         GroupRoomScreen(
             roomId = roomId,
+            isExpired = isExpired,
             onBackClick = {
                 navigateBack()
             },
@@ -266,10 +286,10 @@ fun NavGraphBuilder.groupNavigation(
                 navController.navigateToGroupRoomMates(roomId)
             },
             onNavigateToChat = {
-                navController.navigateToGroupRoomChat(roomId)
+                navController.navigateToGroupRoomChat(roomId, isExpired)
             },
             onNavigateToNote = { page, isOverview ->
-                navController.navigateToGroupNote(roomId, page, isOverview)
+                navController.navigateToGroupNote(roomId, page, isOverview, isExpired)
             },
             onNavigateToBookDetail = { isbn ->
                 navController.navigateToBookDetail(isbn)
@@ -282,7 +302,8 @@ fun NavGraphBuilder.groupNavigation(
         val route = backStackEntry.toRoute<GroupRoutes.RoomMates>()
         val roomId = route.roomId
 
-        val feedViewModel: FeedViewModel = hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Group))
+        val feedViewModel: FeedViewModel =
+            hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Group))
         val feedUiState by feedViewModel.uiState.collectAsState()
         val myUserId = feedUiState.myFeedInfo?.creatorId
 
@@ -307,9 +328,12 @@ fun NavGraphBuilder.groupNavigation(
         )
     }
 
-    composable<GroupRoutes.RoomChat> {
+    composable<GroupRoutes.RoomChat> { backStackEntry ->
+        val route = backStackEntry.toRoute<GroupRoutes.RoomChat>()
+
         GroupRoomChatScreen(
             onBackClick = { navigateBack() },
+            isExpired = route.isExpired
         )
     }
 
@@ -319,12 +343,14 @@ fun NavGraphBuilder.groupNavigation(
         val roomId = route.roomId
         val page = route.page
         val isOverview = route.isOverview
+        val isExpired = route.isExpired
 
         val result = backStackEntry.savedStateHandle.get<Int>("selected_tab_index")
 
         val viewModel: GroupNoteViewModel = hiltViewModel(backStackEntry)
 
-        val feedViewModel: FeedViewModel = hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Group))
+        val feedViewModel: FeedViewModel =
+            hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Group))
         val feedUiState by feedViewModel.uiState.collectAsState()
         val myUserId = feedUiState.myFeedInfo?.creatorId
 
@@ -339,6 +365,7 @@ fun NavGraphBuilder.groupNavigation(
             resultTabIndex = result,
             initialPage = page,
             initialIsOverview = isOverview,
+            isExpired = isExpired,
             onResultConsumed = {
                 backStackEntry.savedStateHandle.remove<Int>("selected_tab_index")
             },

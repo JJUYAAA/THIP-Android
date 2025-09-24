@@ -37,6 +37,7 @@ import com.texthip.thip.utils.rooms.RoomUtils
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupDoneScreen(
+    onRoomClick: (Int) -> Unit = {},
     onNavigateBack: () -> Unit = {},
     viewModel: GroupDoneViewModel = hiltViewModel()
 ) {
@@ -44,6 +45,7 @@ fun GroupDoneScreen(
 
     GroupDoneContent(
         uiState = uiState,
+        onRoomClick = onRoomClick,
         onNavigateBack = onNavigateBack,
         onRefresh = { viewModel.refreshData() },
         onLoadMore = { viewModel.loadMoreExpiredRooms() }
@@ -54,6 +56,7 @@ fun GroupDoneScreen(
 @Composable
 fun GroupDoneContent(
     uiState: GroupDoneUiState,
+    onRoomClick: (Int) -> Unit = {},
     onNavigateBack: () -> Unit = {},
     onRefresh: () -> Unit = {},
     onLoadMore: () -> Unit = {}
@@ -118,7 +121,7 @@ fun GroupDoneContent(
                             maxParticipants = room.recruitCount, // 모집 인원 수 사용
                             isRecruiting = RoomUtils.isRecruitingByType(room.type),
                             isSecret = !room.isPublic,
-                            onClick = { /* 완료된 모임방은 클릭 불가 */ }
+                            onClick = { onRoomClick(room.roomId) }
                         )
                     }
                 }

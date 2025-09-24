@@ -74,6 +74,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun GroupNoteScreen(
     roomId: Int,
+    isExpired: Boolean = false,
     onBackClick: () -> Unit = {},
     onCreateNoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
     onCreateVoteClick: (recentPage: Int, totalPage: Int, isOverviewPossible: Boolean) -> Unit,
@@ -144,6 +145,7 @@ fun GroupNoteScreen(
     GroupNoteContent(
         uiState = uiState,
         onEvent = viewModel::onEvent,
+        isExpired = isExpired,
         onBackClick = onBackClick,
         onCreateNoteClick = {
             uiState.let { s ->
@@ -166,6 +168,7 @@ fun GroupNoteScreen(
 @Composable
 fun GroupNoteContent(
     uiState: GroupNoteUiState,
+    isExpired: Boolean = false,
     onEvent: (GroupNoteEvent) -> Unit,
     onBackClick: () -> Unit,
     onCreateNoteClick: () -> Unit,
@@ -190,6 +193,8 @@ fun GroupNoteContent(
     var toastMessage by remember { mutableStateOf("") }
     var isErrorToast by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val expiredRoomMessage = stringResource(R.string.expired_room_read_only_message)
 
     val commentsViewModel: CommentsViewModel = hiltViewModel()
     val commentsUiState by commentsViewModel.uiState.collectAsStateWithLifecycle()
@@ -366,6 +371,11 @@ fun GroupNoteContent(
                                 Modifier
                             }
 
+                            val showExpiredToast = {
+                                toastMessage = expiredRoomMessage
+                                showToast = true
+                            }
+
                             when (post.postType) {
                                 "RECORD" -> TextCommentCard(
                                     data = post,
@@ -374,13 +384,19 @@ fun GroupNoteContent(
                                         selectedPostForComment = post
                                         isCommentBottomSheetVisible = true
                                     },
-                                    onLongPress = { selectedPostForMenu = post },
+                                    onLongPress = {
+                                        if (isExpired) showExpiredToast() else {
+                                            selectedPostForMenu = post
+                                        }
+                                    },
                                     onPinClick = {
                                         postToPin = post
                                         isPinDialogVisible = true
                                     },
                                     onLikeClick = { postId, postType ->
-                                        onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
+                                        if (isExpired) showExpiredToast() else {
+                                            onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
+                                        }
                                     },
                                     onProfileClick = { onNavigateToUserProfile(post.userId) }
                                 )
@@ -392,12 +408,18 @@ fun GroupNoteContent(
                                         selectedPostForComment = post
                                         isCommentBottomSheetVisible = true
                                     },
-                                    onLongPress = { selectedPostForMenu = post },
+                                    onLongPress = {
+                                        if (isExpired) showExpiredToast() else {
+                                            selectedPostForMenu = post
+                                        }
+                                    },
                                     onVote = { postId, voteItemId, type ->
                                         onEvent(GroupNoteEvent.OnVote(postId, voteItemId, type))
                                     },
                                     onLikeClick = { postId, postType ->
-                                        onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
+                                        if (isExpired) showExpiredToast() else {
+                                            onEvent(GroupNoteEvent.OnLikeRecord(postId, postType))
+                                        }
                                     },
                                     onProfileClick = { onNavigateToUserProfile(post.userId) }
                                 )
@@ -468,20 +490,22 @@ fun GroupNoteContent(
                 }
             }
 
-            ExpandableFloatingButton(
-                menuItems = listOf(
-                    FabMenuItem(
-                        icon = painterResource(R.drawable.ic_write),
-                        text = stringResource(R.string.write_record),
-                        onClick = onCreateNoteClick
-                    ),
-                    FabMenuItem(
-                        icon = painterResource(R.drawable.ic_vote),
-                        text = stringResource(R.string.create_vote),
-                        onClick = onCreateVoteClick
+            if (!isExpired) {
+                ExpandableFloatingButton(
+                    menuItems = listOf(
+                        FabMenuItem(
+                            icon = painterResource(R.drawable.ic_write),
+                            text = stringResource(R.string.write_record),
+                            onClick = onCreateNoteClick
+                        ),
+                        FabMenuItem(
+                            icon = painterResource(R.drawable.ic_vote),
+                            text = stringResource(R.string.create_vote),
+                            onClick = onCreateVoteClick
+                        )
                     )
                 )
-            )
+            }
         }
     }
 
@@ -498,6 +522,7 @@ fun GroupNoteContent(
         CommentBottomSheet(
             viewModel = commentsViewModel,
             uiState = commentsUiState,
+            isExpired = isExpired,
             onDismiss = {
                 isCommentBottomSheetVisible = false
                 selectedPostForComment = null
@@ -624,7 +649,7 @@ fun GroupNoteContent(
     ) {
         ToastWithDate(
             message = toastMessage,
-            color = if (isErrorToast) colors.Red else colors.DarkGrey
+            color = if (isErrorToast) colors.Red else colors.White
         )
     }
 }
