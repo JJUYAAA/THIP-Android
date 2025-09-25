@@ -52,7 +52,7 @@ fun MainScreen(
         
         // 중복 처리 방지: 이미 처리한 알림이면 스킵
         if (data?.notificationId == processedNotificationId) {
-            Log.d("MainScreen", "Notification already processed: ${data.notificationId}")
+            Log.d("MainScreen", "Notification already processed: ${data?.notificationId}")
             return@LaunchedEffect
         }
         
