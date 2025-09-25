@@ -39,7 +39,10 @@ data class GroupNoteUiState(
     val pageEnd: String = "",
     val isOverview: Boolean = false,
     val isPageFilter: Boolean = false,
-    val totalEnabled: Boolean = false
+    val totalEnabled: Boolean = false,
+    
+    // 스크롤 관련 상태
+    val scrollToPostId: Int? = null
 )
 
 sealed interface GroupNoteSideEffect {
@@ -62,6 +65,7 @@ sealed interface GroupNoteEvent {
     data class OnLikeRecord(val postId: Int, val postType: String) : GroupNoteEvent
     data class OnPinRecord(val recordId: Int, val content: String) : GroupNoteEvent
     data object RefreshPosts : GroupNoteEvent
+    data object ClearScrollTarget : GroupNoteEvent
 }
 
 
@@ -82,7 +86,8 @@ class GroupNoteViewModel @Inject constructor(
     fun initialize(
         roomId: Int,
         initialPage: Int? = null,
-        initialIsOverview: Boolean? = null
+        initialIsOverview: Boolean? = null,
+        initialPostId: Int? = null
     ) {
         this.roomId = roomId
 
@@ -94,6 +99,12 @@ class GroupNoteViewModel @Inject constructor(
                     isOverview = initialIsOverview ?: false,
                     isPageFilter = initialPage != null
                 )
+            }
+        }
+
+        if (initialPostId != null) {
+            _uiState.update {
+                it.copy(scrollToPostId = initialPostId)
             }
         }
 
@@ -168,6 +179,9 @@ class GroupNoteViewModel @Inject constructor(
             is GroupNoteEvent.OnLikeRecord -> likeRecord(event.postId, event.postType)
             is GroupNoteEvent.RefreshPosts -> loadPosts(isRefresh = true)
             is GroupNoteEvent.OnPinRecord -> pinRecord(event.recordId, event.content)
+            GroupNoteEvent.ClearScrollTarget -> {
+                _uiState.update { it.copy(scrollToPostId = null) }
+            }
             else -> {
                 Log.w("GroupNoteViewModel", "Unhandled event received: $event")
             }
