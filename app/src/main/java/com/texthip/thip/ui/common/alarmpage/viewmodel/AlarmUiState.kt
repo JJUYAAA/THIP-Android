@@ -12,4 +12,5 @@ data class AlarmUiState(
     val error: String? = null
 ) {
     val canLoadMore: Boolean get() = !isLoading && !isLoadingMore && hasMore
+    val hasUnreadNotifications: Boolean get() = notifications.any { !it.isChecked }
 }

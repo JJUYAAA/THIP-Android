@@ -3,6 +3,7 @@ package com.texthip.thip.ui.common.alarmpage.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.texthip.thip.data.repository.NotificationRepository
+import com.texthip.thip.data.model.notification.response.NotificationCheckResponse
 import com.texthip.thip.ui.common.alarmpage.mock.NotificationType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +30,20 @@ class AlarmViewModel @Inject constructor(
 
     init {
         loadNotifications(reset = true)
+
+        // Repository의 알림 업데이트 이벤트 구독
+        viewModelScope.launch {
+            repository.notificationUpdateFlow.collect { notificationId ->
+                updateNotificationAsRead(notificationId)
+            }
+        }
+
+        // 푸시 알림 도착 시 새로고침 이벤트 구독
+        viewModelScope.launch {
+            repository.notificationRefreshFlow.collect {
+                refreshData()
+            }
+        }
     }
 
     fun loadNotifications(reset: Boolean = false) {
@@ -102,5 +117,32 @@ class AlarmViewModel @Inject constructor(
             updateState { it.copy(currentNotificationType = notificationType) }
             loadNotifications(reset = true)
         }
+    }
+
+    fun checkNotification(notificationId: Int, onNavigate: (NotificationCheckResponse) -> Unit) {
+        viewModelScope.launch {
+            repository.checkNotification(notificationId)
+                .onSuccess { response ->
+                    response?.let {
+                        // 로컬 상태에서 해당 알림을 읽음으로 표시
+                        updateNotificationAsRead(notificationId)
+                        onNavigate(it)
+                    }
+                }
+                .onFailure { exception ->
+                    updateState { it.copy(error = exception.message) }
+                }
+        }
+    }
+
+    private fun updateNotificationAsRead(notificationId: Int) {
+        val updatedNotifications = uiState.value.notifications.map { notification ->
+            if (notification.notificationId == notificationId) {
+                notification.copy(isChecked = true)
+            } else {
+                notification
+            }
+        }
+        updateState { it.copy(notifications = updatedNotifications) }
     }
 }
