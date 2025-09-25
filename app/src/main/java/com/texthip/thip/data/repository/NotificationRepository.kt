@@ -12,6 +12,7 @@ import com.texthip.thip.data.model.notification.response.NotificationCheckRespon
 import com.texthip.thip.data.service.NotificationService
 import com.texthip.thip.utils.auth.getAppScopeDeviceId
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -23,10 +24,18 @@ class NotificationRepository @Inject constructor(
     private val notificationService: NotificationService,
     @param:ApplicationContext private val context: Context
 ) {
-    private val _notificationUpdateFlow = MutableSharedFlow<Int>()
+    private val _notificationUpdateFlow = MutableSharedFlow<Int>(
+        replay = 0,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     val notificationUpdateFlow: SharedFlow<Int> = _notificationUpdateFlow.asSharedFlow()
 
-    private val _notificationRefreshFlow = MutableSharedFlow<Unit>()
+    private val _notificationRefreshFlow = MutableSharedFlow<Unit>(
+        replay = 0,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     val notificationRefreshFlow: SharedFlow<Unit> = _notificationRefreshFlow.asSharedFlow()
     suspend fun registerFcmToken(
         deviceId: String,
@@ -88,15 +97,15 @@ class NotificationRepository @Inject constructor(
             val response = notificationService.checkNotification(request)
             val result = response.handleBaseResponse().getOrNull()
 
-            // 알림 읽기 성공 시 다른 ViewModel들에게 알림
+            // 알림 읽기 성공 시 다른 ViewModel들에게 알림 (비차단 emit)
             if (result != null) {
-                _notificationUpdateFlow.emit(notificationId)
+                _notificationUpdateFlow.tryEmit(notificationId)
             }
             result
         }
     }
 
-    suspend fun onNotificationReceived() {
-        _notificationRefreshFlow.emit(Unit)
+    fun onNotificationReceived() {
+        _notificationRefreshFlow.tryEmit(Unit)
     }
 }

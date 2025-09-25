@@ -37,13 +37,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
 
 
-        // 푸시 알림 도착 시 알림 상태 새로고침
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                notificationRepository.onNotificationReceived()
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to trigger notification refresh", e)
-            }
+        // 푸시 알림 도착 시 알림 상태 새로고침 (비차단 방식)
+        try {
+            notificationRepository.onNotificationReceived()
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to trigger notification refresh", e)
         }
 
         // Data payload 처리
