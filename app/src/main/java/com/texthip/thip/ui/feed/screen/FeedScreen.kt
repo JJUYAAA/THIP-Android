@@ -155,7 +155,8 @@ fun FeedScreen(
         val hasUpdatedFeedData =
             navController.currentBackStackEntry?.savedStateHandle?.get<Long>("updated_feed_id") != null
         val fromProfile =
-            navController.currentBackStackEntry?.savedStateHandle?.get<Boolean>("from_profile") ?: false
+            navController.currentBackStackEntry?.savedStateHandle?.get<Boolean>("from_profile")
+                ?: false
 
         if (!hasUpdatedFeedData && !fromProfile) {
             // 일반적인 경우: 전체 새로고침 + 스크롤 상단 이동
@@ -178,7 +179,7 @@ fun FeedScreen(
             isUserTabChange = false
         }
     }
-    
+
     // 같은 탭 재클릭 시 스크롤 상단 이동 처리
     LaunchedEffect(shouldScrollToTop) {
         if (shouldScrollToTop) {
@@ -186,7 +187,7 @@ fun FeedScreen(
             shouldScrollToTop = false
         }
     }
-    
+
     // 중복된 로직 제거 - 기존 bottomNavReselected 방식만 사용
 
     LaunchedEffect(resultFeedId) {
@@ -218,7 +219,7 @@ fun FeedScreen(
             }
         }
     }
-    
+
     // 바텀 네비게이션 탭 재선택 처리 (직접 상태 전달 방식)
     LaunchedEffect(onFeedTabReselected) {
         if (onFeedTabReselected > 0) {
@@ -257,7 +258,7 @@ fun FeedScreen(
 
     FeedContent(
         feedUiState = feedUiState,
-        hasUnreadNotifications = alarmUiState.notifications.any { !it.isChecked },
+        hasUnreadNotifications = alarmUiState.hasUnreadNotifications,
         showProgressBar = showProgressBar,
         progress = progress.value,
         currentListState = currentListState,

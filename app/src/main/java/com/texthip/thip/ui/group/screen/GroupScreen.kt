@@ -70,7 +70,7 @@ fun GroupScreen(
 
     GroupContent(
         uiState = uiState,
-        hasUnreadNotifications = alarmUiState.notifications.any { !it.isChecked },
+        hasUnreadNotifications = alarmUiState.hasUnreadNotifications,
         onNavigateToMakeRoom = onNavigateToMakeRoom,
         onNavigateToGroupDone = onNavigateToGroupDone,
         onNavigateToAlarm = onNavigateToAlarm,
@@ -141,7 +141,13 @@ fun GroupContent(
                     groupCards = uiState.myJoinedRooms,
                     userName = uiState.userName,
                     onCardClick = { joinedRoom ->
-                        onNavigateToGroupRoom(joinedRoom.roomId)
+                        if (joinedRoom.deadlineDate == null) {
+                            // 시작 후
+                            onNavigateToGroupRoom(joinedRoom.roomId)
+                        } else {
+                            // 시작 전
+                            onNavigateToGroupRecruit(joinedRoom.roomId)
+                        }
                     },
                     onCardVisible = onCardVisible
                 )
