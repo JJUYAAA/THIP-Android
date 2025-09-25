@@ -6,6 +6,7 @@ import com.texthip.thip.data.repository.NotificationRepository
 import com.texthip.thip.data.model.notification.response.NotificationCheckResponse
 import com.texthip.thip.ui.common.alarmpage.mock.NotificationType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,7 @@ class AlarmViewModel @Inject constructor(
     private var nextCursor: String? = null
     private var isLastPage = false
     private var isLoadingData = false
+    private var loadJob: Job? = null
 
     private fun updateState(update: (AlarmUiState) -> AlarmUiState) {
         _uiState.value = update(_uiState.value)
@@ -47,27 +49,37 @@ class AlarmViewModel @Inject constructor(
     }
 
     fun loadNotifications(reset: Boolean = false) {
+        // reset 시 기존 작업 취소
+        if (reset) {
+            loadJob?.cancel()
+            loadJob = null
+        }
+        
+        // 중복 로드 방지 (reset이 아닌 경우에만)
         if (isLoadingData && !reset) return
         if (isLastPage && !reset) return
 
-        viewModelScope.launch {
+        // launch 전에 isLoadingData 선반영 (플리커 방지)
+        isLoadingData = true
+        
+        // UI 상태 즉시 반영
+        if (reset) {
+            updateState {
+                it.copy(
+                    isLoading = true,
+                    notifications = emptyList(),
+                    hasMore = true
+                )
+            }
+            nextCursor = null
+            isLastPage = false
+        } else {
+            updateState { it.copy(isLoadingMore = true) }
+        }
+
+        // 하나의 loadJob에 작업 바인딩
+        loadJob = viewModelScope.launch {
             try {
-                isLoadingData = true
-
-                if (reset) {
-                    updateState {
-                        it.copy(
-                            isLoading = true,
-                            notifications = emptyList(),
-                            hasMore = true
-                        )
-                    }
-                    nextCursor = null
-                    isLastPage = false
-                } else {
-                    updateState { it.copy(isLoadingMore = true) }
-                }
-
                 val type =
                     if (uiState.value.currentNotificationType == NotificationType.FEED_AND_ROOM) {
                         null
@@ -100,6 +112,10 @@ class AlarmViewModel @Inject constructor(
             } finally {
                 isLoadingData = false
                 updateState { it.copy(isLoading = false, isLoadingMore = false) }
+                // 작업 완료 시 job 참조 정리
+                if (loadJob?.isCompleted == true) {
+                    loadJob = null
+                }
             }
         }
     }

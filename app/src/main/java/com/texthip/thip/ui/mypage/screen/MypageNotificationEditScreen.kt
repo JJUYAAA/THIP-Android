@@ -139,7 +139,7 @@ fun MyPageNotificationEditContent(
                     message = when (message) {
                         "push_on" -> stringResource(R.string.push_on)
                         "push_off" -> stringResource(R.string.push_off)
-                        "permission_denied" -> "알림 권한이 필요합니다. 설정에서 권한을 허용해주세요."
+                        "permission_denied" -> stringResource(R.string.notification_permission_required)
                         else -> stringResource(R.string.push_off)
                     },
                     date = toastDateTime,
