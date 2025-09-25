@@ -47,7 +47,7 @@ fun MainScreen(
     var processedNotificationId by remember { mutableStateOf<String?>(null) }
 
     // 푸시 알림에서 온 경우 알림 읽기 API 호출 및 네비게이션
-    LaunchedEffect(notificationData?.notificationId) {
+    LaunchedEffect(notificationData?.notificationId, notificationData?.fromNotification) {
         val data = notificationData
         
         // 중복 처리 방지: 이미 처리한 알림이면 스킵
