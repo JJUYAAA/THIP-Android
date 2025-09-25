@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.texthip.thip.R
+import com.texthip.thip.data.model.notification.response.NotificationCheckResponse
 import com.texthip.thip.data.model.notification.response.NotificationResponse
 import com.texthip.thip.ui.common.alarmpage.component.AlarmFilterRow
 import com.texthip.thip.ui.common.alarmpage.component.CardAlarm
@@ -41,6 +42,7 @@ import com.texthip.thip.ui.theme.ThipTheme.typography
 @Composable
 fun AlarmScreen(
     onNavigateBack: () -> Unit = {},
+    onNotificationNavigation: (NotificationCheckResponse) -> Unit = {},
     viewModel: AlarmViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -54,7 +56,12 @@ fun AlarmScreen(
         onNavigateBack = onNavigateBack,
         onRefresh = { viewModel.refreshData() },
         onLoadMore = { viewModel.loadMoreNotifications() },
-        onChangeNotificationType = { viewModel.changeNotificationType(it) }
+        onChangeNotificationType = { viewModel.changeNotificationType(it) },
+        onNotificationClick = { notificationId ->
+            viewModel.checkNotification(notificationId) { response ->
+                onNotificationNavigation(response)
+            }
+        }
     )
 }
 
@@ -65,7 +72,8 @@ fun AlarmContent(
     onNavigateBack: () -> Unit = {},
     onRefresh: () -> Unit = {},
     onLoadMore: () -> Unit = {},
-    onChangeNotificationType: (NotificationType) -> Unit = {}
+    onChangeNotificationType: (NotificationType) -> Unit = {},
+    onNotificationClick: (Int) -> Unit = {}
 ) {
     val listState = rememberLazyListState()
 
@@ -158,7 +166,7 @@ fun AlarmContent(
                                 timeAgo = notification.postDate,
                                 isRead = notification.isChecked,
                                 onClick = {
-                                    // TODO: 알림 읽음 처리
+                                    onNotificationClick(notification.notificationId)
                                 }
                             )
                         }
