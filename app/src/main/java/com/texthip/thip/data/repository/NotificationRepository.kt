@@ -82,8 +82,8 @@ class NotificationRepository @Inject constructor(
     }
 
     suspend fun getNotifications(
-        type: String? = null,
-        cursor: String? = null
+        cursor: String? = null,
+        type: String? = null
     ): Result<NotificationListResponse?> {
         return runCatching {
             val response = notificationService.getNotifications(cursor, type)

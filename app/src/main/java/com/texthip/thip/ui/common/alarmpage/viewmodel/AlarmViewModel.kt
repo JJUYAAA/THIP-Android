@@ -87,7 +87,7 @@ class AlarmViewModel @Inject constructor(
                         uiState.value.currentNotificationType.value
                     }
 
-                repository.getNotifications(type, nextCursor)
+                repository.getNotifications(nextCursor, type)
                     .onSuccess { notificationListResponse ->
                         notificationListResponse?.let { response ->
                             val currentList =
