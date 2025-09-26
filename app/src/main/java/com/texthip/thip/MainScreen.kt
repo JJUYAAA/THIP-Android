@@ -43,23 +43,20 @@ fun MainScreen(
     var feedReselectionTrigger by remember { mutableStateOf(0) }
     val context = LocalContext.current
     
-    // 처리된 알림 ID 추적 (중복 처리 방지)
+    // 처리된 알림 ID 추적
     var processedNotificationId by remember { mutableStateOf<String?>(null) }
 
     // 푸시 알림에서 온 경우 알림 읽기 API 호출 및 네비게이션
     LaunchedEffect(notificationData?.notificationId, notificationData?.fromNotification) {
         val data = notificationData
         
-        // 중복 처리 방지: 이미 처리한 알림이면 스킵
+        // 중복 처리 방지
         if (data?.notificationId == processedNotificationId) {
-            Log.d("MainScreen", "Notification already processed: ${data?.notificationId}")
             return@LaunchedEffect
         }
         
         data?.let { notificationData ->
             if (notificationData.fromNotification && notificationData.notificationId != null) {
-                Log.d("MainScreen", "Processing notification: ${notificationData.notificationId}")
-                
                 try {
                     val entryPoint = EntryPointAccessors.fromApplication(
                         context.applicationContext,
@@ -67,7 +64,6 @@ fun MainScreen(
                     )
                     val notificationRepository = entryPoint.notificationRepository()
 
-                    // 알림 ID를 Int로 변환 시도
                     val notificationId = try {
                         notificationData.notificationId.toInt()
                     } catch (e: NumberFormatException) {
@@ -79,11 +75,8 @@ fun MainScreen(
                     
                     result.onSuccess { response ->
                         if (response != null) {
-                            Log.d("MainScreen", "Notification check successful, navigating to: ${response.route}")
                             navController.navigateFromNotification(response)
-                            // 알림 상태 강제 새로고침 트리거
                             notificationRepository.onNotificationReceived()
-                            // 처리 완료 표시
                             processedNotificationId = notificationData.notificationId
                         } else {
                             Log.w("MainScreen", "Notification check returned null response")
