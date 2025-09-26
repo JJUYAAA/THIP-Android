@@ -64,6 +64,7 @@ fun GroupScreen(
     // 화면 재진입 시 데이터 새로고침
     LaunchedEffect(Unit) {
         viewModel.resetToInitialState()
+        alarmViewModel.refreshData()
     }
     val uiState by viewModel.uiState.collectAsState()
     val alarmUiState by alarmViewModel.uiState.collectAsState()
@@ -79,7 +80,10 @@ fun GroupScreen(
         onNavigateToGroupRecruit = onNavigateToGroupRecruit,
         onNavigateToGroupRoom = onNavigateToGroupRoom,
         onNavigateToGroupSearchAllRooms = onNavigateToGroupSearchAllRooms,
-        onRefreshGroupData = { viewModel.refreshGroupData() },
+        onRefreshGroupData = { 
+            viewModel.refreshGroupData()
+            alarmViewModel.refreshData()
+        },
         onCardVisible = { cardIndex -> viewModel.loadMoreGroups() },
         onSelectGenre = { genreIndex -> viewModel.selectGenre(genreIndex) },
         onHideToast = { viewModel.hideToast() },

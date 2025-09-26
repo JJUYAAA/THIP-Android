@@ -224,6 +224,7 @@ fun FeedScreen(
     LaunchedEffect(onFeedTabReselected) {
         if (onFeedTabReselected > 0) {
             feedViewModel.refreshOnBottomNavReselect()
+            alarmViewModel.refreshData()
             currentListState.scrollToItem(0)
         }
     }
@@ -285,7 +286,10 @@ fun FeedScreen(
         },
         onChangeFeedLike = feedViewModel::changeFeedLike,
         onChangeFeedSave = feedViewModel::changeFeedSave,
-        onPullToRefresh = feedViewModel::pullToRefresh
+        onPullToRefresh = {
+            feedViewModel.pullToRefresh()
+            alarmViewModel.refreshData()
+        }
     )
 }
 
