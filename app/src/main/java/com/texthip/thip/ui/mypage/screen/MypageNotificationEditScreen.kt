@@ -1,5 +1,7 @@
 package com.texthip.thip.ui.mypage.screen
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
@@ -21,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +39,7 @@ import com.texthip.thip.ui.mypage.viewmodel.MypageNotificationEditUiState
 import com.texthip.thip.ui.mypage.viewmodel.MypageNotificationEditViewModel
 import com.texthip.thip.ui.theme.ThipTheme.colors
 import com.texthip.thip.ui.theme.ThipTheme.typography
+import com.texthip.thip.utils.permission.NotificationPermissionUtils
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -46,9 +50,29 @@ fun MyPageNotificationEditScreen(
     onNavigateBack: () -> Unit,
     viewModel: MypageNotificationEditViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var toastMessage by rememberSaveable { mutableStateOf<String?>(null) }
     var toastDateTime by rememberSaveable { mutableStateOf("") }
+
+    // 알림 권한 요청 런처
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                // 권한이 허용되면 알림 활성화
+                viewModel.onNotificationToggle(true)
+                toastMessage = "push_on"
+                val dateFormat = SimpleDateFormat("yyyy년 M월 d일 H시 m분", Locale.KOREAN)
+                toastDateTime = dateFormat.format(Date())
+            } else {
+                // 권한이 거부되면 토스트 메시지 표시
+                toastMessage = "permission_denied"
+                val dateFormat = SimpleDateFormat("yyyy년 M월 d일 H시 m분", Locale.KOREAN)
+                toastDateTime = dateFormat.format(Date())
+            }
+        }
+    )
 
     LaunchedEffect(toastMessage) {
         if (toastMessage != null) {
@@ -63,10 +87,25 @@ fun MyPageNotificationEditScreen(
         toastDateTime = toastDateTime,
         onNavigateBack = onNavigateBack,
         onNotificationToggle = { enabled ->
-            viewModel.onNotificationToggle(enabled)
-            toastMessage = if (enabled) "push_on" else "push_off"
-            val dateFormat = SimpleDateFormat("yyyy년 M월 d일 H시 m분", Locale.KOREAN)
-            toastDateTime = dateFormat.format(Date())
+            if (enabled) {
+                // 알림을 켜려고 할 때 권한 확인
+                if (NotificationPermissionUtils.shouldRequestNotificationPermission(context)) {
+                    // 권한이 필요하면 권한 요청
+                    notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    // 권한이 이미 있거나 필요없으면 바로 설정 변경
+                    viewModel.onNotificationToggle(enabled)
+                    toastMessage = "push_on"
+                    val dateFormat = SimpleDateFormat("yyyy년 M월 d일 H시 m분", Locale.KOREAN)
+                    toastDateTime = dateFormat.format(Date())
+                }
+            } else {
+                // 알림을 끄는 경우는 권한 체크 없이 바로 설정 변경
+                viewModel.onNotificationToggle(enabled)
+                toastMessage = "push_off"
+                val dateFormat = SimpleDateFormat("yyyy년 M월 d일 H시 m분", Locale.KOREAN)
+                toastDateTime = dateFormat.format(Date())
+            }
         }
     )
 }
@@ -97,9 +136,12 @@ fun MyPageNotificationEditContent(
         ) {
             toastMessage?.let { message ->
                 ToastWithDate(
-                    message = stringResource(
-                        if (message == "push_on") R.string.push_on else R.string.push_off
-                    ),
+                    message = when (message) {
+                        "push_on" -> stringResource(R.string.push_on)
+                        "push_off" -> stringResource(R.string.push_off)
+                        "permission_denied" -> stringResource(R.string.notification_permission_required)
+                        else -> stringResource(R.string.push_off)
+                    },
                     date = toastDateTime,
                     modifier = Modifier.fillMaxWidth()
                 )

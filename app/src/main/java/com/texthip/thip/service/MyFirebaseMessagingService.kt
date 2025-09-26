@@ -11,6 +11,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.texthip.thip.MainActivity
 import com.texthip.thip.R
 import com.texthip.thip.data.manager.FcmTokenManager
+import com.texthip.thip.data.repository.NotificationRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     @Inject
     lateinit var fcmTokenManager: FcmTokenManager
 
+    @Inject
+    lateinit var notificationRepository: NotificationRepository
+
     companion object {
         private const val TAG = "FCM"
         private const val CHANNEL_ID = "thip_notifications"
@@ -32,16 +36,25 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        Log.d(TAG, "From: ${remoteMessage.from}")
 
-        if (remoteMessage.data.isNotEmpty()) {
-            Log.d(TAG, "Message data payload: ${remoteMessage.data}")
+        // 푸시 알림 도착 시 알림 상태 새로고침 (비차단 방식)
+        try {
+            notificationRepository.onNotificationReceived()
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to trigger notification refresh", e)
         }
 
-        remoteMessage.notification?.let {
-            Log.d(TAG, "Message Notification Body: ${it.body}")
-            showNotification(it.title, it.body)
+        // Data payload 처리
+        val dataPayload = remoteMessage.data
+        if (dataPayload.isNotEmpty()) {
+            Log.d(TAG, "Message data payload: $dataPayload")
         }
+
+        val title = remoteMessage.notification?.title ?: "THIP"
+        val body = remoteMessage.notification?.body ?: "새로운 알림이 있습니다"
+
+        Log.d(TAG, "App is in foreground, showing custom notification: title=$title, body=$body")
+        showNotification(title, body, dataPayload)
     }
 
     override fun onNewToken(token: String) {
@@ -54,39 +67,56 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun showNotification(title: String?, messageBody: String?) {
+    private fun showNotification(
+        title: String?,
+        messageBody: String?,
+        dataPayload: Map<String, String>
+    ) {
         val intent = Intent(this, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            // FCM 데이터를 Intent에 추가
+            dataPayload["notificationId"]?.let { notificationId ->
+                putExtra("notification_id", notificationId)
+                putExtra("from_notification", true)
+            }
         }
 
         val pendingIntent = PendingIntent.getActivity(
             this,
-            0,
+            System.currentTimeMillis().toInt(), // 고유한 requestCode 사용
             intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         createNotificationChannel()
 
         val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(title ?: "THIP")
             .setContentText(messageBody)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(0, notificationBuilder.build())
+        val notificationId =
+            dataPayload["notificationId"]?.toIntOrNull() ?: System.currentTimeMillis().toInt()
+        notificationManager.notify(notificationId, notificationBuilder.build())
     }
 
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
             CHANNEL_ID,
             CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description = CHANNEL_DESCRIPTION
+            enableVibration(true)
+            setShowBadge(true)
+            enableLights(true)
         }
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager

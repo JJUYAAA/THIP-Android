@@ -342,23 +342,14 @@ fun NavGraphBuilder.groupNavigation(
         val route = backStackEntry.toRoute<GroupRoutes.Note>()
         val roomId = route.roomId
         val page = route.page
+        val openComments = route.openComments
         val isOverview = route.isOverview
         val isExpired = route.isExpired
+        val postId = route.postId
 
         val result = backStackEntry.savedStateHandle.get<Int>("selected_tab_index")
 
         val viewModel: GroupNoteViewModel = hiltViewModel(backStackEntry)
-
-        val feedViewModel: FeedViewModel =
-            hiltViewModel(navController.getBackStackEntry(MainTabRoutes.Group))
-        val feedUiState by feedViewModel.uiState.collectAsState()
-        val myUserId = feedUiState.myFeedInfo?.creatorId
-
-        LaunchedEffect(Unit) {
-            if (feedUiState.myFeedInfo == null) {
-                feedViewModel.onTabSelected(1)
-            }
-        }
 
         GroupNoteScreen(
             roomId = roomId,
@@ -366,6 +357,8 @@ fun NavGraphBuilder.groupNavigation(
             initialPage = page,
             initialIsOverview = isOverview,
             isExpired = isExpired,
+            initialPostId = postId,
+            openComments = openComments,
             onResultConsumed = {
                 backStackEntry.savedStateHandle.remove<Int>("selected_tab_index")
             },
@@ -424,11 +417,10 @@ fun NavGraphBuilder.groupNavigation(
                 )
             },
             onNavigateToUserProfile = { userId ->
-                if (myUserId != null && myUserId == userId) {
-                    navController.navigate(FeedRoutes.My)
-                } else {
-                    navController.navigate(FeedRoutes.Others(userId))
-                }
+                navController.navigate(FeedRoutes.Others(userId))
+            },
+            onNavigateToMyProfile = {
+                navController.navigate(FeedRoutes.My)
             },
             viewModel = viewModel
         )

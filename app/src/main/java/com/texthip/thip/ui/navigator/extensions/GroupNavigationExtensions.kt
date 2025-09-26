@@ -23,12 +23,14 @@ fun NavHostController.navigateToGroupMakeRoomWithBook(
     imageUrl: String,
     author: String
 ) {
-    navigate(GroupRoutes.MakeRoomWithBook(
-        isbn = isbn,
-        title = title,
-        imageUrl = imageUrl,
-        author = author
-    ))
+    navigate(
+        GroupRoutes.MakeRoomWithBook(
+            isbn = isbn,
+            title = title,
+            imageUrl = imageUrl,
+            author = author
+        )
+    )
 }
 
 // 완료된 모임방 목록으로 이동
@@ -90,9 +92,19 @@ fun NavHostController.navigateToGroupNote(
     roomId: Int,
     page: Int? = null,
     isOverview: Boolean? = null,
-    isExpired: Boolean = false
+    isExpired: Boolean = false,
+    postId: Int? = null
 ) {
-    navigate(GroupRoutes.Note(roomId = roomId, page = page, isOverview = isOverview, isExpired = isExpired))
+    navigate(
+        GroupRoutes.Note(
+            roomId = roomId,
+            page = page,
+            openComments = false,
+            isExpired = isExpired,
+            postId = postId,
+            isOverview = isOverview
+        )
+    )
 }
 
 // 기록 생성 화면으로 이동

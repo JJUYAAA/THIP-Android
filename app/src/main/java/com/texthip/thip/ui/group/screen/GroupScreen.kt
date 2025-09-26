@@ -34,6 +34,7 @@ import com.texthip.thip.data.model.rooms.response.RoomMainList
 import com.texthip.thip.data.model.rooms.response.RoomMainResponse
 import com.texthip.thip.ui.common.buttons.FloatingButton
 import com.texthip.thip.ui.common.modal.ToastWithDate
+import com.texthip.thip.ui.common.alarmpage.viewmodel.AlarmViewModel
 import com.texthip.thip.ui.common.topappbar.LogoTopAppBar
 import com.texthip.thip.ui.feed.component.EmptyMySubscriptionBar
 import com.texthip.thip.ui.group.myroom.component.GroupMySectionHeader
@@ -55,18 +56,22 @@ fun GroupScreen(
     onNavigateToGroupSearch: () -> Unit = {},   // 검색 화면으로 이동
     onNavigateToGroupMy: () -> Unit = {},   // 내 모임방 화면으로 이동
     onNavigateToGroupRecruit: (Int) -> Unit = {},   // 모집 중인 모임방 화면으로 이동
-    onNavigateToGroupRoom: (Int) -> Unit = {},  // 기록장 화면으로 이동,
+    onNavigateToGroupRoom: (Int) -> Unit = {},  // 기록장 화면으로 이동
     onNavigateToGroupSearchAllRooms: () -> Unit = {},
-    viewModel: GroupViewModel = hiltViewModel()
+    viewModel: GroupViewModel = hiltViewModel(),
+    alarmViewModel: AlarmViewModel = hiltViewModel()
 ) {
     // 화면 재진입 시 데이터 새로고침
     LaunchedEffect(Unit) {
         viewModel.resetToInitialState()
+        alarmViewModel.refreshData()
     }
     val uiState by viewModel.uiState.collectAsState()
+    val alarmUiState by alarmViewModel.uiState.collectAsState()
 
     GroupContent(
         uiState = uiState,
+        hasUnreadNotifications = alarmUiState.hasUnreadNotifications,
         onNavigateToMakeRoom = onNavigateToMakeRoom,
         onNavigateToGroupDone = onNavigateToGroupDone,
         onNavigateToAlarm = onNavigateToAlarm,
@@ -75,7 +80,10 @@ fun GroupScreen(
         onNavigateToGroupRecruit = onNavigateToGroupRecruit,
         onNavigateToGroupRoom = onNavigateToGroupRoom,
         onNavigateToGroupSearchAllRooms = onNavigateToGroupSearchAllRooms,
-        onRefreshGroupData = { viewModel.refreshGroupData() },
+        onRefreshGroupData = { 
+            viewModel.refreshGroupData()
+            alarmViewModel.refreshData()
+        },
         onCardVisible = { cardIndex -> viewModel.loadMoreGroups() },
         onSelectGenre = { genreIndex -> viewModel.selectGenre(genreIndex) },
         onHideToast = { viewModel.hideToast() },
@@ -86,6 +94,7 @@ fun GroupScreen(
 @Composable
 fun GroupContent(
     uiState: GroupUiState,
+    hasUnreadNotifications: Boolean = false,
     onNavigateToMakeRoom: () -> Unit = {},
     onNavigateToGroupDone: () -> Unit = {},
     onNavigateToAlarm: () -> Unit = {},
@@ -136,7 +145,13 @@ fun GroupContent(
                     groupCards = uiState.myJoinedRooms,
                     userName = uiState.userName,
                     onCardClick = { joinedRoom ->
-                        onNavigateToGroupRoom(joinedRoom.roomId)
+                        if (joinedRoom.deadlineDate == null) {
+                            // 시작 후
+                            onNavigateToGroupRoom(joinedRoom.roomId)
+                        } else {
+                            // 시작 전
+                            onNavigateToGroupRecruit(joinedRoom.roomId)
+                        }
                     },
                     onCardVisible = onCardVisible
                 )
@@ -175,7 +190,7 @@ fun GroupContent(
         // 상단바
         LogoTopAppBar(
             leftIcon = painterResource(R.drawable.ic_done),
-            hasNotification = false,
+            hasNotification = hasUnreadNotifications,
             onLeftClick = onNavigateToGroupDone,
             onRightClick = onNavigateToAlarm
         )

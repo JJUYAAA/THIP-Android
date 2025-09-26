@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.texthip.thip.R
+import com.texthip.thip.ui.feed.viewmodel.FeedViewModel
 import com.texthip.thip.data.model.rooms.response.PostList
 import com.texthip.thip.data.model.rooms.response.RoomsRecordsPinResponse
 import com.texthip.thip.ui.common.bottomsheet.MenuBottomSheet
@@ -82,14 +83,29 @@ fun GroupNoteScreen(
     onEditNoteClick: (post: PostList) -> Unit = {},
     onEditVoteClick: (post: PostList) -> Unit = {},
     onNavigateToUserProfile: (userId: Long) -> Unit = {},
+    onNavigateToMyProfile: () -> Unit = {},
     resultTabIndex: Int? = null,
     onResultConsumed: () -> Unit = {},
     initialPage: Int? = null,
     initialIsOverview: Boolean? = null,
+    initialPostId: Int? = null,
+    openComments: Boolean = false,
     viewModel: GroupNoteViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+
+    // FeedViewModel을 통해 현재 사용자 정보 가져오기
+    val feedViewModel: FeedViewModel = hiltViewModel()
+    val feedUiState by feedViewModel.uiState.collectAsStateWithLifecycle()
+    val currentUserId = feedUiState.myFeedInfo?.creatorId
+
+    // 내 피드 정보가 없으면 로드
+    LaunchedEffect(Unit) {
+        if (feedUiState.myFeedInfo == null) {
+            feedViewModel.onTabSelected(1)
+        }
+    }
 
     var showProgressBar by remember { mutableStateOf(false) }
     val progress = remember { Animatable(0f) }
@@ -128,7 +144,7 @@ fun GroupNoteScreen(
     LaunchedEffect(key1 = roomId) {
         // 기록 생성 후 돌아온 경우가 아닐 때 (처음 진입 시) 초기화
         if (resultTabIndex == null) {
-            viewModel.initialize(roomId, initialPage, initialIsOverview)
+            viewModel.initialize(roomId, initialPage, initialIsOverview, initialPostId)
         }
     }
 
@@ -159,9 +175,19 @@ fun GroupNoteScreen(
         },
         onEditNoteClick = onEditNoteClick,
         onEditVoteClick = onEditVoteClick,
-        onNavigateToUserProfile = onNavigateToUserProfile,
+        onNavigateToUserProfile = { userId ->
+            // 현재 사용자 ID와 비교하여 적절한 네비게이션 수행
+            if (currentUserId != null && currentUserId == userId) {
+                // 내 프로필로 이동
+                onNavigateToMyProfile()
+            } else {
+                // 다른 사용자 프로필로 이동
+                onNavigateToUserProfile(userId)
+            }
+        },
         showProgressBar = showProgressBar,
-        progress = progress.value
+        progress = progress.value,
+        openComments = openComments
     )
 }
 
@@ -177,7 +203,8 @@ fun GroupNoteContent(
     onEditVoteClick: (post: PostList) -> Unit,
     onNavigateToUserProfile: (userId: Long) -> Unit,
     showProgressBar: Boolean,
-    progress: Float
+    progress: Float,
+    openComments: Boolean = false
 ) {
     var isCommentBottomSheetVisible by remember { mutableStateOf(false) }
     var selectedPostForComment by remember { mutableStateOf<PostList?>(null) }
@@ -227,6 +254,52 @@ fun GroupNoteContent(
     LaunchedEffect(isScrolledToEnd) {
         if (isScrolledToEnd) {
             onEvent(GroupNoteEvent.LoadMorePosts)
+        }
+    }
+
+    // 특정 포스트로 스크롤
+    LaunchedEffect(uiState.scrollToPostId, uiState.posts, uiState.isLoading) {
+        val scrollToPostId = uiState.scrollToPostId
+
+        if (scrollToPostId != null && uiState.posts.isNotEmpty() && !uiState.isLoading) {
+            val targetIndex = uiState.posts.indexOfFirst { it.postId == scrollToPostId }
+
+            if (targetIndex != -1) {
+                val targetPost = uiState.posts[targetIndex]
+
+                // 헤더 아이템들을 고려한 실제 인덱스 계산
+                val actualIndex = if (uiState.selectedTabIndex == 0) {
+                    targetIndex + 2 // 정보 텍스트 + 프로그레스바 아이템
+                } else {
+                    targetIndex + 1 // 프로그레스바 아이템만
+                }
+
+                // LazyColumn이 완전히 구성될 때까지 잠시 대기
+                kotlinx.coroutines.delay(100)
+
+                try {
+                    listState.animateScrollToItem(actualIndex)
+
+                    // openComments가 true이면 댓글 버텀시트를 자동으로 열기
+                    if (openComments) {
+                        kotlinx.coroutines.delay(200) // 스크롤 완료 후 잠시 대기
+                        selectedPostForComment = targetPost
+                        isCommentBottomSheetVisible = true
+                    }
+                } catch (e: Exception) {
+                    // 애니메이션이 실패하면 일반 스크롤 시도
+                    listState.scrollToItem(actualIndex)
+
+                    // openComments가 true이면 댓글 버텀시트를 자동으로 열기
+                    if (openComments) {
+                        kotlinx.coroutines.delay(200) // 스크롤 완료 후 잠시 대기
+                        selectedPostForComment = targetPost
+                        isCommentBottomSheetVisible = true
+                    }
+                }
+
+                onEvent(GroupNoteEvent.ClearScrollTarget)
+            }
         }
     }
 

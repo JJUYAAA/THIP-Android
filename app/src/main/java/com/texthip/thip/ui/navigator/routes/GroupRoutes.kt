@@ -43,8 +43,10 @@ sealed class GroupRoutes : Routes() {
     data class Note(
         val roomId: Int,
         val page: Int? = null,
-        val isOverview: Boolean? = null,
-        val isExpired: Boolean = false
+        val openComments: Boolean = false,
+        val isExpired: Boolean = false,
+        val postId: Int? = null,
+        val isOverview: Boolean? = null
     ) : GroupRoutes()
 
     @Serializable
