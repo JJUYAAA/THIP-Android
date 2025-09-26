@@ -78,7 +78,7 @@ class AlarmViewModel @Inject constructor(
         }
 
         // 하나의 loadJob에 작업 바인딩
-        loadJob = viewModelScope.launch {
+        val currentJob = viewModelScope.launch {
             try {
                 val type =
                     if (uiState.value.currentNotificationType == NotificationType.FEED_AND_ROOM) {
@@ -110,14 +110,14 @@ class AlarmViewModel @Inject constructor(
                         updateState { it.copy(error = exception.message) }
                     }
             } finally {
-                isLoadingData = false
-                updateState { it.copy(isLoading = false, isLoadingMore = false) }
-                // 작업 완료 시 job 참조 정리
-                if (loadJob?.isCompleted == true) {
+                if (loadJob == coroutineContext[Job]) {
+                    isLoadingData = false
+                    updateState { it.copy(isLoading = false, isLoadingMore = false) }
                     loadJob = null
                 }
             }
         }
+        loadJob = currentJob
     }
 
     fun loadMoreNotifications() {
